@@ -5,7 +5,12 @@
   "nameEn": "Wizard of Oz MVP",
   "frameworkId": "product-innovation-24",
   "cellId": 12,
-  "tags": ["Wizard of Oz", "MVP", "假装自动化", "Lean"],
+  "tags": [
+    "Wizard of Oz",
+    "MVP",
+    "假装自动化",
+    "Lean"
+  ],
   "parentAtomId": "atom_mvp_selection_overview",
   "relationType": "child",
   "coreIdea": "前端给用户看一个'看起来全自动'的产品界面，后端是人在手工处理。用户感受真实产品体验，团队用零代码验证复杂功能是否真有人愿意使用——AI 时代尤其常用，先用人脑模仿模型再决定是否训练。",
@@ -24,7 +29,11 @@
     "content": "Nick Swinmurn 创立 Zappos 时不囤库存：他在街边鞋店拍照上传到自建网站，有人下单后他才跑去店里买鞋寄出。前端是'在线鞋店'，后端是创始人本人。这套 Wizard of Oz 模式验证了'人愿意网上买鞋'的核心假设，后来 Zappos 12 亿美元卖给 Amazon。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.254Z",
+  "kind": "methodology"
 }

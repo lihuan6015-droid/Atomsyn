@@ -5,7 +5,12 @@
   "nameEn": "Pivot vs Persevere Decision Framework",
   "frameworkId": "product-innovation-24",
   "cellId": 21,
-  "tags": ["pivot", "decision-making", "lean-startup", "strategy"],
+  "tags": [
+    "pivot",
+    "decision-making",
+    "lean-startup",
+    "strategy"
+  ],
   "coreIdea": "Pivot 不是放弃，而是基于已验证学习的战略转身。当核心假设被数据反驳时，需要结构化决策框架替代情绪化判断。",
   "whenToUse": "PMF 信号长期模糊 · 增长曲线见顶 · 核心指标连续 3 个 cohort 不达标 · 团队对方向产生分歧 · 季度复盘发现假设证伪",
   "keySteps": [
@@ -22,7 +27,11 @@
     "content": "Tiny Speck 团队耗费 4 年开发的多人在线游戏 Glitch 始终无法获得健康留存（D30 < 5%），但团队内部使用的沟通工具反而被员工高度依赖。创始人 Stewart Butterfield 完成 Customer Need Pivot：原假设'休闲玩家需要协作型游戏'被证伪，新假设'知识工作者需要异步频道化沟通'被内部使用强力背书。保留了工程团队、技术栈和品牌敏感度，2013 年发布后 24 小时获 8000 注册，2019 年上市估值 230 亿美元。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.264Z",
+  "kind": "methodology"
 }

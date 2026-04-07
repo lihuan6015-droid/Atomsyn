@@ -5,7 +5,12 @@
   "nameEn": "Rapid Prototyping",
   "frameworkId": "product-innovation-24",
   "cellId": 15,
-  "tags": ["原型", "Figma", "AI 原型", "可用性测试"],
+  "tags": [
+    "原型",
+    "Figma",
+    "AI 原型",
+    "可用性测试"
+  ],
   "coreIdea": "原型不是为了好看，而是为了「让团队尽快指出哪里不对」。原型的精度应该匹配你要回答的问题：草图回答方向，线框回答结构，高保真回答交互，可运行代码回答可行性。错配=浪费。",
   "whenToUse": "概念变成可视化前 · 用户测试前 · 与工程评审之前 · 投资人/老板汇报 · 跨设计师协作 · AI 时代用 v0 / Lovable 直出 demo",
   "keySteps": [
@@ -27,5 +32,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.258Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,12 @@
   "nameEn": "Customer Journey Map",
   "frameworkId": "product-innovation-24",
   "cellId": 14,
-  "tags": ["体验设计", "CJM", "用户旅程", "情绪曲线"],
+  "tags": [
+    "体验设计",
+    "CJM",
+    "用户旅程",
+    "情绪曲线"
+  ],
   "parentAtomId": "atom_experience_mapping_overview",
   "relationType": "child",
   "coreIdea": "从单一 Persona 视角，把他与品牌的全部接触按时间顺序铺开（认知→考虑→购买→使用→忠诚），并叠加情绪曲线和痛点，让团队看到「人」而不是「漏斗」。",
@@ -29,5 +34,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.256Z",
+  "kind": "methodology"
 }

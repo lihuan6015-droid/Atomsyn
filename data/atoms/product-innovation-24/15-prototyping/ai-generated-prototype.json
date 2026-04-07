@@ -5,7 +5,13 @@
   "nameEn": "AI-Generated Prototype (v0 / Lovable)",
   "frameworkId": "product-innovation-24",
   "cellId": 15,
-  "tags": ["AI 原型", "v0", "Lovable", "Bolt", "vibe coding"],
+  "tags": [
+    "AI 原型",
+    "v0",
+    "Lovable",
+    "Bolt",
+    "vibe coding"
+  ],
   "parentAtomId": "atom_prototyping_overview",
   "relationType": "child",
   "coreIdea": "2024-2026 年最大的原型革命：用一段自然语言 prompt + 一张参考截图，30 分钟得到一个可运行的 Next.js / Vite 网站。AI 原型把「设计→代码」的鸿沟压缩为零，PM 自己就能产出准生产级 demo。",
@@ -46,5 +52,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.257Z",
+  "kind": "methodology"
 }

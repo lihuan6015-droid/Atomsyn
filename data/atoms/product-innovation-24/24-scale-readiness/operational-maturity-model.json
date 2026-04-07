@@ -5,7 +5,12 @@
   "nameEn": "Operational Maturity Model",
   "frameworkId": "product-innovation-24",
   "cellId": 24,
-  "tags": ["maturity-model", "operations", "scaling", "process"],
+  "tags": [
+    "maturity-model",
+    "operations",
+    "scaling",
+    "process"
+  ],
   "parentAtomId": "atom_scale_readiness_overview",
   "relationType": "child",
   "coreIdea": "把运营能力分为 5 级：救火 → 反应 → 主动 → 系统化 → 优化。规模化前必须从 1-2 级跃迁到 3 级，否则团队增长 = 救火指数级增长。",
@@ -24,7 +29,11 @@
     "content": "Airbnb 在 2014-2015 年信任与安全运营从 2 级（反应式）升到 4 级（系统化）：建立了 24/7 oncall 轮值、每事故 RCA 报告模板、月度趋势 review、自动化工单分配引擎。此跃迁是其后续三年用户量翻 5 倍但事故率仅升 1.3 倍的关键。Joe Gebbia 公开说过：'如果我们停留在救火模式去做规模化，公司早就崩了。'"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.268Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,12 @@
   "nameEn": "PEST-C Analysis",
   "frameworkId": "product-innovation-24",
   "cellId": 1,
-  "tags": ["PEST", "宏观分析", "趋势扫描", "外部环境"],
+  "tags": [
+    "PEST",
+    "宏观分析",
+    "趋势扫描",
+    "外部环境"
+  ],
   "parentAtomId": "atom_macro_scanning",
   "relationType": "child",
   "coreIdea": "把外部环境拆成 政治 / 经济 / 社会 / 技术 / 文化 五个独立透镜分别扫描，再合成。比起拍脑袋的「行业洞察」，PEST-C 强迫你看到自己原本盲区的那一面——产品人最容易低估的往往是政治和文化。",
@@ -24,7 +29,11 @@
     "content": "字节跳动 2017 年进入印度时的 PEST-C 显示：技术维度（4G 流量价格暴跌至 $0.17/GB）和文化维度（多语言、低识字率催生视频消费）极为利好；但政治维度的「数据本地化 + 中印关系紧张」被低估为低风险——这恰恰是 2020 年被禁的根本原因。事后看，PEST-C 的政治列其实早已闪红灯。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.224Z",
+  "kind": "methodology"
 }

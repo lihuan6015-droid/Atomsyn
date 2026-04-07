@@ -5,7 +5,13 @@
   "nameEn": "Opportunity Discovery Frameworks",
   "frameworkId": "product-innovation-24",
   "cellId": 8,
-  "tags": ["机会地图", "OST", "TAM", "Blue Ocean", "umbrella"],
+  "tags": [
+    "机会地图",
+    "OST",
+    "TAM",
+    "Blue Ocean",
+    "umbrella"
+  ],
   "coreIdea": "机会不是一个名词，而是『结果 ↔ 痛点 ↔ 解法』之间的连接。机会地图的本质是用一棵树或一张图，把模糊的『要做啥』翻译成可下注的『往哪打』。",
   "whenToUse": "季度规划要选下一个战场 · Roadmap 候选 idea 太多无法排序 · 老板问『我们的机会在哪』 · 进入新市场前评估天花板",
   "keySteps": [
@@ -22,7 +28,11 @@
     "content": "结果：用户日均时长 +20%。机会：1) 长内容时段 2) 通勤场景 3) 创作者锁定。最大机会是『锁定头部播客创作者』。蓝海动作：删除『付费墙』（增加：『独家版权 + 创作者分成』）。这条机会带来了 Joe Rogan 等独家协议。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.248Z",
+  "kind": "methodology"
 }

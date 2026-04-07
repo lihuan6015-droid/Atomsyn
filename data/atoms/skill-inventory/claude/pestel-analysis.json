@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_pestel-analysis",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "pestel-analysis",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/pestel-analysis/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "pestel-analysis",
+    "description": "系统分析宏观环境因素——政治、经济、社会、技术、环境和法律——识别可能影响你产品或项目的外部力量。",
+    "type": "component"
+  },
+  "rawDescription": "系统分析宏观环境因素——政治、经济、社会、技术、环境和法律——识别可能影响你产品或项目的外部力量。",
+  "fileMtime": "2026-03-07T06:49:57.874Z",
+  "fileHash": "db20913c6e76b3effd8f88c6c0896c4638376642aaa6576a71d444384904b98c",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.264Z",
+  "updatedAt": "2026-04-08T11:07:10.264Z"
+}

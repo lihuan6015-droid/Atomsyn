@@ -5,7 +5,12 @@
   "nameEn": "Pain-Gain Filter",
   "frameworkId": "product-innovation-24",
   "cellId": 10,
-  "tags": ["Pain", "Gain", "VPC", "用户价值"],
+  "tags": [
+    "Pain",
+    "Gain",
+    "VPC",
+    "用户价值"
+  ],
   "parentAtomId": "atom_idea_filtering_overview",
   "relationType": "child",
   "coreIdea": "把每个想法投到 Value Proposition Canvas 的 Pain Reliever / Gain Creator 两侧，问：它消除了哪个具体痛点？创造了哪个具体收益？无法回答的想法被淘汰——这是把'我以为有用'变成'用户验证有用'的最后一道关卡。",
@@ -24,7 +29,11 @@
     "content": "Superhuman 早期收到大量功能请求，CEO Rahul Vohra 强制每个功能必须对应到'重度邮件用户的具体 Pain'，没有对应的一律淘汰。这让团队拒绝了'日历集成''CRM 同步'等热门请求，专注'键盘速度'和'分类秒响应'，最终做出 PMF 极强的产品。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.252Z",
+  "kind": "methodology"
 }

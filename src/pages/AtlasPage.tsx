@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Library, ChevronRight, Sparkles } from 'lucide-react'
+import { Library, ChevronRight, Sparkles, Bot } from 'lucide-react'
 import { frameworksApi, indexApi, atomsApi } from '@/lib/dataApi'
 import { useAppStore } from '@/stores/useAppStore'
 import type { Framework, KnowledgeIndex, Atom } from '@/types'
 import { MatrixCell } from '@/components/atlas/MatrixCell'
 import { SpotlightPalette } from '@/components/atlas/SpotlightPalette'
+import { AgentActivityFeed } from '@/components/growth/AgentActivityFeed'
 import { NewAtomDialog } from './NewAtomDialog'
 
 const COLUMN_ORDER = ['discover', 'define', 'ideate', 'develop', 'validate', 'evolve'] as const
@@ -23,6 +24,7 @@ export default function AtlasPage() {
   const [index, setIndex] = useState<KnowledgeIndex | null>(null)
   const [atoms, setAtoms] = useState<Atom[]>([])
   const [activeTag, setActiveTag] = useState<string>('all')
+  const [feedOpen, setFeedOpen] = useState(false)
 
   useEffect(() => {
     if (!activeFrameworkId) return
@@ -85,6 +87,15 @@ export default function AtlasPage() {
           </div>
           <h1 className="text-[28px] font-bold tracking-tight leading-tight">{framework.name}</h1>
         </div>
+
+        <button
+          onClick={() => setFeedOpen(true)}
+          className="flex items-center gap-2 px-3 h-9 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/60 dark:bg-neutral-900/60 text-xs text-neutral-500 dark:text-neutral-400 hover:border-violet-400 dark:hover:border-violet-500 transition-colors shrink-0"
+          title="Agent 活动"
+        >
+          <Bot className="w-3.5 h-3.5 text-violet-500" />
+          <span>Agent 活动</span>
+        </button>
 
         <button
           onClick={() => window.dispatchEvent(new CustomEvent('ccl:open-spotlight'))}
@@ -202,6 +213,7 @@ export default function AtlasPage() {
 
       <SpotlightPalette />
       <NewAtomDialog />
+      <AgentActivityFeed open={feedOpen} onClose={() => setFeedOpen(false)} />
     </div>
   )
 }

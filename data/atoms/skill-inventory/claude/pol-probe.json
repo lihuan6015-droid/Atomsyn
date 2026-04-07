@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_pol-probe",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "pol-probe",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/pol-probe/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "pol-probe",
+    "description": "定义生命迹象探针(PoL)——一个轻量级验证工具，在昂贵的开发之前揭示残酷真相。用最小投入测试假设。",
+    "type": "component"
+  },
+  "rawDescription": "定义生命迹象探针(PoL)——一个轻量级验证工具，在昂贵的开发之前揭示残酷真相。用最小投入测试假设。",
+  "fileMtime": "2026-03-07T06:49:57.875Z",
+  "fileHash": "921db8a25e6c3921de1d0ca0174d0c03ecef887838b2c0d9d710c24c9c9087dd",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.265Z",
+  "updatedAt": "2026-04-08T11:07:10.265Z"
+}

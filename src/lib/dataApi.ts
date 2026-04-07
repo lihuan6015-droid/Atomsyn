@@ -7,13 +7,16 @@
  */
 
 import type {
+  AppVersionResult,
   Atom,
+  AtomAny,
   Framework,
   KnowledgeIndex,
-  LLMConfig,
+
   Practice,
   Project,
   PsychologicalEntry,
+  SeedCheckResult,
   UsageEvent,
 } from '@/types'
 
@@ -44,11 +47,14 @@ export const frameworksApi = {
 export const atomsApi = {
   list: () => http<Atom[]>('/atoms'),
   get: (id: string) => http<Atom>(`/atoms/${id}`),
-  create: (atom: Partial<Atom>) =>
-    http<Atom>('/atoms', { method: 'POST', body: JSON.stringify(atom) }),
+  create: (atom: Partial<AtomAny>) =>
+    http<AtomAny>('/atoms', { method: 'POST', body: JSON.stringify(atom) }),
   update: (id: string, atom: Atom) =>
     http<Atom>(`/atoms/${id}`, { method: 'PUT', body: JSON.stringify(atom) }),
   remove: (id: string) => http<{ ok: true }>(`/atoms/${id}`, { method: 'DELETE' }),
+  /** V2.0 M2: bump humanViewCount on an atom (lightweight PATCH, no full body). */
+  trackView: (id: string) =>
+    http<{ ok: true; humanViewCount: number }>(`/atoms/${id}/track-view`, { method: 'PATCH' }),
 }
 
 // ---------- Projects ----------
@@ -87,6 +93,15 @@ export const indexApi = {
   rebuild: () => http<KnowledgeIndex>('/index/rebuild', { method: 'POST' }),
 }
 
+// ---------- Skill scanner (V1.5 · hot rescan) ----------
+export const skillScanApi = {
+  rescan: () =>
+    http<{ ok: boolean; added: number; unchanged: number; removed: number }>(
+      '/scan-skills',
+      { method: 'POST' },
+    ),
+}
+
 // ---------- Usage Log ----------
 export const usageApi = {
   list: () => http<UsageEvent[]>('/usage-log'),
@@ -104,11 +119,25 @@ export const psychApi = {
     }),
 }
 
-// ---------- LLM Config ----------
-export const llmConfigApi = {
-  get: () => http<LLMConfig>('/llm-config'),
-  save: (cfg: LLMConfig) =>
-    http<LLMConfig>('/llm-config', { method: 'PUT', body: JSON.stringify(cfg) }),
+// ---------- Seed methodology updates (V1.5) ----------
+export const seedApi = {
+  check: () => http<SeedCheckResult>('/seed-check'),
+  sync: () =>
+    http<{ ok: boolean; synced: number; skipped: number }>('/seed-sync', {
+      method: 'POST',
+    }),
+  dismiss: (version: string) =>
+    http<{ ok: boolean }>('/seed-dismiss', {
+      method: 'POST',
+      body: JSON.stringify({ version }),
+    }),
+  resetDismiss: () =>
+    http<{ ok: boolean }>('/seed-reset-dismiss', { method: 'POST' }),
+}
+
+// ---------- App version check (V1.5 stub · V1.6 will hit GitHub Releases) ----------
+export const appVersionApi = {
+  check: () => http<AppVersionResult>('/app-version'),
 }
 
 // ---------- Convenience: track usage events without throwing ----------

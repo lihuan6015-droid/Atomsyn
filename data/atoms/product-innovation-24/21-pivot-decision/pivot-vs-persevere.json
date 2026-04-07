@@ -5,7 +5,12 @@
   "nameEn": "Pivot vs Persevere Meeting (Lean Startup)",
   "frameworkId": "product-innovation-24",
   "cellId": 21,
-  "tags": ["lean-startup", "pivot", "ritual", "validated-learning"],
+  "tags": [
+    "lean-startup",
+    "pivot",
+    "ritual",
+    "validated-learning"
+  ],
   "parentAtomId": "atom_pivot_decision_overview",
   "relationType": "child",
   "coreIdea": "Eric Ries 提出的固定节奏会议：每隔几周强制问一次'我们有没有取得足够的已验证学习'，答案是 No 就 Pivot。把决策从'灵感时刻'变成'日历事件'。",
@@ -24,7 +29,11 @@
     "content": "Eric Ries 在 IMVU 创立这一仪式：团队约定每 6 周开一次 Pivot or Persevere 会议，强制把'我们的假设是不是错的'摆上桌。在 IMVU 早期至少进行过 3 次 Persevere 决议和 1 次 Customer Segment Pivot（从 IM 客户端的插件转向独立产品），最终带动留存 3 倍提升。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.264Z",
+  "kind": "methodology"
 }

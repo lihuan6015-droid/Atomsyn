@@ -5,7 +5,12 @@
   "nameEn": "Code Prototype",
   "frameworkId": "product-innovation-24",
   "cellId": 15,
-  "tags": ["代码原型", "可运行 demo", "技术验证", "Spike"],
+  "tags": [
+    "代码原型",
+    "可运行 demo",
+    "技术验证",
+    "Spike"
+  ],
   "parentAtomId": "atom_prototyping_overview",
   "relationType": "child",
   "coreIdea": "当 Figma 原型回答不了「这个东西技术上行不行 / 性能够不够 / 接口好不好用」时，工程师就该花 1-3 天写一个 throwaway 的代码原型。代码原型的灵魂是「写完就丢」——不要爱上你的脏代码。",
@@ -29,5 +34,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.257Z",
+  "kind": "methodology"
 }

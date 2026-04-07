@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_saas-economics-efficiency-metrics",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "saas-economics-efficiency-metrics",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/saas-economics-efficiency-metrics/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "saas-economics-efficiency-metrics",
+    "description": "评估SaaS的单位经济效益和资金效率，涵盖CAC、LTV、回收期、利润率、烧钱率、40法则和魔力指标。",
+    "type": "component"
+  },
+  "rawDescription": "评估SaaS的单位经济效益和资金效率，涵盖CAC、LTV、回收期、利润率、烧钱率、40法则和魔力指标。",
+  "fileMtime": "2026-03-07T06:49:57.876Z",
+  "fileHash": "ea2de6fbc36bb92c5121d09a0d10b41adb8bed19469f4503a53d72a5b8186558",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.271Z",
+  "updatedAt": "2026-04-08T11:07:10.271Z"
+}

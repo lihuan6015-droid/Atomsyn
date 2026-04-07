@@ -1,0 +1,29 @@
+{
+  "id": "skill_claude_workshop-facilitation",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "workshop-facilitation",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/workshop-facilitation/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "workshop-facilitation",
+    "description": "以多轮、逐步的方式引导工作坊，在决策点提供编号建议，在常规问题提供快速选择选项。",
+    "type": "interactive",
+    "theme": "workshops-facilitation",
+    "best_for": "",
+    "scenarios": "",
+    "estimated_time": "varies by workshop"
+  },
+  "rawDescription": "以多轮、逐步的方式引导工作坊，在决策点提供编号建议，在常规问题提供快速选择选项。",
+  "fileMtime": "2026-03-07T06:49:57.877Z",
+  "fileHash": "ff8094c199cfcf5e93e167a7789773c8ac85e935a694454c27a3c66d7b4d041f",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.277Z",
+  "updatedAt": "2026-04-08T11:07:10.277Z"
+}

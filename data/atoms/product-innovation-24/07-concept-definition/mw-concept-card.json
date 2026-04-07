@@ -5,7 +5,12 @@
   "nameEn": "MW Concept Card",
   "frameworkId": "product-innovation-24",
   "cellId": 7,
-  "tags": ["MW Concept", "概念卡", "一页纸", "立项"],
+  "tags": [
+    "MW Concept",
+    "概念卡",
+    "一页纸",
+    "立项"
+  ],
   "parentAtomId": "atom_concept_definition_overview",
   "relationType": "child",
   "coreIdea": "MW 概念卡是把『谁、痛、解、为何赢』压成 6 个固定槽位的一页纸——固定的格式逼迫团队说人话，避免 PPT 的烟雾弹。",
@@ -24,7 +29,11 @@
     "content": "客户: 写代码的工程师; 场景: 写新功能时想让 AI 改文件而不是聊天; 痛点: ChatGPT 复制粘贴每天浪费 30 分钟; 概念: 让 AI 直接住进编辑器; 为何赢: fork VSCode 拿到全量上下文; 北极星: 周活留存 ≥ 60%。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.247Z",
+  "kind": "methodology"
 }

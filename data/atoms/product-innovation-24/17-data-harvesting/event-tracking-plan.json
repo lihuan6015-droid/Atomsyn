@@ -5,7 +5,12 @@
   "nameEn": "Event Tracking Plan",
   "frameworkId": "product-innovation-24",
   "cellId": 17,
-  "tags": ["tracking", "events", "schema", "instrumentation"],
+  "tags": [
+    "tracking",
+    "events",
+    "schema",
+    "instrumentation"
+  ],
   "parentAtomId": "atom_data_harvesting_overview",
   "relationType": "child",
   "coreIdea": "Tracking Plan 是产品和数据团队的合同：定义『发生什么事』『带什么属性』『谁负责』，让上线即可分析，而不是事后补埋点。",
@@ -23,7 +28,11 @@
     "content": "Segment Protocols 让团队用 JSON Schema 锁定事件结构，违反契约的事件直接被拒绝写入下游。某 Fintech 客户上线后数据脏度从 18% 降到 2%。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.260Z",
+  "kind": "methodology"
 }

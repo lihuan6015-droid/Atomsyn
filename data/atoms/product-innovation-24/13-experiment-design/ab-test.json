@@ -5,7 +5,12 @@
   "nameEn": "A/B Test",
   "frameworkId": "product-innovation-24",
   "cellId": 13,
-  "tags": ["实验设计", "数据驱动", "因果推断", "增长"],
+  "tags": [
+    "实验设计",
+    "数据驱动",
+    "因果推断",
+    "增长"
+  ],
   "parentAtomId": "atom_experiment_design_overview",
   "relationType": "child",
   "coreIdea": "把用户随机分成 A、B 两组只看一个变量的差异，用统计显著性把「我感觉这样更好」替换成「数据证明这样更好」。A/B 不是用来证明你对，而是用来戳破你的偏见。",
@@ -39,5 +44,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.254Z",
+  "kind": "methodology"
 }

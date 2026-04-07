@@ -5,7 +5,12 @@
   "nameEn": "Job-Solution Mapping",
   "frameworkId": "product-innovation-24",
   "cellId": 11,
-  "tags": ["JTBD", "解决方案", "映射", "Outcome"],
+  "tags": [
+    "JTBD",
+    "解决方案",
+    "映射",
+    "Outcome"
+  ],
   "parentAtomId": "atom_supply_demand_match_overview",
   "relationType": "child",
   "coreIdea": "把 JTBD 中的每个 Job Step 与拟做的解决方案模块一一对应，再加一列'用户期望的 Outcome 指标'——把'功能'强行翻译成'用户在哪一步变得更快/更准/更省'，避免用功能堆砌冒充解决方案。",
@@ -24,7 +29,11 @@
     "content": "Bosch 用 Job-Solution Mapping 分析'锯一根木板'的 12 个 Step，发现'测量并标记'步骤机会分最高（13.4），用户最不满意。新产品集成激光定位+磁吸尺，正中机会，市场份额一年内提升 12%。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.252Z",
+  "kind": "methodology"
 }

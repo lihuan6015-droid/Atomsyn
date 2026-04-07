@@ -1,0 +1,24 @@
+{
+  "id": "skill_claude_verification-before-completion",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "verification-before-completion",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/verification-before-completion/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "verification-before-completion",
+    "description": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always"
+  },
+  "rawDescription": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always",
+  "fileMtime": "2026-03-28T09:39:10.530Z",
+  "fileHash": "ea52d15aabaf72bc6b558efe2c126f161b53961090ddcd712000273bfe8c7b6c",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.276Z",
+  "updatedAt": "2026-04-08T11:07:10.276Z"
+}

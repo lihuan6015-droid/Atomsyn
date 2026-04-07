@@ -5,7 +5,12 @@
   "nameEn": "Tech Debt Audit",
   "frameworkId": "product-innovation-24",
   "cellId": 24,
-  "tags": ["tech-debt", "engineering", "scale", "audit"],
+  "tags": [
+    "tech-debt",
+    "engineering",
+    "scale",
+    "audit"
+  ],
   "parentAtomId": "atom_scale_readiness_overview",
   "relationType": "child",
   "coreIdea": "技术债不是'代码烂'，而是'未来速度的负利率'。规模化前必须把债分类（蓄意/被迫/腐烂/无知），算清利息，决定哪些先还、哪些可继续付息。",
@@ -24,7 +29,11 @@
     "content": "Twitter 早期用 Ruby on Rails 快速验证 PMF（蓄意债），在 2008-2010 年用户量爆发后频繁出现 'Fail Whale'。技术团队做了一次彻底审计，把'后端 Rails 单体'列为最高利息债务（每周浪费数十人日处理超时与扩容），决定还款：3 年内逐步把核心服务迁移到 JVM/Scala（Finagle 框架）。这次还款让 Twitter 在 2012 年大选夜创下流量纪录而不宕机，被视为技术债主动管理的经典案例。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.269Z",
+  "kind": "methodology"
 }

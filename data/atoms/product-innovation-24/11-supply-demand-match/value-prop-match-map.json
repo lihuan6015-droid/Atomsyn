@@ -5,7 +5,12 @@
   "nameEn": "Value Proposition Match Map",
   "frameworkId": "product-innovation-24",
   "cellId": 11,
-  "tags": ["VPC", "价值主张", "Strategyzer", "Fit"],
+  "tags": [
+    "VPC",
+    "价值主张",
+    "Strategyzer",
+    "Fit"
+  ],
   "parentAtomId": "atom_supply_demand_match_overview",
   "relationType": "child",
   "coreIdea": "Strategyzer VPC 的'Fit 阶段'：把 Customer Profile（Jobs/Pains/Gains）和 Value Map（Products/Pain Relievers/Gain Creators）严格对应，每条 Reliever 必须连到具体 Pain，每条 Creator 必须连到具体 Gain——没连上的就是浪费。",
@@ -24,7 +29,11 @@
     "content": "Nespresso 团队用 VPC Match Map 审计后发现，'胶囊兼容性'是用户最大 Pain 但被 Reliever 严重低估，于是把核心价值主张从'高品质咖啡'迁移到'专属胶囊生态系统'，反而通过专属性建立护城河，营收 10 年增长 5 倍。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.253Z",
+  "kind": "methodology"
 }

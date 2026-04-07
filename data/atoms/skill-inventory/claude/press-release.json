@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_press-release",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "press-release",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/press-release/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "press-release",
+    "description": "按照亚马逊\"逆向工作法\"撰写愿景式新闻稿，在构建产品之前定义和传达产品愿景，对齐利益相关者。",
+    "type": "component"
+  },
+  "rawDescription": "按照亚马逊\"逆向工作法\"撰写愿景式新闻稿，在构建产品之前定义和传达产品愿景，对齐利益相关者。",
+  "fileMtime": "2026-03-07T06:49:57.875Z",
+  "fileHash": "94dd298519fee891afa2443efa42ee97451b79a5c8c015fbd6ddbb4c6470fea9",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.267Z",
+  "updatedAt": "2026-04-08T11:07:10.267Z"
+}

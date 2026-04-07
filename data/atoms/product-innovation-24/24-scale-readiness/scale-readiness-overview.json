@@ -5,7 +5,12 @@
   "nameEn": "Scale Readiness Checklist",
   "frameworkId": "product-innovation-24",
   "cellId": 24,
-  "tags": ["scale", "readiness", "growth-stage", "operations"],
+  "tags": [
+    "scale",
+    "readiness",
+    "growth-stage",
+    "operations"
+  ],
   "coreIdea": "PMF 不是终点，而是规模化的起跑线。规模化准备 = 在踩油门之前确认五个系统都到位：产品稳定性、单位经济、组织、运营、定价。任一环不齐就放大问题。",
   "whenToUse": "刚验证 PMF 准备融资/扩张 · 团队从 10 人涨到 50 人前夜 · 客户量增长 10 倍前的关键 6 个月 · 新一轮融资前自检",
   "keySteps": [
@@ -22,7 +27,11 @@
     "content": "Stripe 在 2011-2014 年坚持小团队（< 80 人）打磨核心 API 稳定性、文档质量与单位经济，拒绝大规模营销投放。Patrick Collison 公开说过：'我们故意推迟规模化，因为知道一旦放大，每个 bug 都会被乘 100 倍。'直到 2014 年五维都达标后才开始全球扩张，最终成为开发者支付的事实标准。这种延迟规模化的纪律被认为是 Stripe 没有重蹈 Square 早期质量危机的关键。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.268Z",
+  "kind": "methodology"
 }

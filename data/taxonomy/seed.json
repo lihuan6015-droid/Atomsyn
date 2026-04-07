@@ -1,0 +1,30 @@
+{
+  "$schema": "../../skills/schemas/seed-taxonomy.schema.json",
+  "version": "2.0.0",
+  "description": "Seed vocabulary for the four-dimension classification system. These are autocomplete hints — users and agents can freely introduce new values.",
+  "roles": [
+    "产品", "研究", "设计", "工程", "咨询", "决策",
+    "创作", "协作", "学习", "教学", "辅导", "自我管理",
+    "运营", "销售", "项目管理"
+  ],
+  "situations": [
+    "会议", "访谈", "独立思考", "阅读", "对话AI", "复盘",
+    "踩坑当下", "灵感闪现", "冲突", "决策关口",
+    "紧急修复", "新功能开发", "架构重构", "代码审查", "方案评审"
+  ],
+  "activities": [
+    "分析", "判断", "说服", "倾听", "试错", "验证",
+    "综合", "表达", "拒绝", "妥协", "观察",
+    "提问", "记录", "教授", "调试"
+  ],
+  "insight_types": [
+    "反直觉",
+    "方法验证",
+    "方法证伪",
+    "情绪复盘",
+    "关系观察",
+    "时机判断",
+    "原则提炼",
+    "纯好奇"
+  ]
+}

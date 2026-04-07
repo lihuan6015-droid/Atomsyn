@@ -5,7 +5,12 @@
   "nameEn": "Concept Card",
   "frameworkId": "product-innovation-24",
   "cellId": 7,
-  "tags": ["概念定义", "MW", "概念卡", "umbrella"],
+  "tags": [
+    "概念定义",
+    "MW",
+    "概念卡",
+    "umbrella"
+  ],
   "coreIdea": "概念定义是把脑里的雾，凝结成一张能贴在墙上的卡。卡上必须能让任何路过的人 60 秒说出『这是什么 / 给谁 / 为什么会赢』。",
   "whenToUse": "立项评审会 · 团队里 3 个人对产品有 3 个版本理解 · 跨部门拉投入 · MVP 启动前的最后一道关",
   "keySteps": [
@@ -21,7 +26,11 @@
     "content": "一行话：在所有设备之间无缝同步任意文件夹。给谁：跨多设备工作的轻量用户。为什么赢：3 分钟视频演示就能让人感到『我懂了』——这张概念卡是 Drew Houston 在 HN 发的视频脚本。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.246Z",
+  "kind": "methodology"
 }

@@ -1,0 +1,24 @@
+{
+  "id": "skill_claude_test-driven-development",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "test-driven-development",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/test-driven-development/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "test-driven-development",
+    "description": "Use when implementing any feature or bugfix, before writing implementation code"
+  },
+  "rawDescription": "Use when implementing any feature or bugfix, before writing implementation code",
+  "fileMtime": "2026-03-28T09:39:10.528Z",
+  "fileHash": "7dee67b4af6bdccc7a914ca34533184d64592d0f5b23aeae631538168db14994",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.274Z",
+  "updatedAt": "2026-04-08T11:07:10.274Z"
+}

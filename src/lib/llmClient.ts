@@ -1,18 +1,52 @@
 /**
  * Provider-agnostic LLM client for the Copilot.
  *
- * - Loads non-sensitive config from llmConfigApi (config/llm.config.json)
- * - Loads API key from localStorage (key: 'ccl-llm-api-key')
+ * V2.0 M1: reads model config from useModelConfigStore (Zustand)
+ * instead of the old llm.config.json.
+ *
+ * - Loads default LLM model from the store
+ * - Loads API key from localStorage per-model key
  * - Loads system prompt from /skills/copilot.system.md (with inlined fallback)
  * - Returns a structured Copilot response object
  * - NEVER throws — always returns a valid response, even on failure
  */
 
 import Anthropic from '@anthropic-ai/sdk'
-import type { KnowledgeIndex, LLMConfig, Project } from '@/types'
-import { llmConfigApi } from '@/lib/dataApi'
+import type { KnowledgeIndex, Project } from '@/types'
+import { useModelConfigStore, getModelApiKey, setModelApiKey } from '@/stores/useModelConfigStore'
 
-export const LLM_API_KEY_STORAGE = 'ccl-llm-api-key'
+// V2.0 M1: legacy key constant kept for backward compat migration
+export const LLM_API_KEY_STORAGE = 'atomsyn-llm-api-key'
+const LEGACY_KEY = 'ccl-llm-api-key'
+
+export function getStoredApiKey(): string | null {
+  // V2.0: try new per-model key first, fall back to legacy global key
+  const store = useModelConfigStore.getState()
+  const defaultLlm = store.getDefault('llm')
+  if (defaultLlm) {
+    const key = getModelApiKey(defaultLlm.id)
+    if (key) return key
+  }
+  // Legacy fallback (try new key name first, then old ccl- prefix)
+  const v = localStorage.getItem(LLM_API_KEY_STORAGE) ?? localStorage.getItem(LEGACY_KEY)
+  return v && v.trim() ? v.trim() : null
+}
+
+export function setStoredApiKey(key: string) {
+  const store = useModelConfigStore.getState()
+  const defaultLlm = store.getDefault('llm')
+  if (defaultLlm) {
+    setModelApiKey(defaultLlm.id, key)
+  }
+  localStorage.setItem(LLM_API_KEY_STORAGE, key)
+  // Clean up legacy key if it exists
+  localStorage.removeItem(LEGACY_KEY)
+}
+
+export function clearStoredApiKey() {
+  localStorage.removeItem(LLM_API_KEY_STORAGE)
+  localStorage.removeItem(LEGACY_KEY)
+}
 
 export interface CopilotRecommendation {
   atomId: string
@@ -38,7 +72,7 @@ export interface CallCopilotArgs {
 // ---------------------------------------------------------------------------
 // Inlined fallback system prompt (mirrors /skills/copilot.system.md)
 // ---------------------------------------------------------------------------
-const FALLBACK_SYSTEM_PROMPT = `你是 CCL PM Tool 的 AI 副驾驶（Copilot）——一个植入在用户的个人元能力沉淀系统内部的"场景导航员"。
+const FALLBACK_SYSTEM_PROMPT = `你是 Atomsyn 的 AI 副驾驶（Copilot）——一个植入在用户的个人元能力沉淀系统内部的"场景导航员"。
 
 ## 你的唯一职责
 回答用户「我现在遇到这个痛点，应该打开哪张方法论卡片」这一类问题。
@@ -95,20 +129,6 @@ async function loadSystemPrompt(): Promise<string> {
 // Helpers
 // ---------------------------------------------------------------------------
 
-export function getStoredApiKey(): string | null {
-  if (typeof localStorage === 'undefined') return null
-  const v = localStorage.getItem(LLM_API_KEY_STORAGE)
-  return v && v.trim() ? v.trim() : null
-}
-
-export function setStoredApiKey(key: string) {
-  localStorage.setItem(LLM_API_KEY_STORAGE, key)
-}
-
-export function clearStoredApiKey() {
-  localStorage.removeItem(LLM_API_KEY_STORAGE)
-}
-
 function trimIndex(idx: KnowledgeIndex | null, max: number): KnowledgeIndex | null {
   if (!idx) return null
   return {
@@ -119,7 +139,6 @@ function trimIndex(idx: KnowledgeIndex | null, max: number): KnowledgeIndex | nu
 
 function safeParseJson(text: string): CopilotResponse | null {
   if (!text) return null
-  // strip ```json fences if present
   let cleaned = text.trim()
   const fenceMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/)
   if (fenceMatch) cleaned = fenceMatch[1].trim()
@@ -152,59 +171,83 @@ function errorResponse(msg: string): CopilotResponse {
 
 export async function callCopilot(args: CallCopilotArgs): Promise<CopilotResponse> {
   try {
-    const apiKey = getStoredApiKey()
-    if (!apiKey) {
+    const store = useModelConfigStore.getState()
+    const defaultLlm = store.getDefault('llm')
+
+    if (!defaultLlm) {
       return {
         intent: 'clarify',
-        message: '还没有配置 API Key。请前往「设置 → AI 副驾驶」填入你的密钥。',
+        message: '还没有配置默认 LLM 模型。请前往「设置 → AI 模型配置」添加一个语言模型。',
         recommendations: [],
         followUp: '配置完成后再来问我吧。',
       }
     }
 
-    let config: LLMConfig
-    try {
-      config = await llmConfigApi.get()
-    } catch (e: any) {
-      return errorResponse('无法读取 LLM 配置 (' + (e?.message ?? 'unknown') + ')')
+    const apiKey = getModelApiKey(defaultLlm.id) || getStoredApiKey()
+    if (!apiKey) {
+      return {
+        intent: 'clarify',
+        message: '还没有配置 API Key。请前往「设置 → AI 模型配置」填入你的密钥。',
+        recommendations: [],
+        followUp: '配置完成后再来问我吧。',
+      }
     }
 
-    const provider = config.activeProvider
-    const providerCfg = config.providers[provider]
-    if (!providerCfg) {
-      return errorResponse('当前 provider "' + provider + '" 配置缺失')
-    }
-
+    const copilotSettings = store.copilot
     const systemPrompt = await loadSystemPrompt()
-    const trimmedIndex = trimIndex(args.knowledgeIndex, config.copilot.maxContextAtoms ?? 30)
+    const trimmedIndex = trimIndex(args.knowledgeIndex, copilotSettings.maxContextAtoms ?? 30)
+
+    const exps = args.knowledgeIndex?.experiences ?? []
+    const skills = args.knowledgeIndex?.skillInventory ?? []
+    const progressiveDisclosure = {
+      experienceCount: exps.length,
+      skillCount: skills.length,
+      experiences: exps.slice(0, 20).map((e) => ({
+        id: e.id,
+        name: e.name,
+        tags: e.tags,
+        sourceAgent: e.sourceAgent,
+        excerpt: e.insightExcerpt,
+      })),
+      skills: skills.slice(0, 20).map((s) => ({
+        id: s.id,
+        name: s.name,
+        toolName: s.toolName,
+        tags: s.tags,
+      })),
+    }
 
     const userPayload = JSON.stringify(
       {
         userMessage: args.userMessage,
         knowledgeIndex: trimmedIndex,
         currentProjectContext: args.currentProjectContext ?? null,
+        progressiveDisclosure,
       },
       null,
       0
     )
 
     const userContent =
-      '请基于以下 JSON 上下文回答用户的问题，严格输出 JSON 对象（不要 markdown）：\n\n' +
+      '请基于以下 JSON 上下文回答用户的问题，严格输出 JSON 对象（不要 markdown）。' +
+      `注意: 用户还沉淀了 ${progressiveDisclosure.experienceCount} 条 agent 经验 + ` +
+      `${progressiveDisclosure.skillCount} 个本地 skill (见 progressiveDisclosure 字段), ` +
+      '若用户问题与这些相关, 可以在回复中按 id 引用它们。\n\n' +
       userPayload
 
-    const maxTokens = providerCfg.maxTokens ?? 2048
-    const temperature = providerCfg.temperature ?? 0.3
+    const maxTokens = 2048
+    const temperature = 0.3
 
     let rawText = ''
 
-    if (provider === 'anthropic') {
+    if (defaultLlm.provider === 'anthropic') {
       const client = new Anthropic({
         apiKey,
-        baseURL: providerCfg.baseUrl || undefined,
+        baseURL: defaultLlm.baseUrl || undefined,
         dangerouslyAllowBrowser: true,
       })
       const resp = await client.messages.create({
-        model: providerCfg.model,
+        model: defaultLlm.modelId,
         max_tokens: maxTokens,
         temperature,
         system: systemPrompt,
@@ -215,8 +258,8 @@ export async function callCopilot(args: CallCopilotArgs): Promise<CopilotRespons
         .join('')
         .trim()
     } else {
-      // openai / custom — OpenAI-compatible chat completions
-      const baseUrl = (providerCfg.baseUrl || 'https://api.openai.com/v1').replace(/\/$/, '')
+      // OpenAI-compatible chat completions
+      const baseUrl = (defaultLlm.baseUrl || 'https://api.openai.com/v1').replace(/\/$/, '')
       const url = baseUrl + '/chat/completions'
       const res = await fetch(url, {
         method: 'POST',
@@ -225,7 +268,7 @@ export async function callCopilot(args: CallCopilotArgs): Promise<CopilotRespons
           Authorization: 'Bearer ' + apiKey,
         },
         body: JSON.stringify({
-          model: providerCfg.model,
+          model: defaultLlm.modelId,
           max_tokens: maxTokens,
           temperature,
           messages: [
@@ -256,7 +299,7 @@ export async function callCopilot(args: CallCopilotArgs): Promise<CopilotRespons
   }
 }
 
-/** Lightweight ping for the "测试连接" button in Settings. */
+/** Lightweight ping for the "测试连接" button. */
 export async function testCopilotConnection(): Promise<{ ok: boolean; message: string }> {
   const resp = await callCopilot({
     userMessage: 'hi',

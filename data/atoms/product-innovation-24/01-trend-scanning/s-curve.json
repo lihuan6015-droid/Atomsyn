@@ -5,7 +5,12 @@
   "nameEn": "S-Curve Analysis",
   "frameworkId": "product-innovation-24",
   "cellId": 1,
-  "tags": ["S 曲线", "技术成熟度", "创新扩散", "时机判断"],
+  "tags": [
+    "S 曲线",
+    "技术成熟度",
+    "创新扩散",
+    "时机判断"
+  ],
   "parentAtomId": "atom_macro_scanning",
   "relationType": "child",
   "coreIdea": "任何技术 / 品类 / 增长曲线都会走「萌芽 → 起飞 → 成熟 → 衰退」的 S 形。最致命的不是看错趋势，而是看对了趋势但搞错了你站在 S 曲线的哪个点——早 5 年和晚 5 年都会让产品死掉。",
@@ -24,7 +29,11 @@
     "content": "柯达 1975 年发明数码相机，但内部判断数码 S 曲线还在胚胎期、胶片正在 S 曲线最赚钱的成熟期顶端，于是选择「收割胶片」。问题是它低估了数码曲线起飞速度——拐点在 2003 年到来时，柯达没来得及完成跳跃，2012 年破产。同期富士因为提早做了 S 曲线诊断、All in 化学品和医疗影像新曲线，活了下来。同一份扫描，两种结论，命运迥异。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.226Z",
+  "kind": "methodology"
 }

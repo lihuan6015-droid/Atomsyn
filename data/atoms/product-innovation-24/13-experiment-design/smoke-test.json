@@ -5,7 +5,12 @@
   "nameEn": "Smoke Test",
   "frameworkId": "product-innovation-24",
   "cellId": 13,
-  "tags": ["实验设计", "Landing Page", "需求验证", "广告测试"],
+  "tags": [
+    "实验设计",
+    "Landing Page",
+    "需求验证",
+    "广告测试"
+  ],
   "parentAtomId": "atom_experiment_design_overview",
   "relationType": "child",
   "coreIdea": "在产品还不存在时，先做一个看起来「真的能用」的着陆页 + 投放小额广告，用真实点击与留资行为验证「有没有人愿意为这个想法举手」。",
@@ -28,5 +33,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.255Z",
+  "kind": "methodology"
 }

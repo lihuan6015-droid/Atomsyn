@@ -5,7 +5,12 @@
   "nameEn": "Heatmap & Session Replay",
   "frameworkId": "product-innovation-24",
   "cellId": 17,
-  "tags": ["heatmap", "session-replay", "qualitative", "ux-research"],
+  "tags": [
+    "heatmap",
+    "session-replay",
+    "qualitative",
+    "ux-research"
+  ],
   "parentAtomId": "atom_data_harvesting_overview",
   "relationType": "child",
   "coreIdea": "数字告诉你『发生了什么』，回放告诉你『为什么』。看 5 段流失用户的回放，往往比一周看仪表盘更接近真相。",
@@ -23,7 +28,11 @@
     "content": "Hubspot 通过 Hotjar 回放发现注册页一个非按钮元素被频繁点击（rage click），把它改成真按钮后注册率提升 11%。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.261Z",
+  "kind": "methodology"
 }

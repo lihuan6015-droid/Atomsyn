@@ -5,7 +5,12 @@
   "nameEn": "MVP Types Selection",
   "frameworkId": "product-innovation-24",
   "cellId": 12,
-  "tags": ["MVP", "Lean Startup", "验证", "选型"],
+  "tags": [
+    "MVP",
+    "Lean Startup",
+    "验证",
+    "选型"
+  ],
   "coreIdea": "MVP 不是'功能少的产品'，而是'用最少投入验证最大风险假设的实验'。MVP 选错类型 = 浪费三倍时间——选 Concierge 还是 Landing Page，取决于你要验证的是'用户会用'还是'用户想要'。",
   "whenToUse": "供需对齐完成后进入第一次验证 · 立项前需要决定'第一刀切多薄' · 团队把 MVP 默认理解为'少做几个功能' · 想用最低成本砍掉错误方向",
   "keySteps": [
@@ -22,7 +27,11 @@
     "content": "Eric Ries 在 IMVU 早期投入 6 个月做完整产品上线后用户量惨淡。后来他推广 MVP 思想：先用 Landing Page 验证需求，再用 Concierge 验证可用性，每一步只验证一个最大风险——这套思路成为 Lean Startup 运动的核心。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.254Z",
+  "kind": "methodology"
 }

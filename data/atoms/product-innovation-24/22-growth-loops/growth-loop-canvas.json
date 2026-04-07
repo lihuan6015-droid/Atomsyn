@@ -5,7 +5,11 @@
   "nameEn": "Growth Loop Canvas",
   "frameworkId": "product-innovation-24",
   "cellId": 22,
-  "tags": ["growth-canvas", "reforge", "loop-design"],
+  "tags": [
+    "growth-canvas",
+    "reforge",
+    "loop-design"
+  ],
   "parentAtomId": "atom_growth_loops_overview",
   "relationType": "child",
   "coreIdea": "Reforge 推广的画布工具：用六个字段（输入 → 行动 → 输出 → 再投资）把任何增长循环标准化呈现，让团队对'循环到底是什么'有一致理解。",
@@ -24,7 +28,11 @@
     "content": "输入：付费搜索 + 老用户 → 行动：用户为了更多空间向朋友发送邀请 → 输出：朋友收到带链接的邮件 → 分发：朋友注册（17%-25% 转化）→ 再投资：新用户也因为空间需求重新发起邀请。Sean Ellis 测算这个循环在 2009-2010 年把 Dropbox 用户从 10 万增长到 400 万，CAC 降至 $0.99，K 值约 0.6（接近自驱临界）。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.265Z",
+  "kind": "methodology"
 }

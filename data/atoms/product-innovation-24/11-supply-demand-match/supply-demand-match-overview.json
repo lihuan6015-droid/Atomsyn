@@ -5,7 +5,12 @@
   "nameEn": "Supply Demand Match Canvas",
   "frameworkId": "product-innovation-24",
   "cellId": 11,
-  "tags": ["供需匹配", "VPC", "DS Canvas", "对齐"],
+  "tags": [
+    "供需匹配",
+    "VPC",
+    "DS Canvas",
+    "对齐"
+  ],
   "coreIdea": "筛过的想法不是答案，而是'供给假设'。供需匹配迫使团队把'我们能提供什么'与'用户真正需要什么'放到同一张画布上对照——错位的地方就是要么改产品要么改用户的决断点。",
   "whenToUse": "想法已筛选要进入 MVP 选型前 · 跨团队（产品/业务/技术）需要同一份语言 · 担心做出'技术可行但没人要'的方案 · 重新定位现有产品",
   "keySteps": [
@@ -22,7 +27,11 @@
     "content": "Notion 早期产品过于复杂（笔记+数据库+wiki+task），团队做了一次供需画布发现：知识工作者最强需求是'灵活拼装文档+数据库'，而早期的 'wiki 模板'供给被大量浪费。团队据此砍掉模板市场，聚焦 block-based editor，找到 PMF。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.253Z",
+  "kind": "methodology"
 }

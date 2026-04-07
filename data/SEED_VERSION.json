@@ -1,0 +1,26 @@
+{
+  "$schema": "CCL Atlas seed methodology version manifest · V1.5 baseline",
+  "version": "1.5.0",
+  "releaseDate": "2026-04-08",
+  "description": "V1.5 baseline seed · 产品创新 24 步法骨架 + 125 条方法论原子",
+  "changelog": [
+    {
+      "version": "1.5.0",
+      "date": "2026-04-08",
+      "notes": [
+        "初始基线 · 产品创新 24 步法骨架",
+        "发现 / 定义 / 创意 / 开发 / 验证 / 进化 六阶段共 24 cells",
+        "第 02 格 用户声音 预置 VOC / JTBD / KANO 三张示范原子",
+        "125 条迁移自 V1 的方法论原子 (kind: methodology)"
+      ]
+    }
+  ],
+  "contents": {
+    "frameworks": ["product-innovation-24"],
+    "methodologyAtomCount": 125,
+    "rootPaths": [
+      "data/frameworks/",
+      "data/atoms/product-innovation-24/"
+    ]
+  }
+}

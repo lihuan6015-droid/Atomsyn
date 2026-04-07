@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SkillInventoryItem",
+  "description": "A catalog entry for a locally-installed AI tool skill (Claude / Cursor / Codex / Trae / ...). Purpose: give the user visibility and sovereignty over what skills their machine has — NOT to inject these into atlas-read context (the coding tools already handle their own skill discovery). Introduced in V1.5 (Gap-4).",
+  "type": "object",
+  "required": [
+    "id",
+    "schemaVersion",
+    "kind",
+    "name",
+    "tags",
+    "localPath",
+    "toolName",
+    "frontmatter",
+    "rawDescription",
+    "fileMtime",
+    "stats",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^skill_[a-z]+_[a-z0-9_-]+$",
+      "description": "Convention: skill_<tool>_<slug>. e.g. skill_claude_problem-framing-canvas"
+    },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "kind": { "type": "string", "const": "skill-inventory" },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "Skill name (typically from frontmatter `name` or directory name)."
+    },
+    "nameEn": { "type": "string" },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Tags derived from frontmatter, file path, or aiGeneratedTags after enrichment."
+    },
+    "localPath": {
+      "type": "string",
+      "description": "Absolute path to the SKILL.md file on the user's machine. Used for 'open in editor' action."
+    },
+    "toolName": {
+      "type": "string",
+      "enum": ["claude", "cursor", "codex", "trae", "openclaw", "custom"],
+      "description": "Which AI coding tool owns this skill."
+    },
+    "frontmatter": {
+      "type": "object",
+      "description": "Raw YAML frontmatter parsed from SKILL.md. Structure varies by tool. Stored verbatim for user inspection.",
+      "additionalProperties": true
+    },
+    "rawDescription": {
+      "type": "string",
+      "description": "The skill's self-declared description (from frontmatter.description or first paragraph of SKILL.md)."
+    },
+    "aiGeneratedSummary": {
+      "type": "string",
+      "description": "Optional. Generated on-demand by T-4.3 when user clicks '✨ Understand this skill'. Concise one-paragraph explanation of what the skill does and when it triggers."
+    },
+    "aiGeneratedTags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional. AI-suggested tags for categorization, generated alongside aiGeneratedSummary."
+    },
+    "typicalScenarios": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional. 2-5 phrases describing typical user situations where this skill should be invoked. Used for search."
+    },
+    "triggerKeywords": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional. Natural-language trigger phrases (e.g. '帮我设计一个按钮'). Used for the Skill Map filter."
+    },
+    "userMarked": {
+      "type": "string",
+      "enum": ["favorite", "forgotten", "unused", "archived"],
+      "description": "Optional. User's manual marker for self-organization. Null = unmarked."
+    },
+    "fileMtime": {
+      "type": "string",
+      "description": "Last modified time of the SKILL.md file. Used by the scanner to detect changes."
+    },
+    "fileHash": {
+      "type": "string",
+      "description": "Optional. sha256 of the SKILL.md content. Used when mtime is unreliable (e.g. across git clones)."
+    },
+    "stats": {
+      "type": "object",
+      "required": ["usedInProjects", "useCount"],
+      "description": "Kept for schema consistency. For skill-inventory, useCount is incremented only when the user opens/views the card in Atomsyn, NOT when the host AI tool invokes the actual skill.",
+      "properties": {
+        "usedInProjects": { "type": "array", "items": { "type": "string" } },
+        "lastUsedAt": { "type": "string" },
+        "useCount": { "type": "integer", "minimum": 0 },
+        "invokedByAgent": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+        "userDemoted": { "type": "boolean" },
+        "locked": { "type": "boolean" }
+      }
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  }
+}

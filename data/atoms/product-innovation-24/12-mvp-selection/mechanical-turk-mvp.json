@@ -5,7 +5,12 @@
   "nameEn": "Mechanical Turk MVP",
   "frameworkId": "product-innovation-24",
   "cellId": 12,
-  "tags": ["Mechanical Turk", "人肉算法", "众包", "MVP"],
+  "tags": [
+    "Mechanical Turk",
+    "人肉算法",
+    "众包",
+    "MVP"
+  ],
   "parentAtomId": "atom_mvp_selection_overview",
   "relationType": "child",
   "coreIdea": "Wizard of Oz 的'分布式版'：把后端的人工处理通过众包平台（Amazon MTurk、自建运营团队）扩大到几十上百单/天。用户感知是'AI 在干活'，实际是世界各地的人。先用人脑生成训练数据再决定要不要训练模型。",
@@ -25,7 +30,11 @@
     "content": "Aardvark（Google 2010 年收购）号称是'社交搜索 AI'，但早期所有问题都由后台运营人员人工分发给最合适的人回答。这种 Mechanical Turk 模式验证了'人愿意问别人而不是搜引擎'，积累的数据后来用于路由模型训练。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.253Z",
+  "kind": "methodology"
 }

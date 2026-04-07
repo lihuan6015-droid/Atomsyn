@@ -1,0 +1,24 @@
+{
+  "id": "skill_claude_using-superpowers",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "using-superpowers",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/using-superpowers/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "using-superpowers",
+    "description": "Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions"
+  },
+  "rawDescription": "Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions",
+  "fileMtime": "2026-03-28T09:39:10.529Z",
+  "fileHash": "5fa548a85ce639dc6a2ea53607f9d405363c9b935004d0d95dc16e9629752d00",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.276Z",
+  "updatedAt": "2026-04-08T11:07:10.276Z"
+}

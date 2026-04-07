@@ -43,12 +43,13 @@ async function loadFrameworks() {
   )
 }
 
-async function loadAtoms() {
+async function loadAllAtomsAny() {
   const files = await walk(path.join(dataDir, 'atoms'))
   const out = []
   for (const f of files) {
     const j = await readJson(f, null)
-    if (j) out.push({ ...j, _file: path.relative(dataDir, f) })
+    if (!j) continue
+    out.push({ ...j, _file: path.relative(dataDir, f) })
   }
   return out
 }
@@ -75,7 +76,11 @@ async function loadPractices(projectId) {
 
 async function rebuild() {
   const frameworks = await loadFrameworks()
-  const atoms = await loadAtoms()
+  const allAtoms = await loadAllAtomsAny()
+  // V1.5: backward compat — `atoms` index field stays methodology-only.
+  const atoms = allAtoms.filter((a) => (a.kind ?? 'methodology') === 'methodology')
+  const experienceAtoms = allAtoms.filter((a) => a.kind === 'experience')
+  const skillInventoryAtoms = allAtoms.filter((a) => a.kind === 'skill-inventory')
   const projects = await loadProjects()
 
   const fwAtomCount = {}
@@ -128,6 +133,27 @@ async function rebuild() {
       innovationStage: p.innovationStage,
       atomsUsed: Array.from(new Set([...(p.pinnedAtoms?.map((x) => x.atomId) ?? [])])),
     })),
+    experiences: experienceAtoms.map((e) => ({
+      id: e.id,
+      name: e.name,
+      tags: e.tags ?? [],
+      sourceAgent: e.sourceAgent ?? 'user',
+      sourceContext: e.sourceContext ?? '',
+      insightExcerpt: (e.insight ?? '').slice(0, 200),
+      createdAt: e.createdAt,
+      updatedAt: e.updatedAt,
+      path: e._file,
+    })),
+    skillInventory: skillInventoryAtoms.map((s) => ({
+      id: s.id,
+      name: s.name,
+      toolName: s.toolName ?? 'custom',
+      rawDescription: s.rawDescription ?? '',
+      aiGeneratedSummary: s.aiGeneratedSummary,
+      tags: s.tags ?? [],
+      localPath: s.localPath ?? '',
+      updatedAt: s.updatedAt,
+    })),
   }
 
   const outFile = path.join(dataDir, 'index', 'knowledge-index.json')
@@ -141,7 +167,7 @@ async function rebuild() {
       const file = path.join(dataDir, a._file)
       const fresh = await readJson(file, null)
       if (!fresh) continue
-      fresh.stats = fresh.stats || { usedInProjects: [], useCount: 0 }
+      fresh.stats = fresh.stats || { usedInProjects: [], useCount: 0, aiInvokeCount: 0, humanViewCount: 0 }
       fresh.stats.usedInProjects = used
       fresh.updatedAt = new Date().toISOString()
       await fs.writeFile(file, JSON.stringify(fresh, null, 2) + '\n', 'utf-8')
@@ -149,7 +175,7 @@ async function rebuild() {
   }
 
   console.log(
-    `✅ Index rebuilt: ${indexed.frameworks.length} frameworks · ${indexed.atoms.length} atoms · ${indexed.projects.length} projects`
+    `✅ Index rebuilt: ${indexed.frameworks.length} frameworks · ${indexed.atoms.length} atoms · ${indexed.experiences.length} experiences · ${indexed.skillInventory.length} skills · ${indexed.projects.length} projects`
   )
 }
 

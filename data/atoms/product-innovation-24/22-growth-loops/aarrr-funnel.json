@@ -5,7 +5,12 @@
   "nameEn": "AARRR Pirate Metrics (vs Loop)",
   "frameworkId": "product-innovation-24",
   "cellId": 22,
-  "tags": ["aarrr", "funnel", "pirate-metrics", "metrics"],
+  "tags": [
+    "aarrr",
+    "funnel",
+    "pirate-metrics",
+    "metrics"
+  ],
   "parentAtomId": "atom_growth_loops_overview",
   "relationType": "child",
   "coreIdea": "Dave McClure 的五环漏斗：Acquisition → Activation → Retention → Referral → Revenue。它仍然是早期产品最快建立指标体系的方法，但要清楚它的局限——线性、不复利。",
@@ -24,7 +29,11 @@
     "content": "Uber 在 2010-2011 年用 AARRR 衡量增长：Acquisition 通过本地活动 + Promo Code，Activation 定义为'首次成功打到车'，Retention 看 4 周内重复打车次数，Referral 用双向 $20 优惠券，Revenue 看每用户月均行程数。其中 Activation 一度只有 30%，团队聚焦优化司机供给密度后提升到 60%+，成为整个漏斗最大杠杆。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.265Z",
+  "kind": "methodology"
 }

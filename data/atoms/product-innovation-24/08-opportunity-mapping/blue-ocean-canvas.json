@@ -5,7 +5,12 @@
   "nameEn": "Blue Ocean Strategy Canvas",
   "frameworkId": "product-innovation-24",
   "cellId": 8,
-  "tags": ["Blue Ocean", "ERRC", "战略画布", "差异化"],
+  "tags": [
+    "Blue Ocean",
+    "ERRC",
+    "战略画布",
+    "差异化"
+  ],
   "parentAtomId": "atom_opportunity_mapping_overview",
   "relationType": "child",
   "coreIdea": "蓝海的核心动作不是『多做』而是『敢删』。ERRC 四个动词（消除/降低/提升/创造）逼你在行业默认值之外重画价值曲线，否则永远只是改良型红海玩家。",
@@ -23,7 +28,11 @@
     "content": "消除：动物表演、明星演员、多场地。降低：玩笑特技、票价折扣。提升：场地舒适度。创造：主题剧情、艺术音乐、精致艺术氛围。结果：把濒死的马戏行业改造成『戏剧 × 马戏』新品类，单价翻 5 倍。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.248Z",
+  "kind": "methodology"
 }

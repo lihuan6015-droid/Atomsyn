@@ -5,7 +5,12 @@
   "nameEn": "Growth Loops Design",
   "frameworkId": "product-innovation-24",
   "cellId": 22,
-  "tags": ["growth", "loops", "compounding", "growth-canvas"],
+  "tags": [
+    "growth",
+    "loops",
+    "compounding",
+    "growth-canvas"
+  ],
   "coreIdea": "漏斗是线性的、一次性的；循环是闭合的、复利的。每一次新用户的输出（内容、邀请、数据）变成下一次获客的输入，增长才会真正自驱。",
   "whenToUse": "PMF 已验证开始规模化 · 付费获客 ROI 见顶 · 想从'每月找新客'改为'让产品自己拉新' · 季度增长策略制定",
   "keySteps": [
@@ -22,7 +27,11 @@
     "content": "Pinterest 的核心循环：用户固定收藏图片（行为）→ 形成主题画板（输出）→ Google 抓取后获得高 SEO 排名（分发）→ 新用户通过搜索进入并注册（触发下一轮）。该循环在 2012-2015 年贡献了 Pinterest 80% 以上的新增用户，CAC 接近 0。Casey Winters 复盘时强调：'关键不是 SEO 技巧，而是用户行为天然产生 SEO 资产。'"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.265Z",
+  "kind": "methodology"
 }

@@ -103,7 +103,7 @@ export function NewAtomDialog() {
             : undefined,
         parentAtomId: parentAtomId.trim() || undefined,
         bookmarks: [],
-        stats: { usedInProjects: [], useCount: 0 },
+        stats: { usedInProjects: [], useCount: 0, aiInvokeCount: 0, humanViewCount: 0 },
       })
       showToast('✓ 已创建新原子')
       trackUsage({ type: 'atom-create' })

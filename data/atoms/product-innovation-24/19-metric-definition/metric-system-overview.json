@@ -5,7 +5,12 @@
   "nameEn": "North Star & Metric System",
   "frameworkId": "product-innovation-24",
   "cellId": 19,
-  "tags": ["north-star", "metrics", "okr", "measurement"],
+  "tags": [
+    "north-star",
+    "metrics",
+    "okr",
+    "measurement"
+  ],
   "coreIdea": "一个组织最多只能追一个北极星，但需要一棵可拆解的指标树让每个团队都知道自己在拉动哪片叶子。没有树，北极星只是墙上的一句话。",
   "whenToUse": "团队目标不对齐 · 指标越来越多但决策越来越糊 · 高管层要对增长逻辑达成共识 · 建立产品仪表盘",
   "keySteps": [
@@ -21,7 +26,11 @@
     "content": "Airbnb 选择 Nights Booked 作为北极星，因为它同时反映房客价值（住过）和房东价值（赚到）。整个组织的指标树都挂在它下面。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.262Z",
+  "kind": "methodology"
 }

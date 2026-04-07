@@ -1,0 +1,29 @@
+{
+  "id": "skill_claude_director-readiness-advisor",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "director-readiness-advisor",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/director-readiness-advisor/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "director-readiness-advisor",
+    "description": "辅导产品经理和新任总监完成从个人贡献者到组织领导者的转型，涵盖准备、面试、新上任和调整四种场景。",
+    "type": "interactive",
+    "theme": "career-leadership",
+    "best_for": "",
+    "scenarios": "",
+    "estimated_time": "10-15 min"
+  },
+  "rawDescription": "辅导产品经理和新任总监完成从个人贡献者到组织领导者的转型，涵盖准备、面试、新上任和调整四种场景。",
+  "fileMtime": "2026-03-07T06:49:57.873Z",
+  "fileHash": "7594966a38de0dd370ff7d6f069c003cce7651ffdef0bedccf19f95b6a60ebf6",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.256Z",
+  "updatedAt": "2026-04-08T11:07:10.256Z"
+}

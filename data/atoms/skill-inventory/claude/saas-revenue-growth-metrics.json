@@ -1,0 +1,29 @@
+{
+  "id": "skill_claude_saas-revenue-growth-metrics",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "saas-revenue-growth-metrics",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/saas-revenue-growth-metrics/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "saas-revenue-growth-metrics",
+    "description": "计算和解读SaaS产品的收入、留存和增长指标，涵盖ARPU/ARPA、MRR/ARR、流失率、NRR、扩展和队列分析。",
+    "type": "component",
+    "theme": "finance-metrics",
+    "best_for": "",
+    "scenarios": "",
+    "estimated_time": "10-15 min"
+  },
+  "rawDescription": "计算和解读SaaS产品的收入、留存和增长指标，涵盖ARPU/ARPA、MRR/ARR、流失率、NRR、扩展和队列分析。",
+  "fileMtime": "2026-03-07T06:49:57.876Z",
+  "fileHash": "3fcc35620fc285c7ca551ed1ca9ddf1cba92c12561d2b45dc09b33c2f0276818",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.271Z",
+  "updatedAt": "2026-04-08T11:07:10.271Z"
+}

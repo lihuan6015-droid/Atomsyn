@@ -5,7 +5,12 @@
   "nameEn": "Hypothesis Validation Experiment Design",
   "frameworkId": "product-innovation-24",
   "cellId": 13,
-  "tags": ["实验设计", "假设验证", "精益创业", "MVP"],
+  "tags": [
+    "实验设计",
+    "假设验证",
+    "精益创业",
+    "MVP"
+  ],
   "coreIdea": "在写一行代码之前，先用最低成本的实验把「最危险的假设」证伪或证实。实验不是为了证明你对，而是为了用真实数据替换 PPT 里的猜测。",
   "whenToUse": "MVP 立项前 · 新功能投资决策 · 增长假设验证 · 商业模式打磨 · 销售前验证支付意愿",
   "keySteps": [
@@ -37,5 +42,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.255Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,11 @@
   "nameEn": "10 Pivot Types (Eric Ries)",
   "frameworkId": "product-innovation-24",
   "cellId": 21,
-  "tags": ["pivot", "lean-startup", "taxonomy"],
+  "tags": [
+    "pivot",
+    "lean-startup",
+    "taxonomy"
+  ],
   "parentAtomId": "atom_pivot_decision_overview",
   "relationType": "child",
   "coreIdea": "Pivot 不是单一动作，而是 10 种结构化转向：放大、缩小、客户细分、客户需求、平台、商业架构、价值捕获、增长引擎、渠道、技术。先识别类型才能算清成本。",
@@ -23,7 +27,11 @@
     "content": "Burbn 原本是一个集签到、计划、照片、点赞于一身的 LBS 社交 App，功能臃肿且增长停滞。Kevin Systrom 观察到用户其实只活跃使用拍照功能，遂执行 Zoom-in Pivot：砍掉所有非照片功能，把'拍照 + 滤镜 + 分享'放大成全部产品。8 周后 Instagram 上线，第一天 25000 注册，2 年后被 Facebook 以 10 亿美元收购。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.264Z",
+  "kind": "methodology"
 }

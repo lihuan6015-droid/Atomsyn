@@ -5,7 +5,12 @@
   "nameEn": "Concierge MVP",
   "frameworkId": "product-innovation-24",
   "cellId": 12,
-  "tags": ["Concierge", "MVP", "手工服务", "Lean"],
+  "tags": [
+    "Concierge",
+    "MVP",
+    "手工服务",
+    "Lean"
+  ],
   "parentAtomId": "atom_mvp_selection_overview",
   "relationType": "child",
   "coreIdea": "完全不写代码：创始人亲手为 5-10 位用户提供手工服务，像酒店管家。目标不是规模，而是'近距离观察用户怎么真的使用'——产品形态会从这种近距离观察中浮现，比任何用研都深。",
@@ -24,7 +29,11 @@
     "content": "Food on the Table 创始人 Manuel Rosso 为第一位用户每周亲自打电话问她想吃什么，根据当地超市特价手工生成菜单和购物清单，用 Excel 做了几个月。等流程稳定后才编码自动化。这种深度服务让产品准确命中宝妈的真实工作流。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.253Z",
+  "kind": "methodology"
 }

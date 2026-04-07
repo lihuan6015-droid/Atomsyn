@@ -5,7 +5,12 @@
   "nameEn": "Funnel Analytics",
   "frameworkId": "product-innovation-24",
   "cellId": 17,
-  "tags": ["funnel", "conversion", "drop-off", "analytics"],
+  "tags": [
+    "funnel",
+    "conversion",
+    "drop-off",
+    "analytics"
+  ],
   "parentAtomId": "atom_data_harvesting_overview",
   "relationType": "child",
   "coreIdea": "漏斗不是描述工具，是定位工具。最大跌幅那一步就是下一次实验的优先级，没有漏斗的产品决策是盲飞。",
@@ -23,7 +28,11 @@
     "content": "Dropbox 把『安装-引荐-注册-激活』拆成 4 步漏斗后，发现引荐链接打开但未注册的流失最大，针对该步骤优化文案，注册率提升 60%。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.261Z",
+  "kind": "methodology"
 }

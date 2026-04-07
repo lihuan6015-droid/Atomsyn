@@ -5,7 +5,12 @@
   "nameEn": "SCAMPER",
   "frameworkId": "product-innovation-24",
   "cellId": 9,
-  "tags": ["SCAMPER", "创意", "发散", "改良创新"],
+  "tags": [
+    "SCAMPER",
+    "创意",
+    "发散",
+    "改良创新"
+  ],
   "parentAtomId": "atom_ideation_explosion_overview",
   "relationType": "child",
   "coreIdea": "对一个已有产品/流程，依次问七个挑衅性的问题：替换 / 合并 / 改良 / 另用 / 去除 / 反转 / 重排——每个问题强迫你跳出'再加一个功能'的惯性，从结构层面重塑解。",
@@ -23,7 +28,11 @@
     "content": "Netflix 早期对'录像带租赁'套用 Eliminate：去掉滞纳金会怎样？——这个看似破坏商业模式的想法直接催生了月度订阅制，让 Blockbuster 失去最大利润来源，开启了 Netflix 的崛起。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.251Z",
+  "kind": "methodology"
 }

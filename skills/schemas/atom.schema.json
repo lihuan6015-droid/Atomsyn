@@ -1,11 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Atom",
-  "description": "A single methodology / knowledge atom card",
+  "title": "MethodologyAtom",
+  "description": "A single methodology / knowledge atom card (kind='methodology'). For kind='experience' see experience-atom.schema.json; for kind='skill-inventory' see skill-inventory-item.schema.json. Introduced in V1.5: the 'kind' discriminator field.",
   "type": "object",
   "required": [
     "id",
     "schemaVersion",
+    "kind",
     "name",
     "frameworkId",
     "cellId",
@@ -21,6 +22,11 @@
   "properties": {
     "id": { "type": "string", "pattern": "^atom_[a-z0-9_-]+$" },
     "schemaVersion": { "type": "integer", "const": 1 },
+    "kind": {
+      "type": "string",
+      "const": "methodology",
+      "description": "V1.5 discriminator. Must be 'methodology' for this schema. V1 atoms get this backfilled by scripts/migrate-v1-to-v1.5.mjs."
+    },
     "name": { "type": "string", "minLength": 1 },
     "nameEn": { "type": "string" },
     "frameworkId": { "type": "string" },
@@ -55,13 +61,29 @@
         }
       }
     },
+    "role": { "type": "string", "description": "V2.0 · role dimension for unified skeleton grouping" },
     "stats": {
       "type": "object",
       "required": ["usedInProjects", "useCount"],
       "properties": {
         "usedInProjects": { "type": "array", "items": { "type": "string" } },
         "lastUsedAt": { "type": "string" },
-        "useCount": { "type": "integer", "minimum": 0 }
+        "useCount": { "type": "integer", "minimum": 0 },
+        "aiInvokeCount": { "type": "integer", "minimum": 0, "description": "V2.0 · incremented by atomsyn-cli read (agent consumption)" },
+        "humanViewCount": { "type": "integer", "minimum": 0, "description": "V2.0 · incremented when user opens atom in GUI" },
+        "invokedByAgent": {
+          "type": "object",
+          "description": "V1.5 · how many times each agent invoked this atom via atomsyn-read. Key = agent name, value = count.",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "userDemoted": {
+          "type": "boolean",
+          "description": "V1.5 · T-6.2 calibration action. True means user down-weighted this atom in retrieval ranking."
+        },
+        "locked": {
+          "type": "boolean",
+          "description": "V1.5 · T-6.2 calibration action. True means agent write operations cannot mutate this atom."
+        }
       }
     },
     "createdAt": { "type": "string" },

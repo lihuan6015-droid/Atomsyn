@@ -5,7 +5,12 @@
   "nameEn": "Porter's Five Forces",
   "frameworkId": "product-innovation-24",
   "cellId": 5,
-  "tags": ["五力模型", "行业结构", "议价权", "进入壁垒"],
+  "tags": [
+    "五力模型",
+    "行业结构",
+    "议价权",
+    "进入壁垒"
+  ],
   "parentAtomId": "atom_competitor_analysis_overview",
   "relationType": "child",
   "coreIdea": "看清一个赛道是否值得进，不看竞品多少，看 5 股力把利润挤到哪里去了。利润流向决定战略选择。",
@@ -24,7 +29,11 @@
     "content": "供应商（自行车厂）议价能力低，但购买者（用户）议价能力极高（一键切换 App），新进入者壁垒在融资战中接近零。结论：利润根本留不下，唯一战略是『烧到只剩一家』——果然只剩两家半。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.243Z",
+  "kind": "methodology"
 }

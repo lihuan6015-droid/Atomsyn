@@ -5,7 +5,12 @@
   "nameEn": "Sunk Cost Audit",
   "frameworkId": "product-innovation-24",
   "cellId": 21,
-  "tags": ["pivot", "decision-making", "behavioral-economics", "sunk-cost"],
+  "tags": [
+    "pivot",
+    "decision-making",
+    "behavioral-economics",
+    "sunk-cost"
+  ],
   "parentAtomId": "atom_pivot_decision_overview",
   "relationType": "child",
   "coreIdea": "Pivot 决策最大的敌人是'我们已经投入这么多了'。沉没成本审计强制把过去花掉的钱、时间、感情明确写下来，再划掉它们——因为它们不影响未来的最优决策。",
@@ -23,7 +28,11 @@
     "content": "在决定从游戏 Glitch Pivot 到 Slack 时，Butterfield 公开承认'我们花了 4 年和 1700 万美元，但这些钱已经花掉了，下一个决策必须基于未来'。他刻意区分了沉没成本（游戏代码、玩家社区）与可复用资产（工程团队、品牌信誉、内部沟通工具），把后者作为 Slack 的起点。这个清晰的区分让团队从悲情中走出来，3 个月内完成转向。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.265Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,13 @@
   "nameEn": "Demand Filtering Toolkit",
   "frameworkId": "product-innovation-24",
   "cellId": 4,
-  "tags": ["需求优先级", "KANO", "MoSCoW", "RICE", "取舍"],
+  "tags": [
+    "需求优先级",
+    "KANO",
+    "MoSCoW",
+    "RICE",
+    "取舍"
+  ],
   "coreIdea": "需求过滤不是「排序」，是「敢拒绝」。一个好 PM 和一个差 PM 的真正差距在于敢不敢对老板和用户说「这个不做」。过滤方法论（KANO/MoSCoW/RICE/艾森豪威尔）提供的是一套「拒绝的语言和证据」，让你把个人判断变成可讨论的框架。",
   "whenToUse": "需求池爆炸但工程容量有限时 · MVP 范围界定 · 季度规划与路线图排期 · 与利益相关者谈判「哪些功能这次不做」 · 产品定位感觉模糊时用过滤反证定位",
   "keySteps": [
@@ -22,7 +28,11 @@
     "content": "Jason Fried 在 Basecamp 的优先级方法很极端：每季度只挑「能在 6 周做完」的 1-2 件事，其他全部进入「Wontdo」清单并公告团队。他们拒绝的需求包括甘特图、时间追踪、权限分级——这些几乎是所有竞品都有的功能。正是这种过滤让 Basecamp 保持简洁、留住了不想被复杂功能淹没的 SMB 客户。拒绝，是需求过滤的本质，不是排序。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.237Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,13 @@
   "nameEn": "Idea Filtering Toolkit",
   "frameworkId": "product-innovation-24",
   "cellId": 10,
-  "tags": ["筛选", "优先级", "RICE", "ICE", "决策"],
+  "tags": [
+    "筛选",
+    "优先级",
+    "RICE",
+    "ICE",
+    "决策"
+  ],
   "coreIdea": "发散后的 50 个想法不能全做。筛选不是'选最好的'，而是'用同一把尺让大家可比较'——尺子选错（如只看 ROI）会系统性淘汰长期价值；选对的尺让团队对齐而非内耗。",
   "whenToUse": "发散结束有 20+ 候选时 · 路线图季度规划 · 团队对'先做什么'有分歧 · 资源紧张需淘汰功能",
   "keySteps": [
@@ -22,7 +28,11 @@
     "content": "Intercom 早期产品团队发现工程师做了大量'看似有用'的功能但留存没动。他们引入 RICE 评分后强制每个功能填写 Reach/Impact/Confidence/Effort，并把'Confidence'下限设为 50%，结果一年砍掉 60% 的待办，留存反而上升 40%。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.251Z",
+  "kind": "methodology"
 }

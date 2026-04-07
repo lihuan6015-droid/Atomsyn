@@ -5,7 +5,13 @@
   "nameEn": "Hypothesis Validation System",
   "frameworkId": "product-innovation-24",
   "cellId": 18,
-  "tags": ["hypothesis", "validation", "experiment", "lean", "evidence"],
+  "tags": [
+    "hypothesis",
+    "validation",
+    "experiment",
+    "lean",
+    "evidence"
+  ],
   "coreIdea": "产品决策的本质是假设管理。把直觉写成可证伪的假设，用最小代价拿到证据，每轮只学一件事——这就是精益 PMF 的内核。",
   "whenToUse": "团队陷入『我觉得』争论 · MVP 即将开发但缺乏证据 · 需要停止烧钱做错方向 · 建立实验文化",
   "keySteps": [
@@ -21,7 +27,11 @@
     "content": "Joel Gascoigne 在编码前用一页落地页测试『有人愿意为定时推文付费』的假设，24 小时内收到付费意向邮件，假设证实后才动工开发。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.261Z",
+  "kind": "methodology"
 }

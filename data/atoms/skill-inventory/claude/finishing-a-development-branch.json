@@ -1,0 +1,24 @@
+{
+  "id": "skill_claude_finishing-a-development-branch",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "finishing-a-development-branch",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/finishing-a-development-branch/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "finishing-a-development-branch",
+    "description": "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup"
+  },
+  "rawDescription": "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup",
+  "fileMtime": "2026-03-28T09:39:10.522Z",
+  "fileHash": "dd2f82c6dc8582b621f9eb57fcb65f557f88eadf872727ac81d0840ae12c504e",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.262Z",
+  "updatedAt": "2026-04-08T11:07:10.262Z"
+}

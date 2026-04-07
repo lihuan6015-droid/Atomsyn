@@ -1,0 +1,24 @@
+{
+  "id": "skill_trae_data-analysis",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "data-analysis",
+  "tags": [
+    "trae"
+  ],
+  "localPath": "/Users/circlelee/.trae/skills/data-analysis/SKILL.md",
+  "toolName": "trae",
+  "frontmatter": {
+    "name": "data-analysis",
+    "description": "Use this skill when the user uploads Excel (.xlsx/.xls) or CSV files and wants to perform data analysis, generate statistics, create summaries, pivot tables, SQL queries, or any form of structured data exploration. Supports multi-sheet Excel workbooks, aggregation, filtering, joins, and exporting results to CSV/JSON/Markdown."
+  },
+  "rawDescription": "Use this skill when the user uploads Excel (.xlsx/.xls) or CSV files and wants to perform data analysis, generate statistics, create summaries, pivot tables, SQL queries, or any form of structured data exploration. Supports multi-sheet Excel workbooks, aggregation, filtering, joins, and exporting results to CSV/JSON/Markdown.",
+  "fileMtime": "2026-02-27T11:04:08.610Z",
+  "fileHash": "d9383f31df40250c7dd58b31f3518bc80c95f670eada6e8222c7925d80a0b3a1",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T13:03:34.181Z",
+  "updatedAt": "2026-04-08T13:03:34.181Z"
+}

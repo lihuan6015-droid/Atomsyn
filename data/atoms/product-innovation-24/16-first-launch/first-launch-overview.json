@@ -5,7 +5,12 @@
   "nameEn": "First Launch Strategy",
   "frameworkId": "product-innovation-24",
   "cellId": 16,
-  "tags": ["发布", "Launch", "Go-to-Market", "种子用户"],
+  "tags": [
+    "发布",
+    "Launch",
+    "Go-to-Market",
+    "种子用户"
+  ],
   "coreIdea": "首次发布不是「上线日」，而是一次用真实用户验证「我们建对了吗」的实验。最差的发布是「全网曝光后产品扛不住」，最好的发布是「每天只放 50 个新用户进来，但每个都能给你写 200 字反馈」。",
   "whenToUse": "MVP 准备就绪 · 第一次面向真实用户 · 决定增长策略 · 投资人/媒体首次曝光 · 验证 PMF 信号前的最后一关",
   "keySteps": [
@@ -28,5 +33,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.259Z",
+  "kind": "methodology"
 }

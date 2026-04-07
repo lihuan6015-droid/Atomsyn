@@ -5,7 +5,12 @@
   "nameEn": "Storyboard",
   "frameworkId": "product-innovation-24",
   "cellId": 14,
-  "tags": ["故事板", "叙事", "共情", "概念可视化"],
+  "tags": [
+    "故事板",
+    "叙事",
+    "共情",
+    "概念可视化"
+  ],
   "parentAtomId": "atom_experience_mapping_overview",
   "relationType": "child",
   "coreIdea": "用 6-8 格漫画把「一个真实的人遇到问题 → 找到你的产品 → 生活变好」讲成一个 30 秒的故事。文字 PRD 让人睡着，故事板让人记住——这是建立团队共情的最便宜方式。",
@@ -29,5 +34,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.257Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,12 @@
   "nameEn": "Viral Coefficient (K-factor)",
   "frameworkId": "product-innovation-24",
   "cellId": 22,
-  "tags": ["viral", "k-factor", "growth-math", "referral"],
+  "tags": [
+    "viral",
+    "k-factor",
+    "growth-math",
+    "referral"
+  ],
   "parentAtomId": "atom_growth_loops_overview",
   "relationType": "child",
   "coreIdea": "K = 每用户发出的邀请数 × 邀请的转化率。K ≥ 1 时增长自驱，K < 1 时只是放大付费获客的杠杆。先算清 K，再决定是否押注病毒增长。",
@@ -24,7 +29,11 @@
     "content": "Hotmail 1996 年在每封外发邮件底部加一行'Get your free email at Hotmail'。每用户平均发邮件数极高（i ≈ 数十），转化率约 1-2%（c），早期 K 值估算约 1.5-2。结果 18 个月用户从 0 涨到 1200 万，被微软以 4 亿美元收购。这是少数公认 K > 1 的案例，关键在于产品行为本身就是分发行为。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.266Z",
+  "kind": "methodology"
 }

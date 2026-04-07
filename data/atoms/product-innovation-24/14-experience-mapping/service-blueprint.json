@@ -5,7 +5,12 @@
   "nameEn": "Service Blueprint",
   "frameworkId": "product-innovation-24",
   "cellId": 14,
-  "tags": ["服务设计", "Service Blueprint", "后台流程", "运营协作"],
+  "tags": [
+    "服务设计",
+    "Service Blueprint",
+    "后台流程",
+    "运营协作"
+  ],
   "parentAtomId": "atom_experience_mapping_overview",
   "relationType": "child",
   "coreIdea": "Customer Journey 只画台前，Service Blueprint 把舞台拆成 5 层：用户行为 → 前台动作 → 互动线 → 后台动作 → 可见线 → 支持流程。它让团队第一次看到「为什么客户那一刻会等 3 分钟」——往往是后台系统的问题。",
@@ -29,5 +34,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.256Z",
+  "kind": "methodology"
 }

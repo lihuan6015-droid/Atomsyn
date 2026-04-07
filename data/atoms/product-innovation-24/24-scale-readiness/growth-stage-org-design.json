@@ -5,7 +5,12 @@
   "nameEn": "Growth-Stage Org Design",
   "frameworkId": "product-innovation-24",
   "cellId": 24,
-  "tags": ["org-design", "scaling", "team-topology", "leadership"],
+  "tags": [
+    "org-design",
+    "scaling",
+    "team-topology",
+    "leadership"
+  ],
   "parentAtomId": "atom_scale_readiness_overview",
   "relationType": "child",
   "coreIdea": "10 人 → 50 人 → 150 人是三个组织断点。每个断点要求重新设计：职能分组、汇报层级、决策权限、沟通机制。沿用旧结构是规模化最常见的死因。",
@@ -24,7 +29,11 @@
     "content": "Stripe 在 2013 年从 35 人涨到 70 人时主动重组：把工程团队按客户旅程拆为 Payments / Connect / Atlas 三条线，每条线有独立 PM/Eng/Design 三角，创始人 Patrick 退出日常 PR review，只保留架构 review。三个月后决策速度恢复，且没有牺牲产品一致性。Patrick 在采访中说：'10 人时所有事都直接告诉我，50 人时我必须学会有些事永远不会告诉我。'"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.267Z",
+  "kind": "methodology"
 }

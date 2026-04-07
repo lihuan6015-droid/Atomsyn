@@ -5,7 +5,12 @@
   "nameEn": "Pretotyping",
   "frameworkId": "product-innovation-24",
   "cellId": 13,
-  "tags": ["实验设计", "Alberto Savoia", "TRI", "市场吸引力"],
+  "tags": [
+    "实验设计",
+    "Alberto Savoia",
+    "TRI",
+    "市场吸引力"
+  ],
   "parentAtomId": "atom_experiment_design_overview",
   "relationType": "child",
   "coreIdea": "Alberto Savoia 提出：在「Build the right it」之前，先确认你的 it 是不是 right。用一个根本不能用的「假产品」搜集真人的 IMI（个人市场承诺：钱、时间、注意力），而不是用嘴巴问他们「会不会用」。",
@@ -38,5 +43,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.255Z",
+  "kind": "methodology"
 }

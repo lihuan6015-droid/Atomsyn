@@ -5,7 +5,12 @@
   "nameEn": "Engagement Loop (Nir Eyal Hook)",
   "frameworkId": "product-innovation-24",
   "cellId": 22,
-  "tags": ["engagement", "hook-model", "retention", "habit"],
+  "tags": [
+    "engagement",
+    "hook-model",
+    "retention",
+    "habit"
+  ],
   "parentAtomId": "atom_growth_loops_overview",
   "relationType": "child",
   "coreIdea": "Nir Eyal 的 Hook 模型：触发 → 行动 → 多变奖励 → 投入。每次循环让用户对产品的依赖加深一点，把'我用它'变成'我离不开它'。注意：必须配合伦理边界。",
@@ -24,7 +29,11 @@
     "content": "触发：每晚固定时间 push + 内部'我不想断'的情绪 → 行动：5 分钟一课（极简）→ 多变奖励：积分、连胜火焰、Leaderboard 排名（社会+狩猎+自我）→ 投入：连续天数（streak）成为用户的情感资产，断了就心痛。Duolingo 在 2018-2023 年靠这一循环把 D30 留存提升到行业顶尖（约 55%+），DAU 突破 3000 万。Luis von Ahn 同时强调拒绝过度焦虑设计——例如允许 streak freeze。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.265Z",
+  "kind": "methodology"
 }

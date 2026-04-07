@@ -1,0 +1,24 @@
+{
+  "id": "skill_claude_using-git-worktrees",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "using-git-worktrees",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/using-git-worktrees/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "using-git-worktrees",
+    "description": "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification"
+  },
+  "rawDescription": "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification",
+  "fileMtime": "2026-03-28T09:39:10.528Z",
+  "fileHash": "de9dcde34840eee074047ec327d4ea6ca4954c5a73a6d874dc48f25fe46c9e7c",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.276Z",
+  "updatedAt": "2026-04-08T11:07:10.276Z"
+}

@@ -5,7 +5,12 @@
   "nameEn": "Outcome-Based Roadmap",
   "frameworkId": "product-innovation-24",
   "cellId": 23,
-  "tags": ["outcomes", "roadmap", "teresa-torres", "outcome-vs-output"],
+  "tags": [
+    "outcomes",
+    "roadmap",
+    "teresa-torres",
+    "outcome-vs-output"
+  ],
   "parentAtomId": "atom_roadmap_planning_overview",
   "relationType": "child",
   "coreIdea": "把路线图从'要交付的功能'改为'要达到的用户行为变化'。功能可以变，结果不能变。Teresa Torres 强调：路线图回答的是'我们想看到用户做什么不一样'。",
@@ -24,7 +29,11 @@
     "content": "Amplitude 内部产品团队在 2019 年改用 Teresa Torres 的方法，把'发布 funnel report v2'这种 feature 项改写为'让数据分析师在 5 分钟内独立完成漏斗诊断'。结果团队最终交付的并不是新的 funnel UI，而是一个 AI 引导的查询助手——完全不同的解决方案，但精准命中了 outcome。这次重写后，团队 quarter end 满意度从 60% 涨到 85%。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.267Z",
+  "kind": "methodology"
 }

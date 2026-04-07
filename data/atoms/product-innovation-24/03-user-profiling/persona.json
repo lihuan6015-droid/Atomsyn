@@ -5,7 +5,11 @@
   "nameEn": "Persona",
   "frameworkId": "product-innovation-24",
   "cellId": 3,
-  "tags": ["Persona", "用户画像", "Alan Cooper"],
+  "tags": [
+    "Persona",
+    "用户画像",
+    "Alan Cooper"
+  ],
   "parentAtomId": "atom_user_profiling_suite",
   "relationType": "child",
   "coreIdea": "Persona 是「一个虚构但可信的具体人」，用于替代抽象的目标用户。它的价值不在于多完整，而在于多具体——具体到团队在做任何决策时都能立刻反问「这个人会怎么想」。好的 Persona 宁可粗糙不要假精致。",
@@ -24,7 +28,11 @@
     "content": "Mailchimp 早期锁定「独立创业者 Sally」作为核心 Persona：一个人运营小店、没有营销团队、害怕 HTML、每次发邮件前都紧张自己会弄砸。这个画像让团队坚决拒绝加入企业级 CRM 功能、坚持一键模板和傻瓜式编辑器，最终长成 20 亿美元业务。有趣的是他们没有画 Sally 的脸（怕团队聚焦长相），只留了 tagline 和一句原话：「I just don't want to embarrass myself.」"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.237Z",
+  "kind": "methodology"
 }

@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_vercel-deploy",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "vercel-deploy",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/vercel-deploy/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "vercel-deploy",
+    "description": "Deploy applications and websites to Vercel. Use this skill when the user requests deployment actions such as \"Deploy my app\", \"Deploy this to production\", \"Create a preview deployment\", \"Deploy and give me the link\", or \"Push this live\". No authentication required - returns preview URL and claimable deployment link.",
+    "metadata": ""
+  },
+  "rawDescription": "Deploy applications and websites to Vercel. Use this skill when the user requests deployment actions such as \"Deploy my app\", \"Deploy this to production\", \"Create a preview deployment\", \"Deploy and give me the link\", or \"Push this live\". No authentication required - returns preview URL and claimable deployment link.",
+  "fileMtime": "2026-02-27T11:04:08.724Z",
+  "fileHash": "92e8165ce59f1da03f7850fc698ee7b4182cbd87e05e8857b555b649d7ee1965",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T13:03:34.174Z",
+  "updatedAt": "2026-04-08T13:03:34.174Z"
+}

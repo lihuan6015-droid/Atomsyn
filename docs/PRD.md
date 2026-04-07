@@ -1,4 +1,6 @@
-# CCL PM Tool · 产品需求文档 (PRD)
+> 📦 **Archived · V1 history**: 项目 V2.0 起更名为 **Atomsyn**。当前版本规划见 [`PRD-v2.0.md`](PRD-v2.0.md) 与 [`framing/v2.0-problem-framing.md`](framing/v2.0-problem-framing.md)。本文档保持原 `ccl-atlas` 命名以保留历史上下文。
+
+# CCL Atlas · 产品需求文档 (PRD)
 
 > **个人元能力沉淀系统 · Personal Meta-Skill Vault**
 >
@@ -24,7 +26,7 @@
 
 ## 1. Executive Summary
 
-我们在构建一个 **本地优先的跨平台桌面应用（CCL PM Tool）**，服务于**从工程师转型 AI 产品经理的跨界并行成长者**，解决"系统学过的方法论在几个月后只剩名词、无法在实际工作中调用"的痛点。
+我们在构建一个 **本地优先的跨平台桌面应用（CCL Atlas）**，服务于**从工程师转型 AI 产品经理的跨界并行成长者**，解决"系统学过的方法论在几个月后只剩名词、无法在实际工作中调用"的痛点。
 
 它通过两层结构——**"知识图书馆 Atlas"**（按 Discover / Define / Ideate / Develop / Validate / Evolve 等科学阶段组织的卡片库，每张卡片包含核心理念 + 可直接对话 AI 的 Skill Prompt + 个人知识收藏夹）与 **"项目演练场 Playground"**（为每个真实项目挑选方法论卡片、实践、沉淀结果）——让方法论从"静态笔记"变成"可调用、可迭代、可积累"的活知识；并通过 **AI 副驾驶（Copilot）**，实现"描述痛点 → 推荐方法论 → 一键跳转"的闭环。
 
@@ -145,7 +147,7 @@
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  🧭 CCL PM Tool                [🌗]  [+]  [⚙️] │
+│  🧭 CCL Atlas                [🌗]  [+]  [⚙️] │
 ├──────────┬──────────────────────────────────────┤
 │          │  📚 知识图书馆  🛠 演练场  🌱 成长   │
 │  骨架    ├──────────────────────────────────────┤
@@ -168,7 +170,7 @@
 #### 文件夹结构
 
 ```
-ccl_pm_tool/
+ccl_atlas/
 ├── src/                          前端源码 (Vite + React + TS)
 ├── src-tauri/                    Tauri Rust 壳
 │
@@ -579,7 +581,7 @@ Temperature      [0.3]
 
 #### 管道 A · Claude Code 协作入库
 
-**流程**：用户丢一段笔记/文章/对话总结给 Claude Code → 说"帮我沉淀到 ccl_pm_tool" → Claude Code 按 `ingest-atom.skill.md` 规范（7 步流程：归属诊断 → 结构化提炼 → 父子判断 → Schema 校验 → 写入 → 重建索引 → 汇报）自动生成 JSON 并写入正确位置。
+**流程**：用户丢一段笔记/文章/对话总结给 Claude Code → 说"帮我沉淀到 ccl_atlas" → Claude Code 按 `ingest-atom.skill.md` 规范（7 步流程：归属诊断 → 结构化提炼 → 父子判断 → Schema 校验 → 写入 → 重建索引 → 汇报）自动生成 JSON 并写入正确位置。
 
 #### 管道 B · Web UI 手动入库
 

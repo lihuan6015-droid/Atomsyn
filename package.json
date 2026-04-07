@@ -1,5 +1,5 @@
 {
-  "name": "ccl-pm-tool",
+  "name": "atomsyn",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -9,10 +9,14 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
-    "reindex": "node scripts/rebuild-index.mjs"
+    "reindex": "node scripts/rebuild-index.mjs",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.1",
+    "@tauri-apps/api": "^2.10.1",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "clsx": "^2.1.1",
@@ -28,6 +32,7 @@
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.10.1",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

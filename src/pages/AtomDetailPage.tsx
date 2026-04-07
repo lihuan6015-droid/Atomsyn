@@ -17,10 +17,25 @@ import {
   Trash2,
   Pencil,
   ArrowRight,
+  History,
+  Lock,
+  GitMerge,
+  TrendingDown,
+  Eye,
+  PencilLine,
 } from 'lucide-react'
-import { atomsApi, frameworksApi, projectsApi, trackUsage } from '@/lib/dataApi'
+import { atomsApi, frameworksApi, projectsApi, trackUsage, usageApi } from '@/lib/dataApi'
 import { useAppStore } from '@/stores/useAppStore'
 import type { Atom, Framework, Project } from '@/types'
+
+interface AgentUsageEvent {
+  ts: string
+  action?: 'write' | 'read'
+  agentName?: string
+  atomId?: string
+  kind?: string
+  query?: string
+}
 import { CollapseSection } from '@/components/shared/CollapseSection'
 import { SkillPromptBox } from '@/components/atom/SkillPromptBox'
 import { SpotlightPalette } from '@/components/atlas/SpotlightPalette'
@@ -38,6 +53,8 @@ export default function AtomDetailPage() {
   const [bmTitle, setBmTitle] = useState('')
   const [bmContent, setBmContent] = useState('')
   const [bmType, setBmType] = useState<'link' | 'text'>('link')
+  const [agentEvents, setAgentEvents] = useState<AgentUsageEvent[]>([])
+  const [mergePickerOpen, setMergePickerOpen] = useState(false)
   const showToast = useAppStore((s) => s.showToast)
 
   useEffect(() => {
@@ -47,6 +64,7 @@ export default function AtomDetailPage() {
       if (cancelled) return
       setAtom(a)
       trackUsage({ type: 'atom-open', atomId: a.id })
+      atomsApi.trackView(a.id).catch(() => undefined) // V2.0 M2: bump humanViewCount
       try {
         const fw = await frameworksApi.get(a.frameworkId)
         if (!cancelled) setFramework(fw)
@@ -68,6 +86,16 @@ export default function AtomDetailPage() {
       } catch {}
     })
     projectsApi.list().then(setProjects).catch(() => undefined)
+    usageApi
+      .list()
+      .then((events) => {
+        if (cancelled) return
+        const filtered = (events as unknown as AgentUsageEvent[]).filter(
+          (e) => e && e.atomId === atomId && (e.action === 'write' || e.action === 'read')
+        )
+        setAgentEvents(filtered)
+      })
+      .catch(() => undefined)
     return () => {
       cancelled = true
     }
@@ -120,6 +148,67 @@ export default function AtomDetailPage() {
   }
 
   const usedProjects = projects.filter((p) => atom.stats.usedInProjects.includes(p.id))
+
+  const handleToggleDemote = async () => {
+    const nextDemoted = !atom.stats.userDemoted
+    const updated: Atom = {
+      ...atom,
+      stats: { ...atom.stats, userDemoted: nextDemoted },
+      updatedAt: new Date().toISOString(),
+    }
+    try {
+      await atomsApi.update(atom.id, updated)
+      setAtom(updated)
+      showToast(nextDemoted ? '✓ 已降权 · atlas-read 将降低权重' : '✓ 已恢复正常权重')
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : '保存失败')
+    }
+  }
+
+  const handleToggleLock = async () => {
+    const nextLocked = !atom.stats.locked
+    const updated: Atom = {
+      ...atom,
+      stats: { ...atom.stats, locked: nextLocked },
+      updatedAt: new Date().toISOString(),
+    }
+    try {
+      await atomsApi.update(atom.id, updated)
+      setAtom(updated)
+      showToast(nextLocked ? '🔒 已锁定 · agent 写入已拦截' : '✓ 已解锁')
+    } catch (e) {
+      showToast(e instanceof Error ? e.message : '保存失败')
+    }
+  }
+
+  const handleMerge = async (otherId: string) => {
+    setMergePickerOpen(false)
+    try {
+      await usageApi.log({
+        type: 'atom-edit',
+        atomId: atom.id,
+        meta: { intent: 'merge', with: otherId },
+      })
+    } catch {}
+    showToast('合并功能即将上线 (V1.6) · 意图已记录')
+  }
+
+  const agentGroups = (() => {
+    const map = new Map<string, { count: number; lastTs: string }>()
+    for (const e of agentEvents) {
+      const key = e.agentName || 'unknown'
+      const cur = map.get(key)
+      if (!cur) map.set(key, { count: 1, lastTs: e.ts })
+      else {
+        cur.count += 1
+        if (e.ts > cur.lastTs) cur.lastTs = e.ts
+      }
+    }
+    return Array.from(map.entries()).sort((a, b) => b[1].count - a[1].count)
+  })()
+
+  const sortedAgentEvents = [...agentEvents].sort((a, b) => (a.ts < b.ts ? 1 : -1))
+  const mergeCandidates = siblings
 
   return (
     <div className="hero-gradient min-h-[calc(100vh-56px)]">
@@ -200,7 +289,18 @@ export default function AtomDetailPage() {
               </>
             )}
           </div>
-          <h1 className="text-4xl font-bold tracking-tight leading-tight">{atom.name}</h1>
+          <h1 className="text-4xl font-bold tracking-tight leading-tight flex items-center gap-3 flex-wrap">
+            <span>{atom.name}</span>
+            {atom.stats.locked && (
+              <span
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-medium border border-amber-500/30"
+                title="已锁定 · agent 写入操作被拦截"
+              >
+                <Lock className="w-3 h-3" />
+                已锁定
+              </span>
+            )}
+          </h1>
           {atom.nameEn && (
             <p className="text-lg text-neutral-500 dark:text-neutral-400 mt-1 font-mono">
               {atom.nameEn}
@@ -459,18 +559,14 @@ export default function AtomDetailPage() {
           <CollapseSection
             title="使用统计"
             icon={<BarChart3 className="w-4 h-4" />}
-            badge={`用于 ${atom.stats.usedInProjects.length} 个项目`}
+            badge={`共 ${(atom.stats.aiInvokeCount ?? 0) + (atom.stats.humanViewCount ?? 0)} 次访问`}
           >
             <div className="grid grid-cols-3 gap-3 mb-4">
-              <Stat label="累计调用" value={`${atom.stats.useCount}`} suffix="次" />
+              <Stat label="AI 调用" value={`${atom.stats.aiInvokeCount ?? 0}`} suffix="次" />
+              <Stat label="人类查看" value={`${atom.stats.humanViewCount ?? 0}`} suffix="次" />
               <Stat
                 label="最近使用"
                 value={atom.stats.lastUsedAt ? formatDate(atom.stats.lastUsedAt) : '—'}
-              />
-              <Stat
-                label="用于项目"
-                value={`${atom.stats.usedInProjects.length}`}
-                suffix="个"
               />
             </div>
             {usedProjects.length > 0 && (
@@ -498,6 +594,141 @@ export default function AtomDetailPage() {
                 </div>
               </>
             )}
+          </CollapseSection>
+
+          <CollapseSection
+            title="🔗 调用历史"
+            icon={<History className="w-4 h-4" />}
+            badge={
+              <span className="px-1.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 text-[10px] font-mono font-semibold">
+                {agentEvents.length}
+              </span>
+            }
+          >
+            {agentEvents.length === 0 ? (
+              <div className="text-[11px] text-neutral-400 dark:text-neutral-500 py-3">
+                尚无 agent 调用记录 · 通过 atlas-write / atlas-read 触发后会出现
+              </div>
+            ) : (
+              <>
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {agentGroups.map(([name, info]) => (
+                    <div
+                      key={name}
+                      className={
+                        'inline-flex items-center gap-1.5 px-2 py-1 rounded-md border text-[11px] ' +
+                        agentChipClass(name)
+                      }
+                    >
+                      <span className="font-medium">{name}</span>
+                      <span className="font-mono text-[10px] opacity-70">× {info.count}</span>
+                      <span className="text-[10px] opacity-60">· {formatDate(info.lastTs)}</span>
+                    </div>
+                  ))}
+                </div>
+                <div
+                  className="scrollbar-subtle rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-neutral-950/40 overflow-y-auto"
+                  style={{ maxHeight: 240 }}
+                >
+                  {sortedAgentEvents.map((e, i) => (
+                    <div
+                      key={i}
+                      className="flex items-start gap-2 px-3 py-2 text-[11px] border-b border-neutral-100 dark:border-neutral-900 last:border-b-0"
+                    >
+                      {e.action === 'write' ? (
+                        <PencilLine className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" />
+                      ) : (
+                        <Eye className="w-3 h-3 text-sky-500 shrink-0 mt-0.5" />
+                      )}
+                      <span className="text-neutral-400 font-mono shrink-0">
+                        {formatTimeShort(e.ts)}
+                      </span>
+                      <span className="text-neutral-500 dark:text-neutral-400 shrink-0">
+                        {e.agentName || 'unknown'}
+                      </span>
+                      {e.action === 'read' && e.query && (
+                        <span className="text-neutral-600 dark:text-neutral-300 truncate">
+                          · {e.query}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            <div className="mt-4 pt-3 border-t border-neutral-200/70 dark:border-neutral-800/70">
+              <div className="text-[10px] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-semibold mb-2">
+                校准
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <div className="relative">
+                  <button
+                    onClick={() => setMergePickerOpen((v) => !v)}
+                    className="inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-violet-400 hover:text-violet-500 text-xs transition-colors"
+                  >
+                    <GitMerge className="w-3 h-3" />
+                    合并
+                  </button>
+                  {mergePickerOpen && (
+                    <div
+                      className="absolute left-0 top-8 z-20 w-64 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-2xl py-1 max-h-56 overflow-y-auto scrollbar-subtle"
+                      onMouseLeave={() => setMergePickerOpen(false)}
+                    >
+                      {mergeCandidates.length === 0 ? (
+                        <div className="px-3 py-2 text-[11px] text-neutral-400">
+                          同骨架 / 同单元格内暂无其他原子
+                        </div>
+                      ) : (
+                        mergeCandidates.map((s) => (
+                          <button
+                            key={s.id}
+                            onClick={() => handleMerge(s.id)}
+                            className="w-full text-left px-3 py-1.5 text-xs hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                          >
+                            <div className="font-medium truncate">{s.name}</div>
+                            {s.nameEn && (
+                              <div className="text-[10px] text-neutral-400 truncate font-mono">
+                                {s.nameEn}
+                              </div>
+                            )}
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <button
+                  onClick={handleToggleDemote}
+                  className={
+                    'inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg border text-xs transition-colors ' +
+                    (atom.stats.userDemoted
+                      ? 'border-rose-400/40 bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                      : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-rose-400/60 hover:text-rose-500')
+                  }
+                >
+                  <TrendingDown className="w-3 h-3" />
+                  {atom.stats.userDemoted ? '✓ 已降权 · 点击恢复' : '降权'}
+                </button>
+
+                <button
+                  onClick={handleToggleLock}
+                  className={
+                    'inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg border text-xs transition-colors ' +
+                    (atom.stats.locked
+                      ? 'border-amber-400/50 bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                      : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-amber-400/60 hover:text-amber-500')
+                  }
+                >
+                  <Lock className="w-3 h-3" />
+                  {atom.stats.locked ? '✓ 已锁定 · 点击解锁' : '锁定'}
+                </button>
+              </div>
+              <div className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-2 leading-relaxed">
+                降权会降低该原子在 atlas-read 结果中的权重 · 锁定会拦截 agent 的写入操作
+              </div>
+            </div>
           </CollapseSection>
         </div>
       </main>
@@ -528,4 +759,25 @@ function formatDate(iso: string) {
   if (days < 1) return '今天'
   if (days < 30) return `${days} 天前`
   return d.toISOString().slice(0, 10)
+}
+
+function formatTimeShort(iso: string) {
+  const d = new Date(iso)
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  const hh = String(d.getHours()).padStart(2, '0')
+  const mi = String(d.getMinutes()).padStart(2, '0')
+  return `${mm}-${dd} ${hh}:${mi}`
+}
+
+function agentChipClass(name: string) {
+  const palette = [
+    'bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20',
+    'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
+    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+    'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+  ]
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0
+  return palette[h % palette.length]
 }

@@ -5,7 +5,12 @@
   "nameEn": "User Profiling Suite",
   "frameworkId": "product-innovation-24",
   "cellId": 3,
-  "tags": ["Persona", "用户画像", "共情", "VSD"],
+  "tags": [
+    "Persona",
+    "用户画像",
+    "共情",
+    "VSD"
+  ],
   "coreIdea": "画像不是 PPT 里的那张漂亮头像，而是团队做产品决策时脑中能「立即浮现」的那个具体人。画像构建是一组方法论的伞——Persona 给轮廓、共情图给情感、一日生活流给场景，不同方法组合才能让虚构人物拥有三维血肉。",
   "whenToUse": "团队对「我们到底在为谁做」意见分裂时 · 新成员入职的共情启动 · 设计评审时判断是否偏离目标用户 · 功能取舍的「这个人会用吗」心智测试 · 营销投放前的 ICP 校对",
   "keySteps": [
@@ -22,7 +27,11 @@
     "content": "Intercom 早期画像爆炸到 11 个，团队在评审会里根本记不住谁是谁。Des Traynor 强行砍到 3 个核心画像（Lead Gen Larry / Support Sarah / Marketing Mary），每个画像配一句话 Job 和一张真实用户照片贴在办公室。半年后团队做任何决策都能脱口而出「Larry 会 / 不会用这个」——画像从文档变成了共同心智。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.237Z",
+  "kind": "methodology"
 }

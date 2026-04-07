@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_web-design-guidelines",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "web-design-guidelines",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/web-design-guidelines/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "web-design-guidelines",
+    "description": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+    "metadata": ""
+  },
+  "rawDescription": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+  "fileMtime": "2026-02-27T11:04:08.744Z",
+  "fileHash": "f4647ca866a3accf763777f83e7682954f0187cd6bea7eea0399796652414e8f",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T13:03:34.177Z",
+  "updatedAt": "2026-04-08T13:03:34.177Z"
+}

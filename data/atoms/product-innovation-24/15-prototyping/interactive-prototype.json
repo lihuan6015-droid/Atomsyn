@@ -5,7 +5,12 @@
   "nameEn": "Interactive Prototype",
   "frameworkId": "product-innovation-24",
   "cellId": 15,
-  "tags": ["交互原型", "Figma Prototype", "可用性测试", "动效"],
+  "tags": [
+    "交互原型",
+    "Figma Prototype",
+    "可用性测试",
+    "动效"
+  ],
   "parentAtomId": "atom_prototyping_overview",
   "relationType": "child",
   "coreIdea": "把高保真稿用线连起来变成「可点击的假产品」，是用真实用户测试可用性的最后一道防线。它的目标不是炫技，而是让被测者「忘记自己在测试」，露出真实的迷茫和惯性。",
@@ -26,9 +31,12 @@
   },
   "bookmarks": [],
   "stats": {
-    "usedInProjects": [],
+    "usedInProjects": [
+      "project-1775575997594-project"
+    ],
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.258Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,12 @@
   "nameEn": "Empathy Map",
   "frameworkId": "product-innovation-24",
   "cellId": 14,
-  "tags": ["共情", "Empathy Map", "Dave Gray", "用户洞察"],
+  "tags": [
+    "共情",
+    "Empathy Map",
+    "Dave Gray",
+    "用户洞察"
+  ],
   "parentAtomId": "atom_experience_mapping_overview",
   "relationType": "child",
   "coreIdea": "Dave Gray 设计的 6 格画布：Says / Thinks / Does / Feels / Pains / Gains，把一个用户的全部信号塞进一张纸。它的价值不是输出，而是「逼团队承认我们其实并不真的了解用户」。",
@@ -37,5 +42,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.256Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,12 @@
   "nameEn": "Feature & Competitor Table",
   "frameworkId": "product-innovation-24",
   "cellId": 5,
-  "tags": ["F&CT", "功能矩阵", "差距分析", "PRD"],
+  "tags": [
+    "F&CT",
+    "功能矩阵",
+    "差距分析",
+    "PRD"
+  ],
   "parentAtomId": "atom_competitor_analysis_overview",
   "relationType": "child",
   "coreIdea": "把竞品按用户决策维度（不是功能清单）排成一张表，让差距和空白格自己说话。F&CT 的关键是『选行选列』，而不是『打分填格』。",
@@ -23,7 +28,11 @@
     "content": "Miro vs FigJam vs Mural vs Whimsical。维度选用『3 分钟内画出第一笔』『手机端是否能编辑』『工程团队接入难度』。结论：FigJam 在『工程团队接入』全行最强，Whimsical 在『手机端』全行最弱——后者是空白机会。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.242Z",
+  "kind": "methodology"
 }

@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExperienceAtom",
+  "description": "A knowledge atom crystallized from an AI-assisted session (vibe coding, debugging, design decision, etc.). Primarily created by agents via the atlas-write skill, and consumed by agents via the atlas-read skill. Introduced in V1.5 (Gap-1 S1.1).",
+  "type": "object",
+  "required": [
+    "id",
+    "schemaVersion",
+    "kind",
+    "name",
+    "tags",
+    "sourceAgent",
+    "sourceContext",
+    "insight",
+    "stats",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^atom_exp_[a-z0-9_-]+$",
+      "description": "Convention: atom_exp_<short-kebab-slug>[_<unix_ts>]"
+    },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "kind": { "type": "string", "const": "experience" },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "Human-readable title, ideally ≤ 60 chars for card rendering."
+    },
+    "nameEn": { "type": "string" },
+    "tags": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": { "type": "string" },
+      "description": "Kebab-case tags. 2-5 preferred for good retrieval signal."
+    },
+    "sourceAgent": {
+      "type": "string",
+      "description": "The agent that crystallized this atom. e.g. 'claude-code', 'cursor', 'codex', 'trae', or 'user' for manual creation."
+    },
+    "sourceContext": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "description": "1-2 sentence description of the situation / project / task during which the insight emerged."
+    },
+    "insight": {
+      "type": "string",
+      "minLength": 50,
+      "maxLength": 4000,
+      "description": "The core learning. ~100-400 words. Must be self-contained enough that a future agent can act on it without the original conversation."
+    },
+    "keySteps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "3-6 actionable steps or bullet points summarizing the insight's application."
+    },
+    "codeArtifacts": {
+      "type": "array",
+      "description": "Code snippets referenced in the insight. Kept inline (not file paths) for portability.",
+      "items": {
+        "type": "object",
+        "required": ["language", "code"],
+        "properties": {
+          "language": { "type": "string", "description": "e.g. 'typescript', 'rust', 'python', 'bash'" },
+          "code": { "type": "string" },
+          "filename": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "screenshots": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Relative paths under data/growth/screenshots/<atomId>/*.png (V1.5 future-friendly field, may be empty)."
+    },
+    "relatedFrameworks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Loose link to framework ids this experience could be taxonomized under (e.g. 'ui-ux-patterns'). Does NOT require a cellId."
+    },
+    "relatedAtoms": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Cross-links to other atom ids (any kind). Used by atlas-read to surface related material."
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "Optional opaque identifier for the originating conversation session. Used to group multiple atoms crystallized from the same session."
+    },
+    "role": { "type": "string", "description": "V2.0 · role dimension" },
+    "situation": { "type": "string", "description": "V2.0 · situation dimension" },
+    "activity": { "type": "string", "description": "V2.0 · activity dimension" },
+    "insight_type": { "type": "string", "description": "V2.0 · insight type dimension" },
+    "subKind": { "type": "string", "enum": ["crystallized"], "description": "V2.0 · discriminator for crystallized vs fragment" },
+    "stats": {
+      "type": "object",
+      "required": ["usedInProjects", "useCount"],
+      "properties": {
+        "usedInProjects": { "type": "array", "items": { "type": "string" } },
+        "lastUsedAt": { "type": "string" },
+        "useCount": { "type": "integer", "minimum": 0 },
+        "aiInvokeCount": { "type": "integer", "minimum": 0 },
+        "humanViewCount": { "type": "integer", "minimum": 0 },
+        "invokedByAgent": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "userDemoted": { "type": "boolean" },
+        "locked": { "type": "boolean" }
+      }
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  }
+}

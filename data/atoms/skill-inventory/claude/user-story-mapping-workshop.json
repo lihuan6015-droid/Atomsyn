@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_user-story-mapping-workshop",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "user-story-mapping-workshop",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/user-story-mapping-workshop/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "user-story-mapping-workshop",
+    "description": "通过提问引导产品经理创建用户故事地图，涵盖系统、用户、工作流和优先级，生成带骨架的二维地图。",
+    "type": "interactive"
+  },
+  "rawDescription": "通过提问引导产品经理创建用户故事地图，涵盖系统、用户、工作流和优先级，生成带骨架的二维地图。",
+  "fileMtime": "2026-03-07T06:49:57.877Z",
+  "fileHash": "e55e5f36f370b296adfcf2f36f66c2164fca2ad2cf99bb43caa2da29c6530cad",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.275Z",
+  "updatedAt": "2026-04-08T11:07:10.275Z"
+}

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T16:21:04.895Z",
+  "generatedAt": "2026-04-09T01:35:49.521Z",
   "version": 1,
   "frameworks": [
     {
@@ -2142,7 +2142,1124 @@
       "id": "project-1775575997594-project",
       "name": "等保测评",
       "innovationStage": "develop",
-      "atomsUsed": []
+      "atomsUsed": [
+        "atom_interactive_prototype"
+      ]
+    }
+  ],
+  "experiences": [
+    {
+      "id": "atom_exp_claude-skill-over-mcp-for-local-sovereignty_1728443200",
+      "name": "本地主权优先于跨协议通用：Claude Skill > MCP Server",
+      "tags": [
+        "architecture-decision",
+        "local-first",
+        "claude-skill",
+        "mcp",
+        "v1.5-scoping",
+        "sovereignty-design"
+      ],
+      "sourceAgent": "claude-code",
+      "sourceContext": "CCL Atlas V1.5 Step 3 OST 会话中，裁决 Gap-2（Agent 双向接口）的技术路线。初版推荐 MCP Server，用户基于本地主权哲学翻盘选择 Claude Skill 原生格式。",
+      "insightExcerpt": "在本地优先、用户主权哲学的产品里，Claude Skill 原生格式优于 MCP Server，即使后者是跨 agent 的协议标准。四层原因：(1) Skill 就是文件——SKILL.md + 可选的 helper script，用户可以看、可以改、可以版本化；MCP Server 是服务抽象，对用户是黑盒。(2) 实现复杂度 Skill 格式低 4 倍——无需 stdio/HTTP 服务、无",
+      "createdAt": "2026-04-08T21:00:00+08:00",
+      "updatedAt": "2026-04-08T11:20:48.803Z",
+      "path": "atoms/experience/claude-skill-mcp-server/atom_exp_claude-skill-over-mcp-for-local-sovereignty_1728443200.json"
+    },
+    {
+      "id": "atom_exp_cli-loose-schema_1775649833",
+      "name": "CLI 自测 · loose schema 写入",
+      "tags": [
+        "atlas-cli",
+        "self-test",
+        "loose-schema"
+      ],
+      "sourceAgent": "claude-code",
+      "sourceContext": "CLI 架构收紧后首次测试 loose input",
+      "insightExcerpt": "atlas-cli 现在接受最小内容字段 (name/sourceContext/insight/tags), 自动生成 id/kind/schemaVersion/timestamps/stats。这是把 agent 从 schema 细节里解放出来的关键一步, skill 契约从此稳定。",
+      "createdAt": "2026-04-08T12:03:53.445Z",
+      "updatedAt": "2026-04-08T12:03:53.448Z",
+      "path": "atoms/experience/cli-loose-schema/atom_exp_cli-loose-schema_1775649833.json"
+    }
+  ],
+  "skillInventory": [
+    {
+      "id": "skill_claude_acquisition-channel-advisor",
+      "name": "acquisition-channel-advisor",
+      "toolName": "claude",
+      "rawDescription": "评估获客渠道的单位经济效益、客户质量和可扩展性，给出扩大/测试/放弃的决策建议。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/acquisition-channel-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T12:14:15.543Z"
+    },
+    {
+      "id": "skill_claude_ai-shaped-readiness-advisor",
+      "name": "ai-shaped-readiness-advisor",
+      "toolName": "claude",
+      "rawDescription": "评估你的产品工作是AI优先还是AI驱动，对5项能力打分并推荐下一个要构建的能力。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/ai-shaped-readiness-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.250Z"
+    },
+    {
+      "id": "skill_claude_altitude-horizon-framework",
+      "name": "altitude-horizon-framework",
+      "toolName": "claude",
+      "rawDescription": "PM到总监转型的核心思维模型：高度（范围）与视野（时间），从执行者到管理者的转变，四个转型区域和常见失败模式。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/altitude-horizon-framework/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.251Z"
+    },
+    {
+      "id": "skill_claude_atlas-read",
+      "name": "atlas-read",
+      "toolName": "claude",
+      "rawDescription": "在回答用户问题之前,先到用户本地的 CCL Atlas 知识库里查一下相关的过往经验,把命中的经验作为上下文注入到回答里。当用户说\"我之前学过类似的吗 / 我的知识库里有没有 / CCL 里有没有 / 从 CCL 里找 / 看看我之前记过什么 / 调用我的经验 / 我以前是怎么做的 / 查一下 atlas / CCL 有没有相关的 / check my atlas / check CCL / use my past experiences\"时触发。此外,在一个新会话开始处理实质性的编码/设计任务时,也应该**静默地主动调用一次**(一个会话一次预算),让用户的过往经验自动成为回答的底子,而不是被忽略。对于闲聊或与用户个人经验无关的通用问题,不要触发。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/atlas-read/SKILL.md",
+      "updatedAt": "2026-04-08T12:55:13.893Z"
+    },
+    {
+      "id": "skill_claude_atlas-write-spike",
+      "name": "atlas-write-spike",
+      "toolName": "claude",
+      "rawDescription": "Crystallize a recent conversation insight into a structured experience atom JSON for CCL Atlas. Trigger when user says \"沉进去\", \"沉淀一下\", \"记一笔\", \"sink this in\", or explicitly asks to preserve a coding/methodology/decision insight from the current session. This is a spike skill for CCL Atlas V1.5 Gap-2 feasibility validation.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/atlas-write-spike/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.251Z"
+    },
+    {
+      "id": "skill_claude_atlas-write",
+      "name": "atlas-write",
+      "toolName": "claude",
+      "rawDescription": "把当前对话里的关键学习沉淀成一张结构化的经验卡片,存进用户本地的 CCL Atlas 知识库,供未来任何 AI 会话调用。当用户说\"帮我记下来 / 这个要记住 / 存到我的 atlas / 存到 CCL / 加到 CCL Atlas / 加到我的知识库 / 以后还会用到 / 把这个经验保存一下 / CCL 记一下 / 这个我要收藏 / 别让我忘了 / save to my atlas / save to CCL / remember this for me / crystallize this\"时触发。只在用户明确要求时调用,不要主动触发。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/atlas-write/SKILL.md",
+      "updatedAt": "2026-04-08T12:55:13.894Z"
+    },
+    {
+      "id": "skill_claude_brainstorming",
+      "name": "brainstorming",
+      "toolName": "claude",
+      "rawDescription": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/brainstorming/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.252Z"
+    },
+    {
+      "id": "skill_claude_business-health-diagnostic",
+      "name": "business-health-diagnostic",
+      "toolName": "claude",
+      "rawDescription": "通过关键指标诊断SaaS业务健康度，识别风险信号并确定优先行动。分析增长、留存、效率和资金状况。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/business-health-diagnostic/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.253Z"
+    },
+    {
+      "id": "skill_claude_chart-visualization",
+      "name": "chart-visualization",
+      "toolName": "claude",
+      "rawDescription": "This skill should be used when the user wants to visualize data. It intelligently selects the most suitable chart type from 26 available options, extracts parameters based on detailed specifications, and generates a chart image using a JavaScript script.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/chart-visualization/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.149Z"
+    },
+    {
+      "id": "skill_claude_company-research",
+      "name": "company-research",
+      "toolName": "claude",
+      "rawDescription": "创建全面的公司档案，提取高管洞察、产品战略、转型计划和组织动态。用于理解潜在客户、合作伙伴或竞争对手。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/company-research/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.253Z"
+    },
+    {
+      "id": "skill_claude_consulting-analysis",
+      "name": "consulting-analysis",
+      "toolName": "claude",
+      "rawDescription": "Use this skill when the user requests to generate, create, or write professional research reports including but not limited to market analysis, consumer insights, brand analysis, financial analysis, industry research, competitive intelligence, investment due diligence, or any consulting-grade analytical report. This skill operates in two phases — (1) generating a structured analysis framework with chapter skeleton, data query requirements, and analysis logic, and (2) after data collection by other skills, producing the final consulting-grade report with structured narratives, embedded charts, and strategic insights.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/consulting-analysis/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.151Z"
+    },
+    {
+      "id": "skill_claude_context-engineering-advisor",
+      "name": "context-engineering-advisor",
+      "toolName": "claude",
+      "rawDescription": "诊断上下文填充与上下文工程的区别，评估实践方法，定义边界，并提供记忆架构和检索策略建议。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/context-engineering-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.254Z"
+    },
+    {
+      "id": "skill_claude_customer-journey-map",
+      "name": "customer-journey-map",
+      "toolName": "claude",
+      "rawDescription": "创建全面的客户旅程地图，可视化客户从认知到忠诚各阶段与品牌的互动，记录行为、触点、情绪和KPI。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/customer-journey-map/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.255Z"
+    },
+    {
+      "id": "skill_claude_customer-journey-mapping-workshop",
+      "name": "customer-journey-mapping-workshop",
+      "toolName": "claude",
+      "rawDescription": "通过提问引导产品经理创建客户旅程地图，涵盖角色、场景、旅程阶段、行为情绪和改进机会。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/customer-journey-mapping-workshop/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.255Z"
+    },
+    {
+      "id": "skill_claude_data-analysis",
+      "name": "data-analysis",
+      "toolName": "claude",
+      "rawDescription": "Use this skill when the user uploads Excel (.xlsx/.xls) or CSV files and wants to perform data analysis, generate statistics, create summaries, pivot tables, SQL queries, or any form of structured data exploration. Supports multi-sheet Excel workbooks, aggregation, filtering, joins, and exporting results to CSV/JSON/Markdown.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/data-analysis/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.153Z"
+    },
+    {
+      "id": "skill_claude_deep-research",
+      "name": "deep-research",
+      "toolName": "claude",
+      "rawDescription": "Use this skill instead of WebSearch for ANY question requiring web research. Trigger on queries like \"what is X\", \"explain X\", \"compare X and Y\", \"research X\", or before content generation tasks. Provides systematic multi-angle research methodology instead of single superficial searches. Use this proactively when the user's question needs online information.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/deep-research/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.154Z"
+    },
+    {
+      "id": "skill_claude_director-readiness-advisor",
+      "name": "director-readiness-advisor",
+      "toolName": "claude",
+      "rawDescription": "辅导产品经理和新任总监完成从个人贡献者到组织领导者的转型，涵盖准备、面试、新上任和调整四种场景。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/director-readiness-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.256Z"
+    },
+    {
+      "id": "skill_claude_discovery-interview-prep",
+      "name": "discovery-interview-prep",
+      "toolName": "claude",
+      "rawDescription": "通过提问引导产品经理准备客户发现访谈，涵盖研究目标、客户群体、约束条件和方法论，设计高效的访谈方案。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/discovery-interview-prep/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.256Z"
+    },
+    {
+      "id": "skill_claude_discovery-process",
+      "name": "discovery-process",
+      "toolName": "claude",
+      "rawDescription": "引导产品经理完成完整的产品发现周期——从初始问题假设到验证解决方案，串联问题定义、客户访谈、综合分析和实验。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/discovery-process/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.257Z"
+    },
+    {
+      "id": "skill_claude_dispatching-parallel-agents",
+      "name": "dispatching-parallel-agents",
+      "toolName": "claude",
+      "rawDescription": "Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/dispatching-parallel-agents/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.258Z"
+    },
+    {
+      "id": "skill_claude_eol-message",
+      "name": "eol-message",
+      "toolName": "claude",
+      "rawDescription": "撰写清晰、有同理心的产品下线(EOL)通知，说明停用原因、客户影响、过渡支持方案，并维护品牌信任。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/eol-message/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.258Z"
+    },
+    {
+      "id": "skill_claude_epic-breakdown-advisor",
+      "name": "epic-breakdown-advisor",
+      "toolName": "claude",
+      "rawDescription": "使用Richard Lawrence的Humanizing Work方法论将Epic拆分为用户故事——按流程图驱动的9种拆分模式依次应用。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/epic-breakdown-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.259Z"
+    },
+    {
+      "id": "skill_claude_epic-hypothesis",
+      "name": "epic-hypothesis",
+      "toolName": "claude",
+      "rawDescription": "将Epic框架化为可测试的假设，使用\"如果/那么\"结构明确行动、目标受益者、预期结果和验证方式。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/epic-hypothesis/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.259Z"
+    },
+    {
+      "id": "skill_claude_executing-plans",
+      "name": "executing-plans",
+      "toolName": "claude",
+      "rawDescription": "Use when you have a written implementation plan to execute in a separate session with review checkpoints",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/executing-plans/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.260Z"
+    },
+    {
+      "id": "skill_claude_executive-onboarding-playbook",
+      "name": "executive-onboarding-playbook",
+      "toolName": "claude",
+      "rawDescription": "VP和CPO新任领导者的30-60-90天入职手册：先诊断再行动，发现未成文的战略，评估团队，建立决策依据。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/executive-onboarding-playbook/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.260Z"
+    },
+    {
+      "id": "skill_claude_feature-investment-advisor",
+      "name": "feature-investment-advisor",
+      "toolName": "claude",
+      "rawDescription": "引导产品经理评估功能投资，分析收入影响、成本结构、投资回报率和战略价值，给出构建/不构建的建议。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/feature-investment-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.260Z"
+    },
+    {
+      "id": "skill_claude_finance-based-pricing-advisor",
+      "name": "finance-based-pricing-advisor",
+      "toolName": "claude",
+      "rawDescription": "使用财务影响分析评估定价变更——ARPU/ARPA、转化率、流失风险、NRR和回收期，给出执行/不执行建议。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/finance-based-pricing-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.261Z"
+    },
+    {
+      "id": "skill_claude_finance-metrics-quickref",
+      "name": "finance-metrics-quickref",
+      "toolName": "claude",
+      "rawDescription": "SaaS财务指标快速参考表：32+指标的公式、基准值和使用场景，包含风险信号和决策框架。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/finance-metrics-quickref/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.261Z"
+    },
+    {
+      "id": "skill_claude_find-skills",
+      "name": "find-skills",
+      "toolName": "claude",
+      "rawDescription": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/find-skills/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.158Z"
+    },
+    {
+      "id": "skill_claude_finishing-a-development-branch",
+      "name": "finishing-a-development-branch",
+      "toolName": "claude",
+      "rawDescription": "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/finishing-a-development-branch/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.262Z"
+    },
+    {
+      "id": "skill_claude_frontend-design",
+      "name": "frontend-design",
+      "toolName": "claude",
+      "rawDescription": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/frontend-design/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.159Z"
+    },
+    {
+      "id": "skill_claude_github-deep-research",
+      "name": "github-deep-research",
+      "toolName": "claude",
+      "rawDescription": "Conduct multi-round deep research on any GitHub Repo. Use when users request comprehensive analysis, timeline reconstruction, competitive analysis, or in-depth investigation of GitHub. Produces structured markdown reports with executive summaries, chronological timelines, metrics analysis, and Mermaid diagrams. Triggers on Github repository URL or open source projects.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/github-deep-research/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.159Z"
+    },
+    {
+      "id": "skill_claude_human3-assessment",
+      "name": "human3-assessment",
+      "toolName": "claude",
+      "rawDescription": "基于HUMAN 3.0模型的多维发展评估工具。通过自适应访谈评估用户在心智、身体、灵性、事业四象限的发展水平，识别元类型与生活方式原型，提供可操作的转型策略。直言不讳地指出虚假转型，同时认可真正的成长机会。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/human3-assessment/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.262Z"
+    },
+    {
+      "id": "skill_claude_image-generation",
+      "name": "image-generation",
+      "toolName": "claude",
+      "rawDescription": "Use this skill when the user requests to generate, create, imagine, or visualize images including characters, scenes, products, or any visual content. Supports structured prompts and reference images for guided generation.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/image-generation/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.161Z"
+    },
+    {
+      "id": "skill_claude_jobs-to-be-done",
+      "name": "jobs-to-be-done",
+      "toolName": "claude",
+      "rawDescription": "系统化探索客户想要完成的任务（功能性、社交性、情感性），他们经历的痛点和期望的收益，发现未被满足的需求。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/jobs-to-be-done/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.263Z"
+    },
+    {
+      "id": "skill_claude_lean-ux-canvas",
+      "name": "lean-ux-canvas",
+      "toolName": "claude",
+      "rawDescription": "引导产品经理使用Jeff Gothelf的精益UX画布v2——围绕业务问题构建工作、暴露假设、确保每个迭代都有学习。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/lean-ux-canvas/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.263Z"
+    },
+    {
+      "id": "skill_claude_officecli",
+      "name": "officecli",
+      "toolName": "claude",
+      "rawDescription": "Create, analyze, proofread, and modify Office documents (.docx, .xlsx, .pptx) using the officecli CLI tool. Use when the user wants to create, inspect, check formatting, find issues, add charts, or modify Office documents.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/officecli/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.264Z"
+    },
+    {
+      "id": "skill_claude_opportunity-solution-tree",
+      "name": "opportunity-solution-tree",
+      "toolName": "claude",
+      "rawDescription": "引导产品经理创建机会解决方案树(OST)，从利益相关者需求中提取目标成果，生成机会选项，映射潜在解决方案。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/opportunity-solution-tree/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.264Z"
+    },
+    {
+      "id": "skill_claude_pestel-analysis",
+      "name": "pestel-analysis",
+      "toolName": "claude",
+      "rawDescription": "系统分析宏观环境因素——政治、经济、社会、技术、环境和法律——识别可能影响你产品或项目的外部力量。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/pestel-analysis/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.264Z"
+    },
+    {
+      "id": "skill_claude_podcast-generation",
+      "name": "podcast-generation",
+      "toolName": "claude",
+      "rawDescription": "Use this skill when the user requests to generate, create, or produce podcasts from text content. Converts written content into a two-host conversational podcast audio format with natural dialogue.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/podcast-generation/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.163Z"
+    },
+    {
+      "id": "skill_claude_pol-probe-advisor",
+      "name": "pol-probe-advisor",
+      "toolName": "claude",
+      "rawDescription": "根据假设、风险和资源选择合适的生命迹象探针(PoL)方法，匹配验证方法到真正的学习目标而非工具偏好。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/pol-probe-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.265Z"
+    },
+    {
+      "id": "skill_claude_pol-probe",
+      "name": "pol-probe",
+      "toolName": "claude",
+      "rawDescription": "定义生命迹象探针(PoL)——一个轻量级验证工具，在昂贵的开发之前揭示残酷真相。用最小投入测试假设。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/pol-probe/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.265Z"
+    },
+    {
+      "id": "skill_claude_positioning-statement",
+      "name": "positioning-statement",
+      "toolName": "claude",
+      "rawDescription": "创建Geoffrey Moore风格的定位声明，清晰表达产品服务对象、满足需求、产品类别、核心价值和竞争差异。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/positioning-statement/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.266Z"
+    },
+    {
+      "id": "skill_claude_positioning-workshop",
+      "name": "positioning-workshop",
+      "toolName": "claude",
+      "rawDescription": "通过提问引导产品经理发现和表达产品定位，涵盖目标客户、未满足需求、产品类别、收益和竞争差异化。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/positioning-workshop/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.266Z"
+    },
+    {
+      "id": "skill_claude_ppt-generation",
+      "name": "ppt-generation",
+      "toolName": "claude",
+      "rawDescription": "Use this skill when the user requests to generate, create, or make presentations (PPT/PPTX). Creates visually rich slides by generating images for each slide and composing them into a PowerPoint file.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/ppt-generation/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.165Z"
+    },
+    {
+      "id": "skill_claude_prd-development",
+      "name": "prd-development",
+      "toolName": "claude",
+      "rawDescription": "Guide product managers through structured PRD (Product Requirements Document) creation, orchestrating problem framing, user research synthesis, solution definition, and success criteria. Use when: (1) writing a complete PRD from scratch, (2) structuring product requirements for engineering handoff, (3) documenting a major new feature before development begins, (4) turning discovery findings into actionable requirements. Triggers on: 'write a PRD', 'create PRD', 'product requirements document', 'I need a PRD', 'document requirements', 'feature spec'.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/prd-development/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.266Z"
+    },
+    {
+      "id": "skill_claude_press-release",
+      "name": "press-release",
+      "toolName": "claude",
+      "rawDescription": "按照亚马逊\"逆向工作法\"撰写愿景式新闻稿，在构建产品之前定义和传达产品愿景，对齐利益相关者。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/press-release/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.267Z"
+    },
+    {
+      "id": "skill_claude_prioritization-advisor",
+      "name": "prioritization-advisor",
+      "toolName": "claude",
+      "rawDescription": "引导产品经理选择合适的优先级排序框架，考虑产品阶段、团队背景、决策需求和利益相关者动态。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/prioritization-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.267Z"
+    },
+    {
+      "id": "skill_claude_problem-framing-canvas",
+      "name": "problem-framing-canvas",
+      "toolName": "claude",
+      "rawDescription": "引导产品经理使用MITRE问题框架画布，通过向内看、向外看和重构三个维度的结构化提问，产出清晰的问题定义。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/problem-framing-canvas/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.268Z"
+    },
+    {
+      "id": "skill_claude_problem-statement",
+      "name": "problem-statement",
+      "toolName": "claude",
+      "rawDescription": "从用户视角阐述问题，使用共情驱动框架捕捉用户是谁、想做什么、遇到什么障碍、为什么以及感受如何。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/problem-statement/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.268Z"
+    },
+    {
+      "id": "skill_claude_product-strategy-session",
+      "name": "product-strategy-session",
+      "toolName": "claude",
+      "rawDescription": "引导产品经理完成全面的产品战略会议，串联定位、问题框架、客户发现和路线图规划技能。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/product-strategy-session/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.269Z"
+    },
+    {
+      "id": "skill_claude_proto-persona",
+      "name": "proto-persona",
+      "toolName": "claude",
+      "rawDescription": "创建基于假设的初始用户画像，综合现有用户研究、市场数据和利益相关者知识，形成目标用户的工作假设。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/proto-persona/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.269Z"
+    },
+    {
+      "id": "skill_claude_receiving-code-review",
+      "name": "receiving-code-review",
+      "toolName": "claude",
+      "rawDescription": "Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/receiving-code-review/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.269Z"
+    },
+    {
+      "id": "skill_claude_recommendation-canvas",
+      "name": "recommendation-canvas",
+      "toolName": "claude",
+      "rawDescription": "使用结构化画布评估和提议AI产品方案，评估业务成果、客户成果、问题框架、解决方案假设和价值论证。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/recommendation-canvas/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.270Z"
+    },
+    {
+      "id": "skill_claude_requesting-code-review",
+      "name": "requesting-code-review",
+      "toolName": "claude",
+      "rawDescription": "Use when completing tasks, implementing major features, or before merging to verify work meets requirements",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/requesting-code-review/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.270Z"
+    },
+    {
+      "id": "skill_claude_roadmap-planning",
+      "name": "roadmap-planning",
+      "toolName": "claude",
+      "rawDescription": "引导产品经理完成战略路线图规划，串联优先级排序、Epic定义、利益相关者对齐和发布排期。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/roadmap-planning/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.270Z"
+    },
+    {
+      "id": "skill_claude_saas-economics-efficiency-metrics",
+      "name": "saas-economics-efficiency-metrics",
+      "toolName": "claude",
+      "rawDescription": "评估SaaS的单位经济效益和资金效率，涵盖CAC、LTV、回收期、利润率、烧钱率、40法则和魔力指标。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/saas-economics-efficiency-metrics/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.271Z"
+    },
+    {
+      "id": "skill_claude_saas-revenue-growth-metrics",
+      "name": "saas-revenue-growth-metrics",
+      "toolName": "claude",
+      "rawDescription": "计算和解读SaaS产品的收入、留存和增长指标，涵盖ARPU/ARPA、MRR/ARR、流失率、NRR、扩展和队列分析。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/saas-revenue-growth-metrics/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.271Z"
+    },
+    {
+      "id": "skill_claude_skill-authoring-workflow",
+      "name": "skill-authoring-workflow",
+      "toolName": "claude",
+      "rawDescription": "将原始PM内容转化为符合规范的、可发布的技能，选择构建/添加路径，运行合规检查，提交前更新文档。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/skill-authoring-workflow/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.272Z"
+    },
+    {
+      "id": "skill_claude_skill-creator",
+      "name": "skill-creator",
+      "toolName": "claude",
+      "rawDescription": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/skill-creator/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.170Z"
+    },
+    {
+      "id": "skill_claude_storyboard",
+      "name": "storyboard",
+      "toolName": "claude",
+      "rawDescription": "创建6帧视觉叙事，讲述用户从问题到解决方案的旅程，使用经典故事弧线构建共情、展示价值。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/storyboard/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.272Z"
+    },
+    {
+      "id": "skill_claude_subagent-driven-development",
+      "name": "subagent-driven-development",
+      "toolName": "claude",
+      "rawDescription": "Use when executing implementation plans with independent tasks in the current session",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/subagent-driven-development/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.272Z"
+    },
+    {
+      "id": "skill_claude_surprise-me",
+      "name": "surprise-me",
+      "toolName": "claude",
+      "rawDescription": "Create a delightful, unexpected \"wow\" experience for the user by dynamically discovering and creatively combining other enabled skills. Triggers when the user says \"surprise me\" or any request expressing a desire for an unexpected creative showcase. Also triggers when the user is bored, wants inspiration, or asks for \"something interesting\".",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/surprise-me/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.171Z"
+    },
+    {
+      "id": "skill_claude_systematic-debugging",
+      "name": "systematic-debugging",
+      "toolName": "claude",
+      "rawDescription": "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/systematic-debugging/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.273Z"
+    },
+    {
+      "id": "skill_claude_tam-sam-som-calculator",
+      "name": "tam-sam-som-calculator",
+      "toolName": "claude",
+      "rawDescription": "引导产品经理计算总可寻址市场(TAM)、可服务市场(SAM)和可获取市场(SOM)，通过自适应提问评估市场规模。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/tam-sam-som-calculator/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.273Z"
+    },
+    {
+      "id": "skill_claude_test-driven-development",
+      "name": "test-driven-development",
+      "toolName": "claude",
+      "rawDescription": "Use when implementing any feature or bugfix, before writing implementation code",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/test-driven-development/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.274Z"
+    },
+    {
+      "id": "skill_claude_user-story-mapping-workshop",
+      "name": "user-story-mapping-workshop",
+      "toolName": "claude",
+      "rawDescription": "通过提问引导产品经理创建用户故事地图，涵盖系统、用户、工作流和优先级，生成带骨架的二维地图。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/user-story-mapping-workshop/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.275Z"
+    },
+    {
+      "id": "skill_claude_user-story-mapping",
+      "name": "user-story-mapping",
+      "toolName": "claude",
+      "rawDescription": "通过创建分层地图可视化用户旅程，将高级活动分解为步骤和任务，按叙事流从左到右组织，建立共享理解。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/user-story-mapping/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.275Z"
+    },
+    {
+      "id": "skill_claude_user-story-splitting",
+      "name": "user-story-splitting",
+      "toolName": "claude",
+      "rawDescription": "将大型用户故事、Epic或功能拆分为更小的、可独立交付的故事，使用系统化的拆分模式降低风险、加速反馈。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/user-story-splitting/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.275Z"
+    },
+    {
+      "id": "skill_claude_user-story",
+      "name": "user-story",
+      "toolName": "claude",
+      "rawDescription": "创建清晰简洁的用户故事，结合Mike Cohn的用户故事格式和Gherkin风格的验收标准，将用户需求转化为可执行的开发任务。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/user-story/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.274Z"
+    },
+    {
+      "id": "skill_claude_using-git-worktrees",
+      "name": "using-git-worktrees",
+      "toolName": "claude",
+      "rawDescription": "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/using-git-worktrees/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.276Z"
+    },
+    {
+      "id": "skill_claude_using-superpowers",
+      "name": "using-superpowers",
+      "toolName": "claude",
+      "rawDescription": "Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/using-superpowers/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.276Z"
+    },
+    {
+      "id": "skill_claude_vercel-deploy",
+      "name": "vercel-deploy",
+      "toolName": "claude",
+      "rawDescription": "Deploy applications and websites to Vercel. Use this skill when the user requests deployment actions such as \"Deploy my app\", \"Deploy this to production\", \"Create a preview deployment\", \"Deploy and give me the link\", or \"Push this live\". No authentication required - returns preview URL and claimable deployment link.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/vercel-deploy/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.174Z"
+    },
+    {
+      "id": "skill_claude_verification-before-completion",
+      "name": "verification-before-completion",
+      "toolName": "claude",
+      "rawDescription": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/verification-before-completion/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.276Z"
+    },
+    {
+      "id": "skill_claude_video-generation",
+      "name": "video-generation",
+      "toolName": "claude",
+      "rawDescription": "Use this skill when the user requests to generate, create, or imagine videos. Supports structured prompts and reference image for guided generation.",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/video-generation/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.176Z"
+    },
+    {
+      "id": "skill_claude_vp-cpo-readiness-advisor",
+      "name": "vp-cpo-readiness-advisor",
+      "toolName": "claude",
+      "rawDescription": "辅导总监和高管完成向VP或CPO的转型，涵盖准备、面试、新上任和高管层级调整四种场景。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/vp-cpo-readiness-advisor/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.277Z"
+    },
+    {
+      "id": "skill_claude_web-design-guidelines",
+      "name": "web-design-guidelines",
+      "toolName": "claude",
+      "rawDescription": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/web-design-guidelines/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.177Z"
+    },
+    {
+      "id": "skill_claude_workshop-facilitation",
+      "name": "workshop-facilitation",
+      "toolName": "claude",
+      "rawDescription": "以多轮、逐步的方式引导工作坊，在决策点提供编号建议，在常规问题提供快速选择选项。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/workshop-facilitation/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.277Z"
+    },
+    {
+      "id": "skill_claude_writing-plans",
+      "name": "writing-plans",
+      "toolName": "claude",
+      "rawDescription": "Use when you have a spec or requirements for a multi-step task, before touching code",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/writing-plans/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.277Z"
+    },
+    {
+      "id": "skill_claude_writing-skills",
+      "name": "writing-skills",
+      "toolName": "claude",
+      "rawDescription": "Use when creating new skills, editing existing skills, or verifying skills work before deployment",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/writing-skills/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.278Z"
+    },
+    {
+      "id": "skill_cursor_atlas-read",
+      "name": "atlas-read",
+      "toolName": "cursor",
+      "rawDescription": "在回答用户问题之前,先到用户本地的 CCL Atlas 知识库里查一下相关的过往经验,把命中的经验作为上下文注入到回答里。当用户说\"我之前学过类似的吗 / 我的知识库里有没有 / CCL 里有没有 / 从 CCL 里找 / 看看我之前记过什么 / 调用我的经验 / 我以前是怎么做的 / 查一下 atlas / CCL 有没有相关的 / check my atlas / check CCL / use my past experiences\"时触发。此外,在一个新会话开始处理实质性的编码/设计任务时,也应该**静默地主动调用一次**(一个会话一次预算),让用户的过往经验自动成为回答的底子,而不是被忽略。对于闲聊或与用户个人经验无关的通用问题,不要触发。",
+      "tags": [
+        "cursor"
+      ],
+      "localPath": "/Users/circlelee/.cursor/skills/atlas-read/SKILL.md",
+      "updatedAt": "2026-04-08T12:55:13.915Z"
+    },
+    {
+      "id": "skill_cursor_atlas-write",
+      "name": "atlas-write",
+      "toolName": "cursor",
+      "rawDescription": "把当前对话里的关键学习沉淀成一张结构化的经验卡片,存进用户本地的 CCL Atlas 知识库,供未来任何 AI 会话调用。当用户说\"帮我记下来 / 这个要记住 / 存到我的 atlas / 存到 CCL / 加到 CCL Atlas / 加到我的知识库 / 以后还会用到 / 把这个经验保存一下 / CCL 记一下 / 这个我要收藏 / 别让我忘了 / save to my atlas / save to CCL / remember this for me / crystallize this\"时触发。只在用户明确要求时调用,不要主动触发。",
+      "tags": [
+        "cursor"
+      ],
+      "localPath": "/Users/circlelee/.cursor/skills/atlas-write/SKILL.md",
+      "updatedAt": "2026-04-08T12:55:13.916Z"
+    },
+    {
+      "id": "skill_cursor_officecli",
+      "name": "officecli",
+      "toolName": "cursor",
+      "rawDescription": "Create, analyze, proofread, and modify Office documents (.docx, .xlsx, .pptx) using the officecli CLI tool. Use when the user wants to create, inspect, check formatting, find issues, add charts, or modify Office documents.",
+      "tags": [
+        "cursor"
+      ],
+      "localPath": "/Users/circlelee/.cursor/skills/officecli/SKILL.md",
+      "updatedAt": "2026-04-08T11:07:10.278Z"
+    },
+    {
+      "id": "skill_trae_chart-visualization",
+      "name": "chart-visualization",
+      "toolName": "trae",
+      "rawDescription": "This skill should be used when the user wants to visualize data. It intelligently selects the most suitable chart type from 26 available options, extracts parameters based on detailed specifications, and generates a chart image using a JavaScript script.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/chart-visualization/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.179Z"
+    },
+    {
+      "id": "skill_trae_consulting-analysis",
+      "name": "consulting-analysis",
+      "toolName": "trae",
+      "rawDescription": "Use this skill when the user requests to generate, create, or write professional research reports including but not limited to market analysis, consumer insights, brand analysis, financial analysis, industry research, competitive intelligence, investment due diligence, or any consulting-grade analytical report. This skill operates in two phases — (1) generating a structured analysis framework with chapter skeleton, data query requirements, and analysis logic, and (2) after data collection by other skills, producing the final consulting-grade report with structured narratives, embedded charts, and strategic insights.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/consulting-analysis/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.180Z"
+    },
+    {
+      "id": "skill_trae_data-analysis",
+      "name": "data-analysis",
+      "toolName": "trae",
+      "rawDescription": "Use this skill when the user uploads Excel (.xlsx/.xls) or CSV files and wants to perform data analysis, generate statistics, create summaries, pivot tables, SQL queries, or any form of structured data exploration. Supports multi-sheet Excel workbooks, aggregation, filtering, joins, and exporting results to CSV/JSON/Markdown.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/data-analysis/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.181Z"
+    },
+    {
+      "id": "skill_trae_deep-research",
+      "name": "deep-research",
+      "toolName": "trae",
+      "rawDescription": "Use this skill instead of WebSearch for ANY question requiring web research. Trigger on queries like \"what is X\", \"explain X\", \"compare X and Y\", \"research X\", or before content generation tasks. Provides systematic multi-angle research methodology instead of single superficial searches. Use this proactively when the user's question needs online information.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/deep-research/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.181Z"
+    },
+    {
+      "id": "skill_trae_find-skills",
+      "name": "find-skills",
+      "toolName": "trae",
+      "rawDescription": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/find-skills/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.181Z"
+    },
+    {
+      "id": "skill_trae_frontend-design",
+      "name": "frontend-design",
+      "toolName": "trae",
+      "rawDescription": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/frontend-design/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.182Z"
+    },
+    {
+      "id": "skill_trae_github-deep-research",
+      "name": "github-deep-research",
+      "toolName": "trae",
+      "rawDescription": "Conduct multi-round deep research on any GitHub Repo. Use when users request comprehensive analysis, timeline reconstruction, competitive analysis, or in-depth investigation of GitHub. Produces structured markdown reports with executive summaries, chronological timelines, metrics analysis, and Mermaid diagrams. Triggers on Github repository URL or open source projects.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/github-deep-research/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.182Z"
+    },
+    {
+      "id": "skill_trae_image-generation",
+      "name": "image-generation",
+      "toolName": "trae",
+      "rawDescription": "Use this skill when the user requests to generate, create, imagine, or visualize images including characters, scenes, products, or any visual content. Supports structured prompts and reference images for guided generation.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/image-generation/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.183Z"
+    },
+    {
+      "id": "skill_trae_podcast-generation",
+      "name": "podcast-generation",
+      "toolName": "trae",
+      "rawDescription": "Use this skill when the user requests to generate, create, or produce podcasts from text content. Converts written content into a two-host conversational podcast audio format with natural dialogue.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/podcast-generation/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.183Z"
+    },
+    {
+      "id": "skill_trae_ppt-generation",
+      "name": "ppt-generation",
+      "toolName": "trae",
+      "rawDescription": "Use this skill when the user requests to generate, create, or make presentations (PPT/PPTX). Creates visually rich slides by generating images for each slide and composing them into a PowerPoint file.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/ppt-generation/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.184Z"
+    },
+    {
+      "id": "skill_trae_skill-creator",
+      "name": "skill-creator",
+      "toolName": "trae",
+      "rawDescription": "Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/skill-creator/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.184Z"
+    },
+    {
+      "id": "skill_trae_surprise-me",
+      "name": "surprise-me",
+      "toolName": "trae",
+      "rawDescription": "Create a delightful, unexpected \"wow\" experience for the user by dynamically discovering and creatively combining other enabled skills. Triggers when the user says \"surprise me\" or any request expressing a desire for an unexpected creative showcase. Also triggers when the user is bored, wants inspiration, or asks for \"something interesting\".",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/surprise-me/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.185Z"
+    },
+    {
+      "id": "skill_trae_vercel-deploy",
+      "name": "vercel-deploy",
+      "toolName": "trae",
+      "rawDescription": "Deploy applications and websites to Vercel. Use this skill when the user requests deployment actions such as \"Deploy my app\", \"Deploy this to production\", \"Create a preview deployment\", \"Deploy and give me the link\", or \"Push this live\". No authentication required - returns preview URL and claimable deployment link.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/vercel-deploy/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.185Z"
+    },
+    {
+      "id": "skill_trae_video-generation",
+      "name": "video-generation",
+      "toolName": "trae",
+      "rawDescription": "Use this skill when the user requests to generate, create, or imagine videos. Supports structured prompts and reference image for guided generation.",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/video-generation/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.185Z"
+    },
+    {
+      "id": "skill_trae_web-design-guidelines",
+      "name": "web-design-guidelines",
+      "toolName": "trae",
+      "rawDescription": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+      "tags": [
+        "trae"
+      ],
+      "localPath": "/Users/circlelee/.trae/skills/web-design-guidelines/SKILL.md",
+      "updatedAt": "2026-04-08T13:03:34.186Z"
     }
   ]
 }

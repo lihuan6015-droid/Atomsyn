@@ -5,7 +5,12 @@
   "nameEn": "Soft Launch",
   "frameworkId": "product-innovation-24",
   "cellId": 16,
-  "tags": ["发布", "Soft Launch", "灰度", "区域测试"],
+  "tags": [
+    "发布",
+    "Soft Launch",
+    "灰度",
+    "区域测试"
+  ],
   "parentAtomId": "atom_first_launch_overview",
   "relationType": "child",
   "coreIdea": "在小范围（一个城市、一个国家、一个用户群）静悄悄上线，不做任何 PR，让产品在没有聚光灯下暴露真实问题。等数据稳定再扩大——「先小后大」是降低发布风险的唯一姿势。",
@@ -29,5 +34,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.259Z",
+  "kind": "methodology"
 }

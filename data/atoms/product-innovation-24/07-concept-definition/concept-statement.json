@@ -5,7 +5,11 @@
   "nameEn": "Concept Statement",
   "frameworkId": "product-innovation-24",
   "cellId": 7,
-  "tags": ["概念陈述", "立项", "一段话"],
+  "tags": [
+    "概念陈述",
+    "立项",
+    "一段话"
+  ],
   "parentAtomId": "atom_concept_definition_overview",
   "relationType": "child",
   "coreIdea": "概念陈述是一段 100-150 字的散文，它的唯一任务是让一个陌生人读完后想说『这玩意儿我现在能买吗？』。如果读完只是『嗯还行』，就还没完成。",
@@ -23,7 +27,11 @@
     "content": "你躺在床上，脑子像浏览器开了 40 个 tab。你试过冥想 App 但跟不下去——它们都太长太严肃。Calm 是一个为现代失眠者设计的睡眠故事 App，每晚 10 分钟，由一位真人轻声讲一个无趣到让你睡着的故事。今晚就试试。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.247Z",
+  "kind": "methodology"
 }

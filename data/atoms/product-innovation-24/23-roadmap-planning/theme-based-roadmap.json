@@ -5,7 +5,11 @@
   "nameEn": "Theme-Based Roadmap",
   "frameworkId": "product-innovation-24",
   "cellId": 23,
-  "tags": ["themes", "roadmap", "bruce-mccarthy"],
+  "tags": [
+    "themes",
+    "roadmap",
+    "bruce-mccarthy"
+  ],
   "parentAtomId": "atom_roadmap_planning_overview",
   "relationType": "child",
   "coreIdea": "Bruce McCarthy 提倡：把路线图组织成 3-5 个'主题'（客户问题群），而不是离散功能列表。主题让团队保持聚焦同时给执行留足空间。",
@@ -24,7 +28,11 @@
     "content": "Intercom 在 2017-2019 年把路线图组织为三大主题：Engage（让客户激活）、Support（解决客户问题）、Marketing（吸引新客户）。每个主题独立团队 + 独立 OKR，公司资源三七二十一分（约 40/40/20）。Des Traynor 在多次分享中强调：'主题让我们能对任何新想法快速判断—— 如果它不属于这三个之一，就不做。'这种聚焦让 Intercom 在 SaaS 客户沟通赛道建立了清晰的产品身份。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.267Z",
+  "kind": "methodology"
 }

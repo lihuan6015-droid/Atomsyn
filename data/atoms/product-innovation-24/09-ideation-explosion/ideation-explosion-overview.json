@@ -5,7 +5,12 @@
   "nameEn": "Ideation Explosion Toolkit",
   "frameworkId": "product-innovation-24",
   "cellId": 9,
-  "tags": ["创意", "发散", "工作坊", "创新方法"],
+  "tags": [
+    "创意",
+    "发散",
+    "工作坊",
+    "创新方法"
+  ],
   "coreIdea": "好创意来自数量而非灵感。先用结构化发散逼出 50+ 个候选，再筛选——'先广再深'是创意爆破的铁律，跳过发散直接评判会扼杀最非显而易见的解。",
   "whenToUse": "概念立项 · 卡壳无新想法时 · 团队共创工作坊 · 旧产品改版前的破局环节 · 探索差异化机会",
   "keySteps": [
@@ -22,7 +27,11 @@
     "content": "Brian Chesky 团队在房源增长停滞时没有立即写代码，而是用 HMW 重写问题：'我们如何才能让房东把房源拍得像高级酒店一样？'——发散出'免费上门拍照''按小时租摄影师''众包拍摄'等想法，最终选定免费上门拍照，房源转化率翻倍。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.250Z",
+  "kind": "methodology"
 }

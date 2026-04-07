@@ -5,7 +5,12 @@
   "nameEn": "Product Hunt Launch",
   "frameworkId": "product-innovation-24",
   "cellId": 16,
-  "tags": ["发布", "Product Hunt", "Maker 社区", "GTM"],
+  "tags": [
+    "发布",
+    "Product Hunt",
+    "Maker 社区",
+    "GTM"
+  ],
   "parentAtomId": "atom_first_launch_overview",
   "relationType": "child",
   "coreIdea": "Product Hunt 是全球早期采纳者最集中的 24 小时聚光灯。一次成功的 PH launch 能在一天内带来 5-50k 访问、上千订阅、几位天使投资人 inbound。但准备工作必须做满 3 周——临时上场必败。",
@@ -39,5 +44,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.259Z",
+  "kind": "methodology"
 }

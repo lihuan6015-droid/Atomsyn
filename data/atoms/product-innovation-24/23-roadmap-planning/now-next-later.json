@@ -5,7 +5,11 @@
   "nameEn": "Now-Next-Later Roadmap",
   "frameworkId": "product-innovation-24",
   "cellId": 23,
-  "tags": ["now-next-later", "roadmap", "janna-bastow"],
+  "tags": [
+    "now-next-later",
+    "roadmap",
+    "janna-bastow"
+  ],
   "parentAtomId": "atom_roadmap_planning_overview",
   "relationType": "child",
   "coreIdea": "Janna Bastow 提出的三栏路线图：Now 是正在做的、Next 是下一个周期可能做的、Later 是远期愿景。三栏的承诺度递减，没有具体日期，避免被甘特图绑架。",
@@ -24,7 +28,11 @@
     "content": "Janna Bastow 的 ProdPad 公司本身就用 Now-Next-Later 管理自己的路线图，并把它做成产品功能。Now 栏永远只有 2-3 项，每月更新。她在多次大会演讲中讲过：'当客户问下个季度有什么 feature 时，最好的回答是给他看 Next 栏然后说—— maybe。这种诚实反而比 Gantt 图更能赢得信任。'"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.267Z",
+  "kind": "methodology"
 }

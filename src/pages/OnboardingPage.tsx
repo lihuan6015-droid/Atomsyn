@@ -5,41 +5,21 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import atomsynLogoImg from '@/assets/atomsyn-logo.png'
 import {
   ArrowRight,
   Bot,
   CheckCircle2,
-  Compass,
-  Eye,
-  EyeOff,
-  Loader2,
   Sparkles,
-  TestTube2,
 } from 'lucide-react'
-import { llmConfigApi } from '@/lib/dataApi'
-import {
-  getStoredApiKey,
-  setStoredApiKey,
-  testCopilotConnection,
-} from '@/lib/llmClient'
-import type { LLMConfig, LLMProvider } from '@/types'
+import { useModelConfigStore } from '@/stores/useModelConfigStore'
 
 const STEPS = ['欢迎', 'AI 配置', '探索骨架', '完成']
 
 export function OnboardingPage() {
   const navigate = useNavigate()
   const [step, setStep] = useState(0)
-  const [config, setConfig] = useState<LLMConfig | null>(null)
-  const [apiKey, setApiKey] = useState('')
-  const [showKey, setShowKey] = useState(false)
-  const [testing, setTesting] = useState(false)
-  const [testMsg, setTestMsg] = useState<string | null>(null)
-  const [testOk, setTestOk] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    llmConfigApi.get().then(setConfig).catch(() => setConfig(null))
-    setApiKey(getStoredApiKey() ?? '')
-  }, [])
+  const hasModels = useModelConfigStore((s) => s.models.length > 0)
 
   function skip() {
     localStorage.setItem('ccl-onboarded', 'true')
@@ -55,27 +35,9 @@ export function OnboardingPage() {
     navigate('/atlas')
   }
 
-  async function handleTest() {
-    if (!config) return
-    if (apiKey.trim()) setStoredApiKey(apiKey.trim())
-    setTesting(true)
-    setTestMsg(null)
-    const r = await testCopilotConnection()
-    setTestOk(r.ok)
-    setTestMsg(r.message)
-    setTesting(false)
-  }
-
-  async function saveAndNext() {
-    if (config) {
-      try {
-        await llmConfigApi.save(config)
-      } catch {
-        /* non-fatal */
-      }
-    }
-    if (apiKey.trim()) setStoredApiKey(apiKey.trim())
-    next()
+  function goToSettings() {
+    localStorage.setItem('ccl-onboarded', 'true')
+    navigate('/settings')
   }
 
   return (
@@ -83,10 +45,10 @@ export function OnboardingPage() {
       {/* Top bar */}
       <header className="flex items-center justify-between p-5">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-sky-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
-            <Sparkles className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-xl overflow-hidden shadow-lg shadow-violet-500/30">
+            <img src={atomsynLogoImg} alt="Atomsyn" className="w-full h-full object-cover" />
           </div>
-          <div className="text-sm font-semibold">CCL PM Tool</div>
+          <div className="text-sm font-semibold">Atomsyn</div>
         </div>
         <button
           onClick={skip}
@@ -163,105 +125,18 @@ export function OnboardingPage() {
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-sky-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
                 <Bot className="w-6 h-6 text-white" />
               </div>
-              <h1 className="text-xl font-semibold">配置 AI 副驾驶</h1>
-              <p className="text-xs text-neutral-500">
-                填入 API Key 后，副驾驶可以在你迷茫时帮你导航到正确的方法论。可稍后在设置中修改。
+              <h1 className="text-xl font-semibold">配置 AI 模型</h1>
+              <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">
+                Atomsyn 支持 10+ 家模型提供商（OpenAI / Anthropic / 通义千问 / DeepSeek 等）。
+                配置后副驾驶可以在你迷茫时帮你导航到正确的方法论。
               </p>
-
-              {!config ? (
-                <div className="text-sm text-neutral-500 flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin" /> 加载配置…
+              {hasModels ? (
+                <div className="rounded-xl bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-4 py-3 text-sm">
+                  已配置模型，可继续下一步。
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-[11px] text-neutral-500">Provider</label>
-                      <select
-                        value={config.activeProvider}
-                        onChange={(e) =>
-                          setConfig({
-                            ...config,
-                            activeProvider: e.target.value as LLMProvider,
-                          })
-                        }
-                        className={inputClass}
-                      >
-                        <option value="anthropic">Anthropic</option>
-                        <option value="openai">OpenAI</option>
-                        <option value="custom">Custom</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="text-[11px] text-neutral-500">Model</label>
-                      <input
-                        value={config.providers[config.activeProvider].model}
-                        onChange={(e) =>
-                          setConfig({
-                            ...config,
-                            providers: {
-                              ...config.providers,
-                              [config.activeProvider]: {
-                                ...config.providers[config.activeProvider],
-                                model: e.target.value,
-                              },
-                            },
-                          })
-                        }
-                        className={inputClass}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-[11px] text-neutral-500">API Key</label>
-                    <div className="relative">
-                      <input
-                        type={showKey ? 'text' : 'password'}
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        className={inputClass + ' pr-10'}
-                        placeholder="sk-..."
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowKey((v) => !v)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-neutral-500"
-                      >
-                        {showKey ? (
-                          <EyeOff className="w-4 h-4" />
-                        ) : (
-                          <Eye className="w-4 h-4" />
-                        )}
-                      </button>
-                    </div>
-                    <div className="text-[10px] text-neutral-500 mt-1">
-                      🔒 仅存储在浏览器本地，不会写入项目文件。
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={handleTest}
-                      disabled={testing}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-200/70 dark:border-white/10 text-xs hover:bg-neutral-100 dark:hover:bg-white/5 disabled:opacity-50"
-                    >
-                      {testing ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <TestTube2 className="w-3.5 h-3.5" />
-                      )}
-                      测试连接
-                    </button>
-                    {testMsg && (
-                      <span
-                        className={
-                          'text-[11px] ' +
-                          (testOk ? 'text-emerald-600' : 'text-red-500')
-                        }
-                      >
-                        {testMsg}
-                      </span>
-                    )}
-                  </div>
+                <div className="rounded-xl bg-amber-500/10 text-amber-700 dark:text-amber-400 px-4 py-3 text-sm">
+                  尚未配置模型。可在设置页添加，也可稍后配置。
                 </div>
               )}
 
@@ -272,20 +147,28 @@ export function OnboardingPage() {
                 >
                   暂时跳过
                 </button>
-                <button
-                  onClick={saveAndNext}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-br from-violet-500 to-sky-500 text-white text-sm shadow-lg shadow-violet-500/30 hover:scale-[1.02] active:scale-95 transition-transform"
-                >
-                  下一步 <ArrowRight className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={goToSettings}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-neutral-300/70 dark:border-white/10 text-sm hover:bg-neutral-100 dark:hover:bg-white/5"
+                  >
+                    前往设置
+                  </button>
+                  <button
+                    onClick={next}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-br from-violet-500 to-sky-500 text-white text-sm shadow-lg shadow-violet-500/30 hover:scale-[1.02] active:scale-95 transition-transform"
+                  >
+                    下一步 <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </>
           )}
 
           {step === 2 && (
             <>
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-sky-500 flex items-center justify-center shadow-lg shadow-emerald-500/30">
-                <Compass className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 rounded-2xl overflow-hidden shadow-lg shadow-emerald-500/30">
+                <img src={atomsynLogoImg} alt="Atomsyn" className="w-full h-full object-cover" />
               </div>
               <h1 className="text-xl font-semibold">你的第一张方法论已就绪</h1>
               <p className="text-sm text-neutral-600 dark:text-neutral-300">
@@ -313,7 +196,7 @@ export function OnboardingPage() {
               </div>
               <h1 className="text-xl font-semibold">一切就绪 🎉</h1>
               <p className="text-sm text-neutral-600 dark:text-neutral-300">
-                现在你可以开始使用 CCL PM Tool 了。沉淀第一张原子，或者直接打开 Atlas 浏览。
+                现在你可以开始使用 Atomsyn 了。沉淀第一张原子，或者直接打开 Atlas 浏览。
               </p>
               <button
                 onClick={finish}

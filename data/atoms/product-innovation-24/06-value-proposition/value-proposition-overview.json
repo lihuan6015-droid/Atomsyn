@@ -5,7 +5,12 @@
   "nameEn": "Value Proposition Design",
   "frameworkId": "product-innovation-24",
   "cellId": 6,
-  "tags": ["价值主张", "VPC", "差异化", "umbrella"],
+  "tags": [
+    "价值主张",
+    "VPC",
+    "差异化",
+    "umbrella"
+  ],
   "coreIdea": "价值主张不是一句营销文案，而是『客户痛 × 我们解 × 别人解不了』三件事都被锁死的契约。任何一项松动，转化率立刻塌方。",
   "whenToUse": "首页 hero 区文案改 N 版仍不灵 · 销售解释不清『我们到底卖啥』 · 融资 BP 一句话被否 · 进入新客群前重设定位",
   "keySteps": [
@@ -22,7 +27,11 @@
     "content": "Job: 团队信息同步; Pain: 邮件错过、抄送爆炸; Gain: 一处搜索全部历史。Reliever: 频道+@; Creator: 全文搜索+集成。一句话: Be Less Busy. 不卖『沟通工具』，卖『少忙一点』。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.245Z",
+  "kind": "methodology"
 }

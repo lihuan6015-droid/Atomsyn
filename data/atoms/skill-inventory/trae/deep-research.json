@@ -1,0 +1,24 @@
+{
+  "id": "skill_trae_deep-research",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "deep-research",
+  "tags": [
+    "trae"
+  ],
+  "localPath": "/Users/circlelee/.trae/skills/deep-research/SKILL.md",
+  "toolName": "trae",
+  "frontmatter": {
+    "name": "deep-research",
+    "description": "Use this skill instead of WebSearch for ANY question requiring web research. Trigger on queries like \"what is X\", \"explain X\", \"compare X and Y\", \"research X\", or before content generation tasks. Provides systematic multi-angle research methodology instead of single superficial searches. Use this proactively when the user's question needs online information."
+  },
+  "rawDescription": "Use this skill instead of WebSearch for ANY question requiring web research. Trigger on queries like \"what is X\", \"explain X\", \"compare X and Y\", \"research X\", or before content generation tasks. Provides systematic multi-angle research methodology instead of single superficial searches. Use this proactively when the user's question needs online information.",
+  "fileMtime": "2026-02-27T11:04:08.618Z",
+  "fileHash": "e25e76ac9f3be380a685e6b8cc5948180bdf0661c2e52e2d4cbb2ac9c417f197",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T13:03:34.181Z",
+  "updatedAt": "2026-04-08T13:03:34.181Z"
+}

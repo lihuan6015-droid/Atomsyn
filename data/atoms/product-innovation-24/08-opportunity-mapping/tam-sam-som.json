@@ -5,7 +5,13 @@
   "nameEn": "TAM-SAM-SOM Calculator",
   "frameworkId": "product-innovation-24",
   "cellId": 8,
-  "tags": ["TAM", "SAM", "SOM", "市场规模", "BP"],
+  "tags": [
+    "TAM",
+    "SAM",
+    "SOM",
+    "市场规模",
+    "BP"
+  ],
   "parentAtomId": "atom_opportunity_mapping_overview",
   "relationType": "child",
   "coreIdea": "TAM 不是抄报告里的最大数字，而是 top-down 和 bottom-up 两条算法必须交叉验证。两个数字差 10 倍以上时，要么市场假的，要么你算错了。",
@@ -24,7 +30,11 @@
     "content": "Top-down: 全球电商 GMV × 支付费率。Bottom-up: 全球开发者数 × 接入率 × 平均处理量。两个算法都指向 $1T+ 的支付流水，验证了赛道天花板足够。SOM 三年内只锚 0.1% 即可证明商业模型成立。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.249Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,12 @@
   "nameEn": "Closed Beta",
   "frameworkId": "product-innovation-24",
   "cellId": 16,
-  "tags": ["发布", "Closed Beta", "邀请制", "种子用户"],
+  "tags": [
+    "发布",
+    "Closed Beta",
+    "邀请制",
+    "种子用户"
+  ],
   "parentAtomId": "atom_first_launch_overview",
   "relationType": "child",
   "coreIdea": "用「邀请码 / Waitlist / 申请制」筛选出 50-500 位高匹配度的种子用户，建立 1 对 1 关系。Closed Beta 的目标不是收入，而是收集 200 字以上的真实反馈和创造「我是早期用户」的归属感。",
@@ -30,5 +35,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.259Z",
+  "kind": "methodology"
 }

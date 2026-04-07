@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_feature-investment-advisor",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "feature-investment-advisor",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/feature-investment-advisor/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "feature-investment-advisor",
+    "description": "引导产品经理评估功能投资，分析收入影响、成本结构、投资回报率和战略价值，给出构建/不构建的建议。",
+    "type": "interactive"
+  },
+  "rawDescription": "引导产品经理评估功能投资，分析收入影响、成本结构、投资回报率和战略价值，给出构建/不构建的建议。",
+  "fileMtime": "2026-03-07T06:49:57.874Z",
+  "fileHash": "d26eac2c0552153038b1d9e41a1133c5066f605d9988855446528a28099acb75",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.260Z",
+  "updatedAt": "2026-04-08T11:07:10.260Z"
+}

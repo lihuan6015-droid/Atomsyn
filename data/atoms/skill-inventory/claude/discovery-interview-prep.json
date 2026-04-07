@@ -1,0 +1,29 @@
+{
+  "id": "skill_claude_discovery-interview-prep",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "discovery-interview-prep",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/discovery-interview-prep/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "discovery-interview-prep",
+    "description": "通过提问引导产品经理准备客户发现访谈，涵盖研究目标、客户群体、约束条件和方法论，设计高效的访谈方案。",
+    "type": "interactive",
+    "theme": "discovery-research",
+    "best_for": "",
+    "scenarios": "",
+    "estimated_time": "15-20 min"
+  },
+  "rawDescription": "通过提问引导产品经理准备客户发现访谈，涵盖研究目标、客户群体、约束条件和方法论，设计高效的访谈方案。",
+  "fileMtime": "2026-03-07T06:49:57.873Z",
+  "fileHash": "781192861886ef8f9384064ebc12ec4685659afe1160f5f8553fe39e6529a8f8",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.256Z",
+  "updatedAt": "2026-04-08T11:07:10.256Z"
+}

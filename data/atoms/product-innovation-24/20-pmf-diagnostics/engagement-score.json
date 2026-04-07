@@ -5,7 +5,12 @@
   "nameEn": "Engagement Score",
   "frameworkId": "product-innovation-24",
   "cellId": 20,
-  "tags": ["engagement", "score", "composite", "health"],
+  "tags": [
+    "engagement",
+    "score",
+    "composite",
+    "health"
+  ],
   "parentAtomId": "atom_pmf_diagnostics_overview",
   "relationType": "child",
   "coreIdea": "单指标永远骗人，把频率、深度、广度三维加权成一个综合分，就能给每个用户打标——谁是铁粉、谁是边缘、谁快流失，一目了然。",
@@ -23,7 +28,11 @@
     "content": "HubSpot 把登录频次、功能使用广度、关键动作深度、NPS 得分综合成一个 0-100 分，CSM 根据分段决定是否主动触达，续费率显著提升。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.263Z",
+  "kind": "methodology"
 }

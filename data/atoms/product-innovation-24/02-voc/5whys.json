@@ -5,7 +5,12 @@
   "nameEn": "5 Whys",
   "frameworkId": "product-innovation-24",
   "cellId": 2,
-  "tags": ["5Whys", "根因分析", "用户访谈", "追问"],
+  "tags": [
+    "5Whys",
+    "根因分析",
+    "用户访谈",
+    "追问"
+  ],
   "parentAtomId": "atom_voc_overview",
   "relationType": "child",
   "coreIdea": "用户说出的第一层抱怨几乎从来不是真问题。连续问 5 个「为什么」能把表层现象穿透到根本动机——但关键不是问 5 次，而是每一次都要追问「为什么这对你重要」，而不是「为什么会这样」。前者找动机，后者找借口。",
@@ -24,7 +29,11 @@
     "content": "大野耐一在丰田车间看到一台机器停了。第 1 层：为什么停？保险丝烧了。第 2 层：为什么保险丝烧？轴承润滑不够。第 3 层：为什么润滑不够？油泵抽油量不足。第 4 层：为什么抽油量不足？泵轴磨损。第 5 层：为什么磨损？没有装滤网，铁屑进入。根因不是「换保险丝」，而是「加装滤网」——前面换 100 次保险丝都解决不了。这个案例后来成了精益生产的基石。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.232Z",
+  "kind": "methodology"
 }

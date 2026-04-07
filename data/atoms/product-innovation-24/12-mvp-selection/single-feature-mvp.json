@@ -5,7 +5,12 @@
   "nameEn": "Single-Feature MVP",
   "frameworkId": "product-innovation-24",
   "cellId": 12,
-  "tags": ["Single Feature", "MVP", "聚焦", "PMF"],
+  "tags": [
+    "Single Feature",
+    "MVP",
+    "聚焦",
+    "PMF"
+  ],
   "parentAtomId": "atom_mvp_selection_overview",
   "relationType": "child",
   "coreIdea": "只做一个核心功能并把它做到极致，所有支持功能（搜索、设置、个性化）一律砍掉。它不是粗糙版完整产品，而是'某一个动作的最佳实现'——通过聚焦获得识别度，让早期用户知道'你是干这个的'。",
@@ -24,7 +29,11 @@
     "content": "Kevin Systrom 早期产品 Burbn 有签到、奖励、照片、日程等十多个功能，无人使用。他砍到只剩'拍照 + 滤镜 + 分享'三步，重命名 Instagram 上线后两个月获 100 万用户。后来评论、Direct、Story 都是基于这一个核心动作的延伸。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.254Z",
+  "kind": "methodology"
 }

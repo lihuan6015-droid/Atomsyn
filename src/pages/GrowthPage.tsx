@@ -114,11 +114,15 @@ export function GrowthPage() {
   // ---------- Top atoms ----------
   const topAtoms = useMemo(() => {
     return [...atoms]
-      .sort((a, b) => (b.stats?.useCount ?? 0) - (a.stats?.useCount ?? 0))
+      .sort((a, b) => {
+        const bTotal = (b.stats?.aiInvokeCount ?? 0) + (b.stats?.humanViewCount ?? 0)
+        const aTotal = (a.stats?.aiInvokeCount ?? 0) + (a.stats?.humanViewCount ?? 0)
+        return bTotal - aTotal
+      })
       .slice(0, 5)
   }, [atoms])
 
-  const topMax = topAtoms[0]?.stats?.useCount ?? 1
+  const topMax = ((topAtoms[0]?.stats?.aiInvokeCount ?? 0) + (topAtoms[0]?.stats?.humanViewCount ?? 0)) || 1
 
   // ---------- Recent activity ----------
   const recent = useMemo(() => {
@@ -212,7 +216,7 @@ export function GrowthPage() {
           ) : (
             <ul className="space-y-2">
               {topAtoms.map((a) => {
-                const v = a.stats?.useCount ?? 0
+                const v = (a.stats?.aiInvokeCount ?? 0) + (a.stats?.humanViewCount ?? 0)
                 const pct = Math.max(4, (v / topMax) * 100)
                 return (
                   <li key={a.id}>

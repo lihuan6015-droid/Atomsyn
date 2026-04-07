@@ -5,7 +5,12 @@
   "nameEn": "Network Effect Map",
   "frameworkId": "product-innovation-24",
   "cellId": 22,
-  "tags": ["network-effects", "nfx", "moat", "platform"],
+  "tags": [
+    "network-effects",
+    "nfx",
+    "moat",
+    "platform"
+  ],
   "parentAtomId": "atom_growth_loops_overview",
   "relationType": "child",
   "coreIdea": "NFX 把网络效应分为 16 类（直接、间接、双边、数据、社交、协议等）。识别你产品里到底是哪一类，决定了你能造多深的护城河和需要多大的种子规模。",
@@ -24,7 +29,11 @@
     "content": "Airbnb 是典型的双边市场（NFX 第 6 类 Marketplace Network Effect）：房东多 → 选择多 → 房客多 → 房东收益高 → 更多房东加入。Airbnb 早期通过逐城市攻坚（先纽约后旧金山）解决冷启动，单城市达到 ~300 listings 临界后开始出现自然增长。Brian Chesky 团队甚至亲自飞到纽约挨家拍照提升供给质量。这一双边循环成为其相对 VRBO 等先发竞品的核心护城河。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.266Z",
+  "kind": "methodology"
 }

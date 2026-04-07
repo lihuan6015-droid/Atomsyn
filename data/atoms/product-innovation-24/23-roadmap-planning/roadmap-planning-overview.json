@@ -5,7 +5,12 @@
   "nameEn": "Product Roadmap Planning",
   "frameworkId": "product-innovation-24",
   "cellId": 23,
-  "tags": ["roadmap", "planning", "agile", "outcomes"],
+  "tags": [
+    "roadmap",
+    "planning",
+    "agile",
+    "outcomes"
+  ],
   "coreIdea": "好的路线图不是甘特图，而是'有取舍的方向声明'。它要回答：我们为什么做这个、要达到什么结果、什么暂时不做、何时重新评估。",
   "whenToUse": "季度/半年规划周期 · 跨团队对齐方向 · 高管或投资人需要清晰的下一步 · 销售需要对客户讲未来 · 已验证 PMF 进入规模化阶段",
   "keySteps": [
@@ -22,7 +27,11 @@
     "content": "Basecamp 抛弃传统季度 roadmap，改用 6 周'cycles + cooldown'：每周期只承诺 6 周内能做完的'shaped' bets，cycle 结束后留 2 周冷却 + 重新规划。没有任何承诺超过 6 周。Jason Fried 和 DHH 在《Shape Up》中强调：'路线图越长越是骗局——客户只关心下一个 cycle 你交付什么。'这一极端取舍让 Basecamp 的发布节奏几乎从未延期。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.267Z",
+  "kind": "methodology"
 }

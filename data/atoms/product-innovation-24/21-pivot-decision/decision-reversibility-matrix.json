@@ -5,7 +5,12 @@
   "nameEn": "Decision Reversibility Matrix (Bezos)",
   "frameworkId": "product-innovation-24",
   "cellId": 21,
-  "tags": ["decision-making", "bezos", "two-way-door", "speed"],
+  "tags": [
+    "decision-making",
+    "bezos",
+    "two-way-door",
+    "speed"
+  ],
   "parentAtomId": "atom_pivot_decision_overview",
   "relationType": "child",
   "coreIdea": "Bezos 的双门理论：Type 1 是单向门（不可逆，需慎重），Type 2 是双向门（可撤销，需迅速）。Pivot 决策中最大的浪费是'把 Type 2 当 Type 1 来开会'。",
@@ -24,7 +29,11 @@
     "content": "Bezos 在 1997 年股东信中写道：'有些决策是双向门，做错了可以走回来。这种决策应该由能力强的个人或小团队快速做出。'Amazon 内部把'产品命名'、'页面文案微调'、'按钮颜色'等划为 Type 2，由一线团队 24 小时内拍板；而'是否进入新市场'、'是否自建物流'划为 Type 1，需走六页备忘录评审。这一区分让 Amazon 在快速迭代和重大决策审慎之间找到平衡，被认为是其决策速度领先同行的核心机制之一。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.264Z",
+  "kind": "methodology"
 }

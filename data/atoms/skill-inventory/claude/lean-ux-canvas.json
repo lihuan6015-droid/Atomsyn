@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_lean-ux-canvas",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "lean-ux-canvas",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/lean-ux-canvas/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "lean-ux-canvas",
+    "description": "引导产品经理使用Jeff Gothelf的精益UX画布v2——围绕业务问题构建工作、暴露假设、确保每个迭代都有学习。",
+    "type": "interactive"
+  },
+  "rawDescription": "引导产品经理使用Jeff Gothelf的精益UX画布v2——围绕业务问题构建工作、暴露假设、确保每个迭代都有学习。",
+  "fileMtime": "2026-03-07T06:49:57.874Z",
+  "fileHash": "57c0762ab6c20c42d3f324259c80cf13524c6fcdcda16aa3db709b01dfb40425",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.263Z",
+  "updatedAt": "2026-04-08T11:07:10.263Z"
+}

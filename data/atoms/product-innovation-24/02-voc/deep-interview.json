@@ -5,7 +5,12 @@
   "nameEn": "Deep Interview",
   "frameworkId": "product-innovation-24",
   "cellId": 2,
-  "tags": ["访谈", "定性研究", "用户研究", "倾听"],
+  "tags": [
+    "访谈",
+    "定性研究",
+    "用户研究",
+    "倾听"
+  ],
   "parentAtomId": "atom_voc_overview",
   "relationType": "child",
   "coreIdea": "深度访谈不是「问问题」，是「引导用户讲故事」。真正有效的访谈 80% 时间用户在说，PM 只做三件事：抛开场问题、用沉默等待、追问具体细节。一旦用户开始说「我通常会……」就已经失败——你要让他说「上一次我是这么做的」。",
@@ -25,7 +30,11 @@
     "content": "Intercom 产品团队在做任何大功能前都坚持访谈 5 位真实用户。他们发现第 6 位开始新洞察骤减、但前 5 位往往足以暴露 80% 的关键问题。有一次他们准备做一个「更智能的收件箱」，访谈 5 位支持主管后发现真问题根本不是「智能」——而是「我没法知道哪些对话被我的团队漏掉了」。产品方向立即从 AI 优先级排序改为团队协作视图，上线后留存提升 40%。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.234Z",
+  "kind": "methodology"
 }

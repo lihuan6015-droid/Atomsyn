@@ -1,0 +1,24 @@
+{
+  "id": "skill_claude_surprise-me",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "surprise-me",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/surprise-me/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "surprise-me",
+    "description": "Create a delightful, unexpected \"wow\" experience for the user by dynamically discovering and creatively combining other enabled skills. Triggers when the user says \"surprise me\" or any request expressing a desire for an unexpected creative showcase. Also triggers when the user is bored, wants inspiration, or asks for \"something interesting\"."
+  },
+  "rawDescription": "Create a delightful, unexpected \"wow\" experience for the user by dynamically discovering and creatively combining other enabled skills. Triggers when the user says \"surprise me\" or any request expressing a desire for an unexpected creative showcase. Also triggers when the user is bored, wants inspiration, or asks for \"something interesting\".",
+  "fileMtime": "2026-02-27T11:04:08.713Z",
+  "fileHash": "e93e72ca445d112fa46c8b4d1b355cd97a51448ad20693f1279296523944d01a",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T13:03:34.171Z",
+  "updatedAt": "2026-04-08T13:03:34.171Z"
+}

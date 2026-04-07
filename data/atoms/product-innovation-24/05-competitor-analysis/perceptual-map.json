@@ -5,7 +5,12 @@
   "nameEn": "Perceptual Map",
   "frameworkId": "product-innovation-24",
   "cellId": 5,
-  "tags": ["知觉图", "心智定位", "二维矩阵", "差异化"],
+  "tags": [
+    "知觉图",
+    "心智定位",
+    "二维矩阵",
+    "差异化"
+  ],
   "parentAtomId": "atom_competitor_analysis_overview",
   "relationType": "child",
   "coreIdea": "找两根用户心里真正在用的尺子（不是功能尺），把竞品撒在 2D 平面上，空白象限就是你的定位地。两根轴选错，整张图作废。",
@@ -23,7 +28,11 @@
     "content": "Oatly 没和豆奶比『蛋白质含量』，而是用『时髦度 × 环保正确』两根轴，把自己撒在咖啡馆右上角空白处，绕开了所有传统植物奶玩家。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.243Z",
+  "kind": "methodology"
 }

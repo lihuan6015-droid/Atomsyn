@@ -1,0 +1,24 @@
+{
+  "id": "skill_claude_podcast-generation",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "podcast-generation",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/podcast-generation/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "podcast-generation",
+    "description": "Use this skill when the user requests to generate, create, or produce podcasts from text content. Converts written content into a two-host conversational podcast audio format with natural dialogue."
+  },
+  "rawDescription": "Use this skill when the user requests to generate, create, or produce podcasts from text content. Converts written content into a two-host conversational podcast audio format with natural dialogue.",
+  "fileMtime": "2026-02-27T11:04:08.675Z",
+  "fileHash": "a571aadb5b21ff81018898a7a79e20a95222408d7727f5e795e6ac455ac7f923",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T13:03:34.163Z",
+  "updatedAt": "2026-04-08T13:03:34.163Z"
+}

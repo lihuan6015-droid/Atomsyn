@@ -5,7 +5,12 @@
   "nameEn": "HEART Framework",
   "frameworkId": "product-innovation-24",
   "cellId": 19,
-  "tags": ["heart", "ux-metrics", "google", "experience"],
+  "tags": [
+    "heart",
+    "ux-metrics",
+    "google",
+    "experience"
+  ],
   "parentAtomId": "atom_metric_system_overview",
   "relationType": "child",
   "coreIdea": "HEART 用 5 个维度量化用户体验：Happiness、Engagement、Adoption、Retention、Task Success。它让『体验好坏』从感受变成可追踪的指标。",
@@ -23,7 +28,11 @@
     "content": "Kerry Rodden 等在 Google+ 项目创造 HEART 框架，用它量化每次改版的用户体验变化，成为 Google 内部标准 UX 度量工具。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.262Z",
+  "kind": "methodology"
 }

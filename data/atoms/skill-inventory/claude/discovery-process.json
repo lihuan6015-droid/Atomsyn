@@ -1,0 +1,29 @@
+{
+  "id": "skill_claude_discovery-process",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "discovery-process",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/discovery-process/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "discovery-process",
+    "description": "引导产品经理完成完整的产品发现周期——从初始问题假设到验证解决方案，串联问题定义、客户访谈、综合分析和实验。",
+    "type": "workflow",
+    "theme": "discovery-research",
+    "best_for": "",
+    "scenarios": "",
+    "estimated_time": "30-60 min"
+  },
+  "rawDescription": "引导产品经理完成完整的产品发现周期——从初始问题假设到验证解决方案，串联问题定义、客户访谈、综合分析和实验。",
+  "fileMtime": "2026-03-07T06:49:57.873Z",
+  "fileHash": "3ff760648efcc147f9083102bfa5114456211df38b51edc22706d5c007e284e9",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.257Z",
+  "updatedAt": "2026-04-08T11:07:10.257Z"
+}

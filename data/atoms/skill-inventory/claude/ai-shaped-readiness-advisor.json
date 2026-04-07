@@ -1,0 +1,29 @@
+{
+  "id": "skill_claude_ai-shaped-readiness-advisor",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "ai-shaped-readiness-advisor",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/ai-shaped-readiness-advisor/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "ai-shaped-readiness-advisor",
+    "description": "评估你的产品工作是AI优先还是AI驱动，对5项能力打分并推荐下一个要构建的能力。",
+    "type": "interactive",
+    "theme": "ai-agents",
+    "best_for": "",
+    "scenarios": "",
+    "estimated_time": "15-20 min"
+  },
+  "rawDescription": "评估你的产品工作是AI优先还是AI驱动，对5项能力打分并推荐下一个要构建的能力。",
+  "fileMtime": "2026-03-07T06:48:43.129Z",
+  "fileHash": "e3349580c97402875496fb379bdaa9ea0e0d0d7df8856816a6e2169c9aef4925",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.250Z",
+  "updatedAt": "2026-04-08T11:07:10.250Z"
+}

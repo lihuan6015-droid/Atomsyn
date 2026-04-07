@@ -5,7 +5,12 @@
   "nameEn": "User Flow",
   "frameworkId": "product-innovation-24",
   "cellId": 14,
-  "tags": ["用户流", "信息架构", "决策树", "可用性"],
+  "tags": [
+    "用户流",
+    "信息架构",
+    "决策树",
+    "可用性"
+  ],
   "parentAtomId": "atom_experience_mapping_overview",
   "relationType": "child",
   "coreIdea": "把用户在产品里完成某个 task 的所有可能路径画成一棵决策树：起点（动机）→ 节点（屏幕/动作）→ 分支（成功/失败/放弃）→ 终点（目标达成）。流程图越早画，工程师越少返工。",
@@ -29,5 +34,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.257Z",
+  "kind": "methodology"
 }

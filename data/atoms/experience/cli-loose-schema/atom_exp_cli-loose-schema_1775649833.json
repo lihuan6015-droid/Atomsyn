@@ -1,0 +1,20 @@
+{
+  "name": "CLI 自测 · loose schema 写入",
+  "sourceContext": "CLI 架构收紧后首次测试 loose input",
+  "insight": "atlas-cli 现在接受最小内容字段 (name/sourceContext/insight/tags), 自动生成 id/kind/schemaVersion/timestamps/stats。这是把 agent 从 schema 细节里解放出来的关键一步, skill 契约从此稳定。",
+  "tags": [
+    "atlas-cli",
+    "self-test",
+    "loose-schema"
+  ],
+  "kind": "experience",
+  "schemaVersion": 1,
+  "sourceAgent": "claude-code",
+  "createdAt": "2026-04-08T12:03:53.445Z",
+  "updatedAt": "2026-04-08T12:03:53.448Z",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "id": "atom_exp_cli-loose-schema_1775649833"
+}

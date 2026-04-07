@@ -5,7 +5,12 @@
   "nameEn": "Kano Model",
   "frameworkId": "product-innovation-24",
   "cellId": 4,
-  "tags": ["KANO", "需求分层", "优先级", "用户满意度"],
+  "tags": [
+    "KANO",
+    "需求分层",
+    "优先级",
+    "用户满意度"
+  ],
   "parentAtomId": "atom_demand_filtering_toolkit",
   "relationType": "child",
   "coreIdea": "需求满足度和用户满意度不是线性关系。KANO 把需求分 5 类：基本型（没有就骂、有了不加分）、期望型（越多越满意）、兴奋型（意外惊喜）、无差异型（用户不在意）、反向型（越做越惹怒）。所有的「全都要」本质都是没做过 KANO。",
@@ -25,7 +30,11 @@
     "content": "2007 年 iPhone 发布时「拍照」是兴奋型——大家惊喜相机居然还能这么好。2012 年变成期望型——像素越高越受欢迎。2020 年变成基本型——没有好相机直接被骂到退货。华为早在 2016 年就意识到「相机」即将退化为基本型，于是 All-in 夜景 + AI 摄影创造新的兴奋点；小米同期押注性价比，相机做成期望型「够用就行」。同一需求，不同时点的 KANO 归类，战略完全不同。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.238Z",
+  "kind": "methodology"
 }

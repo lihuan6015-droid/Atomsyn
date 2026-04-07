@@ -5,7 +5,12 @@
   "nameEn": "RICE Score",
   "frameworkId": "product-innovation-24",
   "cellId": 4,
-  "tags": ["RICE", "优先级", "量化评分", "Intercom"],
+  "tags": [
+    "RICE",
+    "优先级",
+    "量化评分",
+    "Intercom"
+  ],
   "parentAtomId": "atom_demand_filtering_toolkit",
   "relationType": "child",
   "coreIdea": "RICE 把四个维度——Reach（触达人数）× Impact（影响力）× Confidence（置信度）÷ Effort（工作量）——合并成一个可比较的数字。它的真实价值不在于算出精确分数，而是强迫团队把「我觉得很重要」翻译成「多少人、多大影响、我多确定、花多少」。争议往往发生在 Confidence 列，这一列暴露了谁的直觉在裸奔。",
@@ -34,7 +39,11 @@
       "addedAt": "2026-04-07T00:00:00Z"
     }
   ],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.240Z",
+  "kind": "methodology"
 }

@@ -5,7 +5,12 @@
   "nameEn": "Press Release-First (Working Backwards)",
   "frameworkId": "product-innovation-24",
   "cellId": 16,
-  "tags": ["Working Backwards", "Amazon", "PR/FAQ", "愿景驱动"],
+  "tags": [
+    "Working Backwards",
+    "Amazon",
+    "PR/FAQ",
+    "愿景驱动"
+  ],
   "parentAtomId": "atom_first_launch_overview",
   "relationType": "child",
   "coreIdea": "Amazon 的「Working Backwards」核心动作：在写一行代码之前，先假装产品已经发布，写一份未来的新闻稿 + FAQ。如果你写不出让客户兴奋的新闻稿，说明这个产品压根不该被建出来。",
@@ -39,5 +44,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.259Z",
+  "kind": "methodology"
 }

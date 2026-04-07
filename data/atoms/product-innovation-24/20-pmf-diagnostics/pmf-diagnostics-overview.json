@@ -5,7 +5,13 @@
   "nameEn": "PMF Diagnostics System",
   "frameworkId": "product-innovation-24",
   "cellId": 20,
-  "tags": ["pmf", "diagnostic", "retention", "nps", "fit"],
+  "tags": [
+    "pmf",
+    "diagnostic",
+    "retention",
+    "nps",
+    "fit"
+  ],
   "coreIdea": "PMF 不是一个瞬间而是一个光谱。用 4 把尺子一起量：用户失去它会不会痛（Sean Ellis）、留下来的用户是否平坦（曲线）、会不会传出去（NPS）、热情用户是否能复制（Engine）。",
   "whenToUse": "判断是否该加速投入 · 融资前自测 · 决定枢转还是坚持 · 向投资人讲清楚 PMF 程度",
   "keySteps": [
@@ -21,7 +27,11 @@
     "content": "Rahul Vohra 在发现 Sean Ellis 得分只有 22% 时没有放弃，而是系统化提升『极度失望用户』比例，9 个月后得分升到 58%，成为 PMF Engine 范本。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.263Z",
+  "kind": "methodology"
 }

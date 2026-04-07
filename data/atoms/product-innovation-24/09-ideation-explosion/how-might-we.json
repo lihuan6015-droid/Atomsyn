@@ -5,7 +5,12 @@
   "nameEn": "How Might We (HMW)",
   "frameworkId": "product-innovation-24",
   "cellId": 9,
-  "tags": ["HMW", "问题重构", "Design Thinking", "发散前置"],
+  "tags": [
+    "HMW",
+    "问题重构",
+    "Design Thinking",
+    "发散前置"
+  ],
   "parentAtomId": "atom_ideation_explosion_overview",
   "relationType": "child",
   "coreIdea": "好答案来自好问题。把痛点重写成'我们如何能…'句式，避开'为什么不能'（防御）和'我们应该'（命令），创造一种'有可能但还没解'的开放空间——这是所有发散方法的入场券。",
@@ -24,7 +29,11 @@
     "content": "P&G 团队访谈青少年发现痛点'我不想被妈妈看到我用除臭剂'。原始洞察是隐私尴尬，HMW 改写为'我们如何能让青少年获得清新感而不必经历公开使用的尴尬'，发散出体香片、随身贴等想法，最终诞生了便携片状产品。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.250Z",
+  "kind": "methodology"
 }

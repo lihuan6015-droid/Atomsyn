@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_jobs-to-be-done",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "jobs-to-be-done",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/jobs-to-be-done/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "jobs-to-be-done",
+    "description": "系统化探索客户想要完成的任务（功能性、社交性、情感性），他们经历的痛点和期望的收益，发现未被满足的需求。",
+    "type": "component"
+  },
+  "rawDescription": "系统化探索客户想要完成的任务（功能性、社交性、情感性），他们经历的痛点和期望的收益，发现未被满足的需求。",
+  "fileMtime": "2026-03-07T06:49:57.874Z",
+  "fileHash": "5b6541ea7d99dec8dcae493256f6d78dd331b215e7444b2bf3b5e6e0b322a36a",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.263Z",
+  "updatedAt": "2026-04-08T11:07:10.263Z"
+}

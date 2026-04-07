@@ -5,7 +5,12 @@
   "nameEn": "North Star Metric",
   "frameworkId": "product-innovation-24",
   "cellId": 19,
-  "tags": ["north-star", "metric", "value", "alignment"],
+  "tags": [
+    "north-star",
+    "metric",
+    "value",
+    "alignment"
+  ],
   "parentAtomId": "atom_metric_system_overview",
   "relationType": "child",
   "coreIdea": "北极星 = 客户获得核心价值的次数 × 范围。它必须是客户实际用到产品而非仅仅付钱的那一刻，否则团队会为了短期收入伤害长期价值。",
@@ -23,7 +28,11 @@
     "content": "Spotify 选择『总收听时长』作为北极星，因为它直接反映用户从音乐中获得的价值，并与订阅续费强相关。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.262Z",
+  "kind": "methodology"
 }

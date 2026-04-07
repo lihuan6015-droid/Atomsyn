@@ -1,11 +1,21 @@
-# CCL PM Tool · Project Memory
+# CCL Atlas · Project Memory
 
-This is a **Personal Meta-Skill Vault** — a local-first cross-platform desktop app that
-turns scattered methodology notes (product, UI/UX, Agent dev, ...) into a
-**callable, growable, project-bound knowledge system** for one user.
+This is a **Personal Meta-Skill Vault (V1.5: 主权元认知层)** — a local-first
+cross-platform Tauri desktop app that turns scattered methodology notes +
+crystallized AI session experiences + local skill inventory into a
+**callable, growable, 100%-local, agent-bidirectional** knowledge system
+for one user. **L1** = human-facing GUI (Atlas / Playground / Growth /
+Experiences / Skill Map / Settings). **L2** = AI-facing interface via
+`atlas-cli` + `atlas-write` / `atlas-read` skills installed into Claude
+Code and Cursor.
 
-📄 Full PRD: `docs/PRD.md`
+📄 PRD: `docs/PRD.md` (V1) · `docs/PRD-v1.5-delta.md` (V1.5 增量) · **`docs/PRD-v2.0.md` (V2.0 ← 当前)**
+🎯 战略: `docs/framing/v1.5-problem-framing.md` · **`docs/framing/v2.0-problem-framing.md` (Atomsyn 北极星)**
+🛠 V1.5 归档: `docs/plans/v1.5-implementation-plan.md` · `docs/plans/v1.5-resume-state.md` · `docs/releases/v1.5.md`
+🚀 V2.0 启动: `docs/plans/v2.0-handoff.md` · `docs/plans/v2.0-implementation-plan.md` · **`docs/plans/v2.0-m0-complete.md` (M0 完成 + M1 交接)**
 🎨 Visual mockups: `docs/mockups/atlas.html`, `docs/mockups/atom-card.html`
+
+**当前版本**: V2.0 进行中 (2026-04-09 起步)。产品将改名 **Atomsyn** (M0 第一件事)。旧名 `ccl-atlas` / `atlas-cli` 在 M0 完成后不再使用 (单用户 MVP,无兼容层)。启动新会话前先读 `docs/framing/v2.0-problem-framing.md` + `docs/PRD-v2.0.md`。
 
 ---
 
@@ -89,13 +99,31 @@ skills/
 
 ---
 
-## Environment
+## Environment (V1.5)
 
-- **Stack**: Vite + React 18 + TS + TailwindCSS + Zustand + Framer Motion
-- **Data API**: Vite dev plugin in `vite-plugin-data-api.ts` (no Tauri yet — that's a future opt-in)
-- **Run**: `npm install && npm run dev` → http://localhost:5173
-- **Type-check**: `npm run lint`
-- **Tauri shell** (later): planned but not in v1 alpha — to add, install Rust then `npm install -D @tauri-apps/cli && npx tauri init`
+- **Stack**: Vite + React 18 + TS + TailwindCSS + Zustand + Framer Motion + **Tauri v2**
+- **Data API**: Vite dev plugin (`vite-plugin-data-api.ts`) in dev mode + Tauri Rust commands in packaged mode (path resolver shared via env → `~/.ccl-atlas-config.json` → platform default)
+- **Run dev (web)**: `npm install && npm run dev` → http://localhost:5173
+- **Run dev (desktop)**: `npm run tauri:dev` (need rustup + macOS native title bar handles drag)
+- **Build**: `npm run build` (runs `tsc -b && vite build`) — note: `npm run lint` only runs `tsc --noEmit` on src/, `npm run build` is the only check that catches `tsconfig.node.json` errors
+- **Cargo check**: `export PATH="$HOME/.cargo/bin:$PATH" && (cd src-tauri && cargo check)`
+- **Reindex**: `npm run reindex`
+- **L2 CLI shim**: `~/.ccl-atlas/bin/atlas-cli` (sh script wrapping the project's `scripts/atlas-cli.mjs` — install via `node scripts/atlas-cli.mjs install-skill --target claude,cursor`)
+
+## L2 · atlas-cli command surface (V1.5 contract)
+
+```
+atlas-cli write   --stdin              # create new experience atom (loose JSON in)
+atlas-cli update  --id <id> --stdin    # merge into existing atom; atomically moves slug folder if name changed
+atlas-cli get     --id <id>            # print one atom JSON (exit 2 if not found)
+atlas-cli find    --query "..."        # search experience atoms by keyword (skill uses BEFORE write/update)
+atlas-cli read    --query "..."        # markdown output for atlas-read skill consumption
+atlas-cli reindex
+atlas-cli where
+atlas-cli install-skill --target claude,cursor
+```
+
+The two skills `~/.claude/skills/atlas-write` and `~/.claude/skills/atlas-read` (also installed under Cursor) drive these commands. **Agent never writes JSON to disk directly** — always through the CLI so schema validation, slug derivation, lock checks, and usage logging are centralized.
 
 ---
 
@@ -106,14 +134,18 @@ skills/
 - Font: Inter + JetBrains Mono
 - Animation: Framer Motion or CSS spring `cubic-bezier(0.16, 1, 0.3, 1)`
 - Strict adherence to **progressive disclosure (4 levels)** on atom cards
-- Theme: dark-first, full light parity, persisted to localStorage
+- Theme: **light-first as of V1.5**, full dark parity, persisted to zustand `ccl-app` localStorage key
+- Tauri native macOS title bar tracks app theme via `getCurrentWindow().setTheme()` (requires `core:window:allow-set-theme` capability — see `src-tauri/capabilities/default.json`)
 - Reference mockups: `docs/mockups/atlas.html`, `docs/mockups/atom-card.html`
 
 ---
 
 ## Where to look first
 
-1. **Lost?** → `docs/PRD.md` § 5 (Solution Overview)
-2. **Data shape?** → `src/types/index.ts` and `skills/schemas/`
-3. **How to write to disk?** → `src/lib/dataApi.ts`
-4. **Visual reference?** → `docs/mockups/*.html`
+1. **Lost / picking up V1.5 work** → `docs/plans/v1.5-resume-state.md` (handoff doc)
+2. **Starting V2.0 work** → `docs/plans/v2.0-handoff.md` (bridge doc)
+3. **Data shape?** → `src/types/index.ts` (discriminated union: methodology / experience / skill-inventory) + `skills/schemas/`
+4. **How CLI works internally** → `scripts/atlas-cli.mjs`
+5. **How GUI talks to disk in dev** → `vite-plugin-data-api.ts`
+6. **How Tauri talks to disk in packaged mode** → `src-tauri/src/lib.rs` (resolve_data_dir, init_*, seed_*, open_path)
+7. **Visual reference** → `docs/mockups/*.html`

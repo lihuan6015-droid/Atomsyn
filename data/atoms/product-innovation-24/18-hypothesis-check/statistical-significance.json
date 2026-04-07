@@ -5,7 +5,12 @@
   "nameEn": "Statistical Significance Test",
   "frameworkId": "product-innovation-24",
   "cellId": 18,
-  "tags": ["statistics", "ab-test", "p-value", "power"],
+  "tags": [
+    "statistics",
+    "ab-test",
+    "p-value",
+    "power"
+  ],
   "parentAtomId": "atom_hypothesis_check_overview",
   "relationType": "child",
   "coreIdea": "没有显著性的 A/B 就是抛硬币。先算样本量，再跑实验，再看 p 值——顺序反了就是自欺欺人。",
@@ -23,7 +28,11 @@
     "content": "微软的 ExP 平台强制要求所有实验先算样本量、签署 OEC，上线后 novelty 效应监控 14 天，避免了大量『假显著』决策。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.262Z",
+  "kind": "methodology"
 }

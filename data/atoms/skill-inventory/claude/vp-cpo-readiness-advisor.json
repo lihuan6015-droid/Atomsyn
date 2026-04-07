@@ -1,0 +1,29 @@
+{
+  "id": "skill_claude_vp-cpo-readiness-advisor",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "vp-cpo-readiness-advisor",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/vp-cpo-readiness-advisor/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "vp-cpo-readiness-advisor",
+    "description": "辅导总监和高管完成向VP或CPO的转型，涵盖准备、面试、新上任和高管层级调整四种场景。",
+    "type": "interactive",
+    "theme": "career-leadership",
+    "best_for": "",
+    "scenarios": "",
+    "estimated_time": "15-20 min"
+  },
+  "rawDescription": "辅导总监和高管完成向VP或CPO的转型，涵盖准备、面试、新上任和高管层级调整四种场景。",
+  "fileMtime": "2026-03-07T06:49:57.877Z",
+  "fileHash": "40765eea87233afe476874c0fcfe3ade18944621f38b602c125733e6f77f8f77",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.277Z",
+  "updatedAt": "2026-04-08T11:07:10.277Z"
+}

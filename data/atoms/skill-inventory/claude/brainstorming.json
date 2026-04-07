@@ -1,0 +1,24 @@
+{
+  "id": "skill_claude_brainstorming",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "brainstorming",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/brainstorming/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "brainstorming",
+    "description": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation."
+  },
+  "rawDescription": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.",
+  "fileMtime": "2026-03-28T09:39:10.521Z",
+  "fileHash": "bba47904a7f6bbee3bf8a107ebbe84e65d392be683bbb898ded736b29e415f90",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.252Z",
+  "updatedAt": "2026-04-08T11:07:10.252Z"
+}

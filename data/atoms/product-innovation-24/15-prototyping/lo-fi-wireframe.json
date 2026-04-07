@@ -5,7 +5,12 @@
   "nameEn": "Lo-Fi Wireframe",
   "frameworkId": "product-innovation-24",
   "cellId": 15,
-  "tags": ["线框图", "Lo-Fi", "信息架构", "草图"],
+  "tags": [
+    "线框图",
+    "Lo-Fi",
+    "信息架构",
+    "草图"
+  ],
   "parentAtomId": "atom_prototyping_overview",
   "relationType": "child",
   "coreIdea": "用灰色矩形和 Lorem ipsum 故意让原型「看起来像草图」。当一张稿子有视觉成分时，反馈会变成「这个蓝色不好看」；当它是线框时，反馈才会回到「这里的信息层次对不对」。",
@@ -29,5 +34,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.258Z",
+  "kind": "methodology"
 }

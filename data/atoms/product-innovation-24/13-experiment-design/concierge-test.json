@@ -5,7 +5,12 @@
   "nameEn": "Concierge Test",
   "frameworkId": "product-innovation-24",
   "cellId": 13,
-  "tags": ["实验设计", "手动 MVP", "深度学习", "服务原型"],
+  "tags": [
+    "实验设计",
+    "手动 MVP",
+    "深度学习",
+    "服务原型"
+  ],
   "parentAtomId": "atom_experiment_design_overview",
   "relationType": "child",
   "coreIdea": "把产品本应自动化的流程用人工 1 对 1 完成，亲手服务前 5-20 个真实用户。代价是慢，回报是深度——你会发现自动化方案永远学不到的真实需求。",
@@ -29,5 +34,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.255Z",
+  "kind": "methodology"
 }

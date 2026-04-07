@@ -5,7 +5,12 @@
   "nameEn": "OKR Planning",
   "frameworkId": "product-innovation-24",
   "cellId": 23,
-  "tags": ["okr", "objectives", "key-results", "doerr"],
+  "tags": [
+    "okr",
+    "objectives",
+    "key-results",
+    "doerr"
+  ],
   "parentAtomId": "atom_roadmap_planning_overview",
   "relationType": "child",
   "coreIdea": "OKR 不是 KPI 不是 todo list。Objective 是定性的方向，Key Results 是定量的'怎么知道我们到了'。3-5 个 KR、季度刷新、有挑战性、可独立检验。",
@@ -24,7 +29,11 @@
     "content": "2008 年 Sundar Pichai 给 Chrome 团队定的著名 OKR：Objective —— Build the next-generation browser platform。Key Result —— 7 day active users 达到 2000 万。这个 KR 在第一年只完成 ~50%（约 1000 万），第二年才超额完成。Doerr 复盘说这正是好的 OKR：50%-70% 完成度恰恰说明目标有挑战性，全部完成反而意味着设得太低。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.267Z",
+  "kind": "methodology"
 }

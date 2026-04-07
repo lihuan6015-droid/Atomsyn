@@ -1,0 +1,29 @@
+{
+  "id": "skill_claude_customer-journey-map",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "customer-journey-map",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/customer-journey-map/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "customer-journey-map",
+    "description": "创建全面的客户旅程地图，可视化客户从认知到忠诚各阶段与品牌的互动，记录行为、触点、情绪和KPI。",
+    "type": "component",
+    "theme": "workshops-facilitation",
+    "best_for": "",
+    "scenarios": "",
+    "estimated_time": "20-30 min"
+  },
+  "rawDescription": "创建全面的客户旅程地图，可视化客户从认知到忠诚各阶段与品牌的互动，记录行为、触点、情绪和KPI。",
+  "fileMtime": "2026-03-07T06:48:44.831Z",
+  "fileHash": "a2481284e9b545f8126d3ee4bdee5ab1dcba764092374c9f2997e932fd81e255",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.255Z",
+  "updatedAt": "2026-04-08T11:07:10.255Z"
+}

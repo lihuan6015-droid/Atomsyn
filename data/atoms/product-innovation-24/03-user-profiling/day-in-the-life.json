@@ -5,7 +5,12 @@
   "nameEn": "Day in the Life",
   "frameworkId": "product-innovation-24",
   "cellId": 3,
-  "tags": ["DITL", "场景研究", "用户日常", "时空分析"],
+  "tags": [
+    "DITL",
+    "场景研究",
+    "用户日常",
+    "时空分析"
+  ],
   "parentAtomId": "atom_user_profiling_suite",
   "relationType": "child",
   "coreIdea": "DITL 把 Persona 放到 24 小时的时间轴上：几点起床、几点打开手机、在地铁上刷什么、什么时候焦虑、什么时候无聊。这张图暴露的不是「用户是谁」，而是「用户的哪些时刻是机会点」——真正能插入的产品机会都在时间轴的缝隙里。",
@@ -24,7 +29,11 @@
     "content": "多邻国做 DITL 发现学习者真实的一天里，白天几乎没有空档，唯一稳定出现的「高无聊 + 低注意力带宽」时段是晚上 8:30 左右（孩子睡了、电视开着、刷手机）。这个洞察让他们：不做长课程、把课程压到 5 分钟、推送时间固定在 20:30、设计游戏化瘾点。这些产品决策全部来自时间轴里那 60 分钟的缝隙，而不是来自「用户想学语言」这类大而无当的 Insight。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.235Z",
+  "kind": "methodology"
 }

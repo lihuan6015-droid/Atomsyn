@@ -5,7 +5,12 @@
   "nameEn": "Opportunity Solution Tree (OST)",
   "frameworkId": "product-innovation-24",
   "cellId": 8,
-  "tags": ["OST", "Teresa Torres", "Continuous Discovery", "机会"],
+  "tags": [
+    "OST",
+    "Teresa Torres",
+    "Continuous Discovery",
+    "机会"
+  ],
   "parentAtomId": "atom_opportunity_mapping_overview",
   "relationType": "child",
   "coreIdea": "Teresa Torres 的 OST 强迫团队在跳到解法之前，先把『机会』作为一层独立节点画出来——大多数糟糕产品的根因就是机会层被跳过了。",
@@ -23,7 +28,11 @@
     "content": "Outcome: 每周观看 +1.2h. 机会: 1) 不知道看啥就关 App 2) 看到一半被剧透弃剧. 解法（机会1下）: 个性化首屏 / 朋友推荐 / 基于心情的导览. 实验: 给 1% 用户上『今天想看什么心情』选择器，看 7 日观看时长差异。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.248Z",
+  "kind": "methodology"
 }

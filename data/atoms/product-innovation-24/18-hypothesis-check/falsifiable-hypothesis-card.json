@@ -5,7 +5,12 @@
   "nameEn": "Falsifiable Hypothesis Card",
   "frameworkId": "product-innovation-24",
   "cellId": 18,
-  "tags": ["hypothesis", "card", "falsifiable", "experiment-design"],
+  "tags": [
+    "hypothesis",
+    "card",
+    "falsifiable",
+    "experiment-design"
+  ],
   "parentAtomId": "atom_hypothesis_check_overview",
   "relationType": "child",
   "coreIdea": "如果一条假设不能被证伪，它就是信仰不是假设。一张合格的假设卡必须写明：我们相信什么、怎样才算错、错了怎么办。",
@@ -23,7 +28,11 @@
     "content": "Intuit 在 Mint 早期把『用户愿意把银行密码交给一个陌生创业公司』写成 Leap of Faith 假设卡，用信任度调研证伪后才开始建后端。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.261Z",
+  "kind": "methodology"
 }

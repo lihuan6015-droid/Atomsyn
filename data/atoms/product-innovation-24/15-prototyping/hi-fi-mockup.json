@@ -5,7 +5,12 @@
   "nameEn": "Hi-Fi Mockup (Figma)",
   "frameworkId": "product-innovation-24",
   "cellId": 15,
-  "tags": ["Hi-Fi", "Figma", "视觉设计", "Design System"],
+  "tags": [
+    "Hi-Fi",
+    "Figma",
+    "视觉设计",
+    "Design System"
+  ],
   "parentAtomId": "atom_prototyping_overview",
   "relationType": "child",
   "coreIdea": "Hi-Fi 是给「需要做最终决定」的人看的：CEO、客户、营销团队、工程实现团队。它的价值在于细节真实——按钮的圆角、留白、动效、文案口吻——所有人能像看真实产品一样反应。",
@@ -30,5 +35,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.258Z",
+  "kind": "methodology"
 }

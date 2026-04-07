@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExperienceFragment",
+  "description": "V2.0 M2 · A knowledge fragment ingested via CLI (agent) or GUI (human). Classified by four dimensions + insight_type.",
+  "type": "object",
+  "required": [
+    "id", "schemaVersion", "kind", "subKind", "title", "summary",
+    "role", "situation", "activity", "insight_type", "tags",
+    "rawContent", "stats", "createdAt", "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^atom_frag_[a-z0-9_-]+$",
+      "description": "Stable unique id: atom_frag_<slug>_<timestamp>"
+    },
+    "schemaVersion": { "const": 1 },
+    "kind": { "const": "experience" },
+    "subKind": { "const": "fragment" },
+    "title": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "summary": { "type": "string", "minLength": 10, "maxLength": 500 },
+    "role": { "type": "string", "description": "Dimension 1: who was I (completely open, seed table is autocomplete only)" },
+    "situation": { "type": "string", "description": "Dimension 2: what context" },
+    "activity": { "type": "string", "description": "Dimension 3: what I was doing" },
+    "insight_type": {
+      "type": "string",
+      "description": "Dimension 4: type of learning. Semi-closed enum: 反直觉|方法验证|方法证伪|情绪复盘|关系观察|时机判断|原则提炼|纯好奇. New values require insightColors.ts update."
+    },
+    "tags": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": { "type": "string" }
+    },
+    "rawContent": {
+      "type": "string",
+      "description": "Original raw text from ingest (preserved for future re-classification)"
+    },
+    "linked_methodologies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Atom IDs of related methodology atoms (semantic alignment product)"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "LLM classification confidence (0-1)"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "domain_hint": { "type": "string" },
+        "source": { "type": "string", "enum": ["cli", "gui", "agent"] },
+        "ingestModel": { "type": "string", "description": "Model ID used for classification (GUI path only)" }
+      }
+    },
+    "private": {
+      "type": "boolean",
+      "default": false,
+      "description": "True for emotion retrospectives — hidden from default skill retrieval"
+    },
+    "stats": {
+      "type": "object",
+      "required": ["usedInProjects", "useCount"],
+      "properties": {
+        "usedInProjects": { "type": "array", "items": { "type": "string" } },
+        "lastUsedAt": { "type": "string" },
+        "useCount": { "type": "integer", "minimum": 0 },
+        "aiInvokeCount": { "type": "integer", "minimum": 0 },
+        "humanViewCount": { "type": "integer", "minimum": 0 },
+        "invokedByAgent": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "userDemoted": { "type": "boolean" },
+        "locked": { "type": "boolean" }
+      }
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  }
+}

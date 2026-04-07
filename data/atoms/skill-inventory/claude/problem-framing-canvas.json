@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_problem-framing-canvas",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "problem-framing-canvas",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/problem-framing-canvas/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "problem-framing-canvas",
+    "description": "引导产品经理使用MITRE问题框架画布，通过向内看、向外看和重构三个维度的结构化提问，产出清晰的问题定义。",
+    "type": "interactive"
+  },
+  "rawDescription": "引导产品经理使用MITRE问题框架画布，通过向内看、向外看和重构三个维度的结构化提问，产出清晰的问题定义。",
+  "fileMtime": "2026-03-07T06:49:57.875Z",
+  "fileHash": "a4d9504907c5ed1e76aeaeab55e4c1cfabd8765225d95182dfd685ea1f0795e7",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.268Z",
+  "updatedAt": "2026-04-08T11:07:10.268Z"
+}

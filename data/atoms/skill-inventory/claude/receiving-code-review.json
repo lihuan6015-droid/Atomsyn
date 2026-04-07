@@ -1,0 +1,24 @@
+{
+  "id": "skill_claude_receiving-code-review",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "receiving-code-review",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/receiving-code-review/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "receiving-code-review",
+    "description": "Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation"
+  },
+  "rawDescription": "Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation",
+  "fileMtime": "2026-03-28T09:39:10.523Z",
+  "fileHash": "c9382e92b8f32363566068ecfed19d3b2651eaf40d3942b24840f839dedfc406",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.269Z",
+  "updatedAt": "2026-04-08T11:07:10.269Z"
+}

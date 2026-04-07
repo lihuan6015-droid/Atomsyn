@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_recommendation-canvas",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "recommendation-canvas",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/recommendation-canvas/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "recommendation-canvas",
+    "description": "使用结构化画布评估和提议AI产品方案，评估业务成果、客户成果、问题框架、解决方案假设和价值论证。",
+    "type": "component"
+  },
+  "rawDescription": "使用结构化画布评估和提议AI产品方案，评估业务成果、客户成果、问题框架、解决方案假设和价值论证。",
+  "fileMtime": "2026-03-07T06:49:57.876Z",
+  "fileHash": "990a0ec224510283dc34dcc137859745df44de7c308500501a8c9aefd35fe8ef",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.270Z",
+  "updatedAt": "2026-04-08T11:07:10.270Z"
+}

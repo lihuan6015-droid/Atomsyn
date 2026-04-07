@@ -5,7 +5,12 @@
   "nameEn": "Sequential Hypothesis Testing",
   "frameworkId": "product-innovation-24",
   "cellId": 18,
-  "tags": ["sequential", "experiment", "early-stopping", "bayesian"],
+  "tags": [
+    "sequential",
+    "experiment",
+    "early-stopping",
+    "bayesian"
+  ],
   "parentAtomId": "atom_hypothesis_check_overview",
   "relationType": "child",
   "coreIdea": "序贯检验允许你在数据足够说话时就停止实验，而不是硬等固定样本——对低流量产品和高变动成本场景是救命稻草。",
@@ -23,7 +28,11 @@
     "content": "Netflix 公开的实验平台文档中披露了 mSPRT 在低流量实验上的使用，某些实验样本量需求减少 40%，同时保持错误率控制。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.261Z",
+  "kind": "methodology"
 }

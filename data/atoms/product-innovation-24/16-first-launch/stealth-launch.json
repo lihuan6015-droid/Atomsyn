@@ -5,7 +5,12 @@
   "nameEn": "Stealth Launch",
   "frameworkId": "product-innovation-24",
   "cellId": 16,
-  "tags": ["发布", "Stealth", "隐身模式", "安静上线"],
+  "tags": [
+    "发布",
+    "Stealth",
+    "隐身模式",
+    "安静上线"
+  ],
   "parentAtomId": "atom_first_launch_overview",
   "relationType": "child",
   "coreIdea": "完全不发任何 PR、不申请 PH、不发推、不告诉媒体——把产品悄悄上线，让真实自然流量（自然搜索、口碑、推荐）来检验产品本身有没有「自然引力」。这是验证 PMF 最诚实的方式。",
@@ -30,5 +35,6 @@
     "useCount": 0
   },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.260Z",
+  "kind": "methodology"
 }

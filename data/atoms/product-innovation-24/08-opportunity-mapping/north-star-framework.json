@@ -5,7 +5,12 @@
   "nameEn": "North Star Framework",
   "frameworkId": "product-innovation-24",
   "cellId": 8,
-  "tags": ["North Star", "Amplitude", "指标体系", "战略对齐"],
+  "tags": [
+    "North Star",
+    "Amplitude",
+    "指标体系",
+    "战略对齐"
+  ],
   "parentAtomId": "atom_opportunity_mapping_overview",
   "relationType": "child",
   "coreIdea": "北极星指标不是 DAU，而是『为客户创造的价值 × 公司能赚到的钱』在中间找到的那一个数。一个组织只能有一个北极星，否则就是没有北极星。",
@@ -23,7 +28,11 @@
     "content": "Nights Booked。它同时承载客户价值（住到房）和商业价值（佣金）。先行指标含：搜索→预订转化率、新房东上线数、退订率。这一个数让 Airbnb 在 2014 年砍掉了所有不指向它的项目。"
   },
   "bookmarks": [],
-  "stats": { "usedInProjects": [], "useCount": 0 },
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
   "createdAt": "2026-04-07T00:00:00Z",
-  "updatedAt": "2026-04-07T00:00:00Z"
+  "updatedAt": "2026-04-08T10:59:53.248Z",
+  "kind": "methodology"
 }

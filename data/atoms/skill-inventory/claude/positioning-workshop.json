@@ -1,0 +1,25 @@
+{
+  "id": "skill_claude_positioning-workshop",
+  "schemaVersion": 1,
+  "kind": "skill-inventory",
+  "name": "positioning-workshop",
+  "tags": [
+    "claude"
+  ],
+  "localPath": "/Users/circlelee/.claude/skills/positioning-workshop/SKILL.md",
+  "toolName": "claude",
+  "frontmatter": {
+    "name": "positioning-workshop",
+    "description": "通过提问引导产品经理发现和表达产品定位，涵盖目标客户、未满足需求、产品类别、收益和竞争差异化。",
+    "type": "interactive"
+  },
+  "rawDescription": "通过提问引导产品经理发现和表达产品定位，涵盖目标客户、未满足需求、产品类别、收益和竞争差异化。",
+  "fileMtime": "2026-03-07T06:49:57.875Z",
+  "fileHash": "ac9e4c8efe405c584ccca324456a4442e3c11be7815a40e102bf213c928b9131",
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-08T11:07:10.266Z",
+  "updatedAt": "2026-04-08T11:07:10.266Z"
+}
