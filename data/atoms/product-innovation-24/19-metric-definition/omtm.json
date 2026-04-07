@@ -1,0 +1,29 @@
+{
+  "id": "atom_omtm",
+  "schemaVersion": 1,
+  "name": "OMTM 单一关键指标",
+  "nameEn": "One Metric That Matters",
+  "frameworkId": "product-innovation-24",
+  "cellId": 19,
+  "tags": ["omtm", "focus", "lean-analytics", "stage"],
+  "parentAtomId": "atom_metric_system_overview",
+  "relationType": "child",
+  "coreIdea": "当下阶段最重要的一个指标，其他全部暂时忽略。OMTM 强迫团队做取舍——同时盯 5 个 KPI 等于没有 KPI。",
+  "whenToUse": "早期团队决策涣散 · 每个阶段都要清晰的主攻方向 · 避免仪表盘瘫痪 · 与 Lean Analytics 五阶段配合",
+  "keySteps": [
+    "判断当前阶段：Empathy/Stickiness/Virality/Revenue/Scale",
+    "从阶段对应的少数候选中选一个 OMTM",
+    "为它设定挑战性但可达的阈值",
+    "所有团队资源向 OMTM 倾斜",
+    "阶段切换时，显式更新 OMTM"
+  ],
+  "aiSkillPrompt": "你是一位 Lean Analytics 教练。我将提供产品当前阶段描述，请你帮助选出本阶段的 OMTM 并设计阈值。\n\n## 输入\n{请在此处填入：产品描述、当前阶段判断（或困惑）、最近 4 周关键数据、团队规模、可投入资源}\n\n## 任务\n1. 阶段判断：结合数据判断当前处于 Empathy/Stickiness/Virality/Revenue/Scale 哪一阶段\n2. OMTM 推荐：给出该阶段 1 个最合适的 OMTM，并解释为何不是其他候选\n3. 阈值设计：设定 3 个月的目标值（保守 / 合理 / 激进三档）\n4. 焦点约束：列出『为了追 OMTM 应该停做的 3 件事』\n5. 阶段跃迁信号：什么数据出现时应该切换到下一阶段和新的 OMTM\n\n## 输出格式\n阶段判断说明 + OMTM 卡 + 三档目标表 + 止做清单 + 跃迁信号。\n\n## 约束\n- 不允许推荐多个 OMTM\n- 阈值必须是数字 + 时间窗口\n- 止做清单必须包含至少 1 个团队当前在做的事\n- 不要跳过阶段判断直接推荐指标",
+  "example": {
+    "title": "Airbnb 早期的 Bookings OMTM",
+    "content": "Airbnb 在 Stickiness 阶段把所有注意力放在 Bookings 上，甚至放弃了当时看起来增长很快的 PV 指标，确保每一次发布都直接服务预订。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

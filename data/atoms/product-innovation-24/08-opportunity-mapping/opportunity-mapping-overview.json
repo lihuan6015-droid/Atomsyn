@@ -1,0 +1,28 @@
+{
+  "id": "atom_opportunity_mapping_overview",
+  "schemaVersion": 1,
+  "name": "机会发现框架",
+  "nameEn": "Opportunity Discovery Frameworks",
+  "frameworkId": "product-innovation-24",
+  "cellId": 8,
+  "tags": ["机会地图", "OST", "TAM", "Blue Ocean", "umbrella"],
+  "coreIdea": "机会不是一个名词，而是『结果 ↔ 痛点 ↔ 解法』之间的连接。机会地图的本质是用一棵树或一张图，把模糊的『要做啥』翻译成可下注的『往哪打』。",
+  "whenToUse": "季度规划要选下一个战场 · Roadmap 候选 idea 太多无法排序 · 老板问『我们的机会在哪』 · 进入新市场前评估天花板",
+  "keySteps": [
+    "明确目标结果（North Star 或业务 outcome）",
+    "用 OST 把结果拆成机会，再拆成解法",
+    "用 TAM-SAM-SOM 给最大的机会算账",
+    "用 Blue Ocean 四步动作（删减增创）找差异化",
+    "聚合所有机会画一张优先级象限图",
+    "选 1-2 个进入下一轮立项"
+  ],
+  "aiSkillPrompt": "你是一位产品战略顾问，精通 Teresa Torres 的机会解决方案树和 Kim & Mauborgne 的蓝海战略。我将提供我的业务结果和当前认知，请你帮我画一张多框架机会地图。\n\n## 输入\n- 北极星指标 / 业务结果：{请在此处填入}\n- 目标客户细分：{请在此处填入}\n- 已知用户痛点 / 信号：{请在此处填入}\n- 当前候选 idea：{请在此处填入}\n\n## 任务\n1. 用 OST 把结果拆成 5-7 个机会，每个机会下再拆 2-3 个解法假设\n2. 选最大的 1 个机会用 TAM-SAM-SOM 估算（含 1 个 top-down + 1 个 bottom-up 交叉验证）\n3. 用蓝海四步动作（删减/降低/增加/创造）扫一遍当前 idea\n4. 输出一张优先级象限：机会规模 × 验证成本\n5. 推荐 1-2 个进入下一轮立项的机会及理由\n\n## 输出格式\nMarkdown：OST 树（缩进列表）+ 市场估算表 + 蓝海四步表 + 优先级象限 + 推荐\n\n## 约束\n- TAM 必须有 top-down 与 bottom-up 两种算法交叉验证\n- 机会句必须可验证，禁止『提升留存』万能机会\n- 蓝海动作必须具体到产品决策，不能停在概念",
+  "example": {
+    "title": "Spotify 的播客机会地图",
+    "content": "结果：用户日均时长 +20%。机会：1) 长内容时段 2) 通勤场景 3) 创作者锁定。最大机会是『锁定头部播客创作者』。蓝海动作：删除『付费墙』（增加：『独家版权 + 创作者分成』）。这条机会带来了 Joe Rogan 等独家协议。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

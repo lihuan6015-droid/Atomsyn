@@ -1,0 +1,29 @@
+{
+  "id": "atom_aarrr",
+  "schemaVersion": 1,
+  "name": "AARRR 海盗指标",
+  "nameEn": "AARRR Pirate Metrics",
+  "frameworkId": "product-innovation-24",
+  "cellId": 19,
+  "tags": ["aarrr", "growth", "funnel", "pirate"],
+  "parentAtomId": "atom_metric_system_overview",
+  "relationType": "child",
+  "coreIdea": "把整个产品生命周期拆成 5 层漏斗：获取-激活-留存-收入-推荐。它的价值不是完整，而是强迫你看到哪一层最漏——那就是今年要修的地方。",
+  "whenToUse": "构建完整增长指标体系 · 诊断『漏水的桶』· 新任 Growth 负责人快速接手 · 向投资人讲增长故事",
+  "keySteps": [
+    "为每层定义 1 个核心指标（不是所有指标）",
+    "测量当前各层的转化率并与行业基准对比",
+    "找出转化率最低的一层 = 本季度重点",
+    "在该层做集中实验直到改善",
+    "定期轮询 5 层避免偏食"
+  ],
+  "aiSkillPrompt": "你是一位增长负责人。我将提供一个产品的各层数据，请你输出一份 AARRR 诊断报告。\n\n## 输入\n{请在此处填入：产品类型、最近 30 天各层原始数据（获取人数、激活人数、7 日留存、付费人数、推荐人数）、竞品或行业基准（可选）}\n\n## 任务\n1. 计算各层的绝对值与层间转化率\n2. 识别最薄弱环节：给出『漏得最快的那一层』\n3. 根因假设：为薄弱层给出 3 条可能原因\n4. 季度行动建议：聚焦 1 层，列 3 个可执行实验\n5. 反模式提醒：避免『每层都想修』导致资源稀释\n\n## 输出格式\nAARRR 五层表（指标 / 当前值 / 基准 / 差距）+ 薄弱环节诊断 + 实验清单。\n\n## 约束\n- 每层只选一个核心指标\n- 不要为五层同时安排实验，必须聚焦 1 层\n- 缺数据的层标注『需要先补埋点』而非瞎估\n- 不要把『推荐』等同于『NPS』",
+  "example": {
+    "title": "Dave McClure 的原始 AARRR",
+    "content": "500 Startups 的 Dave McClure 在 2007 年提出 AARRR，用它帮助无数种子公司聚焦：先不要管获取，先把激活和留存修好。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

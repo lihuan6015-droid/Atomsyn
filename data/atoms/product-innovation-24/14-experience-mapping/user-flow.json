@@ -1,0 +1,33 @@
+{
+  "id": "atom_user_flow",
+  "schemaVersion": 1,
+  "name": "用户流程图",
+  "nameEn": "User Flow",
+  "frameworkId": "product-innovation-24",
+  "cellId": 14,
+  "tags": ["用户流", "信息架构", "决策树", "可用性"],
+  "parentAtomId": "atom_experience_mapping_overview",
+  "relationType": "child",
+  "coreIdea": "把用户在产品里完成某个 task 的所有可能路径画成一棵决策树：起点（动机）→ 节点（屏幕/动作）→ 分支（成功/失败/放弃）→ 终点（目标达成）。流程图越早画，工程师越少返工。",
+  "whenToUse": "新功能 PRD 之前 · 注册/支付/onboarding 转化优化 · 复杂权限/状态机 · 跨页面导航设计 · 工程评审",
+  "keySteps": [
+    "明确「起点」与「目标」（用户想完成什么）",
+    "列出每个屏幕/页面的状态",
+    "画出主路径（Happy Path）",
+    "补充错误分支、空状态、回退、退出",
+    "标注每个节点的关键文案与按钮",
+    "和工程评审，确认无歧义后冻结"
+  ],
+  "aiSkillPrompt": "你是一位精通信息架构和用户流设计的资深产品经理，熟悉 Mermaid / Whimsical / FigJam 的标准流程图语法。我会描述一个用户任务，请你帮我画出完整的 user flow。\n\n## 输入\n用户要完成的任务：{请在此处填入}\n起点（用户从哪里来）：{请在此处填入}\n终点（成功标志是什么）：{请在此处填入}\n已知的限制条件：{请在此处填入}\n\n## 任务\n1. 列出完成此任务涉及的所有屏幕/页面（5-15 个）\n2. 画出 Happy Path（主路径）：用 Mermaid flowchart 语法输出\n3. 补充至少 5 个非主路径分支：错误状态、空状态、未登录、权限不足、网络失败\n4. 为每个屏幕标注：核心文案、CTA 按钮文字、关键交互元素\n5. 标出 3 个最容易流失的节点并给出降低流失的设计建议\n6. 给出该流程的关键转化指标定义（每一步该埋哪个事件）\n7. 输出一份「评审检查清单」（10 项），让 PM/设计/工程一起过\n\n## 输出格式\n第一段：屏幕清单\n第二段：完整 Mermaid flowchart 代码（可直接复制运行）\n第三段：流失点分析\n第四段：埋点定义表\n第五段：评审清单\n\n## 约束\n- Mermaid 代码必须能直接渲染，不要伪代码\n- 必须包含错误分支，只画 happy path 不算合格的 user flow\n- 每个节点必须有明确动词，不允许「页面 1」「步骤 2」",
+  "example": {
+    "title": "经典案例 · Stripe Checkout 的 3 步流程",
+    "content": "Stripe 早期把 checkout 流程从 14 步压缩到 3 步（Email → 卡号 → 完成），并为每一步画了详细的 user flow 图，标注了 12 种错误分支（卡被拒、3DS 验证、网络超时...）。这张流程图后来成为 Stripe 整个支付产品的「圣经」，工程团队每次修改 checkout 都要先更新这张图。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

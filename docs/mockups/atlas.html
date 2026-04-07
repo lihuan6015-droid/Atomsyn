@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCL PM Tool · 知识图书馆</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.3s ease-out',
+            'slide-up': 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(8px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --col-discover: #A78BFA;
+      --col-define:   #60A5FA;
+      --col-ideate:   #34D399;
+      --col-develop:  #FBBF24;
+      --col-validate: #FB923C;
+      --col-evolve:   #F472B6;
+    }
+    html, body { height: 100%; }
+    body { font-family: 'Inter', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+    .glass {
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+    }
+    .cell-glow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px -12px var(--glow-color, rgba(167, 139, 250, 0.35));
+    }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { scrollbar-width: none; }
+
+    /* Progressive fade-in for cells */
+    .grid-cell {
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    }
+    .grid-cell:nth-child(n)  { animation-delay: calc(var(--i, 0) * 15ms); }
+  </style>
+</head>
+<body class="bg-neutral-50 dark:bg-[#0a0a0b] text-neutral-900 dark:text-neutral-100 transition-colors duration-200">
+
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-40 border-b border-neutral-200/60 dark:border-neutral-800/60 bg-white/70 dark:bg-[#0a0a0b]/70 glass">
+  <div class="flex items-center justify-between px-5 h-14">
+    <div class="flex items-center gap-3">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 via-sky-400 to-emerald-400 flex items-center justify-center shadow-lg shadow-violet-500/20">
+        <i data-lucide="compass" class="w-4 h-4 text-white"></i>
+      </div>
+      <span class="text-sm font-semibold tracking-tight">CCL PM Tool</span>
+      <span class="text-[10px] text-neutral-400 dark:text-neutral-500 font-mono ml-1">v0.1</span>
+    </div>
+
+    <!-- Primary Tabs -->
+    <nav class="flex items-center gap-1 p-1 bg-neutral-100 dark:bg-neutral-900 rounded-xl">
+      <button class="px-3.5 py-1.5 text-xs font-medium rounded-lg bg-white dark:bg-neutral-800 shadow-sm text-neutral-900 dark:text-white flex items-center gap-1.5">
+        <i data-lucide="library" class="w-3.5 h-3.5"></i>
+        知识图书馆
+      </button>
+      <button class="px-3.5 py-1.5 text-xs font-medium rounded-lg text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1.5">
+        <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
+        项目演练场
+      </button>
+      <button class="px-3.5 py-1.5 text-xs font-medium rounded-lg text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1.5">
+        <i data-lucide="sprout" class="w-3.5 h-3.5"></i>
+        成长档案
+      </button>
+    </nav>
+
+    <div class="flex items-center gap-1.5">
+      <button onclick="toggleTheme()" class="w-8 h-8 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 flex items-center justify-center transition-colors" title="切换主题">
+        <i data-lucide="moon" class="w-4 h-4 dark:hidden"></i>
+        <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+      </button>
+      <button class="h-8 px-2.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400 transition-colors">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">新建</span>
+      </button>
+      <button class="w-8 h-8 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 flex items-center justify-center transition-colors" title="设置">
+        <i data-lucide="settings" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Main Layout -->
+<div class="flex h-[calc(100vh-56px)]">
+
+  <!-- Left Sidebar · Framework List -->
+  <aside class="w-56 shrink-0 border-r border-neutral-200/60 dark:border-neutral-800/60 bg-white/40 dark:bg-neutral-950/40 p-4 overflow-y-auto scrollbar-hide">
+    <div class="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-2 px-2">骨架</div>
+    <div class="space-y-0.5">
+      <!-- Active framework -->
+      <button class="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg bg-gradient-to-r from-violet-500/10 to-transparent text-left">
+        <i data-lucide="star" class="w-3.5 h-3.5 text-violet-500 fill-violet-500"></i>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium truncate">产品创新 24 步法</div>
+          <div class="text-[10px] text-neutral-400 dark:text-neutral-500">24 格 · 3 原子</div>
+        </div>
+      </button>
+      <button class="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 text-left transition-colors">
+        <i data-lucide="palette" class="w-3.5 h-3.5 text-neutral-400"></i>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm text-neutral-600 dark:text-neutral-300 truncate">UI/UX 模式</div>
+          <div class="text-[10px] text-neutral-400 dark:text-neutral-500">0 原子</div>
+        </div>
+      </button>
+      <button class="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 text-left transition-colors">
+        <i data-lucide="bot" class="w-3.5 h-3.5 text-neutral-400"></i>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm text-neutral-600 dark:text-neutral-300 truncate">Agent 开发</div>
+          <div class="text-[10px] text-neutral-400 dark:text-neutral-500">0 原子</div>
+        </div>
+      </button>
+    </div>
+
+    <button class="mt-3 w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 hover:border-violet-400 hover:text-violet-500 dark:hover:border-violet-500 transition-colors text-xs">
+      <i data-lucide="plus" class="w-3 h-3"></i>
+      新骨架
+    </button>
+
+    <div class="mt-6 text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-2 px-2">最近使用</div>
+    <div class="space-y-0.5">
+      <button class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 text-left transition-colors">
+        <div class="w-1 h-1 rounded-full bg-violet-400"></div>
+        <span class="text-xs text-neutral-600 dark:text-neutral-400 truncate">Jobs To Be Done</span>
+      </button>
+      <button class="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 text-left transition-colors">
+        <div class="w-1 h-1 rounded-full bg-violet-400"></div>
+        <span class="text-xs text-neutral-600 dark:text-neutral-400 truncate">KANO 模型</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto">
+    <div class="max-w-[1400px] mx-auto px-6 lg:px-10 py-8">
+
+      <!-- Page Header -->
+      <div class="flex items-start justify-between mb-2">
+        <div>
+          <div class="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400 mb-1.5">
+            <i data-lucide="library" class="w-3 h-3"></i>
+            <span>知识图书馆</span>
+            <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            <span>产品创新 24 步法</span>
+          </div>
+          <h1 class="text-[28px] font-bold tracking-tight leading-tight">
+            产品创新 24 步法
+          </h1>
+          <p class="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+            从 Discover 到 Evolve 的完整产品创新闭环 · 混沌 AI 创新院
+          </p>
+        </div>
+
+        <!-- Scene Search Box (Q1④) -->
+        <button class="flex items-center gap-2 px-3.5 h-9 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/60 dark:bg-neutral-900/60 text-xs text-neutral-400 dark:text-neutral-500 hover:border-violet-400 dark:hover:border-violet-500 transition-colors min-w-[280px]">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-violet-500"></i>
+          <span>描述你现在的痛点场景...</span>
+          <div class="ml-auto flex items-center gap-0.5">
+            <kbd class="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-[10px] font-mono">⌘</kbd>
+            <kbd class="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-[10px] font-mono">K</kbd>
+          </div>
+        </button>
+      </div>
+
+      <!-- Tag Filter Chips -->
+      <div class="flex items-center gap-2 mt-6 mb-6 overflow-x-auto scrollbar-hide">
+        <div class="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 shrink-0 mr-1">标签</div>
+        <button class="shrink-0 px-2.5 py-1 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-xs font-medium border border-violet-500/20">全部</button>
+        <button class="shrink-0 px-2.5 py-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-500 dark:text-neutral-400 text-xs transition-colors border border-transparent">用户研究</button>
+        <button class="shrink-0 px-2.5 py-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-500 dark:text-neutral-400 text-xs transition-colors border border-transparent">需求洞察</button>
+        <button class="shrink-0 px-2.5 py-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-500 dark:text-neutral-400 text-xs transition-colors border border-transparent">竞品分析</button>
+        <button class="shrink-0 px-2.5 py-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-500 dark:text-neutral-400 text-xs transition-colors border border-transparent">原型</button>
+        <button class="shrink-0 px-2.5 py-1 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-500 dark:text-neutral-400 text-xs transition-colors border border-transparent">数据验证</button>
+      </div>
+
+      <!-- Column Headers -->
+      <div class="grid grid-cols-6 gap-3 mb-3">
+        <div class="text-center">
+          <div class="text-xs font-bold tracking-wider text-[color:var(--col-discover)]">DISCOVER</div>
+          <div class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5">发现</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs font-bold tracking-wider text-[color:var(--col-define)]">DEFINE</div>
+          <div class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5">定义</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs font-bold tracking-wider text-[color:var(--col-ideate)]">IDEATE</div>
+          <div class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5">创意</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs font-bold tracking-wider text-[color:var(--col-develop)]">DEVELOP</div>
+          <div class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5">开发</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs font-bold tracking-wider text-[color:var(--col-validate)]">VALIDATE</div>
+          <div class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5">验证</div>
+        </div>
+        <div class="text-center">
+          <div class="text-xs font-bold tracking-wider text-[color:var(--col-evolve)]">EVOLVE</div>
+          <div class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-0.5">进化</div>
+        </div>
+      </div>
+
+      <!-- 24-Step Matrix -->
+      <div class="grid grid-cols-6 gap-3" id="matrix"></div>
+
+      <!-- Hint Banner -->
+      <div class="mt-10 flex items-center justify-center gap-3 text-xs text-neutral-400 dark:text-neutral-500">
+        <div class="flex items-center gap-1.5">
+          <kbd class="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-[10px] font-mono">⌘K</kbd>
+          搜索
+        </div>
+        <div class="w-px h-3 bg-neutral-200 dark:bg-neutral-800"></div>
+        <div class="flex items-center gap-1.5">
+          <kbd class="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-[10px] font-mono">⌘J</kbd>
+          AI 副驾驶
+        </div>
+        <div class="w-px h-3 bg-neutral-200 dark:bg-neutral-800"></div>
+        <div class="flex items-center gap-1.5">
+          <kbd class="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-[10px] font-mono">N</kbd>
+          新建原子
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Floating Copilot Button -->
+<button class="fixed bottom-6 right-6 z-30 group">
+  <div class="absolute -inset-2 bg-gradient-to-r from-violet-500 to-sky-400 rounded-2xl opacity-40 blur-xl group-hover:opacity-70 transition-opacity"></div>
+  <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 to-sky-500 flex items-center justify-center shadow-2xl shadow-violet-500/30 hover:scale-105 active:scale-95 transition-transform">
+    <i data-lucide="sparkles" class="w-6 h-6 text-white"></i>
+    <div class="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#0a0a0b]"></div>
+  </div>
+</button>
+
+<script>
+  // 24-Step data
+  const steps = [
+    // Discover
+    { n: 1, col: 'discover', name: '趋势扫描', en: 'Trend Scanning', tag: 'PEST-C Radar', count: 0 },
+    { n: 2, col: 'discover', name: '用户声音', en: 'Goal-VOC', tag: '5Whys · 需求访谈', count: 3 },
+    { n: 3, col: 'discover', name: '深度画像', en: 'User Profiling', tag: 'VSD Canvas', count: 0 },
+    { n: 4, col: 'discover', name: '需求过滤', en: 'Demand Filtering', tag: 'KANO Model', count: 0 },
+    // Define
+    { n: 5, col: 'define', name: '竞品分析', en: 'Competitor Analysis', tag: 'F&CT Analysis', count: 0 },
+    { n: 6, col: 'define', name: '价值主张', en: 'Value Proposition', tag: 'VPC Canvas', count: 0 },
+    { n: 7, col: 'define', name: '概念定义', en: 'Concept Definition', tag: 'MW Concept', count: 0 },
+    { n: 8, col: 'define', name: '机会地图', en: 'Opportunity Mapping', tag: '', count: 0 },
+    // Ideate
+    { n: 9, col: 'ideate', name: '创意爆破', en: 'Ideation Explosion', tag: 'SCAMPER / Lotus', count: 0 },
+    { n:10, col: 'ideate', name: '创意筛选', en: 'Idea Filtering', tag: 'RICE Framework', count: 0 },
+    { n:11, col: 'ideate', name: '供需匹配', en: 'Supply Demand Match', tag: 'DS Canvas', count: 0 },
+    { n:12, col: 'ideate', name: 'MVP 选型', en: 'MVP Selection', tag: 'LEAN MVP Types', count: 0 },
+    // Develop
+    { n:13, col: 'develop', name: '实验设计', en: 'Experiment Design', tag: 'Smoke Test', count: 0 },
+    { n:14, col: 'develop', name: '体验地图', en: 'Experience Mapping', tag: '', count: 0 },
+    { n:15, col: 'develop', name: '原型制作', en: 'Prototyping', tag: 'AI Design Tools', count: 0, featured: true },
+    { n:16, col: 'develop', name: '首次发布', en: 'First Launch', tag: '', count: 0 },
+    // Validate
+    { n:17, col: 'validate', name: '数据采集', en: 'Data Harvesting', tag: 'Data Dashboard', count: 0 },
+    { n:18, col: 'validate', name: '假设校验', en: 'Hypothesis Check', tag: '', count: 0 },
+    { n:19, col: 'validate', name: '指标定义', en: 'Metric Definition', tag: 'Metric Card', count: 0 },
+    { n:20, col: 'validate', name: 'PMF 诊断', en: 'PMF Diagnostics', tag: '', count: 0 },
+    // Evolve
+    { n:21, col: 'evolve', name: '决策时刻', en: 'Pivot Decision', tag: '', count: 0 },
+    { n:22, col: 'evolve', name: '增长循环', en: 'Growth Loops', tag: 'Growth Canvas', count: 0 },
+    { n:23, col: 'evolve', name: '演进路线', en: 'Roadmap Planning', tag: 'Agile Roadmap', count: 0 },
+    { n:24, col: 'evolve', name: '规模准备', en: 'Scale Readiness', tag: '', count: 0 },
+  ];
+
+  const colMap = {
+    discover: { hex: '#A78BFA', glow: 'rgba(167,139,250,0.35)' },
+    define:   { hex: '#60A5FA', glow: 'rgba(96,165,250,0.35)' },
+    ideate:   { hex: '#34D399', glow: 'rgba(52,211,153,0.35)' },
+    develop:  { hex: '#FBBF24', glow: 'rgba(251,191,36,0.35)' },
+    validate: { hex: '#FB923C', glow: 'rgba(251,146,60,0.35)' },
+    evolve:   { hex: '#F472B6', glow: 'rgba(244,114,182,0.35)' },
+  };
+
+  // Reorder so we render row-by-row across columns (needed for CSS grid column-first → row-first)
+  const ordered = [];
+  for (let row = 0; row < 4; row++) {
+    for (const col of ['discover','define','ideate','develop','validate','evolve']) {
+      ordered.push(steps.find(s => s.col === col && Math.floor((s.n-1)%4) === row));
+    }
+  }
+
+  const matrix = document.getElementById('matrix');
+  ordered.forEach((s, i) => {
+    if (!s) return;
+    const c = colMap[s.col];
+    const featured = s.featured;
+    const hasAtoms = s.count > 0;
+    const isClickable = s.n === 2; // Only VOC is linked to the atom-card demo
+
+    const link = isClickable ? 'atom-card.html' : '#';
+    const cursor = isClickable ? 'cursor-pointer' : 'cursor-default';
+
+    matrix.insertAdjacentHTML('beforeend', `
+      <a href="${link}" style="--i:${i}; --glow-color:${c.glow}" class="grid-cell cell-glow group relative block rounded-2xl border transition-all duration-300 ${
+        featured
+          ? 'border-transparent bg-gradient-to-br from-emerald-400/20 via-emerald-500/10 to-transparent ring-1 ring-emerald-400/30 dark:ring-emerald-400/40'
+          : 'border-neutral-200/80 dark:border-neutral-800/80 bg-white/60 dark:bg-neutral-900/40 hover:border-neutral-300 dark:hover:border-neutral-700'
+      } ${cursor} p-4 h-[132px] flex flex-col justify-between overflow-hidden">
+
+        <!-- Step number + badge -->
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] font-mono font-semibold tracking-wider text-neutral-400 dark:text-neutral-500">STEP</span>
+            <span class="text-lg font-bold tabular-nums" style="color:${c.hex}">${String(s.n).padStart(2,'0')}</span>
+          </div>
+          ${hasAtoms ? `
+          <div class="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/80 dark:bg-neutral-800/80 border border-neutral-200/50 dark:border-neutral-700/50">
+            <span class="w-1 h-1 rounded-full" style="background:${c.hex}"></span>
+            <span class="text-[10px] font-semibold tabular-nums" style="color:${c.hex}">${s.count}</span>
+          </div>
+          ` : ''}
+        </div>
+
+        <!-- Name -->
+        <div>
+          <div class="text-sm font-semibold leading-tight text-neutral-900 dark:text-neutral-100">${s.name}</div>
+          <div class="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 leading-tight truncate">${s.en}</div>
+          ${s.tag ? `<div class="text-[10px] text-neutral-400 dark:text-neutral-500 mt-1.5 truncate font-mono">${s.tag}</div>` : '<div class="text-[10px] mt-1.5">&nbsp;</div>'}
+        </div>
+
+        ${isClickable ? `
+        <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div class="w-5 h-5 rounded-md bg-white dark:bg-neutral-800 shadow-lg border border-neutral-200 dark:border-neutral-700 flex items-center justify-center">
+            <span class="text-[10px]">→</span>
+          </div>
+        </div>
+        ` : ''}
+
+        ${featured ? `
+        <div class="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-emerald-400/20 blur-2xl"></div>
+        ` : ''}
+      </a>
+    `);
+  });
+
+  function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    setTimeout(() => lucide.createIcons(), 50);
+  }
+
+  // Restore theme
+  if (localStorage.getItem('theme') === 'light') {
+    document.documentElement.classList.remove('dark');
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      alert('⌘K Spotlight 命令面板（待实现）');
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
+      e.preventDefault();
+      alert('⌘J AI 副驾驶面板（待实现）');
+    }
+  });
+
+  lucide.createIcons();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "id": "atom_build_measure_learn",
+  "schemaVersion": 1,
+  "name": "精益验证循环",
+  "nameEn": "Build-Measure-Learn Loop",
+  "frameworkId": "product-innovation-24",
+  "cellId": 18,
+  "tags": ["lean-startup", "bml", "iteration", "learning"],
+  "parentAtomId": "atom_hypothesis_check_overview",
+  "relationType": "child",
+  "coreIdea": "精益循环的目标不是交付，是学习。每轮只问一个问题：我们下一步是保留、枢转还是放弃？学习速度决定创业死亡曲线。",
+  "whenToUse": "早期阶段资源有限 · 方向未定需要快速试错 · 避免陷入『完美主义陷阱』· 建立持续实验节奏",
+  "keySteps": [
+    "Build：只构建回答当前假设所需的最小版本",
+    "Measure：选 1 个创新会计指标，禁用虚荣指标",
+    "Learn：写下本轮学到的事实（而非意见）",
+    "决策会：保留 / 枢转 / 放弃",
+    "缩短循环周期，目标 1-2 周一轮"
+  ],
+  "aiSkillPrompt": "你是一位精益创业教练。我将提供一轮 Build-Measure-Learn 的原始数据和笔记，请你引导团队做出下一步决策。\n\n## 输入\n{请在此处填入：本轮假设、Build 的最小版本描述、Measure 的定量数据、定性观察（用户引述）、时间与成本}\n\n## 任务\n1. 区分事实与解释：把笔记分为『观察到的事实』与『我们的解释』两列\n2. 假设结论：用量化阈值判断假设被证实/部分证实/证伪\n3. 决策建议：保留（加大投入）/ 枢转（调方向）/ 放弃（止损），并说明理由\n4. 下一轮设计：给出下一个最值得验证的假设和最小版本\n5. 学习速率评估：本轮循环用了多长时间？如何缩短下一轮？\n\n## 输出格式\n事实/解释双栏表 + 决策结论 + 下轮假设卡 + 学习速率诊断。\n\n## 约束\n- 不允许把『继续做原来的事』当成保留\n- 枢转必须明确说明保留哪一维度、改变哪一维度（客户/问题/解决方案/营收模式）\n- 不要用虚荣指标（注册数、PV）作为判断依据\n- 如果本轮没学到任何事实，必须标注『循环失败』",
+  "example": {
+    "title": "Zappos 的明日快递枢转",
+    "content": "Nick Swinmurn 先在实体店拍鞋照上网卖，证实『人愿意网购鞋』后才投入做库存系统，避免了百万级库存风险。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

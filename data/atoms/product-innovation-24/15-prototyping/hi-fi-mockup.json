@@ -1,0 +1,34 @@
+{
+  "id": "atom_hi_fi_mockup",
+  "schemaVersion": 1,
+  "name": "高保真视觉稿",
+  "nameEn": "Hi-Fi Mockup (Figma)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 15,
+  "tags": ["Hi-Fi", "Figma", "视觉设计", "Design System"],
+  "parentAtomId": "atom_prototyping_overview",
+  "relationType": "child",
+  "coreIdea": "Hi-Fi 是给「需要做最终决定」的人看的：CEO、客户、营销团队、工程实现团队。它的价值在于细节真实——按钮的圆角、留白、动效、文案口吻——所有人能像看真实产品一样反应。",
+  "whenToUse": "需要 CEO/客户拍板 · 营销素材准备 · 工程师交付实现稿 · 高质量 demo 演示 · App Store / Product Hunt 截图",
+  "keySteps": [
+    "基于已通过的 Lo-Fi 升级",
+    "套用 Design System / UI Kit（避免每次重造轮子）",
+    "替换所有占位为真实文案、真实数据、真实图片",
+    "添加 micro-interaction 注释（hover / loading / empty / error 状态）",
+    "做 Light + Dark 两套",
+    "做 Mobile + Desktop 双断点",
+    "导出 Spec / Dev Mode 给工程"
+  ],
+  "aiSkillPrompt": "你是一位资深 UI 设计师 + Design System 架构师，精通 Figma / Tailwind / shadcn 风格。我会告诉你一个已通过线框评审的页面，请你帮我把它升级为可交付的 Hi-Fi 视觉稿规范。\n\n## 输入\n页面名称与功能：{请在此处填入}\n目标产品的视觉风格关键词（例如 minimal / playful / enterprise / linear-style）：{请在此处填入}\n品牌主色（如有）：{请在此处填入}\n\n## 任务\n1. 给出该页面的视觉规范：网格（12 column / 8pt grid）、断点（mobile/tablet/desktop）、最大宽度\n2. 推荐 1 个匹配的 Design System（Material 3 / Apple HIG / shadcn / Linear-like / Geist）\n3. 输出色彩 token：primary / secondary / surface / muted / destructive，每个给 light + dark 的 hex\n4. 输出字号阶梯：display / h1 / h2 / body / caption（用 px + line-height）\n5. 列出该页面所有需要设计的状态：default / loading / empty / error / success / hover / focus / disabled\n6. 给出 5 处 micro-interaction 注释（哪里需要动画、缓动函数、时长）\n7. 写出真实文案（不许 Lorem ipsum）：标题、副标题、按钮、empty state 提示语、错误提示\n8. 给工程交付清单：图标库、字体、需要的依赖、Dev Mode link 应包含的内容\n\n## 输出格式\nMarkdown 章节，含 token 表与状态清单\n\n## 约束\n- 文案必须真实可发布，不允许占位\n- 必须考虑 dark mode\n- 必须列出所有状态，不允许只设计 happy state\n- 配色必须符合 WCAG AA 对比度",
+  "example": {
+    "title": "经典案例 · Linear 的 Design System",
+    "content": "Linear 团队的所有 Hi-Fi 都基于一套自研 Design System，内部称为「Linear's quiet detail」。每一个按钮的圆角、阴影、键盘 focus 状态、loading 骨架屏都被严格规范。结果是：用户从未在 Linear 里见过「未完成的页面」——因为 empty state 与 error state 都被同等认真地设计过。这是 Linear 给 PM 工具树立的视觉天花板。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

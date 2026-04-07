@@ -1,0 +1,30 @@
+{
+  "id": "atom_decision_reversibility_matrix",
+  "schemaVersion": 1,
+  "name": "决策可逆性矩阵（Type 1 / Type 2）",
+  "nameEn": "Decision Reversibility Matrix (Bezos)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 21,
+  "tags": ["decision-making", "bezos", "two-way-door", "speed"],
+  "parentAtomId": "atom_pivot_decision_overview",
+  "relationType": "child",
+  "coreIdea": "Bezos 的双门理论：Type 1 是单向门（不可逆，需慎重），Type 2 是双向门（可撤销，需迅速）。Pivot 决策中最大的浪费是'把 Type 2 当 Type 1 来开会'。",
+  "whenToUse": "Pivot 讨论卡在'我们再想想' · 团队过度延迟可逆决策 · 区分哪些决定要 CEO 拍板、哪些要小组长直接做 · 加速决策节奏",
+  "keySteps": [
+    "把待决策事项列成清单",
+    "对每项问：3 个月后能不能撤销？撤销成本多少？",
+    "标记 Type 1 / Type 2",
+    "Type 1 走深度评审（数据 + 反方辩论 + 高层决策）",
+    "Type 2 授权给最接近一线的人，48 小时内决",
+    "事后复盘：有没有把 Type 2 误判成 Type 1"
+  ],
+  "aiSkillPrompt": "你是亚马逊领导力原则的研究者，帮 PM 用 Two-Way Door 框架分类决策、加速节奏。我会给你一份决策清单，请你逐项分类并设计执行流程。\n\n## 输入\n- 当前待定决策清单（每条 1-2 句）：{请在此处填入}\n- 团队规模与汇报关系：{请在此处填入}\n- 当前决策瓶颈描述：{请在此处填入}\n\n## 任务\n1. 分类表：每条决策标 Type 1 或 Type 2，说明撤销成本与时间窗\n2. Type 1 决策：列出每条需要的额外输入（数据/反方/利益相关者），以及建议决策人\n3. Type 2 决策：直接指定 owner，要求 48 小时给出方向\n4. 反模式检查：指出当前团队最容易把哪种 Type 2 误判成 Type 1\n5. 流程改进：给出 3 条让 Type 2 决策提速 5 倍的具体规则（不超过 1 句话每条）\n\n## 输出格式\n表格 + Markdown 列表\n\n## 约束\n- 不要把所有决策都标 Type 1 来回避争议\n- 必须给 Type 2 指定具体 owner，不能写'团队'\n- Type 1 评审清单要具体，不能写'认真考虑'",
+  "example": {
+    "title": "Amazon：把'命名'当 Type 2 决定",
+    "content": "Bezos 在 1997 年股东信中写道：'有些决策是双向门，做错了可以走回来。这种决策应该由能力强的个人或小团队快速做出。'Amazon 内部把'产品命名'、'页面文案微调'、'按钮颜色'等划为 Type 2，由一线团队 24 小时内拍板；而'是否进入新市场'、'是否自建物流'划为 Type 1，需走六页备忘录评审。这一区分让 Amazon 在快速迭代和重大决策审慎之间找到平衡，被认为是其决策速度领先同行的核心机制之一。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

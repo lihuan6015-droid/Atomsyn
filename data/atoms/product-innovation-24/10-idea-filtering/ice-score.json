@@ -1,0 +1,29 @@
+{
+  "id": "atom_ice_score",
+  "schemaVersion": 1,
+  "name": "ICE 评分",
+  "nameEn": "ICE Score",
+  "frameworkId": "product-innovation-24",
+  "cellId": 10,
+  "tags": ["ICE", "增长", "Sean Ellis", "实验排序"],
+  "parentAtomId": "atom_idea_filtering_overview",
+  "relationType": "child",
+  "coreIdea": "ICE = Impact × Confidence × Ease。RICE 的简化版，专为'增长实验排序'而生——当你每周要从 30 个实验想法里挑 3 个跑，RICE 太重，ICE 三个 1-10 维度足够拉开档次。",
+  "whenToUse": "Growth Hacking 实验排序 · 每周/双周实验例会 · A/B 测试候选过多 · 小团队快速决策",
+  "keySteps": [
+    "把每个增长实验写成一句假设（'如果做 X，则 Y 指标会动 Z'）",
+    "三个维度各打 1-10 分（不要平均给分）",
+    "计算 I × C × E（也有团队用平均值）",
+    "Top 3-5 进入本周实验队列",
+    "实验结束后回填实际 Impact，校准下次估分"
+  ],
+  "aiSkillPrompt": "你是一位 GrowthHackers 出身的增长实验官。我会提供一组增长实验想法，请你用 ICE 框架排序。\n\n## 输入\n- 实验想法清单（每条须含'如果…那么…'假设格式）：{请在此处填入}\n- 当前北极星指标：{请在此处填入}\n- 团队本周实验容量：{请在此处填入}\n\n## 任务\n1. 检查每个想法是否符合假设格式，否则补全\n2. 对每个想法在 Impact / Confidence / Ease 三维上打 1-10 分\n3. 每个分数必须附 1 句依据（不要凭直觉）\n4. 计算 I × C × E 总分并排序\n5. 输出本周建议跑的 Top N 个实验（N = 团队容量）\n6. 标记被淘汰但值得后续重审的想法\n\n## 输出格式\n| # | 实验假设 | Impact | I 依据 | Conf | C 依据 | Ease | E 依据 | 总分 | 决策 |\n\n## 约束\n- Confidence 不能超过 8 分，除非有 A/B 历史数据支撑\n- 不要把'优化按钮颜色'类微观实验和'新激活流'放同一表评分，请先按 Layer 分组\n- 总分前 30% 才进入推荐",
+  "example": {
+    "title": "Sean Ellis Dropbox ICE",
+    "content": "Sean Ellis 在 Dropbox 增长团队用 ICE 排序，'双向推荐奖励'最初在传统讨论中并不靠前，但 ICE 评下 Impact=9、Confidence=6、Ease=8 总分 432 杀入 Top，后来成为 Dropbox 病毒增长的核心机制。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

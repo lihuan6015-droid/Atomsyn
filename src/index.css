@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- Design Tokens (mirrors docs/mockups) ---------- */
+@layer base {
+  :root {
+    /* Stage column colors as RGB triples for tailwind alpha-aware utilities */
+    --stage-discover: 167 139 250;  /* #A78BFA */
+    --stage-define:    96 165 250;  /* #60A5FA */
+    --stage-ideate:    52 211 153;  /* #34D399 */
+    --stage-develop:  251 191  36;  /* #FBBF24 */
+    --stage-validate: 251 146  60;  /* #FB923C */
+    --stage-evolve:   244 114 182;  /* #F472B6 */
+  }
+
+  html, body, #root {
+    height: 100%;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @apply text-neutral-900 dark:text-neutral-100 transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  /* Glass morphism backdrop */
+  .glass {
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  /* Hide scrollbars but allow scroll */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  /* Subtle scrollbar (used inside prompt boxes etc.) */
+  .scrollbar-subtle::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-subtle::-webkit-scrollbar-thumb {
+    background: rgba(127, 127, 127, 0.25);
+    border-radius: 3px;
+  }
+  .scrollbar-subtle::-webkit-scrollbar-thumb:hover {
+    background: rgba(127, 127, 127, 0.4);
+  }
+
+  /* Hero radial gradient (atom card background) */
+  .hero-gradient {
+    background:
+      radial-gradient(1200px 400px at 15% -20%, rgba(167, 139, 250, 0.18), transparent 55%),
+      radial-gradient(900px 300px at 90% -10%, rgba(96, 165, 250, 0.12), transparent 55%);
+  }
+  .dark .hero-gradient {
+    background:
+      radial-gradient(1200px 400px at 15% -20%, rgba(167, 139, 250, 0.22), transparent 55%),
+      radial-gradient(900px 300px at 90% -10%, rgba(96, 165, 250, 0.18), transparent 55%);
+  }
+
+  /* Cell glow on hover - per-stage color via inline --glow-color */
+  .cell-glow {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.2s ease;
+  }
+  .cell-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px -12px var(--glow-color, rgba(167, 139, 250, 0.35));
+  }
+
+  /* Progressive disclosure collapse — grid-template-rows trick (no fixed max-height) */
+  .collapse-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.25s ease-out;
+    opacity: 0;
+  }
+  .collapse-content.open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .collapse-content > .collapse-inner {
+    overflow: hidden;
+  }
+
+  .chevron {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .chevron.open {
+    transform: rotate(90deg);
+  }
+}

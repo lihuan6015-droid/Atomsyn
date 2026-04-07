@@ -1,0 +1,30 @@
+{
+  "id": "atom_pricing_packaging_tier",
+  "schemaVersion": 1,
+  "name": "定价与套餐分层设计",
+  "nameEn": "Pricing & Packaging Tier Design",
+  "frameworkId": "product-innovation-24",
+  "cellId": 24,
+  "tags": ["pricing", "packaging", "tiers", "monetization"],
+  "parentAtomId": "atom_scale_readiness_overview",
+  "relationType": "child",
+  "coreIdea": "规模化前必须把定价从'单一价'升级为'分层套餐'：让小客户低门槛进来，大客户为真正在意的功能多付钱。Free / Pro / Team / Enterprise 四阶是 SaaS 默认起点，但维度选择决定一切。",
+  "whenToUse": "PMF 后准备扩张 · 大客户开始主动询问 Enterprise 选项 · ARPU 增长停滞 · 销售反馈定价不灵活 · 准备引入 Sales-led 路径",
+  "keySteps": [
+    "找到 1-2 个'价值维度'（席位/用量/功能/支持）",
+    "设计 3-4 档套餐，每档差异 ≥ 3 倍价格",
+    "把功能拆为'必备 / 增长 / 高级 / 企业'",
+    "定锚定档（中间档），引导 70% 客户选它",
+    "为 Enterprise 留出'价格面议'空间",
+    "上线前做 5-10 个客户访谈验证套餐故事"
+  ],
+  "aiSkillPrompt": "你是 SaaS 定价顾问（Patrick Campbell 风格）。我会给你产品定位与功能清单，请你设计分层套餐。\n\n## 输入\n- 产品定位与目标客户类型：{请在此处填入}\n- 当前定价：{请在此处填入}\n- 完整功能清单：{请在此处填入}\n- 客户大小分布（小/中/大占比）：{请在此处填入}\n- 主要竞品定价：{请在此处填入}\n\n## 任务\n1. 价值维度选择：从席位/用量/功能/支持/合规中挑 1-2 个最匹配的维度，说明理由\n2. 套餐结构：设计 3-4 档（Free / Pro / Team / Enterprise 或类似），每档定价、目标客户、容量/限制\n3. 功能拆分表：把功能清单分到四档，遵循'必备/增长/高级/企业'原则\n4. 锚定策略：明确哪一档是希望 70% 客户选择的，如何用价格锚点引导\n5. Enterprise 策略：是否报价面议，最低成交价区间\n6. 上线前验证：5 个必须问客户的访谈问题\n\n## 输出格式\n套餐对照表 + 功能矩阵 + 访谈问题\n\n## 约束\n- 套餐档数 3-4，不要 5 档以上\n- 相邻档价格倍数 ≥ 3\n- 必须有'不放进任何套餐'的功能（明确丢弃）",
+  "example": {
+    "title": "Slack 从单一价到分层",
+    "content": "Slack 2014 年最初只有单一付费版（$8/用户/月）。随客户规模分化，2015-2017 年演化出 Free / Standard ($6.67) / Plus ($12.5) / Enterprise Grid（约 $25-50）四档。价值维度选择'消息历史 + 集成数 + 合规'三项。Plus 档设为锚点（70% 中型客户选它），Enterprise Grid 留给 1000+ 员工大公司报价面议。这次分层让 Slack 的 ARPU 在 2016-2018 年提升约 2.3 倍，并支撑了从 SMB 向大企业的扩张。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

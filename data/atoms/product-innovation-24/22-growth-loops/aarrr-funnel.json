@@ -1,0 +1,30 @@
+{
+  "id": "atom_aarrr_funnel",
+  "schemaVersion": 1,
+  "name": "AARRR 海盗指标漏斗",
+  "nameEn": "AARRR Pirate Metrics (vs Loop)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 22,
+  "tags": ["aarrr", "funnel", "pirate-metrics", "metrics"],
+  "parentAtomId": "atom_growth_loops_overview",
+  "relationType": "child",
+  "coreIdea": "Dave McClure 的五环漏斗：Acquisition → Activation → Retention → Referral → Revenue。它仍然是早期产品最快建立指标体系的方法，但要清楚它的局限——线性、不复利。",
+  "whenToUse": "产品 0-1 阶段第一次建立指标 · 团队对'增长由什么组成'缺乏共识 · 需要快速找到漏斗最大流失环 · 准备从 AARRR 升级到 Loop 之前的诊断",
+  "keySteps": [
+    "为五个环节各定义 1 个核心指标",
+    "拉出全量用户的当前转化率",
+    "找出最大流失环节",
+    "为该环节设计 2-3 个改进实验",
+    "实验后重新量化漏斗",
+    "诊断哪些环节天然适合改造成循环"
+  ],
+  "aiSkillPrompt": "你是早期产品的增长教练。我会给你一份产品数据，请你用 AARRR 漏斗诊断当前最大瓶颈，并指出哪些环节可以升级为增长循环。\n\n## 输入\n- 产品类型与定价模式：{请在此处填入}\n- 月活跃用户量级：{请在此处填入}\n- 五环节各自的当前指标（如果有）：{请在此处填入}\n- 当前最关心的增长目标：{请在此处填入}\n\n## 任务\n1. 漏斗表：补全 Acquisition / Activation / Retention / Referral / Revenue 各环节的指标定义和当前值\n2. 瓶颈诊断：找出转化率最低或最异常的 1 个环节，指出可能原因\n3. 改进实验：为瓶颈环节设计 3 个具体实验（变量 / 假设 / 度量）\n4. 漏斗 → 循环升级：指出哪 1-2 个环节最适合改造为增长循环，给出转换路径\n5. 反模式提醒：列出 PM 用 AARRR 时最常犯的 2 个错误（如把 D1 当 Retention）\n\n## 输出格式\n表格 + 实验卡\n\n## 约束\n- 不要把所有环节都说成瓶颈，必须挑 1 个\n- 指标定义必须可被工程实现，不能模糊\n- 实验必须可在 2 周内完成",
+  "example": {
+    "title": "Uber 早期 AARRR",
+    "content": "Uber 在 2010-2011 年用 AARRR 衡量增长：Acquisition 通过本地活动 + Promo Code，Activation 定义为'首次成功打到车'，Retention 看 4 周内重复打车次数，Referral 用双向 $20 优惠券，Revenue 看每用户月均行程数。其中 Activation 一度只有 30%，团队聚焦优化司机供给密度后提升到 60%+，成为整个漏斗最大杠杆。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

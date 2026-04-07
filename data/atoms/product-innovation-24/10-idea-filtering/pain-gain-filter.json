@@ -1,0 +1,30 @@
+{
+  "id": "atom_pain_gain_filter",
+  "schemaVersion": 1,
+  "name": "Pain-Gain 筛选器",
+  "nameEn": "Pain-Gain Filter",
+  "frameworkId": "product-innovation-24",
+  "cellId": 10,
+  "tags": ["Pain", "Gain", "VPC", "用户价值"],
+  "parentAtomId": "atom_idea_filtering_overview",
+  "relationType": "child",
+  "coreIdea": "把每个想法投到 Value Proposition Canvas 的 Pain Reliever / Gain Creator 两侧，问：它消除了哪个具体痛点？创造了哪个具体收益？无法回答的想法被淘汰——这是把'我以为有用'变成'用户验证有用'的最后一道关卡。",
+  "whenToUse": "RICE/ICE 评分后想再做一次'用户视角'交叉检验 · 担心团队陷入功能堆砌 · VPC 已存在并希望延续到优先级阶段 · 每个候选都需要被'用户为什么会用'解释",
+  "keySteps": [
+    "确保已有目标用户的 Customer Profile（Jobs/Pains/Gains）",
+    "把每个想法摆到对应的 Pain 或 Gain 旁",
+    "对每个想法标注'Pain Reliever 强度' 和 'Gain Creator 强度'（弱/中/强）",
+    "去掉无法对应任何 Pain/Gain 的想法",
+    "保留对'极端 Pain'或'未被服务 Gain'有强匹配的想法",
+    "对 Top 项写一句价值主张草稿"
+  ],
+  "aiSkillPrompt": "你是一位 Strategyzer 认证的价值主张设计师。我会提供候选想法和已知的用户 Pain/Gain，请用 Pain-Gain Filter 筛选。\n\n## 输入\n- 候选想法清单：{请在此处填入}\n- 目标用户的 Jobs/Pains/Gains（已存在的 VPC，可分点列出）：{请在此处填入}\n- 当前竞品对这些 Pain/Gain 的覆盖情况：{请在此处填入}\n\n## 任务\n1. 把每个想法映射到具体的 Pain 编号 + Gain 编号（一个想法可同时映射多个）\n2. 对每个映射打强度（弱/中/强）\n3. 标记'未对应任何 Pain/Gain'的想法 → 建议淘汰\n4. 标记'对应到极端 Pain（用户每天经历且无替代方案）'的想法 → 建议优先\n5. 标记'对应到未被任何竞品覆盖的 Gain'的想法 → 战略机会\n6. 为 Top 3 写一句价值主张草稿\n\n## 输出格式\n| # | 想法 | 对应 Pain | Reliever 强度 | 对应 Gain | Creator 强度 | 是否覆盖盲区 | 决策 |\n\n## Top 3 价值主张草稿\n- 想法 X：「为 [用户] 提供 [...]，让他们 [Gain]，避免 [Pain]」\n\n## 约束\n- 一个想法若映射不到任何具体 Pain/Gain，必须淘汰，不允许'间接相关'\n- Pain/Gain 必须引用编号，不允许新造\n- 强度判断须有依据（用户引语 / 数据 / 类比）",
+  "example": {
+    "title": "Superhuman 的痛点筛选",
+    "content": "Superhuman 早期收到大量功能请求，CEO Rahul Vohra 强制每个功能必须对应到'重度邮件用户的具体 Pain'，没有对应的一律淘汰。这让团队拒绝了'日历集成''CRM 同步'等热门请求，专注'键盘速度'和'分类秒响应'，最终做出 PMF 极强的产品。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

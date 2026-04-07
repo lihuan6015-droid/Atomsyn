@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Framework",
+  "description": "A skeleton organizing knowledge atoms (e.g. Product Innovation 24-Step)",
+  "type": "object",
+  "required": ["id", "schemaVersion", "name", "layoutType", "matrix", "createdAt", "updatedAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "name": { "type": "string" },
+    "nameEn": { "type": "string" },
+    "source": { "type": "string" },
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "layoutType": { "type": "string", "enum": ["matrix"] },
+    "matrix": {
+      "type": "object",
+      "required": ["rows", "columns", "columnHeaders", "cells"],
+      "properties": {
+        "rows": { "type": "integer" },
+        "columns": { "type": "integer" },
+        "columnHeaders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "color"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "color": { "type": "string" }
+            }
+          }
+        },
+        "cells": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["stepNumber", "column", "row", "name", "atomCategoryPath"],
+            "properties": {
+              "stepNumber": { "type": "integer" },
+              "column": { "type": "string" },
+              "row": { "type": "integer" },
+              "name": { "type": "string" },
+              "nameEn": { "type": "string" },
+              "tagline": { "type": "string" },
+              "atomCategoryPath": { "type": "string" },
+              "featured": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "atom_closed_beta",
+  "schemaVersion": 1,
+  "name": "封闭内测",
+  "nameEn": "Closed Beta",
+  "frameworkId": "product-innovation-24",
+  "cellId": 16,
+  "tags": ["发布", "Closed Beta", "邀请制", "种子用户"],
+  "parentAtomId": "atom_first_launch_overview",
+  "relationType": "child",
+  "coreIdea": "用「邀请码 / Waitlist / 申请制」筛选出 50-500 位高匹配度的种子用户，建立 1 对 1 关系。Closed Beta 的目标不是收入，而是收集 200 字以上的真实反馈和创造「我是早期用户」的归属感。",
+  "whenToUse": "产品初步可用但还不稳定 · 需要深度定性反馈 · 想制造稀缺感 · B2B 高客单价 · 需要建立社群护城河",
+  "keySteps": [
+    "搭建 waitlist 落地页（Hero + 邀请制说明 + 邮箱表单）",
+    "用「申请理由」字段筛选高动机用户",
+    "分批邀请，每批 20-50 人",
+    "建立专属沟通渠道（Discord / Slack / 微信群）",
+    "每周和至少 5 位用户做 30 分钟访谈",
+    "记录每个 bug、每条建议、每次「啊哈时刻」",
+    "毕业标准达成后转 Open Beta 或正式发布"
+  ],
+  "aiSkillPrompt": "你是一位精通 Closed Beta 与社群运营的资深产品营销负责人。我会告诉你产品状态与目标用户，请你帮我设计一次完整的 Closed Beta 计划。\n\n## 输入\n产品概述：{请在此处填入}\n目标用户画像：{请在此处填入}\n计划放量人数：{请在此处填入}\nBeta 期长度（周）：{请在此处填入}\n\n## 任务\n1. 设计 waitlist 落地页结构：Hero 标题 / 价值主张 / 申请表单字段（必须含「为什么你想加入」筛选题）/ 进度条 / FAQ\n2. 设计申请筛选评分卡：5 个维度，每维度 1-3 分，告诉我多少分以上自动通过\n3. 设计分批放量节奏：第 1 周 N 人 / 第 2 周 N 人 / ... 给出每批的目的\n4. 设计种子用户的专属「特权清单」（早鸟价、专属徽章、CEO 直聊…）\n5. 设计每周节奏：周一发布 changelog、周三 office hour、周五访谈\n6. 设计反馈收集结构：bug 报告模板 / NPS / 1 对 1 访谈大纲（5 个核心问题）\n7. 给出 Beta 毕业标准：什么时候该开放给所有人？（用具体数字）\n8. 列出 3 个 Closed Beta 常见失败模式及规避方法\n\n## 输出格式\nMarkdown 章节，含落地页结构 + 评分卡 + 节奏表\n\n## 约束\n- 申请表必须含开放性问题（不只是邮箱）\n- 毕业标准必须可量化\n- 沟通渠道必须有专人负责",
+  "example": {
+    "title": "经典案例 · Slack 的 Closed Beta",
+    "content": "Slack 在 2013 年正式发布前邀请了 6 家公司做 Closed Beta，前 6 个月只服务这 6 家。Stewart Butterfield 亲自参加这些公司的内部 demo 并接听吐槽。这 6 家用户帮 Slack 发现了「频道命名规范」「@ 提醒优先级」等关键设计。当 Slack 正式开放时，第一天就有 8000 家公司注册，因为前 6 家中的每一位员工都成了传教士。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "atom_sequential_testing",
+  "schemaVersion": 1,
+  "name": "序贯假设检验",
+  "nameEn": "Sequential Hypothesis Testing",
+  "frameworkId": "product-innovation-24",
+  "cellId": 18,
+  "tags": ["sequential", "experiment", "early-stopping", "bayesian"],
+  "parentAtomId": "atom_hypothesis_check_overview",
+  "relationType": "child",
+  "coreIdea": "序贯检验允许你在数据足够说话时就停止实验，而不是硬等固定样本——对低流量产品和高变动成本场景是救命稻草。",
+  "whenToUse": "流量很小等不起固定样本 · 差异很大想早停止损 · 需要持续评估而非单点判断 · 高风险实验要快速叫停",
+  "keySteps": [
+    "选择方法：mSPRT / Alpha Spending / Bayesian Posterior",
+    "设定早停边界（上限证实、下限证伪）",
+    "每次数据更新重新计算决策统计量",
+    "命中边界即停止，不命中则继续",
+    "记录整个决策轨迹以便审计"
+  ],
+  "aiSkillPrompt": "你是一位序贯实验方法专家。我将提供一个实验场景，请你帮助选择合适的序贯方法并输出监控方案。\n\n## 输入\n{请在此处填入：实验目标、每日样本量、业务对早停需求的强度、指标类型（转化率/连续值/计数）、alpha 与 beta 容忍度}\n\n## 任务\n1. 方法推荐：在 mSPRT / Group Sequential / Bayesian 中推荐一个，并说明为何\n2. 参数设定：给出具体的早停边界参数\n3. 监控节奏：每天 / 每小时 / 每 N 样本更新一次，权衡计算成本\n4. 伪早停风险：说明该方法在你场景下的假阳性控制方式\n5. 落地建议：提供监控 SQL 或伪代码\n\n## 输出格式\n方法对比表 + 推荐方案 + 参数表 + 监控伪代码 + 风险提示。\n\n## 约束\n- 不允许『跑到显著就停』的朴素 peeking\n- 必须明确控制整体 alpha\n- 对极低样本量场景直接建议不用 A/B 而用定性验证\n- 不要堆砌统计术语，必须解释对业务的意义",
+  "example": {
+    "title": "Netflix 的序贯 A/B 平台",
+    "content": "Netflix 公开的实验平台文档中披露了 mSPRT 在低流量实验上的使用，某些实验样本量需求减少 40%，同时保持错误率控制。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

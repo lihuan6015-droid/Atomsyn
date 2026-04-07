@@ -1,0 +1,29 @@
+{
+  "id": "atom_nps",
+  "schemaVersion": 1,
+  "name": "NPS 净推荐值",
+  "nameEn": "Net Promoter Score",
+  "frameworkId": "product-innovation-24",
+  "cellId": 20,
+  "tags": ["nps", "loyalty", "recommendation", "survey"],
+  "parentAtomId": "atom_pmf_diagnostics_overview",
+  "relationType": "child",
+  "coreIdea": "NPS 的价值不在那个数字，而在后面的『为什么』。数字用来追趋势，评论用来听真相。只看分数不看引语，NPS 只是虚荣指标。",
+  "whenToUse": "跟踪长期客户忠诚度 · 改版后判断用户感受变化 · 找到推荐者与贬损者的差异 · 产出质性洞察",
+  "keySteps": [
+    "在触发式节点发送（使用 N 次后，而非注册后）",
+    "配必填的『为什么』开放问题",
+    "分推荐者 / 中立者 / 贬损者计算 NPS",
+    "对贬损者与推荐者分别做主题分析",
+    "把洞察转化为 roadmap 条目"
+  ],
+  "aiSkillPrompt": "你是一位 CX 研究员。我将提供 NPS 原始评分与开放评论，请你输出一份 NPS 主题分析报告。\n\n## 输入\n{请在此处填入：调研期、样本量、每条记录的评分 0-10 与评论原文、用户基础画像（如可用）}\n\n## 任务\n1. 计算 NPS 与三组占比\n2. 推荐者主题：从评论中提炼 3 类被夸赞的价值\n3. 贬损者主题：从评论中提炼 3 类主要不满\n4. 关键引语：每类主题附 1-2 条代表性原文\n5. 行动转化：每类主题给出 1 条 roadmap 建议\n\n## 输出格式\nNPS 数值 + 主题分析表（主题 / 频次 / 引语 / 建议）+ 警告区（样本偏差、幸存者偏差）。\n\n## 约束\n- 不得编造不在原文中的引语\n- 样本 < 30 不得下结论\n- 不要把 NPS 数字与 PMF 等同\n- 匿名化：引语中删除个人可识别信息",
+  "example": {
+    "title": "Intercom 的 NPS 轮询",
+    "content": "Intercom 在用户使用产品 30 天后触发 NPS，并要求回答者必须写出理由。团队每月开 NPS 回顾会，将高频抱怨直接进入 roadmap。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

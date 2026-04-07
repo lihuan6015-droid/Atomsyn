@@ -1,0 +1,29 @@
+{
+  "id": "atom_north_star_metric",
+  "schemaVersion": 1,
+  "name": "北极星指标",
+  "nameEn": "North Star Metric",
+  "frameworkId": "product-innovation-24",
+  "cellId": 19,
+  "tags": ["north-star", "metric", "value", "alignment"],
+  "parentAtomId": "atom_metric_system_overview",
+  "relationType": "child",
+  "coreIdea": "北极星 = 客户获得核心价值的次数 × 范围。它必须是客户实际用到产品而非仅仅付钱的那一刻，否则团队会为了短期收入伤害长期价值。",
+  "whenToUse": "组织跨部门对齐 · 融资沟通 · 长期产品战略 · 避免功能工厂陷阱",
+  "keySteps": [
+    "写下产品承诺给用户的核心价值",
+    "找到那个『价值交付瞬间』的可测量动作",
+    "用量 × 频率 × 广度三维构造指标",
+    "对比备选方案：哪个最难被 gaming、最能代表未来收入",
+    "通过 3 个月数据验证它与留存/NRR 的相关性"
+  ],
+  "aiSkillPrompt": "你是一位 Growth 负责人，精通北极星选择与验证。我将提供产品场景，请你帮助选出并验证一个合适的北极星指标。\n\n## 输入\n{请在此处填入：产品描述、用户核心 Job、商业模式、现有指标与其 6 个月趋势、组织规模}\n\n## 任务\n1. 候选生成：给出 3 个北极星候选，每个注明『价值瞬间』和度量方式\n2. 评估：从 可测量 / 代表长期价值 / 可影响 / 难 gaming / 易沟通 五维打分\n3. 推荐：选出 1 个主北极星和 1 个备选\n4. 验证计划：给出如何用现有数据验证其与留存/收入的相关性\n5. 反模式警告：指出该指标可能被团队 gaming 的 2 种方式\n\n## 输出格式\n候选对比表（五维评分）+ 推荐结论 + 验证 SQL 伪代码 + 反模式清单。\n\n## 约束\n- 北极星禁止为纯粹的注册数、下载数、DAU（除非这是产品本质）\n- 必须能被一个数值直接表达，不允许复合公式\n- 不要超过 8 个字的中文命名\n- 不要建议同时使用多个北极星",
+  "example": {
+    "title": "Spotify 的 Time Spent Listening",
+    "content": "Spotify 选择『总收听时长』作为北极星，因为它直接反映用户从音乐中获得的价值，并与订阅续费强相关。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

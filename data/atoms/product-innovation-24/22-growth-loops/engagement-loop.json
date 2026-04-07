@@ -1,0 +1,30 @@
+{
+  "id": "atom_engagement_loop",
+  "schemaVersion": 1,
+  "name": "参与度循环（Hook Model）",
+  "nameEn": "Engagement Loop (Nir Eyal Hook)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 22,
+  "tags": ["engagement", "hook-model", "retention", "habit"],
+  "parentAtomId": "atom_growth_loops_overview",
+  "relationType": "child",
+  "coreIdea": "Nir Eyal 的 Hook 模型：触发 → 行动 → 多变奖励 → 投入。每次循环让用户对产品的依赖加深一点，把'我用它'变成'我离不开它'。注意：必须配合伦理边界。",
+  "whenToUse": "留存曲线在 D7-D30 急速下滑 · 用户激活后未形成习惯 · 设计 onboarding 后的'第二天体验' · 改造任何高频功能",
+  "keySteps": [
+    "找到外部触发与内部触发（情绪/场景）",
+    "把核心行为简化到 1 步可完成",
+    "设计奖励的多变性（社会/狩猎/自我三类）",
+    "增加用户'投入'（数据/内容/社交连接）",
+    "测量循环时长与重复频率",
+    "做伦理审核：是不是让用户做了对自己不好的事"
+  ],
+  "aiSkillPrompt": "你是 Nir Eyal 的 Hook 模型实践教练，同时坚持伦理设计原则。我会描述一个用户行为路径，请你设计参与度循环，但要明确指出哪些做法越界。\n\n## 输入\n- 产品类型与核心使用场景：{请在此处填入}\n- 当前留存曲线（D1/D7/D30）：{请在此处填入}\n- 用户为什么打开产品的情绪/场景描述：{请在此处填入}\n- 团队的伦理底线（如不做 dark pattern）：{请在此处填入}\n\n## 任务\n1. 触发设计：列出 2 个外部触发 + 2 个内部触发（情绪/场景）\n2. 行动简化：写出当前最小可执行行为，是否能再砍一步\n3. 多变奖励：设计 3 类（社会/狩猎/自我）各一个具体形式\n4. 投入设计：用户每用一次会沉淀什么（数据/内容/关系）让他更难离开\n5. 循环节拍：估算循环时长，建议监控指标\n6. 伦理红线检查：明确指出本设计中哪 2 处可能滑向 dark pattern，给出替代方案\n\n## 输出格式\n四步表格 + 伦理检查段落\n\n## 约束\n- 必须包含伦理检查，不能省略\n- 不要建议虚假紧迫感或恐惧驱动的设计\n- 投入设计要让用户真正受益，而不只是被绑架",
+  "example": {
+    "title": "Duolingo 的 streak 循环",
+    "content": "触发：每晚固定时间 push + 内部'我不想断'的情绪 → 行动：5 分钟一课（极简）→ 多变奖励：积分、连胜火焰、Leaderboard 排名（社会+狩猎+自我）→ 投入：连续天数（streak）成为用户的情感资产，断了就心痛。Duolingo 在 2018-2023 年靠这一循环把 D30 留存提升到行业顶尖（约 55%+），DAU 突破 3000 万。Luis von Ahn 同时强调拒绝过度焦虑设计——例如允许 streak freeze。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

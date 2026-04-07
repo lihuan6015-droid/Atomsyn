@@ -1,0 +1,29 @@
+{
+  "id": "atom_heatmap_session_replay",
+  "schemaVersion": 1,
+  "name": "热力图与会话回放",
+  "nameEn": "Heatmap & Session Replay",
+  "frameworkId": "product-innovation-24",
+  "cellId": 17,
+  "tags": ["heatmap", "session-replay", "qualitative", "ux-research"],
+  "parentAtomId": "atom_data_harvesting_overview",
+  "relationType": "child",
+  "coreIdea": "数字告诉你『发生了什么』，回放告诉你『为什么』。看 5 段流失用户的回放，往往比一周看仪表盘更接近真相。",
+  "whenToUse": "漏斗某一步流失莫名其妙 · 用户反馈与数据冲突 · 想发现 UX 死角 · 新功能上线后体验定性",
+  "keySteps": [
+    "在关键页面接入热力图（点击/移动/滚动）",
+    "为高价值流程开启会话回放，过滤掉低价值流量",
+    "按『流失/报错/rage click』标签筛选回放",
+    "每周抽看 5-10 段，提炼定性洞察",
+    "把洞察转换成 3 条可验证的设计假设"
+  ],
+  "aiSkillPrompt": "你是一位 UX 研究员，擅长从会话回放中提炼洞察。我将提供某条流程的回放观察笔记，请你输出一份定性诊断报告。\n\n## 输入\n{请在此处填入：流程名称、目标行为、观察到的 5-10 段回放笔记（每段包含：时间戳、用户行为、终止状态）、对应的定量数据（流失率等）}\n\n## 任务\n1. 模式识别：总结 3 类典型行为模式（如 hover-犹豫、rage click、scroll-then-leave）\n2. 根因假设：把模式映射到可能的 UX/文案/性能问题\n3. 优先级：按出现频次 × 影响 排序问题\n4. 设计假设：每个高优先问题给出 1 条可验证的设计修改\n5. 可信度提示：哪些观察样本太少、不能下定论\n\n## 输出格式\n表格『模式-频次-假设-修改-优先级』+ 文字总结。\n\n## 约束\n- 不要将单段回放上升为普遍规律\n- 必须区分『证实』与『启发』两种洞察类型\n- 不得包含可识别用户身份的描述\n- 不要建议在没有定量数据印证的情况下大改首页",
+  "example": {
+    "title": "Hotjar × Hubspot 的 rage click 修复",
+    "content": "Hubspot 通过 Hotjar 回放发现注册页一个非按钮元素被频繁点击（rage click），把它改成真按钮后注册率提升 11%。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

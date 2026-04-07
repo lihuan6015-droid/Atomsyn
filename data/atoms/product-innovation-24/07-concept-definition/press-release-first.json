@@ -1,0 +1,29 @@
+{
+  "id": "atom_press_release_first",
+  "schemaVersion": 1,
+  "name": "逆向新闻稿",
+  "nameEn": "Press Release-First (Amazon Working Backwards)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 7,
+  "tags": ["Working Backwards", "Amazon", "Press Release", "PR/FAQ"],
+  "parentAtomId": "atom_concept_definition_overview",
+  "relationType": "child",
+  "coreIdea": "亚马逊『逆向工作法』要求在写一行代码之前先写发布日新闻稿——如果新闻稿读起来无趣，产品本身就不值得做。这是一个极致的客户视角强制器。",
+  "whenToUse": "立项前审视是否真有客户价值 · 大型项目对齐高管 · 团队陷入功能堆砌时拉回客户视角 · 写 PRD 之前的『北极星文档』",
+  "keySteps": [
+    "想象产品已发布，写一篇 1 页的新闻稿（含标题、副标题、问题段、解决段、客户引用、CEO 引用、可用方式）",
+    "写一份 5-10 题的内部 FAQ（最难的问题先答）",
+    "写一份外部 FAQ（客户最可能问的）",
+    "在评审会上朗读，看是否让在场所有人想成为客户",
+    "迭代直到读起来兴奋——不兴奋就别做"
+  ],
+  "aiSkillPrompt": "你是亚马逊产品文化的资深教练，精通 Working Backwards 的 PR/FAQ 写法。我将提供产品想法，请你产出一篇发布日新闻稿和关键 FAQ。\n\n## 输入\n- 产品想法：{请在此处填入}\n- 目标客户与场景：{请在此处填入}\n- 假想的发布日期：{请在此处填入}\n- 你希望客户听完后做的下一步动作：{请在此处填入}\n\n## 任务\n1. 写一篇 ≤ 1 页的发布日新闻稿，必须包含：\n   - 标题（≤ 12 字，吸引力强）\n   - 副标题（说明客户与价值）\n   - 段 1：客户面临的问题（含具体场景）\n   - 段 2：我们的产品如何解决（避免功能罗列）\n   - 段 3：一段虚拟客户引用（要像真人会说的话）\n   - 段 4：一段虚拟 CEO 引用（讲使命）\n   - 段 5：如何开始使用\n2. 写 5 个内部 FAQ（团队最怕被问的）\n3. 写 5 个外部 FAQ（客户最想知道的）\n4. 给出 3 个『读完仍然不兴奋』的警示信号\n\n## 输出格式\nMarkdown：完整新闻稿 + 内部 FAQ + 外部 FAQ + 警示信号\n\n## 约束\n- 新闻稿不允许出现技术栈、架构或里程碑日期\n- 客户引用必须像真实人在说话，不能像营销文案\n- 标题禁止『重磅推出』『颠覆性』等套词",
+  "example": {
+    "title": "Amazon Echo 的逆向新闻稿",
+    "content": "亚马逊在 Echo 立项前先写了一份新闻稿：『Amazon 推出 Echo——一只随时待命的会听话的圆筒』。整篇没提任何技术，只描绘『妈妈在做饭时喊 Alexa 加购物车』的画面。这篇文档让团队 4 年间砍掉了上百个无关功能。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

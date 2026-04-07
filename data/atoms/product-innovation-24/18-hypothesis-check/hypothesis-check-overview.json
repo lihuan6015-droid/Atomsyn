@@ -1,0 +1,27 @@
+{
+  "id": "atom_hypothesis_check_overview",
+  "schemaVersion": 1,
+  "name": "数据假设校验法",
+  "nameEn": "Hypothesis Validation System",
+  "frameworkId": "product-innovation-24",
+  "cellId": 18,
+  "tags": ["hypothesis", "validation", "experiment", "lean", "evidence"],
+  "coreIdea": "产品决策的本质是假设管理。把直觉写成可证伪的假设，用最小代价拿到证据，每轮只学一件事——这就是精益 PMF 的内核。",
+  "whenToUse": "团队陷入『我觉得』争论 · MVP 即将开发但缺乏证据 · 需要停止烧钱做错方向 · 建立实验文化",
+  "keySteps": [
+    "把模糊想法改写成可证伪的假设卡",
+    "选择匹配风险的校验方法（访谈 / AB / 烟雾测试 / 统计检验）",
+    "定义成功/失败的量化阈值（pre-mortem）",
+    "用 Build-Measure-Learn 循环跑最小版本",
+    "复盘：保留 / 枢转 / 放弃，更新信念"
+  ],
+  "aiSkillPrompt": "你是一位精益创业教练，帮团队把直觉变成可验证的实验。我将提供一个产品想法，请你输出一份《假设校验路线图》。\n\n## 输入\n{请在此处填入：产品想法、目标用户、当前最大风险（需求 / 解决方案 / 可行性 / 商业模式）、可用时间、可用预算}\n\n## 任务\n1. 风险拆解：列出 5-8 条隐含假设，按『致命度 × 不确定性』打分\n2. 校验方法匹配：为 top 3 假设分别选择最低成本的验证方法（访谈 / 落地页 / 烟雾测试 / A/B / 并发样本）\n3. 假设卡：每条 top 假设写成『我们相信 X，当 Y 发生时即被证实/证伪，阈值为 Z』\n4. 1-2 周行动计划：含里程碑、所需人力、预期学习\n5. Pre-mortem：指出本路线图最可能翻车的 3 个地方\n\n## 输出格式\n风险矩阵表 + 假设卡（Markdown 模板）+ 2 周日历 + Pre-mortem。\n\n## 约束\n- 不允许出现不可证伪的假设（如『用户会喜欢』）\n- 每条假设必须给出数字阈值\n- 不要先做 MVP 再找假设，必须假设驱动\n- 禁止一次验证超过 1 条核心假设",
+  "example": {
+    "title": "Buffer 落地页假设验证",
+    "content": "Joel Gascoigne 在编码前用一页落地页测试『有人愿意为定时推文付费』的假设，24 小时内收到付费意向邮件，假设证实后才动工开发。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

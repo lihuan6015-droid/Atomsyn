@@ -1,0 +1,55 @@
+{
+  "id": "product-innovation-24",
+  "schemaVersion": 1,
+  "name": "产品创新 24 步法",
+  "nameEn": "Product Innovation 24 Steps",
+  "source": "circleLee",
+  "version": "2.0",
+  "description": "覆盖从 Discover 发现 → Define 定义 → Ideate 创意 → Develop 开发 → Validate 验证 → Evolve 进化 的完整产品创新闭环",
+  "layoutType": "matrix",
+  "matrix": {
+    "rows": 4,
+    "columns": 6,
+    "columnHeaders": [
+      { "id": "discover", "name": "Discover 发现", "color": "#A78BFA" },
+      { "id": "define",   "name": "Define 定义",   "color": "#60A5FA" },
+      { "id": "ideate",   "name": "Ideate 创意",   "color": "#34D399" },
+      { "id": "develop",  "name": "Develop 开发",  "color": "#FBBF24" },
+      { "id": "validate", "name": "Validate 验证", "color": "#FB923C" },
+      { "id": "evolve",   "name": "Evolve 进化",   "color": "#F472B6" }
+    ],
+    "cells": [
+      { "stepNumber": 1,  "column": "discover", "row": 1, "name": "趋势扫描",  "nameEn": "Trend Scanning",       "tagline": "PEST-C Radar",          "atomCategoryPath": "product-innovation-24/01-trend-scanning" },
+      { "stepNumber": 2,  "column": "discover", "row": 2, "name": "用户声音",  "nameEn": "Goal-VOC",             "tagline": "5Whys · 需求访谈",       "atomCategoryPath": "product-innovation-24/02-voc" },
+      { "stepNumber": 3,  "column": "discover", "row": 3, "name": "深度画像",  "nameEn": "User Profiling",       "tagline": "VSD Canvas",            "atomCategoryPath": "product-innovation-24/03-user-profiling" },
+      { "stepNumber": 4,  "column": "discover", "row": 4, "name": "需求过滤",  "nameEn": "Demand Filtering",     "tagline": "KANO Model",            "atomCategoryPath": "product-innovation-24/04-demand-filtering" },
+
+      { "stepNumber": 5,  "column": "define",   "row": 1, "name": "竞品分析",  "nameEn": "Competitor Analysis",  "tagline": "F&CT Analysis",         "atomCategoryPath": "product-innovation-24/05-competitor-analysis" },
+      { "stepNumber": 6,  "column": "define",   "row": 2, "name": "价值主张",  "nameEn": "Value Proposition",    "tagline": "VPC Canvas",            "atomCategoryPath": "product-innovation-24/06-value-proposition" },
+      { "stepNumber": 7,  "column": "define",   "row": 3, "name": "概念定义",  "nameEn": "Concept Definition",   "tagline": "MW Concept",            "atomCategoryPath": "product-innovation-24/07-concept-definition" },
+      { "stepNumber": 8,  "column": "define",   "row": 4, "name": "机会地图",  "nameEn": "Opportunity Mapping",  "tagline": "",                       "atomCategoryPath": "product-innovation-24/08-opportunity-mapping" },
+
+      { "stepNumber": 9,  "column": "ideate",   "row": 1, "name": "创意爆破",  "nameEn": "Ideation Explosion",   "tagline": "SCAMPER / Lotus",        "atomCategoryPath": "product-innovation-24/09-ideation-explosion" },
+      { "stepNumber": 10, "column": "ideate",   "row": 2, "name": "创意筛选",  "nameEn": "Idea Filtering",       "tagline": "RICE Framework",         "atomCategoryPath": "product-innovation-24/10-idea-filtering" },
+      { "stepNumber": 11, "column": "ideate",   "row": 3, "name": "供需匹配",  "nameEn": "Supply Demand Match",  "tagline": "DS Canvas",              "atomCategoryPath": "product-innovation-24/11-supply-demand-match" },
+      { "stepNumber": 12, "column": "ideate",   "row": 4, "name": "MVP 选型",  "nameEn": "MVP Selection",        "tagline": "LEAN MVP Types",         "atomCategoryPath": "product-innovation-24/12-mvp-selection" },
+
+      { "stepNumber": 13, "column": "develop",  "row": 1, "name": "实验设计",  "nameEn": "Experiment Design",    "tagline": "Smoke Test",             "atomCategoryPath": "product-innovation-24/13-experiment-design" },
+      { "stepNumber": 14, "column": "develop",  "row": 2, "name": "体验地图",  "nameEn": "Experience Mapping",   "tagline": "",                        "atomCategoryPath": "product-innovation-24/14-experience-mapping" },
+      { "stepNumber": 15, "column": "develop",  "row": 3, "name": "原型制作",  "nameEn": "Prototyping",          "tagline": "AI Design Tools",        "atomCategoryPath": "product-innovation-24/15-prototyping" },
+      { "stepNumber": 16, "column": "develop",  "row": 4, "name": "首次发布",  "nameEn": "First Launch",         "tagline": "",                        "atomCategoryPath": "product-innovation-24/16-first-launch" },
+
+      { "stepNumber": 17, "column": "validate", "row": 1, "name": "数据采集",  "nameEn": "Data Harvesting",      "tagline": "Data Dashboard",         "atomCategoryPath": "product-innovation-24/17-data-harvesting" },
+      { "stepNumber": 18, "column": "validate", "row": 2, "name": "假设校验",  "nameEn": "Hypothesis Check",     "tagline": "",                        "atomCategoryPath": "product-innovation-24/18-hypothesis-check" },
+      { "stepNumber": 19, "column": "validate", "row": 3, "name": "指标定义",  "nameEn": "Metric Definition",    "tagline": "Metric Card",            "atomCategoryPath": "product-innovation-24/19-metric-definition" },
+      { "stepNumber": 20, "column": "validate", "row": 4, "name": "PMF 诊断",  "nameEn": "PMF Diagnostics",      "tagline": "",                        "atomCategoryPath": "product-innovation-24/20-pmf-diagnostics" },
+
+      { "stepNumber": 21, "column": "evolve",   "row": 1, "name": "决策时刻",  "nameEn": "Pivot Decision",       "tagline": "",                        "atomCategoryPath": "product-innovation-24/21-pivot-decision" },
+      { "stepNumber": 22, "column": "evolve",   "row": 2, "name": "增长循环",  "nameEn": "Growth Loops",         "tagline": "Growth Canvas",          "atomCategoryPath": "product-innovation-24/22-growth-loops" },
+      { "stepNumber": 23, "column": "evolve",   "row": 3, "name": "演进路线",  "nameEn": "Roadmap Planning",     "tagline": "Agile Roadmap",          "atomCategoryPath": "product-innovation-24/23-roadmap-planning" },
+      { "stepNumber": 24, "column": "evolve",   "row": 4, "name": "规模准备",  "nameEn": "Scale Readiness",      "tagline": "",                        "atomCategoryPath": "product-innovation-24/24-scale-readiness" }
+    ]
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

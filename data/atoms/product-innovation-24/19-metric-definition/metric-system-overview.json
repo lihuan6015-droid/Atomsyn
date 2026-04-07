@@ -1,0 +1,27 @@
+{
+  "id": "atom_metric_system_overview",
+  "schemaVersion": 1,
+  "name": "北极星与指标体系",
+  "nameEn": "North Star & Metric System",
+  "frameworkId": "product-innovation-24",
+  "cellId": 19,
+  "tags": ["north-star", "metrics", "okr", "measurement"],
+  "coreIdea": "一个组织最多只能追一个北极星，但需要一棵可拆解的指标树让每个团队都知道自己在拉动哪片叶子。没有树，北极星只是墙上的一句话。",
+  "whenToUse": "团队目标不对齐 · 指标越来越多但决策越来越糊 · 高管层要对增长逻辑达成共识 · 建立产品仪表盘",
+  "keySteps": [
+    "定义北极星：反映长期用户价值，而非短期收入",
+    "拆解为 3-5 个输入指标（driver）",
+    "每个输入指标再拆 2-3 层可执行子指标",
+    "为每个叶子指定 owner 和数据口径",
+    "季度回顾：北极星是否仍然代表成功"
+  ],
+  "aiSkillPrompt": "你是一位产品战略顾问，擅长构建指标体系。我将提供一个产品与商业背景，请你输出一棵完整的指标树。\n\n## 输入\n{请在此处填入：产品描述、商业模式（订阅/广告/电商）、阶段（PMF 前/增长/成熟）、当前最痛的业务问题、现有已追踪指标清单}\n\n## 任务\n1. 推荐 1 个北极星候选，说明为何它反映长期用户价值\n2. 对比 2-3 个备选北极星的优劣\n3. 拆分 3-5 个 L1 输入指标（例：活跃用户 = 新增 + 留存 - 流失）\n4. 每个 L1 再拆 2-3 个 L2 可执行指标，指定假设 owner 角色\n5. 风险提示：该体系最容易被 gaming 的点在哪里\n\n## 输出格式\n指标树 Markdown 缩进清单 + 北极星对比表 + Gaming 风险清单。\n\n## 约束\n- 北极星不能是收入（除非是纯交易型产品）\n- 每层分解必须满足 MECE 或明确说明重叠\n- 不得有超过 5 层深度\n- 指标名必须带量纲（次/DAU、美元/月）",
+  "example": {
+    "title": "Airbnb 的 Nights Booked 北极星",
+    "content": "Airbnb 选择 Nights Booked 作为北极星，因为它同时反映房客价值（住过）和房东价值（赚到）。整个组织的指标树都挂在它下面。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

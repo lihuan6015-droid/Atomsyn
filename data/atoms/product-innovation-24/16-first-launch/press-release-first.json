@@ -1,0 +1,43 @@
+{
+  "id": "atom_press_release_first",
+  "schemaVersion": 1,
+  "name": "新闻稿先行",
+  "nameEn": "Press Release-First (Working Backwards)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 16,
+  "tags": ["Working Backwards", "Amazon", "PR/FAQ", "愿景驱动"],
+  "parentAtomId": "atom_first_launch_overview",
+  "relationType": "child",
+  "coreIdea": "Amazon 的「Working Backwards」核心动作：在写一行代码之前，先假装产品已经发布，写一份未来的新闻稿 + FAQ。如果你写不出让客户兴奋的新闻稿，说明这个产品压根不该被建出来。",
+  "whenToUse": "新产品立项 · 新功能投资决策 · 跨部门对齐愿景 · 高管/董事会评审 · 替代传统 PRD",
+  "keySteps": [
+    "用未来时态写一段「如果产品已发布」的新闻稿（≤ 1.5 页）",
+    "结构：Headline / Subheading / 客户问题 / 解决方案 / 客户引言 / CEO 引言 / 下一步",
+    "写一份内部 FAQ 回答 10-20 个最难的问题",
+    "写一份外部 FAQ 回答客户最常问的问题",
+    "团队/高管共审：「这真的会让客户兴奋吗？」",
+    "如果新闻稿不令人兴奋，迭代或 kill；否则才开始建产品",
+    "整个开发期把这份 PR 钉在墙上当北极星"
+  ],
+  "aiSkillPrompt": "你是一位精通 Amazon Working Backwards 方法论的资深产品负责人，写过几十份 Amazon 风格的 PR/FAQ。我会描述一个产品想法，请你帮我写出一份完整的 Press Release + FAQ。\n\n## 输入\n产品想法：{请在此处填入}\n目标客户：{请在此处填入}\n核心客户问题：{请在此处填入}\n\n## 任务\n1. 写一份未来时态的新闻稿（约 600 字），严格遵循 Amazon 7 段结构：\n   - HEADLINE：让客户一眼读懂受益的新闻头条\n   - SUBHEADING：1 句话补充对象与价值\n   - SUMMARY：第一段 100 字概括\n   - PROBLEM：客户当前的痛苦（具体场景）\n   - SOLUTION：产品如何解决（用客户视角，不要技术细节）\n   - QUOTES：1 段客户引言 + 1 段 CEO 引言\n   - CALL TO ACTION：客户从哪里可以开始使用\n2. 写一份内部 FAQ（10 个问题），覆盖：经济模型、技术风险、依赖、扩展性、kill 标准\n3. 写一份外部 FAQ（5 个问题），覆盖：定价、隐私、迁移、兼容性、客户支持\n4. 写一段「Customer Experience」描述：用第一人称叙述「典型用户某天使用产品的故事」\n5. 给出「Tenets」（3-5 条原则）：本产品在权衡时坚持什么\n6. 评估自检：这份 PR 哪些地方还像 PPT 而不像新闻稿？给出修订建议\n\n## 输出格式\nMarkdown，按 7 段结构组织\n\n## 约束\n- 必须用未来时态\n- 严禁出现「我们」「我们的产品」开头——必须以客户受益为主语\n- 引言必须像真人说话，不能像 marketing slogan\n- 内部 FAQ 必须暴露最难的问题，不能避重就轻",
+  "example": {
+    "title": "经典案例 · AWS 的 PR/FAQ 发明史",
+    "content": "Amazon 内部规定：任何新产品立项都必须先写 PR/FAQ。AWS S3 在建立前，团队先写了一份「Amazon 推出 S3，开发者只需付实际使用的字节数即可获得无限存储」的新闻稿。当时这听起来像科幻，但写下来后高管讨论的不是「能不能做」，而是「客户是否会兴奋」。Bezos 把这套方法称为「Working Backwards from the Customer」——这是 AWS / Kindle / Echo 共同的诞生方式。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_pr_01",
+      "type": "link",
+      "title": "Working Backwards (Bryar & Carr)",
+      "url": "https://www.workingbackwards.com/",
+      "note": "Amazon 前高管写的官方方法论书",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

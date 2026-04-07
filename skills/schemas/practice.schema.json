@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Practice",
+  "description": "A project-level execution record bound to one atom",
+  "type": "object",
+  "required": ["id", "schemaVersion", "projectId", "atomId", "title", "status", "createdAt", "updatedAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "projectId": { "type": "string" },
+    "atomId": { "type": "string" },
+    "title": { "type": "string", "minLength": 1 },
+    "context": { "type": "string" },
+    "executionSummary": { "type": "string" },
+    "keyInsights": { "type": "array", "items": { "type": "string" } },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string", "enum": ["text", "link"] },
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "url": { "type": "string" }
+        }
+      }
+    },
+    "whatWorked": { "type": "string" },
+    "whatFailed": { "type": "string" },
+    "status": { "type": "string", "enum": ["in-progress", "completed", "abandoned"] },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  }
+}

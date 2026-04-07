@@ -1,0 +1,30 @@
+{
+  "id": "atom_landing_page_mvp",
+  "schemaVersion": 1,
+  "name": "Landing Page MVP 落地页式",
+  "nameEn": "Landing Page MVP",
+  "frameworkId": "product-innovation-24",
+  "cellId": 12,
+  "tags": ["Landing Page", "Smoke Test", "MVP", "需求验证"],
+  "parentAtomId": "atom_mvp_selection_overview",
+  "relationType": "child",
+  "coreIdea": "产品都还没做就先上一个落地页：清晰描述价值主张 + 行动按钮（注册/付款/预约）。用真金白银的转化率（不是问卷里的'感兴趣'）证明需求是否存在——这是验证'有没有人想要'的最快方式。",
+  "whenToUse": "想法非常早期没有任何代码 · 想验证'人愿不愿付钱/留邮箱' · B2C 大众市场需要量化转化率 · 营销文案与定位也想顺便测试",
+  "keySteps": [
+    "用一句话写出价值主张（10 秒内能看懂）",
+    "用 No-code 工具搭页面（Carrd / Framer / Webflow）",
+    "设计明确 CTA：留邮箱 / 预约演示 / 预付款",
+    "投放广告把目标用户引流（小预算）",
+    "测量转化率与 CPC",
+    "用通过/失败阈值决定是否继续投入开发"
+  ],
+  "aiSkillPrompt": "你是一位 Smoke Test / Landing Page MVP 专家。我会描述一个产品想法，请帮我设计一个用于需求验证的落地页测试方案。\n\n## 输入\n- 产品想法（一段话）：{请在此处填入}\n- 目标用户与他们经常上的渠道：{请在此处填入}\n- 验证预算与时间：{请在此处填入}\n- 待验证的核心命题：{请在此处填入}\n\n## 任务\n1. 写出 3 个候选'一句话价值主张'供 A/B 测试（每条 ≤ 15 个字）\n2. 设计落地页结构：Hero / 痛点描述 / 解决方案 / 社会证明 / CTA\n3. 推荐 No-code 工具（含理由）\n4. 设计 CTA 阶梯：留邮箱（弱）/ 预约（中）/ 预付款（强）——选哪种取决于命题\n5. 设计广告投放方案：渠道、关键词、人群、预算分配\n6. 设定通过/失败阈值（参考行业 baseline，给具体百分比）\n7. 列出常见'伪积极信号'陷阱（如点击高但留资低、留资高但付款低）\n\n## 输出格式\n```\n### 价值主张候选\n1. ...\n\n### 落地页结构\n| 区块 | 内容要点 |\n\n### 工具推荐\n\n### CTA 阶梯选择与理由\n\n### 投放方案\n| 渠道 | 受众 | 预算 | KPI |\n\n### 通过 / 失败阈值\n- 通过: CTR > X%, CVR > Y%\n- 失败: ...\n\n### 伪积极信号陷阱\n```\n\n## 约束\n- 必须给具体百分比阈值，禁止'看起来不错'\n- 不允许只测点击率，必须测有承诺成本的 CTA\n- 文案不允许虚假承诺已存在的功能（伦理）",
+  "example": {
+    "title": "Dropbox 解释视频 MVP",
+    "content": "Drew Houston 在没有任何代码的情况下，先发布了一个 3 分钟解释视频和落地页，邀请观看者注册等候列表。一夜之间等候名单从 5000 涨到 75000，证明需求强烈。Dropbox 才决定全力投入开发——这是 Landing Page MVP 的教科书案例。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

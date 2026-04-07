@@ -1,0 +1,39 @@
+{
+  "id": "atom_jtbd",
+  "schemaVersion": 1,
+  "name": "Jobs To Be Done",
+  "nameEn": "JTBD",
+  "frameworkId": "product-innovation-24",
+  "cellId": 2,
+  "tags": ["JTBD", "用户研究", "需求洞察", "Job Story"],
+  "parentAtomId": "atom_voc_overview",
+  "relationType": "child",
+  "coreIdea": "用户不是在买产品，而是在特定场景下「雇佣」产品完成一个任务（Job）。产品没被雇佣的真正原因往往不是功能不够，而是你搞错了 Job——以及这个 Job 同时包含的功能、情感、社交三层动机。",
+  "whenToUse": "新产品寻找 PMF · 老产品增长停滞 · 看不懂竞品为什么抢走用户 · 功能堆了一堆但留存不动 · 营销话术总抓不住痛点",
+  "keySteps": [
+    "1. 选择一个真实使用/切换产品的用户（而非潜在用户）",
+    "2. 用 Switch Interview 法还原他「上一次切换产品」的完整时间线",
+    "3. 识别触发事件（第一次想要新方案的那个时刻）",
+    "4. 挖掘功能性 Job + 情感性 Job + 社交性 Job 三层",
+    "5. 用 Job Story 句式表达：When ___, I want to ___, So I can ___",
+    "6. 按 Job 重要性 × 当前满足度 打分，找未满足的高价值 Job"
+  ],
+  "aiSkillPrompt": "你是一位精通 Clayton Christensen 和 Bob Moesta「Switch Interview」学派的 JTBD 研究员。请按以下流程帮助我：\n\n## 输入\n{请在此处填入：产品名、目标用户画像、用户最近的一次行为或切换故事（原话越多越好）}\n\n## 任务\n1. 根据用户故事，还原出完整的 Forces Diagram（切换四力）：\n   - Push of the situation（现状的推力）\n   - Pull of the new solution（新方案的吸引力）\n   - Anxiety of the new（对新方案的焦虑）\n   - Habit of the present（对现状的惯性）\n   每一力至少给出 1 条用户原话引用作为证据\n2. 基于故事提炼 3-5 个 Job，区分：\n   - 功能性 Job（要完成什么）\n   - 情感性 Job（想要什么感受）\n   - 社交性 Job（想被别人怎么看）\n3. 用 Job Story 句式写出每个 Job：When [situation], I want to [motivation], So I can [outcome]\n4. 指出现有解决方案哪些 Job 已被满足、哪些未被满足\n5. 对每个未满足 Job 提出 1 个可能的产品切入点\n\n## 输出格式\n章节 1：Forces Diagram（Markdown 表格：力 | 描述 | 原话证据）。章节 2：Jobs 清单（分功能/情感/社交三列）。章节 3：Job Stories（列表，每条一句）。章节 4：满足度诊断。章节 5：切入点建议。\n\n## 约束\n- 不允许编造用户原话——如果我没提供，就写「需要访谈补充」\n- Job 必须是「用户想达成的结果」，不能写成「用户想要某个功能」\n- 情感 Job 不能写「愉悦」「满足」这种口水词，必须具体到「不想在同事面前显得落伍」这种颗粒度\n- 全文不超过 1200 字",
+  "example": {
+    "title": "经典案例 · 麦当劳奶昔的真实 Job",
+    "content": "Christensen 团队发现早高峰卖出的奶昔大多被单身男性通勤者「雇佣」——他们要单手驾驶、耐饿撑到午餐、不易漏在车里、能打发一个小时通勤的无聊。相比「好喝」，这些 Job 更重要。麦当劳把奶昔加稠、改容器、放自助机解决排队，早高峰销量提升 7 倍。晚高峰同样的奶昔被父母当作「安抚孩子的道具」——同一产品，完全不同的 Job。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_jtbd_01",
+      "type": "link",
+      "title": "HBR · Know Your Customers' Jobs To Be Done",
+      "url": "https://hbr.org/2016/09/know-your-customers-jobs-to-be-done",
+      "note": "Clayton Christensen 2016 经典原文",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "atom_rice_score",
+  "schemaVersion": 1,
+  "name": "RICE 评分",
+  "nameEn": "RICE Score",
+  "frameworkId": "product-innovation-24",
+  "cellId": 10,
+  "tags": ["RICE", "优先级", "Intercom", "评分"],
+  "parentAtomId": "atom_idea_filtering_overview",
+  "relationType": "child",
+  "coreIdea": "RICE = (Reach × Impact × Confidence) / Effort。Confidence 是关键——它强制你承认'我觉得有用但没证据'，把'信心'变成可见变量后，团队的乐观偏见会被系统性纠正。",
+  "whenToUse": "季度路线图规划 · 候选想法 10-30 个 · 团队需要一种'看起来公平'的协作排序工具 · 工程资源紧张要砍",
+  "keySteps": [
+    "对每个想法估算 Reach（一个时间窗内会触达多少用户）",
+    "估算 Impact（对每个用户的影响 0.25/0.5/1/2/3）",
+    "估算 Confidence（高 100% / 中 80% / 低 50%）",
+    "估算 Effort（人月）",
+    "计算 (R × I × C) / E 得到 RICE 分",
+    "团队评审'低 Confidence 高分'项是否需要先做实验验证",
+    "按分数排序但保留 1-2 个战略性低分项不被淘汰"
+  ],
+  "aiSkillPrompt": "你是一位精通 Intercom RICE 框架的产品分析师。我会提供一组候选功能/想法，请你严格按 RICE 公式打分。\n\n## 输入\n- 候选想法清单：{请在此处填入}\n- Reach 时间窗（季度/月）：{请在此处填入}\n- 现有用户量级：{请在此处填入}\n- 团队人月容量：{请在此处填入}\n\n## 任务\n1. 对每个想法逐项估算 R/I/C/E，每项必须附'估算依据'（数据/类比/假设）\n2. Impact 用 Intercom 标准刻度：Massive=3, High=2, Medium=1, Low=0.5, Minimal=0.25\n3. Confidence 用 100/80/50% 三档，禁止给出 95% 这种伪精确\n4. 计算 RICE 分并排序\n5. 标记'Confidence ≤ 50%'的想法，建议先用 PoL 探针验证\n6. 标记'高分但战略相关性低'的潜在陷阱\n\n## 输出格式\n| # | 想法 | Reach | R 依据 | Impact | I 依据 | Conf | C 依据 | Effort | E 依据 | RICE | 备注 |\n\n## 约束\n- 不允许给出无依据的整数估算\n- Effort 必须以人月为单位，含设计+前后端+测试\n- 禁止把所有 Confidence 都标 100%——强制至少 30% 的想法是 50/80%",
+  "example": {
+    "title": "Intercom RICE 起源",
+    "content": "Sean McBride 在 Intercom 提出 RICE 时，团队最常争吵的功能是'要不要做 SAML SSO'——传统讨论里它'看起来很重要'。RICE 算下来 Reach=200 客户、Impact=2、Confidence=80%、Effort=4 人月，得分 80；而'改善消息搜索'得分 320，团队当季果断改做搜索。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_rice_01",
+      "type": "link",
+      "title": "Intercom: RICE 评分原文",
+      "url": "https://www.intercom.com/blog/rice-simple-prioritization-for-product-managers/",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

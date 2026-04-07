@@ -1,0 +1,29 @@
+{
+  "id": "atom_swot_analysis",
+  "schemaVersion": 1,
+  "name": "SWOT 分析",
+  "nameEn": "SWOT Analysis",
+  "frameworkId": "product-innovation-24",
+  "cellId": 5,
+  "tags": ["SWOT", "战略", "内外因"],
+  "parentAtomId": "atom_competitor_analysis_overview",
+  "relationType": "child",
+  "coreIdea": "SWOT 的真正价值不是填四个格子，而是做交叉配对——SO 进攻、ST 防守、WO 修补、WT 撤退。没有交叉的 SWOT 是废纸。",
+  "whenToUse": "团队对自身优劣势认知不一致 · 战略复盘会议 · 写商业计划书 · 向上汇报战略选择",
+  "keySteps": [
+    "穷举 S/W：内部可控因素，避免一句话泛泛",
+    "穷举 O/T：外部不可控趋势，引用具体数据源",
+    "做 SO/ST/WO/WT 四象限交叉配对",
+    "为每个交叉配对写 1 个具体行动",
+    "选 1 个『现在就做』的优先级"
+  ],
+  "aiSkillPrompt": "你是一位战略咨询顾问，擅长 SWOT 配对分析（不是简单填四个格）。我将提供我的产品/公司情况，请你帮我做一次交叉式 SWOT。\n\n## 输入\n- 公司/产品概况：{请在此处填入}\n- 所处赛道与阶段：{请在此处填入}\n- 已知的内部资源与外部信号：{请在此处填入}\n\n## 任务\n1. 列 4-5 条 S（内部优势，必须可证伪）\n2. 列 4-5 条 W（内部劣势，避免「人手不足」这种正确废话）\n3. 列 4-5 条 O（外部机会，附信号来源）\n4. 列 4-5 条 T（外部威胁，附触发条件）\n5. 做 SO/ST/WO/WT 四象限交叉配对，每个象限至少 1 个具体行动\n6. 推荐当前阶段最该执行的 1 个象限及其原因\n\n## 输出格式\nMarkdown：先列 SWOT 四组，再用表格输出交叉配对，最后写 1 段优先级建议\n\n## 约束\n- 每条 SWOT 必须 ≤ 25 字\n- O/T 必须有具体外部信号，禁止『AI 趋势』『消费降级』式空话\n- 交叉配对必须是动词开头的具体行动",
+  "example": {
+    "title": "Tesla 早期 SWOT 配对",
+    "content": "S（电池软件能力）+ O（碳排放法规）→ SO 行动：把零排放积分卖给传统车企，反哺研发现金流。这一招让 Tesla 在 2014-2019 撑过死亡谷。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

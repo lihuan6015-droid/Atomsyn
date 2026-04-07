@@ -1,0 +1,28 @@
+{
+  "id": "atom_value_proposition_overview",
+  "schemaVersion": 1,
+  "name": "价值主张设计",
+  "nameEn": "Value Proposition Design",
+  "frameworkId": "product-innovation-24",
+  "cellId": 6,
+  "tags": ["价值主张", "VPC", "差异化", "umbrella"],
+  "coreIdea": "价值主张不是一句营销文案，而是『客户痛 × 我们解 × 别人解不了』三件事都被锁死的契约。任何一项松动，转化率立刻塌方。",
+  "whenToUse": "首页 hero 区文案改 N 版仍不灵 · 销售解释不清『我们到底卖啥』 · 融资 BP 一句话被否 · 进入新客群前重设定位",
+  "keySteps": [
+    "用 VPC 画客户侧（Job/Pain/Gain）和产品侧（Pain Reliever/Gain Creator）",
+    "做 fit 检验：是否每个 Pain 都有 Reliever 对应",
+    "用 Geoffrey Moore 模板写一句话定位声明",
+    "用差异化语句标注『仅我们能做』的部分",
+    "在 5 个真实客户面前测听后能否复述",
+    "迭代回 VPC 修正不 fit 的格子"
+  ],
+  "aiSkillPrompt": "你是一位价值主张教练，曾帮助数百家 B2B 和 B2C 产品锁定差异化定位。我将提供我的产品、客户和竞争情况，请你引导我产出一份完整的价值主张组合。\n\n## 输入\n- 产品一句话：{请在此处填入}\n- 目标客户细分：{请在此处填入}\n- 已知的客户痛点 / 期望（如有）：{请在此处填入}\n- 主要竞品和差异：{请在此处填入}\n\n## 任务\n1. 列 5 条客户 Job（功能、社交、情感各覆盖）\n2. 列 5 条 Pain 和 5 条 Gain，按强度排序\n3. 对每个 Top 3 Pain 写出我们的 Pain Reliever\n4. 对每个 Top 3 Gain 写出我们的 Gain Creator\n5. 用 Geoffrey Moore 模板输出一句话定位声明\n6. 标注哪一部分是『仅我们能做』的差异点\n7. 给出 1 个可在 1 周内验证的小实验\n\n## 输出格式\nMarkdown：分客户侧、产品侧、定位声明、差异化、实验 5 个章节\n\n## 约束\n- 不要使用『更好』『更快』『更智能』这类比较级形容词\n- 每条 Pain/Gain 必须可量化或有具体场景\n- 定位声明必须严格按照模板填空，禁止自创格式",
+  "example": {
+    "title": "Slack 的早期价值主张",
+    "content": "Job: 团队信息同步; Pain: 邮件错过、抄送爆炸; Gain: 一处搜索全部历史。Reliever: 频道+@; Creator: 全文搜索+集成。一句话: Be Less Busy. 不卖『沟通工具』，卖『少忙一点』。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

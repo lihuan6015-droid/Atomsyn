@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project",
+  "type": "object",
+  "required": ["id", "schemaVersion", "name", "slug", "status", "innovationStage", "stageHistory", "pinnedAtoms", "createdAt", "updatedAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "slug": { "type": "string" },
+    "description": { "type": "string" },
+    "status": { "type": "string" },
+    "innovationStage": {
+      "type": "string",
+      "enum": ["ideation", "discover", "define", "ideate", "develop", "validate", "evolve", "archived"]
+    },
+    "stageHistory": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "pinnedAtoms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["atomId", "pinnedAt"],
+        "properties": {
+          "atomId": { "type": "string" },
+          "pinnedAt": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  }
+}

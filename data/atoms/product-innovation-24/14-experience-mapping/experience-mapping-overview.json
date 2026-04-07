@@ -1,0 +1,40 @@
+{
+  "id": "atom_experience_mapping_overview",
+  "schemaVersion": 1,
+  "name": "用户体验地图",
+  "nameEn": "Experience Mapping",
+  "frameworkId": "product-innovation-24",
+  "cellId": 14,
+  "tags": ["体验设计", "用户旅程", "服务设计", "共情"],
+  "coreIdea": "把抽象的「用户体验」摊开成一张二维地图：横轴是时间（用户经历的阶段），纵轴是层次（行为、情绪、痛点、机会）。地图的真正价值不是画得漂亮，而是让团队 5 个人对着同一张图争论——共识比正确更重要。",
+  "whenToUse": "新产品概念落地前 · 跨部门对齐用户全流程 · 找改进机会 · 服务设计 · 重新设计转化漏斗 · 客户成功流程梳理",
+  "keySteps": [
+    "选择映射的对象：1 个具体的 Persona + 1 个具体的 Job/场景",
+    "定义阶段（5-7 步）：从 Awareness → Consideration → Use → Loyalty",
+    "为每阶段填充：用户行为、想法、情绪曲线、触点、痛点",
+    "标记 Moments of Truth（关键时刻）和 Pain Points（断裂点）",
+    "标出机会区（Opportunity Zone）",
+    "和团队 workshop 共审，转化为可执行的设计动作"
+  ],
+  "aiSkillPrompt": "你是一位精通服务设计与用户体验地图的资深 UX Lead，熟悉 Adaptive Path 的 experience mapping 方法和 NN/g 的 journey mapping 框架。我会描述一个产品场景与用户类型，请你帮我搭建一张完整的体验地图骨架。\n\n## 输入\n产品/服务：{请在此处填入}\n目标 Persona（一句话描述）：{请在此处填入}\n核心场景/Job：{请在此处填入}\n\n## 任务\n1. 推荐最适合该场景的地图类型（Customer Journey Map / Service Blueprint / Experience Map / User Flow / Empathy Map）并说明理由\n2. 列出 5-7 个时间阶段（要具体到动词，例如「比价」而不是「考虑」）\n3. 为每个阶段填充：典型行为（≤ 15 字）/ 内心想法（用第一人称）/ 情绪强度（-3 到 +3）/ 触点 / 痛点\n4. 标出 2-3 个 Moments of Truth（成败关键点）\n5. 标出 3 个机会区，每个机会区给一句「How Might We...」问题\n6. 输出为 Markdown 表格（行=阶段，列=维度），方便我直接复制到 FigJam\n7. 结尾给 5 个团队 workshop 的引导问题\n\n## 输出格式\n第一段：地图类型推荐\n第二段：完整 Markdown 表格\n第三段：HMW 问题与 workshop 提示\n\n## 约束\n- 行为必须是动词开头\n- 不许写「用户感到沮丧」这种无信息描述，要写「用户因为找不到价格说明，第三次回到首页查 FAQ」\n- 情绪曲线必须有起伏，全程 +3 或全程 -3 都不真实",
+  "example": {
+    "title": "经典案例 · Lego 的 Customer Experience Map",
+    "content": "Lego 在 2000 年代用 experience map 重建了与孩子家长的关系。他们发现「拆开盒子拼装的那一刻」并不是情绪最高点，反而是「拼完后给爸爸展示」才是。这个洞察让他们重新设计了包装、说明书和官网的「家庭分享」功能，并促成了 Lego Ideas 社区平台的诞生。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_em_01",
+      "type": "link",
+      "title": "Mapping Experiences (Jim Kalbach)",
+      "url": "https://www.oreilly.com/library/view/mapping-experiences-2nd/9781492076629/",
+      "note": "体验地图百科全书",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

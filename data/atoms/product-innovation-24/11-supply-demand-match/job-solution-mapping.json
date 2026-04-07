@@ -1,0 +1,30 @@
+{
+  "id": "atom_job_solution_mapping",
+  "schemaVersion": 1,
+  "name": "Job-Solution 映射",
+  "nameEn": "Job-Solution Mapping",
+  "frameworkId": "product-innovation-24",
+  "cellId": 11,
+  "tags": ["JTBD", "解决方案", "映射", "Outcome"],
+  "parentAtomId": "atom_supply_demand_match_overview",
+  "relationType": "child",
+  "coreIdea": "把 JTBD 中的每个 Job Step 与拟做的解决方案模块一一对应，再加一列'用户期望的 Outcome 指标'——把'功能'强行翻译成'用户在哪一步变得更快/更准/更省'，避免用功能堆砌冒充解决方案。",
+  "whenToUse": "已经完成 JTBD 访谈或 Job Map · 团队把 Job 当成 'use case' 的列表用 · 需要把功能与用户成果挂钩做汇报 · 准备 OKR/北极星指标拆解",
+  "keySteps": [
+    "把目标 Job 分解为 5-10 个 Job Steps（执行流程）",
+    "为每个 Step 列出用户期望的 Outcome（'更快/更准/更省 X'）",
+    "把候选解决方案模块对应到具体 Step",
+    "对每个 Step 评估：被解决的程度（弱/中/强）",
+    "找出'用户期望强但方案弱'的步骤 → 优先做",
+    "为每个 Outcome 设计 1 个可量化指标"
+  ],
+  "aiSkillPrompt": "你是一位 Anthony Ulwick 风格的 Outcome-Driven Innovation 教练。我会提供 JTBD 与候选方案，请做 Job-Solution 映射。\n\n## 输入\n- 核心 Job（一句话）：{请在此处填入}\n- Job Map 步骤（按时间顺序，5-10 步）：{请在此处填入}\n- 候选解决方案模块清单：{请在此处填入}\n- 现有竞品在每个步骤的表现：{请在此处填入}\n\n## 任务\n1. 为每个 Job Step 写 1-3 个用户期望 Outcome（用 ODI 句式：'最小化…' 或 '最大化…' + 可量化对象）\n2. 把候选方案映射到 Step，标注覆盖强度（弱/中/强）\n3. 计算每个 Step 的'机会分数'：(Importance + max(0, Importance - Satisfaction))，按经典 ODI 公式\n4. 排序找出 Top 3 机会步骤\n5. 为 Top 3 设计具体可量化的成功指标\n6. 标记'方案过度服务的步骤'（用户已经满意但我方仍重复造轮子）\n\n## 输出格式\n```\n### Job Map 与 Outcomes\n| Step | Outcome | 重要度 1-10 | 当前满足度 1-10 | 机会分数 |\n\n### 方案映射\n| 方案 | 对应 Step | 覆盖强度 | 缺口 |\n\n### Top 3 机会与指标\n| Step | 机会 | 量化指标 | 目标值 |\n\n### 过度服务警告\n```\n\n## 约束\n- Outcome 必须是用户视角，不允许写'实现 X 功能'\n- 重要度/满足度需说明依据（访谈 N=?, 调研 N=?）\n- 机会分数 ≥ 12 才视为高机会",
+  "example": {
+    "title": "Bosch 圆锯 ODI",
+    "content": "Bosch 用 Job-Solution Mapping 分析'锯一根木板'的 12 个 Step，发现'测量并标记'步骤机会分最高（13.4），用户最不满意。新产品集成激光定位+磁吸尺，正中机会，市场份额一年内提升 12%。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

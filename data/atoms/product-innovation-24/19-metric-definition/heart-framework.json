@@ -1,0 +1,29 @@
+{
+  "id": "atom_heart_framework",
+  "schemaVersion": 1,
+  "name": "HEART 体验指标框架",
+  "nameEn": "HEART Framework",
+  "frameworkId": "product-innovation-24",
+  "cellId": 19,
+  "tags": ["heart", "ux-metrics", "google", "experience"],
+  "parentAtomId": "atom_metric_system_overview",
+  "relationType": "child",
+  "coreIdea": "HEART 用 5 个维度量化用户体验：Happiness、Engagement、Adoption、Retention、Task Success。它让『体验好坏』从感受变成可追踪的指标。",
+  "whenToUse": "要给体验设立 KPI · 设计团队被问『你对业务的贡献是什么』· UX 改版后评估真实影响 · 对比多个产品线体验",
+  "keySteps": [
+    "为每个维度选 1-2 个指标（Goal-Signal-Metric）",
+    "区分用户感受（调研）与行为（事件）",
+    "定义基线和目标值",
+    "嵌入产品仪表盘持续监控",
+    "季度回顾，与功能发布事件对齐分析"
+  ],
+  "aiSkillPrompt": "你是 Google UX 研究背景的体验度量专家。我将提供一个产品功能或体验场景，请你输出一份 HEART 度量方案。\n\n## 输入\n{请在此处填入：产品或功能描述、目标用户、要评估的体验问题、可用数据源（埋点 / NPS / CSAT / 调研）}\n\n## 任务\n1. Goal 列表：每个 HEART 维度先写目标（例：H = 用户使用后感到高效）\n2. Signal 列表：目标对应的观察信号（例：填问卷评分、返回率）\n3. Metric 列表：可量化的具体指标与公式\n4. 数据来源与收集频次\n5. 指标优先级：标出 Must have / Nice to have\n\n## 输出格式\n五维 Goal-Signal-Metric 表 + 数据源映射表 + 实施优先级。\n\n## 约束\n- 每维度至少 1 个、最多 2 个指标，避免膨胀\n- Happiness 必须有用户直接反馈来源（调研/NPS）\n- 不要混淆 Adoption（新）与 Retention（旧）\n- 不要把 DAU 当成 Engagement 的唯一信号",
+  "example": {
+    "title": "Google+ 的 HEART 起源",
+    "content": "Kerry Rodden 等在 Google+ 项目创造 HEART 框架，用它量化每次改版的用户体验变化，成为 Google 内部标准 UX 度量工具。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

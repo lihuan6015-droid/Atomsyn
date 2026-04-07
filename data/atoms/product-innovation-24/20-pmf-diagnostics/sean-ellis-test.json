@@ -1,0 +1,29 @@
+{
+  "id": "atom_sean_ellis_test",
+  "schemaVersion": 1,
+  "name": "Sean Ellis 测试 (40% 法则)",
+  "nameEn": "Sean Ellis Test",
+  "frameworkId": "product-innovation-24",
+  "cellId": 20,
+  "tags": ["sean-ellis", "pmf", "survey", "40-percent"],
+  "parentAtomId": "atom_pmf_diagnostics_overview",
+  "relationType": "child",
+  "coreIdea": "问一个问题：『如果明天不能再用这个产品，你会有多失望？』。『极度失望』的比例≥40% 是 PMF 的经验基线——低于此，强行增长会更快烧钱。",
+  "whenToUse": "验证是否达到 PMF · 决定是否加速获客 · 融资前自测 · 改版后复测",
+  "keySteps": [
+    "在活跃用户（≥2 次使用）中发送 4 问调研",
+    "收集≥40 份有效回答",
+    "计算『极度失望』比例",
+    "按用户画像切片找出『高分群体』",
+    "访谈高分群体提炼 JTBD"
+  ],
+  "aiSkillPrompt": "你是一位 PMF 调研设计师，熟悉 Sean Ellis 测试的执行细节。我将提供产品与目标用户，请你输出一份完整的 Sean Ellis 测试执行方案与分析框架。\n\n## 输入\n{请在此处填入：产品描述、目标用户、活跃用户定义、可用的触达渠道（站内信/邮件）、已有调研结果（如有）}\n\n## 任务\n1. 样本筛选条件：严格定义『活跃用户』，防止选择偏差\n2. 问卷设计：给出 4 个核心问题（含中英文版本），避免引导性措辞\n3. 样本量要求：给出最小有效样本量和回收率预期\n4. 分析框架：如何切片（画像、使用频次、渠道）找出高分人群\n5. 行动建议：根据得分档位（<25 / 25-40 / ≥40）分别给出下一步\n\n## 输出格式\n筛选 SQL 伪代码 + 问卷原文 + 分析维度表 + 得分档位行动表。\n\n## 约束\n- 不能向非活跃用户发送\n- 样本量 < 40 必须延长收集时间\n- 『极度失望』比例只是一个信号，不是 PMF 的充要条件\n- 不要在问卷中暗示产品的优点",
+  "example": {
+    "title": "Hiten Shah × Sean Ellis",
+    "content": "Sean Ellis 本人用此测试帮助 LogMeIn、Eventbrite、Dropbox 等公司判断 PMF，并提出 40% 作为经验阈值。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

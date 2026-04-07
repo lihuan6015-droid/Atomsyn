@@ -1,0 +1,29 @@
+{
+  "id": "atom_cohort_tracking",
+  "schemaVersion": 1,
+  "name": "同期群追踪",
+  "nameEn": "Cohort Tracking",
+  "frameworkId": "product-innovation-24",
+  "cellId": 17,
+  "tags": ["cohort", "retention", "lifecycle", "analytics"],
+  "parentAtomId": "atom_data_harvesting_overview",
+  "relationType": "child",
+  "coreIdea": "总用户数会骗人，同期群不会。把用户按起始周分组，看他们在 N 周后还在不在，才是产品价值的真实证据。",
+  "whenToUse": "判断产品是否存在 PMF · 评估改版是否真正改善留存 · 识别『漏水的桶』· 为 LTV 建模",
+  "keySteps": [
+    "选定 cohort 维度（注册周/首购周/版本号）",
+    "定义『留存』动作（登录？核心动作？付费？）",
+    "绘制 N0-N12 留存矩阵，找微笑曲线/平坦化点",
+    "对比新老 cohort 找改版效果",
+    "结合付费/扩展数据估算 cohort LTV"
+  ],
+  "aiSkillPrompt": "你是一位留存分析专家。我将提供同期群留存矩阵，请你输出一份留存诊断与建议。\n\n## 输入\n{请在此处填入：cohort 定义、留存动作定义、N0-N12 留存矩阵原始数据、产品类型（消费/SaaS/工具）、最近一次重大改版时间}\n\n## 任务\n1. 判断曲线形态：递减/平坦/微笑，并解释意味着 PMF 状态\n2. 识别『拐点周』：用户开始稳定留存的时点，对应 Aha Moment 假设\n3. 对比改版前后 cohort，给出留存变化的统计显著性判断\n4. 给出 3 条提升留存的实验建议，每条标注预期影响哪一周\n5. LTV 粗估：基于 cohort 曲线给出 12 个月 LTV 区间\n\n## 输出格式\n热力图描述 + 形态判断 + 实验建议 + LTV 区间表。\n\n## 约束\n- cohort 样本 < 200 标注为低置信度\n- 不要把『总活跃数上升』等同于『留存改善』\n- LTV 估算必须给出乐观/中性/悲观三档\n- 不要使用未在输入中出现的数字",
+  "example": {
+    "title": "Slack 的微笑曲线",
+    "content": "Slack 在 2014 年观察到团队发送 2000 条消息后留存曲线变平，将该数字定为激活指标，并围绕它重构 onboarding，企业级留存提升数倍。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

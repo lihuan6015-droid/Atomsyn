@@ -1,0 +1,30 @@
+{
+  "id": "atom_impact_effort_matrix",
+  "schemaVersion": 1,
+  "name": "影响-成本矩阵",
+  "nameEn": "Impact-Effort Matrix",
+  "frameworkId": "product-innovation-24",
+  "cellId": 10,
+  "tags": ["2x2", "矩阵", "Quick Wins", "可视化"],
+  "parentAtomId": "atom_idea_filtering_overview",
+  "relationType": "child",
+  "coreIdea": "把所有想法贴到 Impact↔Effort 两轴的 2×2 上，自动浮现四象限：Quick Wins（高影响低成本）、Big Bets（高影响高成本）、Fill-ins（低影响低成本）、Time Sinks（低影响高成本）。它的力量在于'可视化共识'，让分歧无处可藏。",
+  "whenToUse": "工作坊白板共创 · 团队对优先级争论但缺数据时 · 向非 PM 利益相关方解释取舍 · 早期粗筛大量想法",
+  "keySteps": [
+    "在白板/Miro 画 2×2，标注四象限名字",
+    "把每个想法写成便利贴",
+    "团队成员独立把便利贴贴到位置（不讨论）",
+    "对比贴位差异最大的项，讨论隐含假设",
+    "确定 Quick Wins 立即排期",
+    "Big Bets 进入下季度评估，Time Sinks 直接淘汰"
+  ],
+  "aiSkillPrompt": "你是一位工作坊引导师，擅长用 Impact-Effort Matrix 帮团队快速达成优先级共识。\n\n## 输入\n- 候选想法清单：{请在此处填入}\n- 团队角色（设计/前端/后端/...人数）：{请在此处填入}\n- 业务背景与北极星指标：{请在此处填入}\n\n## 任务\n1. 对每个想法估算 Impact（1-10，对北极星指标的提升量级）\n2. 估算 Effort（1-10，所有角色综合人月）\n3. 把每个想法分配到四象限之一\n4. 输出可视化矩阵（用 ASCII 或 Markdown 表）\n5. 给出每个象限的行动建议\n6. 标记'落在边界'的想法，建议如何分裂成更小批次以挪入 Quick Wins\n\n## 输出格式\n```\n## ASCII 矩阵\n           Low Effort       High Effort\nHigh   |  Quick Wins    |  Big Bets    |\nImpact |  - 想法A       |  - 想法B      |\n       |--------------- |---------------|\nLow    |  Fill-ins      |  Time Sinks   |\nImpact |  - 想法C       |  - 想法D      |\n\n## 详细评分表\n| # | 想法 | Impact | Effort | 象限 | 建议 |\n\n## 行动建议\n- 立刻做：...\n- 排队：...\n- 拆分：...\n- 放弃：...\n```\n\n## 约束\n- 不要把超过 50% 的想法都放进 Quick Wins（自欺欺人）\n- 拆分建议必须给出具体的最小切片",
+  "example": {
+    "title": "Trello Quick Wins 路线",
+    "content": "Trello 团队 2014 年用 Impact-Effort Matrix 评估 50 多个用户请求，把'看板背景图''邮件通知优化'等 Quick Wins 一周内全部上线，用户 NPS 月内上升 15 分；同时识别出'移动端原生重写'是 Big Bet，推迟到下季度专项立项。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

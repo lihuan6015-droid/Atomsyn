@@ -1,0 +1,32 @@
+{
+  "id": "atom_first_launch_overview",
+  "schemaVersion": 1,
+  "name": "首次发布策略",
+  "nameEn": "First Launch Strategy",
+  "frameworkId": "product-innovation-24",
+  "cellId": 16,
+  "tags": ["发布", "Launch", "Go-to-Market", "种子用户"],
+  "coreIdea": "首次发布不是「上线日」，而是一次用真实用户验证「我们建对了吗」的实验。最差的发布是「全网曝光后产品扛不住」，最好的发布是「每天只放 50 个新用户进来，但每个都能给你写 200 字反馈」。",
+  "whenToUse": "MVP 准备就绪 · 第一次面向真实用户 · 决定增长策略 · 投资人/媒体首次曝光 · 验证 PMF 信号前的最后一关",
+  "keySteps": [
+    "回答：本次发布要回答什么问题？（不是要冲多少 DAU）",
+    "选择发布形态：Stealth / Soft / Closed Beta / Open Beta / Big Bang / Press Release-First",
+    "圈定种子用户名单（数量 ≪ 质量）",
+    "准备配套：onboarding 文档、反馈收集渠道、应急预案、限流",
+    "执行发布并实时监控关键指标",
+    "与每个种子用户保持 1 对 1 沟通",
+    "发布后 7 天写复盘并决定下一阶段策略"
+  ],
+  "aiSkillPrompt": "你是一位精通 Go-to-Market 的资深产品发布教练，熟悉 Y Combinator 的 launch playbook 和 Amazon Working Backwards 文化。我会告诉你产品状态与目标，请你帮我选定发布策略并给出执行清单。\n\n## 输入\n产品当前状态：{请在此处填入}\n本次发布要回答的核心问题：{请在此处填入}\n可用资源（预算 / 团队 / 时间）：{请在此处填入}\n目标用户与数量级：{请在此处填入}\n\n## 任务\n1. 从 6 种发布策略中推荐最适合的 1 种（Stealth / Soft Launch / Closed Beta / Open Beta / Press Release-First / Product Hunt 大爆炸），并说明为什么排除其他 5 种\n2. 给出本次发布的明确「成功定义」：3 个可量化指标（不要 DAU / MAU 这种空泛指标，要「7 日留存 ≥ X%」「20% 用户主动写反馈」）\n3. 设计种子用户招募方案：从哪里找、如何筛选、如何邀请、限多少人\n4. 列出发布前 14 天倒计时清单（D-14 → D-Day）\n5. 设计发布日 War Room 监控指标 Top 5 + 应急预案（如果服务挂了 / 反馈极差 / 服务器爆掉怎么办）\n6. 设计发布后 7 天的用户访谈计划：每天访谈几个？问什么？\n7. 给一个发布后复盘 Doc 模板（What worked / What broke / What we learned / What we'll do next）\n\n## 输出格式\nMarkdown 章节\n\n## 约束\n- 严禁推荐「先上线看看」「能做多大做多大」这种没有约束的策略\n- 成功指标必须可量化\n- 必须包含「失败应急方案」",
+  "example": {
+    "title": "经典案例 · Superhuman 的逐户面试式发布",
+    "content": "Superhuman 在 2017 年开始邀请制内测后，CEO Rahul Vohra 亲自给每一个新用户做 30 分钟视频电话——不是为了销售，而是为了观察他们打开 Superhuman 时的表情。前 2 年他们每天只放 20 个用户进来，靠这种「反规模」的方式积累了 PMF 证据，最终估值 8.25 亿美元。这是「质量发布」战胜「数量发布」的教科书。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

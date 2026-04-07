@@ -1,0 +1,30 @@
+{
+  "id": "atom_outcome_based_roadmap",
+  "schemaVersion": 1,
+  "name": "结果导向路线图",
+  "nameEn": "Outcome-Based Roadmap",
+  "frameworkId": "product-innovation-24",
+  "cellId": 23,
+  "tags": ["outcomes", "roadmap", "teresa-torres", "outcome-vs-output"],
+  "parentAtomId": "atom_roadmap_planning_overview",
+  "relationType": "child",
+  "coreIdea": "把路线图从'要交付的功能'改为'要达到的用户行为变化'。功能可以变，结果不能变。Teresa Torres 强调：路线图回答的是'我们想看到用户做什么不一样'。",
+  "whenToUse": "团队疲于交付 feature 却看不到指标变化 · 高管把路线图当 backlog · 产品经理被销售 demand 列表淹没 · 已建立持续发现习惯",
+  "keySteps": [
+    "把每条 roadmap 项改写成'用户行为/业务结果'语句",
+    "为每个 outcome 定义 1 个 leading indicator",
+    "保持解决方案开放——不要绑定具体功能",
+    "为 outcome 分配负责人和预算",
+    "review 时只看结果指标，不看交付物",
+    "如果某 outcome 3 个 cycle 不动，重新评估"
+  ],
+  "aiSkillPrompt": "你是 Teresa Torres 风格的产品发现教练。我会给你一份偏 feature 的路线图，请你帮我重写为结果导向版本。\n\n## 输入\n- 当前 feature 路线图（5-10 项）：{请在此处填入}\n- 产品北极星指标：{请在此处填入}\n- 主要用户角色：{请在此处填入}\n- 业务上层目标：{请在此处填入}\n\n## 任务\n1. Feature → Outcome 翻译：每项 feature 改写为'用户/业务行为变化'语句\n2. Leading indicator：每个 outcome 配 1-2 个领先指标（不是结果指标）\n3. 解决方案开放性：明确每个 outcome 至少有 2 种解决路径，不锁死功能\n4. 取舍：合并/砍掉重复或低价值的 outcome\n5. 三个月 review 计划：每个 outcome 的检查节点 + 重新评估触发条件\n6. 反模式提醒：指出原 roadmap 里 2 个最典型的'output 伪装成 outcome'\n\n## 输出格式\n左右对照表（原 feature → 新 outcome）+ 评估计划\n\n## 约束\n- 不允许 outcome 写成'发布 X 功能'\n- leading indicator 必须可在 2 周内观察到变化\n- 必须保留至少 2 种解决路径",
+  "example": {
+    "title": "Amplitude 团队的 outcome roadmap",
+    "content": "Amplitude 内部产品团队在 2019 年改用 Teresa Torres 的方法，把'发布 funnel report v2'这种 feature 项改写为'让数据分析师在 5 分钟内独立完成漏斗诊断'。结果团队最终交付的并不是新的 funnel UI，而是一个 AI 引导的查询助手——完全不同的解决方案，但精准命中了 outcome。这次重写后，团队 quarter end 满意度从 60% 涨到 85%。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

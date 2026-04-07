@@ -1,0 +1,43 @@
+{
+  "id": "atom_product_hunt_launch",
+  "schemaVersion": 1,
+  "name": "Product Hunt 发布",
+  "nameEn": "Product Hunt Launch",
+  "frameworkId": "product-innovation-24",
+  "cellId": 16,
+  "tags": ["发布", "Product Hunt", "Maker 社区", "GTM"],
+  "parentAtomId": "atom_first_launch_overview",
+  "relationType": "child",
+  "coreIdea": "Product Hunt 是全球早期采纳者最集中的 24 小时聚光灯。一次成功的 PH launch 能在一天内带来 5-50k 访问、上千订阅、几位天使投资人 inbound。但准备工作必须做满 3 周——临时上场必败。",
+  "whenToUse": "面向开发者/设计师/创业者等早期采纳者 · 产品已经稳定可演示 · 想一次性获得 launch 流量与口碑 · 募资前的可见度积累",
+  "keySteps": [
+    "提前 3 周预约 launch 日期，避开节假日",
+    "准备资产：tagline（≤ 60 字符）、Gallery（4-6 张高质量图）、Demo Video（≤ 90 秒）",
+    "选 1 位有影响力的 Hunter（或自己 hunt）",
+    "提前 7 天预热：Twitter teaser、邮件名单、朋友圈",
+    "Launch 当天 PT 时间 12:01am 上线",
+    "全天（24h）实时回复每一条评论",
+    "Day 1 复盘：upvote、新增、评论、媒体提及"
+  ],
+  "aiSkillPrompt": "你是一位帮助过 50+ 产品在 Product Hunt 拿到 #1 of the day 的资深 launch 顾问。我会告诉你产品信息和发布日期，请你帮我做完整的 PH launch 方案。\n\n## 输入\n产品名称与一句话定位：{请在此处填入}\n目标用户：{请在此处填入}\n计划 launch 日期：{请在此处填入}\n现有可调动的资源（邮件订阅数、社媒粉丝、社群人数）：{请在此处填入}\n\n## 任务\n1. 写出 3 条候选 tagline（≤ 60 字符），每条对应一个角度（功能/情感/痛点）\n2. 写出长描述（≤ 260 字符）\n3. 设计 Gallery 6 张图的内容规划（封面图 / 核心功能 1-4 / 价格或社会证明）\n4. 写一份 90 秒 Demo Video 脚本（含旁白与画面动作）\n5. 给出 First Comment 模板（Maker 自述：why we built this / who it's for / what's free / 求 feedback）\n6. 给出 launch 前 21 天倒计时清单（按周拆分）\n7. 给出 launch 当天 24 小时小时级运营节奏（PT 时区）\n8. 提供 3 个常见失败原因（预热不足 / 评论未回 / launch 时间错） + 应对\n9. 设计成功指标：upvote 数 / 评论数 / 网站访问 / 注册转化 / 后续 7 天留存\n\n## 输出格式\nMarkdown 章节 + 21 天倒计时表 + Day 1 24 小时表\n\n## 约束\n- Tagline 严禁堆砌 buzzword\n- 不允许刷票（违反 PH 规则会被直接 ban）\n- First Comment 必须真诚，不能像广告",
+  "example": {
+    "title": "经典案例 · Notion 的 PH 多次发布",
+    "content": "Notion 不是一次 launch 就成功。他们 2016 年第一次 launch Notion 1.0 反响平平。复盘后做了 18 个月的产品打磨，2018 年 launch Notion 2.0 时拿到 #1 of the day、#1 of the week、#1 of the month。CEO Ivan Zhao 当天每条评论都亲自回复了 12 小时。这是「准备 + 真诚」战胜「投放 + 套路」的典范。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_ph_01",
+      "type": "link",
+      "title": "Product Hunt Launch Guide (official)",
+      "url": "https://www.producthunt.com/launch",
+      "note": "PH 官方 launch checklist",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "atom_pivot_vs_persevere",
+  "schemaVersion": 1,
+  "name": "Pivot vs Persevere 仪式",
+  "nameEn": "Pivot vs Persevere Meeting (Lean Startup)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 21,
+  "tags": ["lean-startup", "pivot", "ritual", "validated-learning"],
+  "parentAtomId": "atom_pivot_decision_overview",
+  "relationType": "child",
+  "coreIdea": "Eric Ries 提出的固定节奏会议：每隔几周强制问一次'我们有没有取得足够的已验证学习'，答案是 No 就 Pivot。把决策从'灵感时刻'变成'日历事件'。",
+  "whenToUse": "建立产品迭代节奏 · MVP 上线后每 4-8 周一次 · 重要假设到了证伪窗口 · 创始人和产品负责人需要被强制对账时",
+  "keySteps": [
+    "锁定固定频率（建议 6-8 周一次），写进团队日历",
+    "会前一周由 PM 准备'已验证学习报告'：假设 / 证据 / 结论",
+    "会议第一议题强制问'是否有进展？'，禁止跳过",
+    "全员投票 Pivot / Persevere / Insufficient Data",
+    "如果 Persevere，必须说出下一个里程碑指标",
+    "会后 24 小时内更新一切对外文档与 OKR"
+  ],
+  "aiSkillPrompt": "你是 Eric Ries 的精益创业教练，专门帮团队主持 Pivot vs Persevere 仪式会议。我会给你一份会前材料，请你像主持会议一样产出会议纪要草稿和决策建议。\n\n## 输入\n- 上一次会议的 Persevere 承诺与里程碑：{请在此处填入}\n- 本周期已运行的实验列表（假设/方法/结果）：{请在此处填入}\n- 当前用户量级与核心北极星指标趋势：{请在此处填入}\n- 资金/跑道情况：{请在此处填入}\n\n## 任务\n1. 学习清单：列出本周期'已验证'与'未验证'的学习，每条引用证据\n2. 承诺审计：上次承诺的里程碑达成了吗？没达成的原因是执行问题还是假设错？\n3. 三选一推荐：Pivot / Persevere / Insufficient Data，明确投票理由\n4. 如果 Persevere：写出下一个 6 周的里程碑（数字 + 截止日期）\n5. 如果 Pivot：写出新的'leap of faith'假设和首个验证实验\n6. 主持人话术：给我 3 句开场白和 2 句压力提问，帮我把会议从客气模式拉到诚实模式\n\n## 输出格式\nMarkdown 会议纪要模板，结尾附一段决策摘要。\n\n## 约束\n- 不要回避艰难结论，证据指向 Pivot 就明确说 Pivot\n- 禁止使用'整体来看还可以'这种主持人套话\n- 所有数字必须来自我提供的输入，不要捏造",
+  "example": {
+    "title": "IMVU 的双周节奏",
+    "content": "Eric Ries 在 IMVU 创立这一仪式：团队约定每 6 周开一次 Pivot or Persevere 会议，强制把'我们的假设是不是错的'摆上桌。在 IMVU 早期至少进行过 3 次 Persevere 决议和 1 次 Customer Segment Pivot（从 IM 客户端的插件转向独立产品），最终带动留存 3 倍提升。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

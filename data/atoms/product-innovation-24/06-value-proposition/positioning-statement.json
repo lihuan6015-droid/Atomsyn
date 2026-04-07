@@ -1,0 +1,29 @@
+{
+  "id": "atom_positioning_statement",
+  "schemaVersion": 1,
+  "name": "定位声明",
+  "nameEn": "Positioning Statement (Geoffrey Moore)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 6,
+  "tags": ["定位声明", "Geoffrey Moore", "一句话", "Crossing the Chasm"],
+  "parentAtomId": "atom_value_proposition_overview",
+  "relationType": "child",
+  "coreIdea": "Geoffrey Moore 的定位声明 = 客户 + 痛点 + 品类 + 利益 + 差异。一句话能不能让陌生人 30 秒复述出来，决定整条 GTM 的流速。",
+  "whenToUse": "首页 hero 文案 / 投资人电梯演讲 / 销售开场白 / 招聘 JD 第一段 / 内部对齐",
+  "keySteps": [
+    "先填空 6 个变量：客户、需求、品类、关键利益、主要竞品、差异",
+    "把变量套进 Moore 模板成句",
+    "朗读 5 遍，删一切赘词到能一口气说完",
+    "拿给 5 个非团队成员复述，看能否命中关键词",
+    "迭代直到 80% 复述率"
+  ],
+  "aiSkillPrompt": "你是一位 GTM 教练，精通 Geoffrey Moore《Crossing the Chasm》定位声明模板。我将提供产品要素，请你帮我产出 3 个候选定位声明并比选。\n\n## 输入\n- 目标客户（具体角色，不是『所有人』）：{请在此处填入}\n- 客户最痛的 1 件事：{请在此处填入}\n- 产品所属品类（市场已知词）：{请在此处填入}\n- 核心利益（量化或可感知）：{请在此处填入}\n- 主要替代方案：{请在此处填入}\n- 我们不同的关键差异：{请在此处填入}\n\n## 任务\n1. 严格套用模板：『For [客户] who [需求], [产品] is a [品类] that [关键利益]. Unlike [替代], we [差异].』产出 3 个候选\n2. 给 3 个候选打分（清晰度、差异度、可记忆度，各 1-5）\n3. 选出最佳一句，给出修改理由\n4. 给出中文版翻译并保持节奏\n5. 提示 1 个常见风险：模糊词 / 比较级 / 行业黑话\n\n## 输出格式\nMarkdown：3 个候选 + 评分表 + 最终中英文版本 + 风险提示\n\n## 约束\n- 不能出现『全栈』『智能』『一站式』『赋能』等模糊词\n- 每句必须 ≤ 40 个英文单词或 50 个汉字\n- 差异部分必须是『仅我们能』而不是『我们也有』",
+  "example": {
+    "title": "Volvo 的经典定位",
+    "content": "For upscale American families who desire a safe car, Volvo is a premium automobile that delivers the safest ride. Unlike other premium brands, Volvo is engineered for safety from the ground up."
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

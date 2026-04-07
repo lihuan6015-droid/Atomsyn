@@ -1,0 +1,34 @@
+{
+  "id": "atom_interactive_prototype",
+  "schemaVersion": 1,
+  "name": "交互原型",
+  "nameEn": "Interactive Prototype",
+  "frameworkId": "product-innovation-24",
+  "cellId": 15,
+  "tags": ["交互原型", "Figma Prototype", "可用性测试", "动效"],
+  "parentAtomId": "atom_prototyping_overview",
+  "relationType": "child",
+  "coreIdea": "把高保真稿用线连起来变成「可点击的假产品」，是用真实用户测试可用性的最后一道防线。它的目标不是炫技，而是让被测者「忘记自己在测试」，露出真实的迷茫和惯性。",
+  "whenToUse": "可用性测试 · onboarding 流程验证 · 复杂手势/动效设计 · 远程用户测试（Maze、UserTesting） · 投资人 demo",
+  "keySteps": [
+    "确认要测试的关键 task（≤ 3 个）",
+    "用 Figma Prototype / ProtoPie / Framer 把页面用线连起来",
+    "为关键交互添加动效（smart animate / overlay / micro-interaction）",
+    "做出 1-2 条岔路（错误状态、空状态）",
+    "招募 5-8 名目标用户做可用性测试",
+    "记录原声、录屏、SUS 分数",
+    "用 Severity x Frequency 排序问题，决定哪些进 backlog"
+  ],
+  "aiSkillPrompt": "你是一位精通可用性测试与 Figma 交互原型的资深 UX 研究员，熟悉 Jakob Nielsen 的 10 大启发式与 NN/g 的远程测试方法。我会描述一个要测试的功能，请你帮我设计一次完整的交互原型测试方案。\n\n## 输入\n要测试的功能：{请在此处填入}\n目标用户：{请在此处填入}\n测试形式（线下/远程）：{请在此处填入}\n\n## 任务\n1. 列出测试要回答的 3 个核心问题（具体到「用户能否在 30 秒内找到 X 入口」）\n2. 设计 3-5 个测试任务卡，每张卡包含：场景描述（让用户代入）+ 任务句式（「请你尝试...」）+ 成功标志\n3. 给出原型必须做到的最低交互完整度清单（必须能点的按钮、必须有的状态、可以省略的细节）\n4. 推荐合适的工具（Figma Prototype / ProtoPie / Framer / Maze）并说明为什么\n5. 招募 5-8 名用户的筛选问卷（Screener）模板\n6. 测试主持脚本：开场白 / Think aloud 提示 / 中场询问 / 结束问 SUS 与 NPS\n7. 数据记录表：任务完成率 / 完成时长 / 错误次数 / 主观评分\n8. 测试结束后给出问题优先级矩阵（Severity 1-4 × Frequency 1-3）\n\n## 输出格式\nMarkdown 章节 + 完整任务卡 + 主持脚本\n\n## 约束\n- 任务句式禁止暗示路径（不能说「点击右上角的按钮然后...」）\n- 主持人不许在用户卡住时直接帮忙，只能问「你接下来想做什么？」\n- 必须设计 think aloud 提示语",
+  "example": {
+    "title": "经典案例 · Airbnb 的 Snow White 项目",
+    "content": "Airbnb 在 2014 年用一个高度交互的 Figma 原型测试整个旅行流程。他们让 8 个真实用户对着原型「假装订一次旅行」，结果发现一个意料之外的问题：用户根本不读「房东介绍」。这个发现催生了「Snow White」全流程重设计——把房东形象前置到首屏。这是交互原型在「可用性测试」之外更高维的用法：暴露认知盲点。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

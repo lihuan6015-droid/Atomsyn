@@ -1,0 +1,30 @@
+{
+  "id": "atom_growth_stage_org_design",
+  "schemaVersion": 1,
+  "name": "增长期组织设计",
+  "nameEn": "Growth-Stage Org Design",
+  "frameworkId": "product-innovation-24",
+  "cellId": 24,
+  "tags": ["org-design", "scaling", "team-topology", "leadership"],
+  "parentAtomId": "atom_scale_readiness_overview",
+  "relationType": "child",
+  "coreIdea": "10 人 → 50 人 → 150 人是三个组织断点。每个断点要求重新设计：职能分组、汇报层级、决策权限、沟通机制。沿用旧结构是规模化最常见的死因。",
+  "whenToUse": "团队即将跨过 10/50/150 人 · 决策瓶颈集中在创始人 · 跨团队冲突增多 · 新招的中高管无法发挥",
+  "keySteps": [
+    "诊断当前团队所处断点",
+    "明确下一个断点的'必须改变'清单",
+    "重新画出 6 个月后的目标组织结构图",
+    "定义每个新角色的决策范围与不做什么",
+    "设计沟通节奏（all-hands / 1on1 / async update）",
+    "招聘前先把岗位画像写成 'L0 决策→L3 决策'梯度"
+  ],
+  "aiSkillPrompt": "你是组织设计顾问，熟悉 Team Topologies 与 Scale-up 阶段团队演化。我会描述当前组织，请你帮我设计下一阶段的结构。\n\n## 输入\n- 当前总人数与按职能分布：{请在此处填入}\n- 创始团队的决策瓶颈描述：{请在此处填入}\n- 6 个月内计划增长到的人数：{请在此处填入}\n- 主要业务线：{请在此处填入}\n\n## 任务\n1. 断点诊断：判断当前处于哪个断点（10/50/150），下一个是谁\n2. 必须改变清单：列出跨断点必须重新设计的 5 件事（汇报关系/决策权/沟通节奏/职能拆分/激励）\n3. 目标结构图：用文字描述 6 个月后的目标组织（含中层管理者数量）\n4. 关键招聘：列出 3 个最关键的新角色，写出 must-have 与 nice-to-have\n5. 决策权限矩阵：列出 5 类决策应该由谁拍板\n6. 文化护栏：跨过断点时最容易失去什么文化，给 2 条保护规则\n\n## 输出格式\n结构图（文字版）+ 决策矩阵 + 招聘画像\n\n## 约束\n- 不要建议增加超过 1 层管理\n- 关键招聘不能超过 3 个\n- 决策矩阵必须明确到角色而非'团队'",
+  "example": {
+    "title": "Stripe 的 50 人断点",
+    "content": "Stripe 在 2013 年从 35 人涨到 70 人时主动重组：把工程团队按客户旅程拆为 Payments / Connect / Atlas 三条线，每条线有独立 PM/Eng/Design 三角，创始人 Patrick 退出日常 PR review，只保留架构 review。三个月后决策速度恢复，且没有牺牲产品一致性。Patrick 在采访中说：'10 人时所有事都直接告诉我，50 人时我必须学会有些事永远不会告诉我。'"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

@@ -1,0 +1,30 @@
+{
+  "id": "atom_persona",
+  "schemaVersion": 1,
+  "name": "Persona 用户画像",
+  "nameEn": "Persona",
+  "frameworkId": "product-innovation-24",
+  "cellId": 3,
+  "tags": ["Persona", "用户画像", "Alan Cooper"],
+  "parentAtomId": "atom_user_profiling_suite",
+  "relationType": "child",
+  "coreIdea": "Persona 是「一个虚构但可信的具体人」，用于替代抽象的目标用户。它的价值不在于多完整，而在于多具体——具体到团队在做任何决策时都能立刻反问「这个人会怎么想」。好的 Persona 宁可粗糙不要假精致。",
+  "whenToUse": "产品立项时对齐目标用户 · 设计评审与功能取舍 · 新成员入职 · 营销投放确定 ICP · 与工程团队沟通场景时用它代替「用户」这个词",
+  "keySteps": [
+    "1. 基于至少 5 次访谈或一份扎实数据开始（否则写 Proto-Persona 并标注）",
+    "2. 聚类共同行为模式而非人口统计（行为 > 年龄职业）",
+    "3. 给每个画像起一个有性格的名字和一句话 tagline",
+    "4. 只写与产品决策相关的字段，删除「爱好 / 星座」等无关装饰",
+    "5. 为每个画像配一句真实原话（取自访谈）",
+    "6. 控制在 1-3 个画像，每个能与产品决策挂钩"
+  ],
+  "aiSkillPrompt": "你是一位遵循 Alan Cooper《About Face》学派的 Persona 设计师。请按以下流程生成高质量的 Persona：\n\n## 输入\n{请在此处填入：产品、访谈笔记或用户数据摘要、画像用途}\n\n## 任务\n1. 分析输入，聚类出 1-3 个行为模式不同的人群（不按年龄/性别，按他们对产品的使用动机与障碍）\n2. 为每个聚类生成一份 Persona 卡片，字段严格包含：\n   - 姓名 + 一句话 tagline（例如「总想省时间的独立咨询顾问」）\n   - 人口统计（仅限与决策相关的 3-5 条）\n   - 场景描述（一天中他什么时候、在哪里用到这类产品）\n   - 核心 Job + 期望结果\n   - 主要痛点（3 条，要具体）\n   - 当前替代方案 + 为什么不满意\n   - 决策触发器（什么情况下他会开始找新方案）\n   - 一句真实感原话（取自访谈，标注来源；无访谈标「假设待验证」）\n   - 关键拒绝理由（3 条反对他采用新方案的担忧）\n3. 为每个 Persona 给出 3 个产品设计含义（这个人的存在意味着产品该怎么做）\n4. 明确标注每个字段是「事实」还是「假设」\n\n## 输出格式\n每个 Persona 一张独立的 Markdown 卡片，按上述字段顺序排列。最后加一个「画像间差异矩阵」表格，说明这几个 Persona 在关键维度上的差别。\n\n## 约束\n- 禁止「喜欢健身、爱喝咖啡」这类装饰性描述\n- Tagline 必须体现「最重要的那件事」而不是角色职业\n- 如果访谈不足，Persona 必须冠名「Proto-」前缀\n- 画像总数不超过 3 个\n- 全文不超过 1500 字",
+  "example": {
+    "title": "经典案例 · Mailchimp 的 Freddie 与 Persona",
+    "content": "Mailchimp 早期锁定「独立创业者 Sally」作为核心 Persona：一个人运营小店、没有营销团队、害怕 HTML、每次发邮件前都紧张自己会弄砸。这个画像让团队坚决拒绝加入企业级 CRM 功能、坚持一键模板和傻瓜式编辑器，最终长成 20 亿美元业务。有趣的是他们没有画 Sally 的脸（怕团队聚焦长相），只留了 tagline 和一句原话：「I just don't want to embarrass myself.」"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

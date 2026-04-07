@@ -1,0 +1,43 @@
+{
+  "id": "atom_ab_test",
+  "schemaVersion": 1,
+  "name": "A/B 测试",
+  "nameEn": "A/B Test",
+  "frameworkId": "product-innovation-24",
+  "cellId": 13,
+  "tags": ["实验设计", "数据驱动", "因果推断", "增长"],
+  "parentAtomId": "atom_experiment_design_overview",
+  "relationType": "child",
+  "coreIdea": "把用户随机分成 A、B 两组只看一个变量的差异，用统计显著性把「我感觉这样更好」替换成「数据证明这样更好」。A/B 不是用来证明你对，而是用来戳破你的偏见。",
+  "whenToUse": "已有足够流量（≥ 周访 10k） · 局部优化决策（按钮、文案、流程） · 增长指标提升 · 定价/付费墙策略 · 多个候选方案需要因果证据",
+  "keySteps": [
+    "写出明确假设：「改成 X 会让 [指标] 提升 [幅度]，因为 [机制]」",
+    "选择 1 个核心指标（OEC）+ 2-3 个护栏指标（防退化）",
+    "用功效分析计算最小样本量（α=0.05, power=0.8）",
+    "用实验平台（GrowthBook / Statsig / 自研）做随机分流",
+    "运行至少 1-2 个完整业务周期，避免 peeking 偏差",
+    "用置信区间而非 p 值做决策，关注效应大小",
+    "记录学习卡片，无论赢输都沉淀到知识库"
+  ],
+  "aiSkillPrompt": "你是一位精通因果推断和实验平台的资深数据科学家，熟悉 Ron Kohavi 的 Trustworthy Online Controlled Experiments。我会描述一个待测试的优化想法，请你帮我把它变成一个严谨的 A/B 测试方案。\n\n## 输入\n要测试的改动：{请在此处填入}\n业务背景与当前指标基线：{请在此处填入}\n日活/周活用户数：{请在此处填入}\n\n## 任务\n1. 用「如果...那么...因为...」结构改写假设，并指出因果机制\n2. 推荐 1 个 OEC（Overall Evaluation Criterion）和 2-3 个护栏指标（例如崩溃率、加载时长、流失）\n3. 用功效分析估算最小样本量：给出 MDE（最小可检测效应）= 5% / 10% / 20% 三档对应的样本量与所需运行天数\n4. 设计分流策略：50/50 还是 90/10 灰度？为什么？\n5. 列出 5 个常见的实验陷阱（peeking、SRM、新奇效应、季节性、样本污染）针对本实验的具体规避方法\n6. 给出实验结束后的决策树：显著正向 → ? / 显著负向 → ? / 不显著 → ?\n7. 写一份实验记录卡片模板（假设、指标、结果、学习、下一步）\n\n## 输出格式\nMarkdown 章节 + 一张样本量计算表\n\n## 约束\n- 不允许「跑一周看看」这种没有功效分析的方案\n- 必须区分统计显著与业务显著\n- 如果流量不足以达到 MDE，明确告诉用户「不要做 A/B，改用其他方法」",
+  "example": {
+    "title": "经典案例 · Bing 的标题广告点击 12% 提升",
+    "content": "Microsoft Bing 一位工程师提议：广告标题如果太长就把第一行的描述文字接到标题后面。这个看起来微小的改动通过 A/B 测试发现让广告收入提升 12%，年化超 1 亿美元。Ron Kohavi 把这个故事写进了书里——很多看起来不起眼的想法才是真正的金矿，而很多看起来「显然更好」的想法跑出来根本没用。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_ab_01",
+      "type": "link",
+      "title": "Trustworthy Online Controlled Experiments (Kohavi)",
+      "url": "https://experimentguide.com/",
+      "note": "实验科学的圣经",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

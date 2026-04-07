@@ -1,0 +1,31 @@
+{
+  "id": "atom_mechanical_turk_mvp",
+  "schemaVersion": 1,
+  "name": "Mechanical Turk MVP 人肉算法式",
+  "nameEn": "Mechanical Turk MVP",
+  "frameworkId": "product-innovation-24",
+  "cellId": 12,
+  "tags": ["Mechanical Turk", "人肉算法", "众包", "MVP"],
+  "parentAtomId": "atom_mvp_selection_overview",
+  "relationType": "child",
+  "coreIdea": "Wizard of Oz 的'分布式版'：把后端的人工处理通过众包平台（Amazon MTurk、自建运营团队）扩大到几十上百单/天。用户感知是'AI 在干活'，实际是世界各地的人。先用人脑生成训练数据再决定要不要训练模型。",
+  "whenToUse": "AI / 内容审核 / 翻译 / 图像识别类产品早期 · Wizard of Oz 已通过但需要扩到更大规模 · 训练模型前要验证数据质量 · 单条任务可被陌生人 30 秒完成",
+  "keySteps": [
+    "把'AI 做的事'拆成可外包的最小单元任务",
+    "写清晰的标注/处理 SOP（含质量检查标准）",
+    "选众包平台（MTurk / Scale / Appen / 自建运营）",
+    "试跑 100 条任务测时延和准确率",
+    "建立双人交叉审核机制保证质量",
+    "记录所有数据用于后续训练 ML 模型",
+    "当任务量到达临界点再考虑模型替代"
+  ],
+  "aiSkillPrompt": "你是一位精通 Mechanical Turk MVP 的 AI 产品验证专家。我有一个看似需要 AI 的产品想法，请帮我设计人肉算法的初版方案。\n\n## 输入\n- 产品想法与'AI 应该做的事'：{请在此处填入}\n- 单次任务的输入/输出格式：{请在此处填入}\n- 期望的响应时延与每日单量：{请在此处填入}\n- 待验证命题：{请在此处填入}\n\n## 任务\n1. 把 AI 任务拆成 1-3 个可被陌生人独立完成的小任务\n2. 为每个小任务写一份标注/操作 SOP（含输入说明、判断规则、举例、禁止事项）\n3. 推荐众包平台并给出对比（成本/质量/时延/合规）\n4. 设计质量保障机制：双人交叉、抽检、Gold Standard 题\n5. 估算单条成本与日总成本\n6. 设计数据收集格式，确保未来可直接训练模型\n7. 给出'何时切换到 ML 模型'的临界条件（数据量、单条成本曲线）\n\n## 输出格式\n```\n### 任务拆解\n| 子任务 | 输入 | 输出 | 单条耗时 |\n\n### 标注 SOP（核心子任务）\n- 输入说明：\n- 判断规则：\n- 正例：\n- 反例：\n- 禁止事项：\n\n### 平台推荐对比\n| 平台 | 成本/条 | 时延 | 质量 | 合规 | 推荐 |\n\n### 质量保障机制\n\n### 成本估算\n\n### 数据收集格式（JSON Schema）\n\n### 切换 ML 的临界条件\n```\n\n## 约束\n- SOP 必须详细到陌生人 5 分钟可上手\n- 必须包含 Gold Standard 题用于持续质量校准\n- 数据格式必须便于后续监督学习训练",
+  "example": {
+    "title": "Aardvark 人肉问答",
+    "content": "Aardvark（Google 2010 年收购）号称是'社交搜索 AI'，但早期所有问题都由后台运营人员人工分发给最合适的人回答。这种 Mechanical Turk 模式验证了'人愿意问别人而不是搜引擎'，积累的数据后来用于路由模型训练。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

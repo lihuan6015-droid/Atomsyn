@@ -1,0 +1,33 @@
+{
+  "id": "atom_code_prototype",
+  "schemaVersion": 1,
+  "name": "代码原型",
+  "nameEn": "Code Prototype",
+  "frameworkId": "product-innovation-24",
+  "cellId": 15,
+  "tags": ["代码原型", "可运行 demo", "技术验证", "Spike"],
+  "parentAtomId": "atom_prototyping_overview",
+  "relationType": "child",
+  "coreIdea": "当 Figma 原型回答不了「这个东西技术上行不行 / 性能够不够 / 接口好不好用」时，工程师就该花 1-3 天写一个 throwaway 的代码原型。代码原型的灵魂是「写完就丢」——不要爱上你的脏代码。",
+  "whenToUse": "新技术可行性验证 · 性能压力测试 · 第三方 API 探索 · 算法效果验证 · 复杂动效真实手感 · 工程评估前的 Spike",
+  "keySteps": [
+    "写一个 1 页 spike doc：要回答的技术问题、成功标志、时间盒",
+    "用最熟的技术栈，不追求架构干净",
+    "聚焦验证 1 个不确定点，其他全部硬编码",
+    "Demo 后写 spike report：可行 / 不可行 / 部分可行 + 学习",
+    "★ 代码删除或归档到 spike 文件夹，不要污染主仓库",
+    "把学习写进决策记录（ADR）"
+  ],
+  "aiSkillPrompt": "你是一位精通 Spike 工程实践的资深技术 Lead，熟悉 XP 与 Agile 中的 Spike Solution 方法。我会告诉你一个待验证的技术问题，请你帮我设计一次代码原型 Spike。\n\n## 输入\n技术问题（要回答什么）：{请在此处填入}\n相关技术栈：{请在此处填入}\n时间盒（小时/天）：{请在此处填入}\n\n## 任务\n1. 把模糊的「我想试试 X」改写成 1-3 个可二元判断的技术问题（「Y 的 P95 延迟在 N 条数据下能否 < 200ms」）\n2. 给出最小化原型方案：用什么库、跳过什么、硬编码什么\n3. 列出实现关键步骤（按小时分配，时间盒不能超）\n4. 给出 3 条「验证成功」的具体度量（数字 + 工具）\n5. 给出 3 条提前停止的红线条件（什么情况立刻 abort 这次 spike）\n6. 写一份 Spike Report 模板：问题、做法、结果、学习、下一步建议\n7. 提醒：哪些工程债不能带进生产代码（一次性 hack 清单）\n\n## 输出格式\n章节式 Markdown\n\n## 约束\n- 必须有时间盒，不允许「等做完看看」\n- 成功标志必须可被命令行/测试验证\n- 必须显式声明 spike 代码不进入主分支",
+  "example": {
+    "title": "经典案例 · GitHub Copilot 的早期 Spike",
+    "content": "GitHub Copilot 团队 2020 年用一个 3 天 spike 验证了「能否用 OpenAI Codex 在 VSCode 里实时补全代码且延迟可接受」。代码极脏：硬编码 API key、单线程、没缓存。但它回答了核心问题——P50 延迟 800ms 可接受，开发者真的会接受 AI 补全。这个 spike 后来被全部丢弃，但它的学习直接催生了几十亿美元的产品方向。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

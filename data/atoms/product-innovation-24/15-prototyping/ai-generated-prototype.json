@@ -1,0 +1,50 @@
+{
+  "id": "atom_ai_generated_prototype",
+  "schemaVersion": 1,
+  "name": "AI 生成原型",
+  "nameEn": "AI-Generated Prototype (v0 / Lovable)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 15,
+  "tags": ["AI 原型", "v0", "Lovable", "Bolt", "vibe coding"],
+  "parentAtomId": "atom_prototyping_overview",
+  "relationType": "child",
+  "coreIdea": "2024-2026 年最大的原型革命：用一段自然语言 prompt + 一张参考截图，30 分钟得到一个可运行的 Next.js / Vite 网站。AI 原型把「设计→代码」的鸿沟压缩为零，PM 自己就能产出准生产级 demo。",
+  "whenToUse": "1 天内要给老板看 demo · 验证一个完整产品概念 · landing page 烟雾测试 · 投资人 pitch · MVP 0 → 1 · 竞品快速复刻分析",
+  "keySteps": [
+    "选工具：v0.dev（最适合 React + shadcn）/ Lovable.dev（最适合全栈 + DB）/ Bolt.new（最适合一键预览）",
+    "准备一段结构化 prompt：角色 + 目标用户 + 5 屏功能 + 参考视觉风格",
+    "上传 1-2 张参考截图（竞品 / Dribbble / 自己的草图）",
+    "首轮生成后，用对话式 micro-prompt 精修：「把 hero 改成深色 + glassmorphism」",
+    "导出代码到 GitHub / Vercel 一键部署",
+    "把 URL 直接发给用户做烟雾测试或可用性测试"
+  ],
+  "aiSkillPrompt": "你是一位精通 v0.dev / Lovable.dev / Bolt.new 等 AI 代码生成工具的资深产品设计师，知道如何用结构化 prompt 让 AI 一次出对设计。我会描述一个产品想法，请你帮我写出可以直接粘贴到 v0/Lovable 的 prompt。\n\n## 输入\n产品名称与一句话定位：{请在此处填入}\n目标用户：{请在此处填入}\n需要的核心页面（3-6 个）：{请在此处填入}\n参考视觉风格关键词（例如 Linear / Notion / Vercel / Apple）：{请在此处填入}\n\n## 任务\n1. 推荐最匹配的 AI 工具（v0 / Lovable / Bolt / Cursor）并说明理由\n2. 写出可以直接粘贴的结构化 prompt，必须包含：\n   - Role：你是一位...\n   - Product：产品定位\n   - Target user：目标用户\n   - Pages：每个页面的文案 + 模块构成\n   - Visual style：色彩 token + 字体 + 圆角 + 间距风格\n   - Tech stack：Next.js + shadcn + Tailwind + Framer Motion\n   - Don't：明确禁止事项（例如「不要使用 emoji」「不要堆砌渐变」）\n3. 给出 3 个候选「参考截图」类型描述，告诉我从哪里截图上传\n4. 给 5 条精修 micro-prompt 模板（首轮后用来微调）\n5. 警告 3 个常见 AI 原型陷阱：占位数据失真 / 假按钮无后端 / 视觉趋同\n6. 给出导出 → 部署 → 分享给用户的 30 分钟工作流\n\n## 输出格式\n第一段：工具推荐\n第二段：完整可粘贴 prompt（用代码块）\n第三段：精修 prompt 列表\n第四段：30 分钟工作流\n\n## 约束\n- prompt 必须可直接复制粘贴，不能用占位\n- 视觉规范必须给具体 hex / 字号 / 圆角值\n- 必须包含 Don't 部分，AI 不被禁止就会乱发挥",
+  "example": {
+    "title": "经典案例 · Vercel v0 一夜复刻 Notion AI",
+    "content": "2024 年 Vercel 团队在内部黑客马拉松上用自家的 v0 在 4 小时内做出了一个高保真 Notion AI 克隆 demo（完整 sidebar + 富文本编辑 + 流式 AI 输出）。Guillermo Rauch 把它发到 X 上，引爆「vibe coding」概念——产品经理不再需要等 2 周排期，自己一晚上就能产出可演示的 working prototype。这是 PM 角色被 AI 重塑的最具体案例。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_aip_01",
+      "type": "link",
+      "title": "v0.dev",
+      "url": "https://v0.dev",
+      "note": "Vercel 的 AI UI 生成器",
+      "addedAt": "2026-04-07T00:00:00Z"
+    },
+    {
+      "id": "bm_aip_02",
+      "type": "link",
+      "title": "Lovable.dev",
+      "url": "https://lovable.dev",
+      "note": "全栈 AI 原型平台",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

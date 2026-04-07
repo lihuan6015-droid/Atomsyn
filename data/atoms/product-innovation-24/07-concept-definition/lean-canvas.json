@@ -1,0 +1,29 @@
+{
+  "id": "atom_lean_canvas",
+  "schemaVersion": 1,
+  "name": "精益画布",
+  "nameEn": "Lean Canvas",
+  "frameworkId": "product-innovation-24",
+  "cellId": 7,
+  "tags": ["Lean Canvas", "Ash Maurya", "商业模式", "9 格"],
+  "parentAtomId": "atom_concept_definition_overview",
+  "relationType": "child",
+  "coreIdea": "Lean Canvas 是 Ash Maurya 把 Business Model Canvas 改造成创业者专用的 9 格——重点不在画完，而在于哪一格『说不清楚』，那就是下一周要去测的假设。",
+  "whenToUse": "立项后 / MVP 之前 · 多业务对比筛选 · 创始人对外路演一页纸 · 团队对齐商业模式",
+  "keySteps": [
+    "按 Maurya 顺序填：问题 → 客户细分 → 独特价值主张 → 解决方案 → 渠道 → 收入流 → 成本结构 → 关键指标 → 不公平优势",
+    "对每一格标『高/中/低』风险等级",
+    "把高风险格转化为可验证的实验",
+    "1 周内测掉至少 1 格高风险",
+    "迭代画布版本号"
+  ],
+  "aiSkillPrompt": "你是一位精益创业教练，精通 Ash Maurya 的 Lean Canvas。我将提供创业想法，请你帮我填完 9 格并标注风险。\n\n## 输入\n- 创业想法一句话：{请在此处填入}\n- 你认为的目标客户：{请在此处填入}\n- 你认为的核心问题：{请在此处填入}\n- 已知约束：{请在此处填入}\n\n## 任务\n1. 按 Maurya 推荐顺序填完 9 格，每格 ≤ 40 字\n2. 对每格标风险等级（高/中/低），高风险必须解释为什么\n3. 选出最高风险的 2 格，设计 1 周可验证的实验\n4. 指出 9 格之间的内在矛盾（例如客户与渠道不匹配）\n5. 输出『下一周必须做什么』的行动清单\n\n## 输出格式\nMarkdown：9 格表格 + 风险等级 + 实验设计 + 矛盾分析 + 行动清单\n\n## 约束\n- 不公平优势必须是『真不公平』，不能是『团队执行力强』\n- 关键指标禁止 DAU 万能，必须与商业模式对应\n- 解决方案必须 ≤ 3 个核心功能，不能罗列 PRD",
+  "example": {
+    "title": "Buffer 的早期 Lean Canvas",
+    "content": "Joel Gascoigne 在写一行代码之前用 Lean Canvas 圈出最高风险是『有没有人愿意为定时发推付费』，他做了一个只有定价页的着陆页测试，48 小时拿到第一个付费用户，整张画布的核心假设就此验证。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

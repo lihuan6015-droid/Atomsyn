@@ -1,0 +1,33 @@
+{
+  "id": "atom_service_blueprint",
+  "schemaVersion": 1,
+  "name": "服务蓝图",
+  "nameEn": "Service Blueprint",
+  "frameworkId": "product-innovation-24",
+  "cellId": 14,
+  "tags": ["服务设计", "Service Blueprint", "后台流程", "运营协作"],
+  "parentAtomId": "atom_experience_mapping_overview",
+  "relationType": "child",
+  "coreIdea": "Customer Journey 只画台前，Service Blueprint 把舞台拆成 5 层：用户行为 → 前台动作 → 互动线 → 后台动作 → 可见线 → 支持流程。它让团队第一次看到「为什么客户那一刻会等 3 分钟」——往往是后台系统的问题。",
+  "whenToUse": "服务交付链很长 · 跨部门协作出现责任真空 · 客户投诉总在某个环节 · 数字+实体融合服务 · 客户成功流程优化",
+  "keySteps": [
+    "横轴：客户旅程阶段（与 CJM 对齐）",
+    "纵轴 5 层：Customer Actions / Frontstage / Line of Interaction / Backstage / Support Processes",
+    "在每个交叉格填入具体动作 + 系统 / 工具",
+    "用线条连接因果关系（哪一个 backstage 慢导致哪个 frontstage 卡）",
+    "标记 Fail Points（最容易出错的格子）和 Wait Times",
+    "为每个 Fail Point 设计补救流程"
+  ],
+  "aiSkillPrompt": "你是一位精通 Service Design 的资深咨询顾问，熟悉 NN/g 的 Service Blueprint 标准。我会描述一个服务流程，请你帮我搭建一份完整的服务蓝图。\n\n## 输入\n服务名称：{请在此处填入}\n关键客户旅程阶段（按顺序列出）：{请在此处填入}\n参与的部门/角色：{请在此处填入}\n\n## 任务\n1. 用 5 层结构构建蓝图（Customer Actions / Frontstage Actions / Line of Interaction / Backstage Actions / Support Processes）\n2. 在每个客户旅程阶段下，逐层填入具体动作 + 涉及系统 + 涉及角色\n3. 标出 3-5 个 Fail Points（最容易出错或最慢的格子）\n4. 标出 2-3 个 Wait Time（客户等待节点）并估算等待时长\n5. 对每个 Fail Point 提出：根因（是后台流程？系统？培训？）+ 改进动作 + owner\n6. 输出蓝图为 Markdown 表格（行=层级，列=阶段）\n7. 末尾给一段 service standard 建议：哪些指标该被纳入 SLA\n\n## 输出格式\n完整 Markdown 表格 + Fail Points 清单 + SLA 建议\n\n## 约束\n- 必须区分 Frontstage 和 Backstage，不允许混淆\n- 每个动作必须有具体角色，不允许「系统自动处理」这种黑盒\n- Fail Points 必须有根因分析，不能只描述症状",
+  "example": {
+    "title": "经典案例 · 宜家的服务蓝图",
+    "content": "IKEA 用服务蓝图发现：客户在「自助提货区找货」环节失败率最高（因为编号系统对外行不友好）。表面是客户体验问题，背后是仓储管理系统的命名规则。改进时同时调整了店内地图、APP 扫码定位和后台编号体系——这正是蓝图的价值：让前后台一起暴露在同一张图上。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "atom_experiment_design_overview",
+  "schemaVersion": 1,
+  "name": "假设验证实验设计",
+  "nameEn": "Hypothesis Validation Experiment Design",
+  "frameworkId": "product-innovation-24",
+  "cellId": 13,
+  "tags": ["实验设计", "假设验证", "精益创业", "MVP"],
+  "coreIdea": "在写一行代码之前，先用最低成本的实验把「最危险的假设」证伪或证实。实验不是为了证明你对，而是为了用真实数据替换 PPT 里的猜测。",
+  "whenToUse": "MVP 立项前 · 新功能投资决策 · 增长假设验证 · 商业模式打磨 · 销售前验证支付意愿",
+  "keySteps": [
+    "写出可被证伪的假设：「我们相信 [用户] 在 [场景] 会 [行为]，因为 [动机]」",
+    "识别最危险假设（Riskiest Assumption）——如果它错，整个商业逻辑就崩",
+    "选择最便宜的实验形态（Smoke / Fake Door / Concierge / A/B / Pretotype）",
+    "预先定义成功阈值（例如「若 CTR < 5%，证伪」）",
+    "限定实验周期（通常 3-14 天），到点必须做决策",
+    "执行 → 记录原始数据 → 与阈值对照 → 写学习笔记 (Learning Card)",
+    "决策三选一：Pivot / Persevere / Kill"
+  ],
+  "aiSkillPrompt": "你是一位资深 Lean Startup 实验设计教练，熟悉 Eric Ries 的「构建-测量-学习」循环以及 David Bland 的 Testing Business Ideas。我将告诉你一个产品想法或假设，请你帮我把它打磨成一个可执行的实验方案。\n\n## 输入\n产品/功能/假设描述：{请在此处填入}\n目标用户：{请在此处填入}\n可用预算/时间：{请在此处填入}\n\n## 任务\n1. 把模糊的想法翻译成 1-3 条可证伪的假设，使用「我们相信 [谁] 在 [场景] 会 [行为]，因为 [动机]」结构\n2. 标出哪一条是「最危险假设」并说明理由（如果错了，整个生意就不成立）\n3. 推荐 2 种实验类型（从 Smoke Test / Fake Door / Concierge / Wizard of Oz / Pretotype / A/B / Landing Page MVP 中选），说明各自适合验证哪条假设\n4. 为推荐的首选实验给出：实验名称、所需材料、操作步骤（5 步内）、样本量估算、运行周期、所需预算\n5. 预定义成功/失败阈值（必须是数字，例如「转化率 ≥ 8% 视为成功」）\n6. 列出 3 个常见 false positive 风险（哪些信号会骗人？）和规避方法\n\n## 输出格式\n用 Markdown 表格 + bullet 输出，结尾给一句「下一步行动」\n\n## 约束\n- 不要写「需要更多调研」这种无用建议，直接给可执行方案\n- 阈值必须是具体数字，不允许「显著提升」「明显增加」等模糊词\n- 如果用户假设本身就不可证伪，先指出来并帮他改写",
+  "example": {
+    "title": "经典案例 · Zappos 的鞋类电商假设验证",
+    "content": "Nick Swinmurn 1999 年没有库存、没有仓库，他先跑到本地鞋店拍照传到自建网站，有人下单后他再去鞋店买鞋手动寄出。这个 Concierge MVP 用不到 2000 美元的成本验证了「美国人愿意在网上买鞋」这一在当时被视为不可能的核心假设——后来 Zappos 以 12 亿美元卖给 Amazon。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_exp_01",
+      "type": "link",
+      "title": "Testing Business Ideas (David Bland)",
+      "url": "https://www.strategyzer.com/library/testing-business-ideas",
+      "note": "44 种实验卡片的标准参考书",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

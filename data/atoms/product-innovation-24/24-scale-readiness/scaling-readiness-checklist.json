@@ -1,0 +1,30 @@
+{
+  "id": "atom_scaling_readiness_checklist",
+  "schemaVersion": 1,
+  "name": "规模化就绪检查表",
+  "nameEn": "Scaling Readiness Checklist",
+  "frameworkId": "product-innovation-24",
+  "cellId": 24,
+  "tags": ["checklist", "scale", "due-diligence"],
+  "parentAtomId": "atom_scale_readiness_overview",
+  "relationType": "child",
+  "coreIdea": "把'我们准备好了吗'拆成 30+ 个可勾选项目：从 P99 延迟、SLO、CI/CD、On-call、客户成功到合规、安全、财务流程。任何一项 No 都是放大风险的入口。",
+  "whenToUse": "准备 B 轮融资前的内部审计 · 大客户合同签订前的就绪检查 · 新区域市场扩张前 · 收购方尽调前的自我准备",
+  "keySteps": [
+    "用 6 个分组（工程/数据/客成/财务/合规/安全）展开",
+    "每个分组列 5-8 项 Yes/No 题",
+    "对每个 No 评估'修复成本 vs 不修复风险'",
+    "把高风险 No 转为 30 天内必修任务",
+    "周会跟进进度，按比例计算 readiness%",
+    "达到 85% 才允许大动作"
+  ],
+  "aiSkillPrompt": "你是融资尽调顾问。我会给你产品基本情况，请你生成一份针对该产品的规模化就绪检查表，并基于我的回答估算 readiness%。\n\n## 输入\n- 产品类型（B2B SaaS / 消费 App / 平台等）：{请在此处填入}\n- 当前客户数与最大客户体量：{请在此处填入}\n- 工程团队规模：{请在此处填入}\n- 已有合规认证：{请在此处填入}\n- 计划扩张方向：{请在此处填入}\n\n## 任务\n1. 检查表生成：按 6 分组（工程稳定性 / 数据可观测 / 客户成功 / 财务流程 / 合规 / 安全）各列 5-8 项具体 Yes/No 题，针对该产品类型定制\n2. 优先级标签：每项标 P0（必须）/ P1（重要）/ P2（可选）\n3. 修复路径：对最容易缺失的 5 项 Yes/No 题，给出第一步修复建议\n4. Readiness 评分：假设全部 P0 = Yes 才算 80%，给出当前可达分数公式\n5. 行业对标：指出该产品类型在融资尽调中投资人最看重的 3 个项目\n6. 报告模板：输出一段 board 友好的就绪现状段落\n\n## 输出格式\n6 组分组检查表（带 P0/P1/P2）+ 评分公式 + 报告段落\n\n## 约束\n- 检查项必须针对产品类型定制，不能通用模板\n- 不要把所有项都标 P0\n- 建议必须可在 30 天内开始",
+  "example": {
+    "title": "Notion 的 SOC2 闯关",
+    "content": "Notion 在 2020 年准备进入大企业市场前用一份 80 项的就绪清单做内部审计，发现 SOC2 Type II、SAML SSO、Audit Log 三项未达标，被列为 P0。团队用 6 个月攻克这三项，2021 年正式拿到 SOC2 报告，随后才开放 Enterprise 销售线。Akshay Kothari 复盘时说：'如果我们没有这份清单逼自己，肯定会先签合同后救火，那将是数倍的成本。'"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

@@ -1,0 +1,42 @@
+{
+  "id": "atom_pretotyping",
+  "schemaVersion": 1,
+  "name": "Pretotyping 预型法",
+  "nameEn": "Pretotyping",
+  "frameworkId": "product-innovation-24",
+  "cellId": 13,
+  "tags": ["实验设计", "Alberto Savoia", "TRI", "市场吸引力"],
+  "parentAtomId": "atom_experiment_design_overview",
+  "relationType": "child",
+  "coreIdea": "Alberto Savoia 提出：在「Build the right it」之前，先确认你的 it 是不是 right。用一个根本不能用的「假产品」搜集真人的 IMI（个人市场承诺：钱、时间、注意力），而不是用嘴巴问他们「会不会用」。",
+  "whenToUse": "想法刚萌芽 · 还没投资任何工程资源 · 想区分「市场失败」和「执行失败」 · 害怕掉进「TLAP 自我安慰」陷阱",
+  "keySteps": [
+    "写出 XYZ 假设：「至少 X% 的 Y 会在 Z 场景下做出 [具体行为]」",
+    "缩小范围到 xyz 子假设（小样本可验证版）",
+    "选 1 种 pretotype 形态：Mechanical Turk / Pinocchio / Minimum Viable Product / Provincial / Fake Door / YouTube",
+    "收集真实的 TRI（Thinking / Relative / Investment）数据——尤其是 Skin in the Game",
+    "对比 Surprise Threshold：结果是否大幅超出/低于直觉？",
+    "用 TRI Meter 计算 Market Engagement Hypothesis 的支持度"
+  ],
+  "aiSkillPrompt": "你是一位精通 Alberto Savoia《The Right It》方法论的 Pretotyping 教练，曾在 Google 主导这套体系。我会描述一个产品想法，请你帮我设计一个 pretotype 实验。\n\n## 输入\n产品想法（一句话描述）：{请在此处填入}\n目标市场假设：{请在此处填入}\n时间预算（天）：{请在此处填入}\n\n## 任务\n1. 用 XYZ 公式改写市场吸引力假设：「至少 X% 的 Y 在 Z 情境下会 [具体可观察行为]」\n2. 把 XYZ 缩小为可在 1-2 周内验证的 xyz 子假设\n3. 从 8 种经典 pretotype 中推荐最匹配的 2 种（Mechanical Turk / Pinocchio / Minimum Viable Product / Provincial / Fake Door / Re-Label / YouTube / One-Night Stand）并说明为什么\n4. 给出首选 pretotype 的具体执行清单：所需材料（≤ 50 美元）、操作步骤、记录什么\n5. 设计 IMI 数据收集表：要记录哪些「真金白银」信号（钱、时间、邮箱、预付款、推荐人数）\n6. 计算 TRI（Thinking / Relative / Investment）权重：哪些数据是 5x，哪些是 1x，哪些要打 0.1x 折扣\n7. 给出「跑路阈值」：如果 xyz 结果低于多少就立刻 kill\n\n## 输出格式\nMarkdown，最后给一句 Savoia 风格的诚实建议\n\n## 约束\n- 严禁使用 opinion-based 数据（「你会用吗？」「觉得有价值吗？」），只接受行为数据\n- TRI 必须包含 Skin in the Game（用户付出的真实代价）\n- 提醒用户警惕 TLAP（Thought Land Active Plot）自我安慰",
+  "example": {
+    "title": "经典案例 · IBM 的语音转文字 Pretotype",
+    "content": "1980 年代 IBM 想做语音转文字，但硬件成本巨高。他们做了一个 Mechanical Turk pretotype：让用户对着一个假装的语音识别机器说话，背后其实是一个打字员实时听写。结果发现：用户用了几分钟就嫌累、嗓子疼、隐私尴尬——没人真的想长时间口述。这个 pretotype 用几乎零成本省下了一个本可能投资几亿美元的失败方向。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_pre_01",
+      "type": "link",
+      "title": "The Right It (Alberto Savoia)",
+      "url": "https://www.pretotyping.org/",
+      "note": "Pretotyping 官方资料",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

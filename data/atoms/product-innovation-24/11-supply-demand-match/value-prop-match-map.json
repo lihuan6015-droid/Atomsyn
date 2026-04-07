@@ -1,0 +1,30 @@
+{
+  "id": "atom_value_prop_match_map",
+  "schemaVersion": 1,
+  "name": "价值主张匹配图",
+  "nameEn": "Value Proposition Match Map",
+  "frameworkId": "product-innovation-24",
+  "cellId": 11,
+  "tags": ["VPC", "价值主张", "Strategyzer", "Fit"],
+  "parentAtomId": "atom_supply_demand_match_overview",
+  "relationType": "child",
+  "coreIdea": "Strategyzer VPC 的'Fit 阶段'：把 Customer Profile（Jobs/Pains/Gains）和 Value Map（Products/Pain Relievers/Gain Creators）严格对应，每条 Reliever 必须连到具体 Pain，每条 Creator 必须连到具体 Gain——没连上的就是浪费。",
+  "whenToUse": "VPC 已经画完但没做 Fit 检查 · 价值主张文案前的对齐 · 销售/营销与产品对'卖点'认知不一致时 · 进入 MVP 前的最后审计",
+  "keySteps": [
+    "收集 Customer Profile 三圈（Jobs/Pains/Gains 各 5-10 条）",
+    "收集 Value Map 三圈（Products/Pain Relievers/Gain Creators）",
+    "对每个 Pain Reliever 画线指向它解决的 Pain，并写'如何解'",
+    "对每个 Gain Creator 画线指向它创造的 Gain",
+    "评估三层 Fit：Problem-Solution Fit / Product-Market Fit / Business Model Fit",
+    "标记孤儿元素，决定补/删"
+  ],
+  "aiSkillPrompt": "你是一位 Strategyzer 认证教练，精通 Value Proposition Canvas 的 Fit 评估。\n\n## 输入\n- Customer Profile：\n  - Jobs（功能/社交/情感）：{请在此处填入}\n  - Pains（含强度 1-5）：{请在此处填入}\n  - Gains（含期望度 1-5）：{请在此处填入}\n- Value Map：\n  - Products & Services：{请在此处填入}\n  - Pain Relievers：{请在此处填入}\n  - Gain Creators：{请在此处填入}\n\n## 任务\n1. 输出'Pain Reliever → Pain'匹配表，每行写'如何解''证据''Fit 强度'\n2. 输出'Gain Creator → Gain'匹配表，同上\n3. 计算三层 Fit 得分：\n   - Problem-Solution Fit：所有 Top 3 Pain 是否都被 Reliever 覆盖？（百分比）\n   - Product-Market Fit：用户是否真用了？（输出需要验证的假设清单）\n   - Business Model Fit：愿意付费的 Gain 是否被覆盖？\n4. 列出孤儿 Reliever / 孤儿 Pain\n5. 给出'必须补、可以删、必须验证'三类清单\n\n## 输出格式\n```\n### Reliever ↔ Pain\n| Reliever | 对应 Pain | 如何解 | 证据 | Fit |\n\n### Creator ↔ Gain\n| Creator | 对应 Gain | 如何创 | 证据 | Fit |\n\n### Fit 评分\n- Problem-Solution Fit: X%\n- 待验证假设: ...\n\n### 行动\n- 必须补：\n- 可以删：\n- 必须验证：\n```\n\n## 约束\n- 'Top 3 Pain' 由强度排序决定，不允许跳过\n- '证据=团队认为'一律标 Fit=低，要求验证\n- 不允许同一 Reliever 声称解决全部 Pain（典型自欺）",
+  "example": {
+    "title": "Strategyzer 案例 · Nespresso",
+    "content": "Nespresso 团队用 VPC Match Map 审计后发现，'胶囊兼容性'是用户最大 Pain 但被 Reliever 严重低估，于是把核心价值主张从'高品质咖啡'迁移到'专属胶囊生态系统'，反而通过专属性建立护城河，营收 10 年增长 5 倍。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

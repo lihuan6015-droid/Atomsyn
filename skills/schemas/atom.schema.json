@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Atom",
+  "description": "A single methodology / knowledge atom card",
+  "type": "object",
+  "required": [
+    "id",
+    "schemaVersion",
+    "name",
+    "frameworkId",
+    "cellId",
+    "tags",
+    "coreIdea",
+    "whenToUse",
+    "aiSkillPrompt",
+    "bookmarks",
+    "stats",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^atom_[a-z0-9_-]+$" },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "nameEn": { "type": "string" },
+    "frameworkId": { "type": "string" },
+    "cellId": { "type": "integer", "minimum": 1 },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "parentAtomId": { "type": "string" },
+    "relationType": { "type": "string", "enum": ["child", "sibling", "parent"] },
+    "coreIdea": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "whenToUse": { "type": "string", "minLength": 1 },
+    "keySteps": { "type": "array", "items": { "type": "string" } },
+    "aiSkillPrompt": { "type": "string", "minLength": 1 },
+    "example": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" }
+      }
+    },
+    "bookmarks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "title", "addedAt"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string", "enum": ["link", "text"] },
+          "title": { "type": "string" },
+          "url": { "type": "string" },
+          "content": { "type": "string" },
+          "note": { "type": "string" },
+          "addedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "required": ["usedInProjects", "useCount"],
+      "properties": {
+        "usedInProjects": { "type": "array", "items": { "type": "string" } },
+        "lastUsedAt": { "type": "string" },
+        "useCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "createdAt": { "type": "string" },
+    "updatedAt": { "type": "string" }
+  }
+}

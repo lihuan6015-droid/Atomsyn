@@ -1,0 +1,34 @@
+{
+  "id": "atom_stealth_launch",
+  "schemaVersion": 1,
+  "name": "隐身发布",
+  "nameEn": "Stealth Launch",
+  "frameworkId": "product-innovation-24",
+  "cellId": 16,
+  "tags": ["发布", "Stealth", "隐身模式", "安静上线"],
+  "parentAtomId": "atom_first_launch_overview",
+  "relationType": "child",
+  "coreIdea": "完全不发任何 PR、不申请 PH、不发推、不告诉媒体——把产品悄悄上线，让真实自然流量（自然搜索、口碑、推荐）来检验产品本身有没有「自然引力」。这是验证 PMF 最诚实的方式。",
+  "whenToUse": "想验证产品本身的 organic pull · 不想给竞品提前预警 · 公司战略需要保密 · 不希望被早期负面评论定义 · 验证留存而非首日流量",
+  "keySteps": [
+    "上线产品但不发布任何官方公告",
+    "禁用或最小化付费投放",
+    "依赖 SEO 长尾、Reddit/HN 自然提及、用户口碑",
+    "监控 organic traffic 与 word-of-mouth K 因子",
+    "定期采访前 100 位「自己找上门」的用户",
+    "如果 organic 增长 > 0 → 等增长曲线明确再 PR；如果 = 0 → 退回打磨",
+    "★ 不是「永远不发布」，是「等产品有引力再发布」"
+  ],
+  "aiSkillPrompt": "你是一位精通早期 PMF 验证的资深产品顾问，倡导「stealth-first，PR-second」策略。我会告诉你产品状态与战略意图，请你帮我设计一次 stealth launch 方案与验证计划。\n\n## 输入\n产品类型：{请在此处填入}\n为什么选择 stealth（保密 / 验证 / 战略）：{请在此处填入}\n可接受的 stealth 期长度：{请在此处填入}\n\n## 任务\n1. 推荐适合 stealth 的最小化曝光渠道组合（SEO 长尾 / 1-2 个相关 subreddit / Hacker News show HN / 个人朋友圈）\n2. 列出严格禁止的动作（发新闻稿 / 投信息流广告 / Product Hunt / 大 V 转发）\n3. 设计「organic pull」检测指标：自然访问 / 自然注册 / 引荐来源 Top 10 / NPS / 主动分享率\n4. 给出每周一次的「Stealth 体检表」，连续 4 周看趋势\n5. 设计「破壳条件」：满足什么数据后从 stealth 转为公开发布\n6. 给出「打回去」条件：什么数据下应该退回到 closed beta 重新打磨\n7. 设计前 100 位用户访谈方案：从哪里找他们 / 问哪 5 个核心问题\n8. 警告 3 个 stealth 常见误区（误解为「永远不发布」/ 因为安静而自我感动 / 漏掉技术 SEO）\n\n## 输出格式\n章节式 Markdown + 体检表模板\n\n## 约束\n- 必须有「破壳条件」，stealth 不能成为永久状态\n- 必须区分「organic」与「friends-and-family」流量\n- 不允许把 stealth 当成「不敢发布」的借口",
+  "example": {
+    "title": "经典案例 · Linear 的安静发布",
+    "content": "Linear 2019 年 stealth 上线，没有 Product Hunt、没有 TechCrunch。前 6 个月所有用户都来自创始人 Karri Saarinen 的设计师圈子和 organic SEO。当他们终于在 2020 年公开发布时，已经有了清晰的留存曲线和 NPS 数据。Linear 的策略证明：不发布也是一种发布——你给产品时间去证明自己。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

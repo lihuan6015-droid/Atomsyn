@@ -1,0 +1,29 @@
+{
+  "id": "atom_pivot_types_10",
+  "schemaVersion": 1,
+  "name": "Pivot 十种类型",
+  "nameEn": "10 Pivot Types (Eric Ries)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 21,
+  "tags": ["pivot", "lean-startup", "taxonomy"],
+  "parentAtomId": "atom_pivot_decision_overview",
+  "relationType": "child",
+  "coreIdea": "Pivot 不是单一动作，而是 10 种结构化转向：放大、缩小、客户细分、客户需求、平台、商业架构、价值捕获、增长引擎、渠道、技术。先识别类型才能算清成本。",
+  "whenToUse": "已经决定要 Pivot 但不知道转向哪里 · 团队对'怎么转'有多种方案 · 需要向投资人解释 Pivot 不是乱跳",
+  "keySteps": [
+    "对照 10 类定义，先剔除明显不合适的 5-6 类",
+    "对剩余候选写'保留什么 / 抛弃什么 / 新增什么'三栏",
+    "估算每个候选的资产复用率与上线时间",
+    "用一句话写出新的价值假设，看是否更聚焦",
+    "选定 1 类，文档化为 Pivot 备忘录"
+  ],
+  "aiSkillPrompt": "你是熟读《精益创业》的产品战略顾问。我会描述当前产品和遇到的瓶颈，请你帮我识别哪种 Pivot 类型最适合，并给出操作清单。\n\n## 输入\n- 当前产品一句话定义：{请在此处填入}\n- 当前目标客户与典型场景：{请在此处填入}\n- 验证失败的核心假设：{请在此处填入}\n- 团队/技术/品牌可复用资产：{请在此处填入}\n- 跑道与资源约束：{请在此处填入}\n\n## 任务\n1. 类型筛选：对 10 种 Pivot（Zoom-in / Zoom-out / Customer Segment / Customer Need / Platform / Business Architecture / Value Capture / Engine of Growth / Channel / Technology）逐一打分（0-5），并附 1 句理由\n2. Top3 详解：为得分最高的 3 种 Pivot 各写 一段方案：保留什么 / 抛弃什么 / 新假设是什么 / 首个验证实验是什么\n3. 推荐选择：明确选 1 种，说明为什么它最匹配资产与跑道\n4. 风险与替代：指出该 Pivot 最可能失败的 2 个原因，以及备用 Plan B\n5. 写一段对外沟通话术：如何向投资人/团队解释这次 Pivot 是'有原则的'而不是'慌乱的'\n\n## 输出格式\nMarkdown，先打分表，再 Top3 方案，再推荐与话术。\n\n## 约束\n- 必须真正区分 10 种 Pivot 的差异，不要把 Customer Segment 和 Customer Need 混为一谈\n- 推荐必须基于资产复用率，而不是'看起来更性感'\n- 不要建议同时做两种 Pivot",
+  "example": {
+    "title": "Instagram：Zoom-in Pivot from Burbn",
+    "content": "Burbn 原本是一个集签到、计划、照片、点赞于一身的 LBS 社交 App，功能臃肿且增长停滞。Kevin Systrom 观察到用户其实只活跃使用拍照功能，遂执行 Zoom-in Pivot：砍掉所有非照片功能，把'拍照 + 滤镜 + 分享'放大成全部产品。8 周后 Instagram 上线，第一天 25000 注册，2 年后被 Facebook 以 10 亿美元收购。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

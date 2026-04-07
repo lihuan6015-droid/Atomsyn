@@ -1,0 +1,29 @@
+{
+  "id": "atom_vpc_canvas",
+  "schemaVersion": 1,
+  "name": "价值主张画布",
+  "nameEn": "Value Proposition Canvas (VPC)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 6,
+  "tags": ["VPC", "Strategyzer", "Job-Pain-Gain", "Fit"],
+  "parentAtomId": "atom_value_proposition_overview",
+  "relationType": "child",
+  "coreIdea": "VPC 的价值不是画两个圆，而是逼问『每个 Pain 是否真有对应的 Reliever』——大多数产品死在 Pain 多但 Reliever 不准的 Mismatch 上。",
+  "whenToUse": "新功能立项前 · 产品没人用但说不上为什么 · 需要把客户语言翻译成产品语言 · 跨团队对齐用户需求",
+  "keySteps": [
+    "右圆 Customer Profile：Job / Pain / Gain 各 5 条",
+    "对 Pain 和 Gain 按强度（1-5）排序",
+    "左圆 Value Map：Products / Pain Relievers / Gain Creators",
+    "做 Problem-Solution Fit 配对检查，标出 Mismatch",
+    "为 Mismatch 设计 1 个验证实验或砍掉对应功能"
+  ],
+  "aiSkillPrompt": "你是一位 Strategyzer 认证教练。我将提供我的产品和客户细分，请你帮我画一张完整的 VPC 并指出 Fit 缺口。\n\n## 输入\n- 产品一句话：{请在此处填入}\n- 客户细分（一个具体角色）：{请在此处填入}\n- 当前已知的功能列表：{请在此处填入}\n\n## 任务\n1. 客户侧 Customer Profile：列 5 条 Job、5 条 Pain（按强度排序）、5 条 Gain（按重要性排序）\n2. 产品侧 Value Map：列产品/服务、Pain Relievers、Gain Creators\n3. 输出一张 Fit Matrix（表格）：行=Top 3 Pain，列=对应 Reliever，标 ✓/△/✗\n4. 圈出 Mismatch（Pain 强但 Reliever 弱）\n5. 为每个 Mismatch 给出『补强』或『砍掉』建议\n6. 用 1 句话总结这张 VPC 的核心 fit 程度（0-100%）\n\n## 输出格式\nMarkdown：分两个圆 + Fit Matrix + 行动建议\n\n## 约束\n- Job 必须用客户原话，禁止『提高效率』这类抽象词\n- Pain 必须可观察或可测量\n- Reliever 必须对应到具体产品功能或服务",
+  "example": {
+    "title": "Airbnb 早期 VPC",
+    "content": "Job: 出差找便宜住宿; Pain: 酒店贵+体验冷; Gain: 像本地人一样住。Reliever: 民宿低价; Creator: 房东欢迎+本地推荐。Fit ✓——这就是 PMF 的形状。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

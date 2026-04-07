@@ -1,0 +1,29 @@
+{
+  "id": "atom_falsifiable_hypothesis_card",
+  "schemaVersion": 1,
+  "name": "可证伪假设卡",
+  "nameEn": "Falsifiable Hypothesis Card",
+  "frameworkId": "product-innovation-24",
+  "cellId": 18,
+  "tags": ["hypothesis", "card", "falsifiable", "experiment-design"],
+  "parentAtomId": "atom_hypothesis_check_overview",
+  "relationType": "child",
+  "coreIdea": "如果一条假设不能被证伪，它就是信仰不是假设。一张合格的假设卡必须写明：我们相信什么、怎样才算错、错了怎么办。",
+  "whenToUse": "启动一个新实验 · 把需求评审变为假设评审 · 规训团队的言之凿凿 · 建立决策审计轨迹",
+  "keySteps": [
+    "写下『我们相信...』的一句话假设",
+    "列出背后最脆弱的 2-3 条隐含前提",
+    "定义量化证伪条件（阈值、样本、时间窗）",
+    "预先承诺证伪后的行动（继续/枢转/放弃）",
+    "实验结束后更新『学到了什么』"
+  ],
+  "aiSkillPrompt": "你是一位实验设计审阅者，帮团队把模糊想法变成可证伪的假设卡。我将提供一个产品想法或功能提案，请你输出一张完整的假设卡。\n\n## 输入\n{请在此处填入：功能或想法描述、背后的业务目标、目标用户、当前已知信息}\n\n## 任务\n1. 假设改写：用『我们相信 [动作] 会导致 [结果]，因为 [理由]』格式\n2. 脆弱前提：列出 2-3 条最可能错的隐含前提\n3. 证伪条件：给出可量化的失败阈值（如：7 天激活率低于 25%）\n4. 预承诺：证伪后采取什么行动（不允许『继续观察』）\n5. 最小验证：描述成本最低的验证方式\n\n## 输出格式\n结构化假设卡 Markdown 模板（假设 / 前提 / 证伪条件 / 预承诺 / 验证方法 / 负责人 / 截止日期）。\n\n## 约束\n- 禁止出现『提升用户体验』这种无法测量的描述\n- 证伪条件必须含数字、时间窗、样本量\n- 预承诺必须是可执行动作，不能是态度\n- 每卡只能承载一个核心假设",
+  "example": {
+    "title": "Intuit 的 Leap of Faith 假设",
+    "content": "Intuit 在 Mint 早期把『用户愿意把银行密码交给一个陌生创业公司』写成 Leap of Faith 假设卡，用信任度调研证伪后才开始建后端。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

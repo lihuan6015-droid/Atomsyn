@@ -1,0 +1,29 @@
+{
+  "id": "atom_differentiator_statement",
+  "schemaVersion": 1,
+  "name": "差异化承诺语句",
+  "nameEn": "Differentiator Statement",
+  "frameworkId": "product-innovation-24",
+  "cellId": 6,
+  "tags": ["差异化", "承诺", "GTM", "壁垒"],
+  "parentAtomId": "atom_value_proposition_overview",
+  "relationType": "child",
+  "coreIdea": "差异化不是『我们也有 X』，而是『只有我们 X』。一句合格的差异化语句必须能让对手听完后无法反驳『我们也行』。",
+  "whenToUse": "销售 battle card · 投放素材的钩子 · 融资问答最容易被问倒的『为什么是你』 · 内部团队质疑战略时",
+  "keySteps": [
+    "列 5 个候选差异点",
+    "用『对手能不能在 6 个月内复制？』筛掉伪差异",
+    "把剩下的差异点写成『Only ___ does ___ because ___』句式",
+    "用客户视角验证『这点真的影响购买决定吗』",
+    "把通过验证的语句嵌入定位声明和首页文案"
+  ],
+  "aiSkillPrompt": "你是一位差异化策略顾问，擅长戳破『伪差异』。我将提供我的产品和竞品，请你帮我产出经得起对手反驳的差异化语句。\n\n## 输入\n- 产品一句话：{请在此处填入}\n- 主要竞品 3 家：{请在此处填入}\n- 我们认为的 5 个差异候选：{请在此处填入}\n\n## 任务\n1. 对每个候选差异，评估『对手 6 个月内能复制吗』，给『可复制 / 难复制 / 不可复制』标记\n2. 把『不可复制』的差异写成『Only [我们] [动作]，because [底层原因]』句式\n3. 给底层原因分类：技术 / 数据 / 网络效应 / 成本结构 / 品牌资产\n4. 给出 1 个验证差异是否真正影响购买决策的客户问题\n5. 输出 1 句话最终差异化承诺，可直接贴首页\n\n## 输出格式\nMarkdown 表格 + 最终承诺语句 + 验证问题\n\n## 约束\n- 禁止『更好』『更智能』等比较级\n- 底层原因必须可被外人验证，禁止『团队更努力』式自夸\n- 最终语句 ≤ 25 字",
+  "example": {
+    "title": "Stripe 的底层差异",
+    "content": "Only Stripe lets a developer accept payments in 7 lines of code, because Stripe rebuilt the entire payment stack as a developer-first API. 这一点 PayPal 复制了 10 年仍然追不上。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

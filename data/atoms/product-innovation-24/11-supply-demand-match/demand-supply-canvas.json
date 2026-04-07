@@ -1,0 +1,31 @@
+{
+  "id": "atom_demand_supply_canvas",
+  "schemaVersion": 1,
+  "name": "Demand-Supply Canvas",
+  "nameEn": "Demand-Supply Canvas",
+  "frameworkId": "product-innovation-24",
+  "cellId": 11,
+  "tags": ["DS Canvas", "画布", "对齐", "可视化"],
+  "parentAtomId": "atom_supply_demand_match_overview",
+  "relationType": "child",
+  "coreIdea": "一张分左右两侧的画布：左侧是需求（Jobs / Pains / Gains 三层），右侧是供给（产品 / 服务 / 渠道 / 商业模式四层）。中间用连线和颜色编码强弱匹配——画完一眼看出'哪些功能是孤儿，哪些痛点是孤儿'。",
+  "whenToUse": "立项汇报需要一页纸说清楚 · 多产品线团队对齐 · 重新评估老产品的市场契合度 · 为 MVP 选型提供输入",
+  "keySteps": [
+    "准备空白 DS Canvas（左 3 行需求 / 右 4 行供给）",
+    "从 VOC、JTBD 笔记中誊抄需求项到左侧",
+    "从筛选后的想法清单誊抄供给项到右侧",
+    "用绿/黄/红线连接（强/弱/无证据）",
+    "圈出无连线的两侧孤儿项",
+    "决策：补 / 砍 / 改",
+    "拍照存档作为 MVP 立项依据"
+  ],
+  "aiSkillPrompt": "你是一位 Strategyzer 风格的画布教练，熟练使用 Demand-Supply Canvas 帮团队做产品契合度审计。\n\n## 输入\n- 需求侧三层（Jobs / Pains / Gains，每条注明证据来源）：{请在此处填入}\n- 供给侧四层（核心产品 / 配套服务 / 交付渠道 / 收费方式）：{请在此处填入}\n- 主要竞品在该需求上的当前供给：{请在此处填入}\n\n## 任务\n1. 用 Markdown 表渲染左右画布\n2. 输出连接清单（供给→需求），每条标注 强/弱/无 与证据\n3. 列出孤儿供给（无任何需求连接）\n4. 列出孤儿需求（无任何供给连接）\n5. 与竞品对比，指出'我方强但竞品弱'的差异化机会\n6. 输出 3 条迭代建议\n\n## 输出格式\n```\n## 左：需求侧\n| 层 | # | 项 | 证据 |\n\n## 右：供给侧\n| 层 | # | 项 | 现状 |\n\n## 连接\n| 供给# | 需求# | 强度 | 证据 |\n\n## 孤儿\n- 供给孤儿：\n- 需求孤儿：\n\n## 差异化机会\n\n## 迭代建议\n```\n\n## 约束\n- 强连接必须引用具体证据，禁止'团队共识'\n- 至少识别出 2 条孤儿（如果一条都没有，重新检查是否在自欺）\n- 输出语言精炼，整张画布一屏可读",
+  "example": {
+    "title": "Stripe 早期 DS Canvas",
+    "content": "Stripe 团队画 DS Canvas 时发现，开发者最痛的需求是'7 行代码集成支付'，而当时的供给（Authorize.net 等）需要 9 页表单。Stripe 把所有供给项围绕'API 优先 + 文档优先'重组，所有非开发者需求暂时丢弃，造就了开发者首选的支付平台。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

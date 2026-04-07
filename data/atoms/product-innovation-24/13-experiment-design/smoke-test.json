@@ -1,0 +1,32 @@
+{
+  "id": "atom_smoke_test",
+  "schemaVersion": 1,
+  "name": "Smoke Test 烟雾测试",
+  "nameEn": "Smoke Test",
+  "frameworkId": "product-innovation-24",
+  "cellId": 13,
+  "tags": ["实验设计", "Landing Page", "需求验证", "广告测试"],
+  "parentAtomId": "atom_experiment_design_overview",
+  "relationType": "child",
+  "coreIdea": "在产品还不存在时，先做一个看起来「真的能用」的着陆页 + 投放小额广告，用真实点击与留资行为验证「有没有人愿意为这个想法举手」。",
+  "whenToUse": "产品想法早期 · 不确定是否有市场需求 · 需要快速排除「自嗨」想法 · 决定是否值得继续投入",
+  "keySteps": [
+    "用 Framer / Carrd / Webflow 1 天内做一个像样的 landing page：清晰价值主张 + CTA",
+    "CTA 后接邮件留资表单或「立即购买」按钮（按钮后接「即将上线 + 留邮箱」)",
+    "Google Ads / Meta Ads / 小红书投放 100-500 美元定向广告，导流到该页面",
+    "运行 5-7 天，观察 CTR、留资率、CAC",
+    "对照阈值（一般留资率 ≥ 10% 视为有信号）做 Go/Kill 决策"
+  ],
+  "aiSkillPrompt": "你是一位精通 Landing Page MVP 和广告投放的增长黑客。我会描述一个产品想法，请你帮我设计一次烟雾测试方案。\n\n## 输入\n产品想法：{请在此处填入}\n目标人群画像：{请在此处填入}\n可用预算（美元）：{请在此处填入}\n\n## 任务\n1. 写出 landing page 的核心结构：Hero 标题（≤12 字）、副标题、3 个价值卖点、CTA 按钮文案、社会证明区\n2. 给出 3 条不同角度的 Hero 标题供 A/B（功能型 / 情感型 / 痛点型）\n3. 推荐最适合该人群的 1-2 个广告渠道并说明理由\n4. 给出广告文案 + 受众定向建议（年龄、兴趣、关键词）\n5. 计算：在给定预算下预计能买到多少次曝光和点击（假设 CTR=2%，CPC=1.5 USD）\n6. 给出成功阈值表（landing page CTR、留资率、CAC）作为决策依据\n7. 列出 3 个 false positive 警告（例如：好奇党点击 ≠ 真实付费意愿）\n\n## 输出格式\n分章节 Markdown，最后给「Day 1 - Day 7 执行清单」\n\n## 约束\n- 所有文案中文，所有阈值必须是数字\n- 不要建议自建复杂分析系统，用 Plausible / GA4 即可\n- 不要鼓励夸大宣传或虚假承诺，CTA 后必须明示「即将上线」",
+  "example": {
+    "title": "经典案例 · Buffer 的 Landing Page MVP",
+    "content": "Joel Gascoigne 2010 年只做了两个页面：第一页讲产品概念 + 'Plans & Pricing' 按钮，第二页写「Hello! You caught us before we're ready. Leave your email...」。两周内收到大量留资和明确的付费意向，他才开始写代码。Buffer 后来 ARR 超 2000 万美元。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

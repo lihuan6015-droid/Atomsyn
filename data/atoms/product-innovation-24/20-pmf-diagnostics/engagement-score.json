@@ -1,0 +1,29 @@
+{
+  "id": "atom_engagement_score",
+  "schemaVersion": 1,
+  "name": "参与度综合评分",
+  "nameEn": "Engagement Score",
+  "frameworkId": "product-innovation-24",
+  "cellId": 20,
+  "tags": ["engagement", "score", "composite", "health"],
+  "parentAtomId": "atom_pmf_diagnostics_overview",
+  "relationType": "child",
+  "coreIdea": "单指标永远骗人，把频率、深度、广度三维加权成一个综合分，就能给每个用户打标——谁是铁粉、谁是边缘、谁快流失，一目了然。",
+  "whenToUse": "为大批用户做健康度打分 · 预测流失 · 指导 CSM 介入优先级 · 为销售线索做 PQL 评分",
+  "keySteps": [
+    "选择频率（DAU/MAU）、深度（核心动作次数）、广度（使用功能数）",
+    "对每个维度做归一化（log 或百分位）",
+    "按业务权重加权求和得到 0-100 分",
+    "设定分段：冷淡 / 常规 / 核心 / 福音",
+    "将分段接入 CSM 流程与流失预警"
+  ],
+  "aiSkillPrompt": "你是一位产品数据科学家。我将提供可用事件数据和业务目标，请你设计一套 Engagement Score 模型。\n\n## 输入\n{请在此处填入：产品类型、可用事件列表、核心价值动作、希望预测的结果（流失 / 扩展 / 推荐）、当前用户规模}\n\n## 任务\n1. 维度选择：从频率 / 深度 / 广度三维各选 1-2 个观测事件\n2. 归一化方案：给出每个维度的归一化公式\n3. 权重：基于与目标结果的相关性分析，推荐初始权重（必要时给出 placeholder 提示需校准）\n4. 分段阈值：定义 4 段（冷淡 / 常规 / 核心 / 福音）的分数区间\n5. 验证方法：如何用回溯数据验证分数与流失/扩展的相关性\n\n## 输出格式\n维度表 + 公式 + 分段表 + 验证 SQL 伪代码 + 后续迭代建议。\n\n## 约束\n- 必须明确提示初始权重需要用历史数据校准\n- 不要用简单求和而不归一化\n- 不得只看频率忽略深度\n- 分段切分必须可解释，不能是纯统计阈值",
+  "example": {
+    "title": "HubSpot 的 Customer Health Score",
+    "content": "HubSpot 把登录频次、功能使用广度、关键动作深度、NPS 得分综合成一个 0-100 分，CSM 根据分段决定是否主动触达，续费率显著提升。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

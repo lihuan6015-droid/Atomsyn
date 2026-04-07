@@ -1,0 +1,30 @@
+{
+  "id": "atom_now_next_later",
+  "schemaVersion": 1,
+  "name": "Now-Next-Later 路线图",
+  "nameEn": "Now-Next-Later Roadmap",
+  "frameworkId": "product-innovation-24",
+  "cellId": 23,
+  "tags": ["now-next-later", "roadmap", "janna-bastow"],
+  "parentAtomId": "atom_roadmap_planning_overview",
+  "relationType": "child",
+  "coreIdea": "Janna Bastow 提出的三栏路线图：Now 是正在做的、Next 是下一个周期可能做的、Later 是远期愿景。三栏的承诺度递减，没有具体日期，避免被甘特图绑架。",
+  "whenToUse": "团队习惯了甘特图但路线图频繁延期 · 需要既给客户希望又不做出无法兑现的承诺 · 早中期产品 · 跨团队对齐方向不对齐细节",
+  "keySteps": [
+    "明确每栏的'承诺度'语义并对外声明",
+    "Now 栏只放正在执行的 1-3 项，配上结果指标",
+    "Next 栏放 2-5 个可能的下一步，但允许换",
+    "Later 栏放愿景方向，可以模糊",
+    "每月/每季度滚动更新，公开透明",
+    "禁止任何栏出现具体交付日期"
+  ],
+  "aiSkillPrompt": "你是 Janna Bastow 风格的 Now-Next-Later 实践教练。我会给你机会清单，请你输出一份三栏路线图。\n\n## 输入\n- 产品阶段：{请在此处填入}\n- 团队人数：{请在此处填入}\n- 候选机会列表：{请在此处填入}\n- 战略主题（最多 3 个）：{请在此处填入}\n- 当前正在做的事项：{请在此处填入}\n\n## 任务\n1. 三栏分类：把机会归入 Now / Next / Later，每栏数量上限严格执行（Now ≤ 3，Next ≤ 5，Later 不限但需聚合主题）\n2. 结果指标：Now 栏每项必须配 1 个可量化结果，不能写'做完'\n3. 承诺度声明：写一段对外的'什么是 Now Next Later'解释，避免客户误解为 deadline\n4. 滚动机制：建议每隔多久 review 一次，由谁主持\n5. 反甘特图保护：列出 3 条规则防止团队偷偷把它退化成 Gantt\n\n## 输出格式\n三栏 Markdown 表格 + 解释段落\n\n## 约束\n- Now 栏不超过 3 项，超了必须强制砍\n- 任何栏不允许出现日期\n- Next 栏必须明确写'可能换'",
+  "example": {
+    "title": "ProdPad 自家路线图",
+    "content": "Janna Bastow 的 ProdPad 公司本身就用 Now-Next-Later 管理自己的路线图，并把它做成产品功能。Now 栏永远只有 2-3 项，每月更新。她在多次大会演讲中讲过：'当客户问下个季度有什么 feature 时，最好的回答是给他看 Next 栏然后说—— maybe。这种诚实反而比 Gantt 图更能赢得信任。'"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

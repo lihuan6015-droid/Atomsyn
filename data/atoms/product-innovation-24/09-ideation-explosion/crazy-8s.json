@@ -1,0 +1,30 @@
+{
+  "id": "atom_crazy_8s",
+  "schemaVersion": 1,
+  "name": "Crazy 8s 八格疯狂草图",
+  "nameEn": "Crazy 8s",
+  "frameworkId": "product-innovation-24",
+  "cellId": 9,
+  "tags": ["Crazy 8s", "Design Sprint", "草图", "限时发散"],
+  "parentAtomId": "atom_ideation_explosion_overview",
+  "relationType": "child",
+  "coreIdea": "把 A4 纸折成 8 格，8 分钟内画出 8 个差异化方案——每格 60 秒，时间压力会逼出第二轮、第三轮想法，那才是真正未被开发的解法层。",
+  "whenToUse": "Design Sprint 第 3 天 · 团队发散卡在 1-2 个想法时 · 需要快速让每个人贡献而不被强势者主导 · UX 方向探索",
+  "keySteps": [
+    "确认问题陈述与目标用户场景（贴在所有人面前）",
+    "每人发 A4 纸折成 8 格",
+    "计时 8 分钟，每格 60 秒强制画一个不同想法",
+    "禁止说话、禁止精修——只画粗草图+关键词",
+    "时间到统一收草图，用 Heat Map 投票（贴贴纸）",
+    "票数最高的草图作者再做 1 张'三幕草图'细化"
+  ],
+  "aiSkillPrompt": "你是一位 Google Ventures Design Sprint 教练。我无法画图但需要 Crazy 8s 的发散效果，请你为我用文字模拟 8 个截然不同的草图方案。\n\n## 输入\n- 问题陈述：{请在此处填入}\n- 目标用户与场景：{请在此处填入}\n- 已知的 1-2 个常规方案（用于避开）：{请在此处填入}\n\n## 任务\n1. 输出 8 个差异化解决方案，每个方案用以下结构描述（模拟一张草图）：\n   - 核心机制（一句话）\n   - 关键界面/触点（3 个）\n   - 用户操作 3 步\n   - 与其他 7 个方案的差异点\n2. 强制让方案 5-8 越来越'狂野'（突破当前介质/商业模式）\n3. 最后给出 Heat Map 评估：每个方案在'用户价值''可实现性''差异度'三轴上 1-5 分\n\n## 输出格式\n```\n### 方案 1: <名称>\n- 机制：\n- 触点：\n- 用户 3 步：\n- 差异点：\n\n（重复 8 次）\n\n### Heat Map\n| # | 名称 | 用户价值 | 可实现性 | 差异度 | 总分 |\n```\n\n## 约束\n- 8 个方案不可有 2 个本质相同\n- 必须包含至少 1 个非数字介质方案（线下/硬件/纸质/...）\n- 不要分析利弊，那是后续阶段",
+  "example": {
+    "title": "Slack 早期 onboarding Crazy 8s",
+    "content": "Slack 团队在新用户激活率低时跑了一轮 Crazy 8s，8 个方案中最反常的是'让 bot 假装真人欢迎你'，后来落地为 Slackbot 引导对话，把首日激活率显著提升。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

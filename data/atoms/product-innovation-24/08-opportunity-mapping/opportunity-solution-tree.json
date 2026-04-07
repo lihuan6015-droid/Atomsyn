@@ -1,0 +1,29 @@
+{
+  "id": "atom_opportunity_solution_tree",
+  "schemaVersion": 1,
+  "name": "机会解决方案树",
+  "nameEn": "Opportunity Solution Tree (OST)",
+  "frameworkId": "product-innovation-24",
+  "cellId": 8,
+  "tags": ["OST", "Teresa Torres", "Continuous Discovery", "机会"],
+  "parentAtomId": "atom_opportunity_mapping_overview",
+  "relationType": "child",
+  "coreIdea": "Teresa Torres 的 OST 强迫团队在跳到解法之前，先把『机会』作为一层独立节点画出来——大多数糟糕产品的根因就是机会层被跳过了。",
+  "whenToUse": "Discovery 周/月度复盘 · idea 太多需要排序 · 老板拍解法但没人知道为什么 · 跨团队对齐战场",
+  "keySteps": [
+    "顶部写 1 个具体的业务 outcome（不是 OKR 一句）",
+    "第二层：从用户访谈里抽取的『机会』（用户原话痛点）",
+    "第三层：每个机会下的 2-3 个候选解法",
+    "第四层：每个解法下的实验（如何低成本验证）",
+    "选 1 条端到端的『outcome → 机会 → 解法 → 实验』作为本周下注"
+  ],
+  "aiSkillPrompt": "你是 Teresa Torres 的 Continuous Discovery 教练。我将提供业务结果和已知用户痛点，请你帮我画一棵 OST 并给出本周下注路径。\n\n## 输入\n- 业务 outcome（具体可量化）：{请在此处填入}\n- 客户细分：{请在此处填入}\n- 已知用户痛点 / 访谈片段：{请在此处填入}\n- 团队当前在做的解法（如有）：{请在此处填入}\n\n## 任务\n1. 在树顶写 outcome\n2. 第二层列 4-6 个机会，每个用客户原话风格表达\n3. 对每个机会标注证据强度（强/中/弱）\n4. 第三层为每个机会列 2-3 个解法\n5. 第四层为每个解法列 1 个 1 周内可做的实验（含 success metric）\n6. 推荐 1 条本周下注路径并说明为什么\n\n## 输出格式\nMarkdown 缩进列表（展示树结构）+ 推荐路径段\n\n## 约束\n- 机会必须用客户语言，禁止内部术语\n- 一个机会下不能直接跳到 PRD 级解法，必须是 2-3 个候选\n- 实验必须 1 周内可做，禁止『先开发再说』",
+  "example": {
+    "title": "Netflix 提升观看时长的 OST",
+    "content": "Outcome: 每周观看 +1.2h. 机会: 1) 不知道看啥就关 App 2) 看到一半被剧透弃剧. 解法（机会1下）: 个性化首屏 / 朋友推荐 / 基于心情的导览. 实验: 给 1% 用户上『今天想看什么心情』选择器，看 7 日观看时长差异。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

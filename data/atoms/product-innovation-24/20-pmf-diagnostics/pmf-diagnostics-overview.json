@@ -1,0 +1,27 @@
+{
+  "id": "atom_pmf_diagnostics_overview",
+  "schemaVersion": 1,
+  "name": "PMF 健康度诊断",
+  "nameEn": "PMF Diagnostics System",
+  "frameworkId": "product-innovation-24",
+  "cellId": 20,
+  "tags": ["pmf", "diagnostic", "retention", "nps", "fit"],
+  "coreIdea": "PMF 不是一个瞬间而是一个光谱。用 4 把尺子一起量：用户失去它会不会痛（Sean Ellis）、留下来的用户是否平坦（曲线）、会不会传出去（NPS）、热情用户是否能复制（Engine）。",
+  "whenToUse": "判断是否该加速投入 · 融资前自测 · 决定枢转还是坚持 · 向投资人讲清楚 PMF 程度",
+  "keySteps": [
+    "运行 Sean Ellis 测试拿 40% 基线",
+    "画 cohort 留存曲线看是否平坦化",
+    "跑 NPS 与 Engagement Score 双通道",
+    "分析『极度失望』用户的画像与 JTBD",
+    "综合出 PMF 健康度四象限结论"
+  ],
+  "aiSkillPrompt": "你是一位 PMF 诊断专家，帮创始人判断产品是否到达、接近或远离 PMF。我将提供产品数据与调研结果，请你输出一份综合诊断报告。\n\n## 输入\n{请在此处填入：产品描述、活跃用户数与 6 个月趋势、cohort 留存矩阵、Sean Ellis 调研结果（如有）、NPS（如有）、核心用户画像、竞争格局}\n\n## 任务\n1. 单项评估：分别给出 Sean Ellis、留存曲线、NPS、Engagement 四项的结果与解读\n2. 综合定位：在『Pre-PMF / Weak PMF / Strong PMF / Post-PMF』四象限上定位\n3. 关键证据：列出 3 条支持结论的关键证据\n4. 下一步行动：根据定位给出不同行动建议（枢转 / 打磨 / 加速 / 扩张）\n5. 风险提示：当前最容易误判 PMF 的 2 个陷阱\n\n## 输出格式\n四项评估卡 + 综合定位 + 证据清单 + 行动建议 + 陷阱提示。\n\n## 约束\n- 没有留存数据时不得下 PMF 结论\n- Sean Ellis 样本 < 40 需标注低置信度\n- 不要把增长速度等同于 PMF\n- 不要用单一数据点判定，必须多源交叉验证",
+  "example": {
+    "title": "Superhuman 的 PMF Engine",
+    "content": "Rahul Vohra 在发现 Sean Ellis 得分只有 22% 时没有放弃，而是系统化提升『极度失望用户』比例，9 个月后得分升到 58%，成为 PMF Engine 范本。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

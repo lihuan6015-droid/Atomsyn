@@ -1,0 +1,28 @@
+{
+  "id": "atom_roadmap_planning_overview",
+  "schemaVersion": 1,
+  "name": "产品路线图规划法",
+  "nameEn": "Product Roadmap Planning",
+  "frameworkId": "product-innovation-24",
+  "cellId": 23,
+  "tags": ["roadmap", "planning", "agile", "outcomes"],
+  "coreIdea": "好的路线图不是甘特图，而是'有取舍的方向声明'。它要回答：我们为什么做这个、要达到什么结果、什么暂时不做、何时重新评估。",
+  "whenToUse": "季度/半年规划周期 · 跨团队对齐方向 · 高管或投资人需要清晰的下一步 · 销售需要对客户讲未来 · 已验证 PMF 进入规模化阶段",
+  "keySteps": [
+    "回到战略与北极星指标，明确路线图要服务的成果",
+    "选择路线图形式（Now-Next-Later / OKR / 主题）",
+    "把候选机会按价值/信心/努力排序",
+    "明确'不做什么'清单",
+    "把承诺度分级（已承诺 / 探索中 / 愿景）",
+    "设定重新评估节奏（如季度 review）"
+  ],
+  "aiSkillPrompt": "你是一位资深产品负责人。我会给你战略目标、机会清单和资源约束，请你帮我制定一份诚实、有取舍的产品路线图。\n\n## 输入\n- 产品阶段与年度战略目标：{请在此处填入}\n- 北极星指标与当前值：{请在此处填入}\n- 机会清单（5-15 项，每项 1 句）：{请在此处填入}\n- 团队规模与时间窗口：{请在此处填入}\n- 已知约束（技术债/合规/合同）：{请在此处填入}\n\n## 任务\n1. 形式选择：在 Now-Next-Later / Outcome-Based / Theme-Based / GIST / OKR 中推荐 1 种最适合现状的形式，说明理由\n2. 排序与归位：把机会清单按推荐形式分组并排序\n3. 不做清单：明确列出本周期不做的 3-5 项及原因（取舍是核心）\n4. 承诺度标签：每项标 Committed / Exploring / Visionary\n5. 风险评估：对 Now 阶段的项目各列 1 个最大风险\n6. 沟通版本：写一段 200 字摘要给销售/客户使用\n\n## 输出格式\n按推荐形式生成路线图表格 + 不做清单 + 沟通摘要\n\n## 约束\n- 必须给出'不做'清单，否则视为未完成\n- 不要把所有机会都塞进 Now\n- 承诺度标签必须真诚，Visionary 不要伪装成 Committed",
+  "example": {
+    "title": "Basecamp 的 Shape Up 周期路线图",
+    "content": "Basecamp 抛弃传统季度 roadmap，改用 6 周'cycles + cooldown'：每周期只承诺 6 周内能做完的'shaped' bets，cycle 结束后留 2 周冷却 + 重新规划。没有任何承诺超过 6 周。Jason Fried 和 DHH 在《Shape Up》中强调：'路线图越长越是骗局——客户只关心下一个 cycle 你交付什么。'这一极端取舍让 Basecamp 的发布节奏几乎从未延期。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

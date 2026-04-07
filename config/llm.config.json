@@ -1,0 +1,30 @@
+{
+  "$schema": "../skills/schemas/llm-config.schema.json",
+  "activeProvider": "custom",
+  "providers": {
+    "anthropic": {
+      "enabled": true,
+      "model": "claude-sonnet-4-6",
+      "baseUrl": "https://api.anthropic.com",
+      "maxTokens": 2048,
+      "temperature": 0.3
+    },
+    "openai": {
+      "enabled": false,
+      "model": "gpt-4o-mini",
+      "baseUrl": "https://api.openai.com/v1"
+    },
+    "custom": {
+      "enabled": true,
+      "model": "qwen3.5-35b-a3b",
+      "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "maxTokens": 8196
+    }
+  },
+  "copilot": {
+    "systemPromptRef": "./skills/copilot.system.md",
+    "maxContextAtoms": 30,
+    "enableAutoNavigate": true,
+    "logConversations": true
+  }
+}

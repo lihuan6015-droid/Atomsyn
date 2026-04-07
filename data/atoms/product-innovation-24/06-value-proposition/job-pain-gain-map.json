@@ -1,0 +1,29 @@
+{
+  "id": "atom_job_pain_gain_map",
+  "schemaVersion": 1,
+  "name": "Job-Pain-Gain 地图",
+  "nameEn": "Job-Pain-Gain Map",
+  "frameworkId": "product-innovation-24",
+  "cellId": 6,
+  "tags": ["JTBD", "Pain", "Gain", "客户洞察"],
+  "parentAtomId": "atom_value_proposition_overview",
+  "relationType": "child",
+  "coreIdea": "在画 VPC 之前，先用 JPG 把客户大脑里那张地图掏出来——每个 Job 必须配对至少一个真实 Pain 和一个具体 Gain，否则就是你脑补的客户。",
+  "whenToUse": "客户访谈结束后做综合 · 团队对客户认知不一致 · 进入 VPC 之前的素材准备 · 验证 ICP 假设",
+  "keySteps": [
+    "从访谈/调研笔记中抽取 Job 句式『当...时，我想...以便...』",
+    "对每个 Job 找到客户原话中的 Pain（情绪 + 频率）",
+    "对每个 Job 找到客户口中的 Gain（结果 + 感受）",
+    "按强度 × 频率给 Pain 排序，找 Top 3",
+    "标注哪些 Job 现在没有任何成熟解决方案"
+  ],
+  "aiSkillPrompt": "你是一位用户研究员，精通 JTBD 与 Pain/Gain 抽取。我将提供原始访谈笔记或客户描述，请你帮我整理成 JPG 地图。\n\n## 输入\n- 客户角色：{请在此处填入}\n- 原始访谈片段或客户原话：{请在此处填入}\n- 已知场景：{请在此处填入}\n\n## 任务\n1. 用 JTBD 句式提炼 5 个 Job：『当 [触发情境] 时，我想 [动作]，以便 [期望结果]』\n2. 为每个 Job 提取至少 1 个 Pain：标注情绪强度（1-5）和发生频率（每天/每周/每月）\n3. 为每个 Job 提取至少 1 个 Gain：区分『必要 Gain』和『惊喜 Gain』\n4. 按 强度 × 频率 给 Pain 排序，圈 Top 3\n5. 指出哪些 Job 目前没有成熟解决方案——这是机会区\n\n## 输出格式\nMarkdown 表格：Job / Pain / 强度 / 频率 / Gain / 是否有现成方案\n\n## 约束\n- Job 必须含『触发情境』，禁止纯动词\n- Pain 必须用客户原话引号标注\n- 不要把功能写进 Job（例如『使用搜索框』不是 Job）",
+  "example": {
+    "title": "新手父母的夜醒 Job",
+    "content": "当宝宝凌晨 3 点哭时，我想快速判断是不是饿了，以便不打扰我老婆。Pain: 不敢开灯怕惊醒孩子（强度 5，每天）。Gain: 黑暗中也能看清表情。机会区: 没有任何夜灯产品做这件事——这就是 Hatch 后来切的口子。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

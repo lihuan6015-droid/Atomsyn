@@ -1,0 +1,29 @@
+{
+  "id": "atom_scamper",
+  "schemaVersion": 1,
+  "name": "SCAMPER 七问法",
+  "nameEn": "SCAMPER",
+  "frameworkId": "product-innovation-24",
+  "cellId": 9,
+  "tags": ["SCAMPER", "创意", "发散", "改良创新"],
+  "parentAtomId": "atom_ideation_explosion_overview",
+  "relationType": "child",
+  "coreIdea": "对一个已有产品/流程，依次问七个挑衅性的问题：替换 / 合并 / 改良 / 另用 / 去除 / 反转 / 重排——每个问题强迫你跳出'再加一个功能'的惯性，从结构层面重塑解。",
+  "whenToUse": "存量产品改版 · 模仿竞品后想找差异化 · 功能堆叠停滞期 · 团队对既有方案'看腻了'时",
+  "keySteps": [
+    "选定一个待改造的对象（功能、流程、产品或商业模式）",
+    "依次过 S/C/A/M/P/E/R 七个问题，每个问题至少产出 2 个想法",
+    "记录每个想法的'被动假设'——它颠覆了原方案的什么前提",
+    "选出 3-5 个最具张力的想法做粗略可行性勾画",
+    "回到 HMW 检查是否仍服务原目标"
+  ],
+  "aiSkillPrompt": "你是一位精通 SCAMPER 创意法的资深产品创新顾问。我将提供一个待改造的产品、功能或流程，请你严格按 SCAMPER 七问法逐项发散。\n\n## 输入\n- 待改造对象：{请在此处填入}\n- 当前用户与场景：{请在此处填入}\n- 我希望改善的指标或痛点：{请在此处填入}\n\n## 任务\n按下列七个维度依次发散，每个维度产出 2-3 个具体想法：\n1. **Substitute 替换**：什么元素/材料/角色可以被替换？\n2. **Combine 合并**：可以与什么合并？跨界是什么？\n3. **Adapt 改良**：什么类似方案可以借鉴并改造？\n4. **Modify/Magnify 放大或缩小**：放大/缩小哪个属性会怎样？\n5. **Put to other use 另用**：还能用在什么场景或人群？\n6. **Eliminate 去除**：去掉什么仍然成立？\n7. **Reverse/Rearrange 反转重排**：流程倒过来或重排会发生什么？\n\n## 输出格式\n| 维度 | 想法 | 颠覆的假设 | 对目标指标的潜在影响 |\n|---|---|---|---|\n\n最后给出 Top 3 推荐及理由。\n\n## 约束\n- 每个想法必须具体到可被设计师画出来\n- 不要用'优化''提升'等模糊词\n- 禁止'加一个 AI 助手'类敷衍想法",
+  "example": {
+    "title": "Netflix 用 Eliminate 干掉滞纳金",
+    "content": "Netflix 早期对'录像带租赁'套用 Eliminate：去掉滞纳金会怎样？——这个看似破坏商业模式的想法直接催生了月度订阅制，让 Blockbuster 失去最大利润来源，开启了 Netflix 的崛起。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

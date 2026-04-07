@@ -1,0 +1,29 @@
+{
+  "id": "atom_retention_curve",
+  "schemaVersion": 1,
+  "name": "留存曲线分析",
+  "nameEn": "Retention Curve Analysis",
+  "frameworkId": "product-innovation-24",
+  "cellId": 20,
+  "tags": ["retention", "curve", "pmf", "cohort"],
+  "parentAtomId": "atom_pmf_diagnostics_overview",
+  "relationType": "child",
+  "coreIdea": "留存曲线能不能平坦化是 PMF 的硬证据。递减到零的曲线 = 漏桶 = 没 PMF；出现『微笑曲线』或稳定地板 = 有人真的离不开。",
+  "whenToUse": "判断产品是否具备 PMF · 评估改版的长期影响 · 决定是否投入获客预算 · 找到 Aha Moment",
+  "keySteps": [
+    "选择留存动作（消费型 DAU、工具型 WAU、企业型 MAU）",
+    "绘制 N0-N12 周留存矩阵",
+    "观察曲线形态：递减 / 平坦 / 微笑",
+    "找到『平坦化起点』作为 Aha 假设",
+    "对比同行基准判断是否存在 PMF"
+  ],
+  "aiSkillPrompt": "你是一位 PMF 分析专家。我将提供 cohort 留存矩阵，请你输出一份留存曲线诊断。\n\n## 输入\n{请在此处填入：产品类型、留存动作定义、最近 3-6 个 cohort 的 N0-N12 留存矩阵、样本量}\n\n## 任务\n1. 形态判断：每条 cohort 分别属于递减 / 平坦 / 微笑哪一种\n2. PMF 信号强度：综合所有 cohort 给出 0-100 的 PMF 信号分\n3. 平坦点识别：估算大致在第几周留存开始稳定\n4. 对比基准：给出该产品类型的行业典型留存水平做参照\n5. 行动建议：如果递减给出『先修留存再拉新』；如果平坦给出『找到平坦点前的关键动作』\n\n## 输出格式\n每 cohort 形态表 + 信号分 + 平坦点估计 + 基准对照 + 行动建议。\n\n## 约束\n- 样本量 < 200 的 cohort 标注低置信度\n- 不要把 W1 留存高当成 PMF 证据\n- 不能凭单条 cohort 下结论\n- 不要提供未在输入中出现的行业数字（只能给方向性描述）",
+  "example": {
+    "title": "Brian Balfour 的留存曲线公式",
+    "content": "Brian Balfour 指出：留存曲线不能平坦化的产品即使花 100 万做增长也回不来本，平坦化才是 PMF 的必要条件。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "atom_empathy_map",
+  "schemaVersion": 1,
+  "name": "共情地图",
+  "nameEn": "Empathy Map",
+  "frameworkId": "product-innovation-24",
+  "cellId": 14,
+  "tags": ["共情", "Empathy Map", "Dave Gray", "用户洞察"],
+  "parentAtomId": "atom_experience_mapping_overview",
+  "relationType": "child",
+  "coreIdea": "Dave Gray 设计的 6 格画布：Says / Thinks / Does / Feels / Pains / Gains，把一个用户的全部信号塞进一张纸。它的价值不是输出，而是「逼团队承认我们其实并不真的了解用户」。",
+  "whenToUse": "用户访谈后整理 · 团队对用户认知不一致 · Persona 之外补充情绪与隐性动机 · 设计冲刺 Day 1 · 启动新项目",
+  "keySteps": [
+    "选择 1 个具体的目标用户（最好是有姓名的真人）",
+    "在画布 6 格分别填入：Says（原话）/ Thinks（推测的内心）/ Does（观察到的行为）/ Feels（情绪）/ Pains（痛点）/ Gains（期望收益）",
+    "标出 Says 与 Thinks 的差异（口是心非的地方）",
+    "标出 Does 与 Says 的矛盾（行为与言语不一致）",
+    "提取 3 个 insight 转化为「我们如何...」问题"
+  ],
+  "aiSkillPrompt": "你是一位精通 Dave Gray Empathy Map Canvas v2 的用户研究专家。我会提供一段用户访谈摘录或行为观察记录，请你帮我整理成一份完整的 Empathy Map。\n\n## 输入\n用户姓名/代号：{请在此处填入}\n用户背景（年龄、职业、场景）：{请在此处填入}\n访谈摘录或行为观察原文：{请在此处填入}\n\n## 任务\n1. 从原文中抽取并填充 6 个区块：\n   - SAYS：直接引用原话（带引号），至少 3 条\n   - THINKS：推测的内心想法（标注「推测」），至少 3 条\n   - DOES：观察到的具体行为，至少 3 条\n   - FEELS：情绪词（焦虑/兴奋/迷茫...），至少 3 条\n   - PAINS：痛点（具体可观察）\n   - GAINS：期望收益（具体可衡量）\n2. 标出 Says 与 Thinks 的 2 处矛盾（口是心非）\n3. 标出 Does 与 Says 的 2 处不一致（行为打脸）\n4. 提取 3 个核心 insight，每个 insight 改写成「How might we...」问题\n5. 给出 5 条下一步访谈/观察的追问题目\n6. 标记 3 个未被原文证实的「推测」，提醒后续验证\n\n## 输出格式\n6 格表格 + 矛盾分析 + HMW 问题 + 追问清单\n\n## 约束\n- SAYS 必须是真实引用，禁止编造\n- 推测必须明确标注「推测」字样\n- HMW 问题必须可被设计/产品动作回应",
+  "example": {
+    "title": "经典案例 · IDEO 为儿童设计牙刷",
+    "content": "IDEO 团队为 Oral-B 重新设计儿童牙刷时，先做了 empathy map：父母「说」希望孩子认真刷牙，但「做」的事是抓着孩子手强行刷；孩子「说」会刷，但「做」的是 5 秒就跑。Empathy Map 暴露了一个 insight：小手抓不住大人款的细柄牙刷。结果他们把柄做粗（违反成人直觉的 chunky grip），销量翻倍。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_emp_01",
+      "type": "link",
+      "title": "Updated Empathy Map Canvas (Dave Gray)",
+      "url": "https://medium.com/@davegray/updated-empathy-map-canvas-46df22df3c8a",
+      "note": "v2 版官方画布与解读",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0
+  },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

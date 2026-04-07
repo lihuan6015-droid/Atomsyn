@@ -1,0 +1,2148 @@
+{
+  "generatedAt": "2026-04-07T16:21:04.895Z",
+  "version": 1,
+  "frameworks": [
+    {
+      "id": "product-innovation-24",
+      "name": "产品创新 24 步法",
+      "atomCount": 125
+    }
+  ],
+  "atoms": [
+    {
+      "id": "atom_macro_scanning",
+      "name": "宏观趋势扫描",
+      "nameEn": "Macro Trend Scanning",
+      "frameworkId": "product-innovation-24",
+      "cellId": 1,
+      "cellName": "趋势扫描",
+      "tags": [
+        "趋势扫描",
+        "宏观分析",
+        "PEST",
+        "战略",
+        "外部环境"
+      ],
+      "tagline": "在投入产品资源之前，先看清楚外部世界正在发生什么。宏观扫描不是预测未来，而是识别出已经在你脚下流动、但还没被你重视的暗流——下属包含 PEST-C、波特五力、S",
+      "whenToUse": "新业务立项前 · 年度战略复盘 · 进入新行业/新地区前 · 感觉「行业风向变了但说不清楚」时 · 路演/融资材料的市场章节",
+      "path": "atoms/product-innovation-24/01-trend-scanning/macro-scanning.json"
+    },
+    {
+      "id": "atom_pest_c",
+      "name": "PEST-C 分析",
+      "nameEn": "PEST-C Analysis",
+      "frameworkId": "product-innovation-24",
+      "cellId": 1,
+      "cellName": "趋势扫描",
+      "tags": [
+        "PEST",
+        "宏观分析",
+        "趋势扫描",
+        "外部环境"
+      ],
+      "tagline": "把外部环境拆成 政治 / 经济 / 社会 / 技术 / 文化 五个独立透镜分别扫描，再合成。比起拍脑袋的「行业洞察」，PEST-C 强迫你看到自己原本盲区的那一",
+      "whenToUse": "进入新市场/新地区 · 战略年会准备 · 监管敏感行业（金融/医疗/教育）立项 · 出海前的目标国调研 · 投资委员会答辩材料",
+      "path": "atoms/product-innovation-24/01-trend-scanning/pest-c.json"
+    },
+    {
+      "id": "atom_porter_five_forces",
+      "name": "波特五力分析",
+      "nameEn": "Porter's Five Forces",
+      "frameworkId": "product-innovation-24",
+      "cellId": 1,
+      "cellName": "趋势扫描",
+      "tags": [
+        "五力",
+        "竞争分析",
+        "产业结构",
+        "战略"
+      ],
+      "tagline": "一个行业能不能赚钱，不取决于你多努力，而取决于产业结构本身的张力。五力模型告诉你：现有竞争者、潜在进入者、替代品、买方议价、供方议价——这五股力量任何一股变强，",
+      "whenToUse": "进入新行业前 · 老板问「这个赛道值不值得做」时 · 商业模式画布画完后做现实校验 · 估值/定价决策 · 解释为什么某个看起来火热的行业其实没人赚钱",
+      "path": "atoms/product-innovation-24/01-trend-scanning/porter-five-forces.json"
+    },
+    {
+      "id": "atom_s_curve",
+      "name": "S 曲线分析",
+      "nameEn": "S-Curve Analysis",
+      "frameworkId": "product-innovation-24",
+      "cellId": 1,
+      "cellName": "趋势扫描",
+      "tags": [
+        "S 曲线",
+        "技术成熟度",
+        "创新扩散",
+        "时机判断"
+      ],
+      "tagline": "任何技术 / 品类 / 增长曲线都会走「萌芽 → 起飞 → 成熟 → 衰退」的 S 形。最致命的不是看错趋势，而是看对了趋势但搞错了你站在 S 曲线的哪个点——",
+      "whenToUse": "判断「这是不是入场时机」 · 老业务感觉增长卡住时诊断是否进入成熟期 · 押注新技术（AI / 区块链 / VR）前的成熟度判断 · 决定是「ALL IN 现曲线」还是「跳跃到新曲线」",
+      "path": "atoms/product-innovation-24/01-trend-scanning/s-curve.json"
+    },
+    {
+      "id": "atom_5whys",
+      "name": "5 Whys 追因法",
+      "nameEn": "5 Whys",
+      "frameworkId": "product-innovation-24",
+      "cellId": 2,
+      "cellName": "用户声音",
+      "tags": [
+        "5Whys",
+        "根因分析",
+        "用户访谈",
+        "追问"
+      ],
+      "tagline": "用户说出的第一层抱怨几乎从来不是真问题。连续问 5 个「为什么」能把表层现象穿透到根本动机——但关键不是问 5 次，而是每一次都要追问「为什么这对你重要」，而不",
+      "whenToUse": "用户反馈一条抱怨但 PM 怀疑背后有更深原因 · 需求被打回来重做 · 故障复盘 · 访谈中用户给出抽象答案（「不好用」「太慢」）时的深挖工具 · 团队争论应该做哪个功能时",
+      "path": "atoms/product-innovation-24/02-voc/5whys.json"
+    },
+    {
+      "id": "atom_deep_interview",
+      "name": "深度访谈",
+      "nameEn": "Deep Interview",
+      "frameworkId": "product-innovation-24",
+      "cellId": 2,
+      "cellName": "用户声音",
+      "tags": [
+        "访谈",
+        "定性研究",
+        "用户研究",
+        "倾听"
+      ],
+      "tagline": "深度访谈不是「问问题」，是「引导用户讲故事」。真正有效的访谈 80% 时间用户在说，PM 只做三件事：抛开场问题、用沉默等待、追问具体细节。一旦用户开始说「我通",
+      "whenToUse": "新用户群 · 颠覆式创新项目的早期 · 问卷数据反直觉需要解释时 · 访谈 5-8 位用户后做需求合成 · 任何你不确定自己假设是否成立的时候",
+      "path": "atoms/product-innovation-24/02-voc/deep-interview.json"
+    },
+    {
+      "id": "atom_jtbd",
+      "name": "Jobs To Be Done",
+      "nameEn": "JTBD",
+      "frameworkId": "product-innovation-24",
+      "cellId": 2,
+      "cellName": "用户声音",
+      "tags": [
+        "JTBD",
+        "用户研究",
+        "需求洞察",
+        "Job Story"
+      ],
+      "tagline": "用户不是在买产品，而是在特定场景下「雇佣」产品完成一个任务（Job）。产品没被雇佣的真正原因往往不是功能不够，而是你搞错了 Job——以及这个 Job 同时包含",
+      "whenToUse": "新产品寻找 PMF · 老产品增长停滞 · 看不懂竞品为什么抢走用户 · 功能堆了一堆但留存不动 · 营销话术总抓不住痛点",
+      "path": "atoms/product-innovation-24/02-voc/jtbd.json"
+    },
+    {
+      "id": "atom_voc_overview",
+      "name": "VOC · 用户声音",
+      "nameEn": "Voice of Customer",
+      "frameworkId": "product-innovation-24",
+      "cellId": 2,
+      "cellName": "用户声音",
+      "tags": [
+        "VOC",
+        "用户研究",
+        "需求洞察",
+        "访谈",
+        "倾听"
+      ],
+      "tagline": "VOC 不是「收集用户反馈」，而是让用户在自己的语言里暴露 Job、痛点和绕行方案。它是一个伞——下辖 JTBD、5 Whys、深度访谈等方法。PM 最常见的错",
+      "whenToUse": "产品立项前 · 功能上线后 3 个月的真实反馈收敛 · KPI 掉了但看不出原因时 · 与设计/工程团队建立共同同理心 · 要说服老板「用户真的不这么想」时",
+      "path": "atoms/product-innovation-24/02-voc/voc-overview.json"
+    },
+    {
+      "id": "atom_day_in_the_life",
+      "name": "一日生活流",
+      "nameEn": "Day in the Life",
+      "frameworkId": "product-innovation-24",
+      "cellId": 3,
+      "cellName": "深度画像",
+      "tags": [
+        "DITL",
+        "场景研究",
+        "用户日常",
+        "时空分析"
+      ],
+      "tagline": "DITL 把 Persona 放到 24 小时的时间轴上：几点起床、几点打开手机、在地铁上刷什么、什么时候焦虑、什么时候无聊。这张图暴露的不是「用户是谁」，而是",
+      "whenToUse": "新功能要找触达时机 · Push / 通知策略设计 · 判断产品是否打扰用户节奏 · B 端产品理解一线员工真实工作流 · 对比理想使用场景 vs 真实使用场景的落差",
+      "path": "atoms/product-innovation-24/03-user-profiling/day-in-the-life.json"
+    },
+    {
+      "id": "atom_empathy_map",
+      "name": "共情图",
+      "nameEn": "Empathy Map",
+      "frameworkId": "product-innovation-24",
+      "cellId": 3,
+      "cellName": "深度画像",
+      "tags": [
+        "共情图",
+        "用户情感",
+        "Dave Gray"
+      ],
+      "tagline": "共情图强迫你从用户的五官出发思考：他看见什么、听见什么、说什么做什么、想什么感受什么。最后得出他的痛点与收获。它不是画像的替代，而是画像的情感层——当 Pers",
+      "whenToUse": "访谈结束后的快速合成 · 团队共情工作坊 · 设计前需要进入用户情境 · 功能拍板前验证是否戳中痛点 · 营销文案找不到痛点表达时",
+      "path": "atoms/product-innovation-24/03-user-profiling/empathy-map.json"
+    },
+    {
+      "id": "atom_persona",
+      "name": "Persona 用户画像",
+      "nameEn": "Persona",
+      "frameworkId": "product-innovation-24",
+      "cellId": 3,
+      "cellName": "深度画像",
+      "tags": [
+        "Persona",
+        "用户画像",
+        "Alan Cooper"
+      ],
+      "tagline": "Persona 是「一个虚构但可信的具体人」，用于替代抽象的目标用户。它的价值不在于多完整，而在于多具体——具体到团队在做任何决策时都能立刻反问「这个人会怎么想",
+      "whenToUse": "产品立项时对齐目标用户 · 设计评审与功能取舍 · 新成员入职 · 营销投放确定 ICP · 与工程团队沟通场景时用它代替「用户」这个词",
+      "path": "atoms/product-innovation-24/03-user-profiling/persona.json"
+    },
+    {
+      "id": "atom_user_profiling_suite",
+      "name": "用户画像构建",
+      "nameEn": "User Profiling Suite",
+      "frameworkId": "product-innovation-24",
+      "cellId": 3,
+      "cellName": "深度画像",
+      "tags": [
+        "Persona",
+        "用户画像",
+        "共情",
+        "VSD"
+      ],
+      "tagline": "画像不是 PPT 里的那张漂亮头像，而是团队做产品决策时脑中能「立即浮现」的那个具体人。画像构建是一组方法论的伞——Persona 给轮廓、共情图给情感、一日生",
+      "whenToUse": "团队对「我们到底在为谁做」意见分裂时 · 新成员入职的共情启动 · 设计评审时判断是否偏离目标用户 · 功能取舍的「这个人会用吗」心智测试 · 营销投放前的 ICP 校对",
+      "path": "atoms/product-innovation-24/03-user-profiling/user-profiling-suite.json"
+    },
+    {
+      "id": "atom_demand_filtering_toolkit",
+      "name": "需求优先级过滤",
+      "nameEn": "Demand Filtering Toolkit",
+      "frameworkId": "product-innovation-24",
+      "cellId": 4,
+      "cellName": "需求过滤",
+      "tags": [
+        "需求优先级",
+        "KANO",
+        "MoSCoW",
+        "RICE",
+        "取舍"
+      ],
+      "tagline": "需求过滤不是「排序」，是「敢拒绝」。一个好 PM 和一个差 PM 的真正差距在于敢不敢对老板和用户说「这个不做」。过滤方法论（KANO/MoSCoW/RICE/",
+      "whenToUse": "需求池爆炸但工程容量有限时 · MVP 范围界定 · 季度规划与路线图排期 · 与利益相关者谈判「哪些功能这次不做」 · 产品定位感觉模糊时用过滤反证定位",
+      "path": "atoms/product-innovation-24/04-demand-filtering/demand-filtering-toolkit.json"
+    },
+    {
+      "id": "atom_eisenhower_matrix",
+      "name": "艾森豪威尔矩阵",
+      "nameEn": "Eisenhower Matrix",
+      "frameworkId": "product-innovation-24",
+      "cellId": 4,
+      "cellName": "需求过滤",
+      "tags": [
+        "艾森豪威尔",
+        "紧急重要",
+        "优先级",
+        "2x2"
+      ],
+      "tagline": "把需求放在「紧急 × 重要」的 2×2 矩阵里，四象限决定命运：重要且紧急立即做、重要不紧急排计划、紧急不重要授权或简化、不重要不紧急砍掉。PM 最常犯的错是把",
+      "whenToUse": "产品待办列表严重膨胀时的粗筛 · PM 个人每周待办管理 · 突然袭来的紧急需求判断是否真的紧急 · 组织过载时的分派决策 · 与上级对齐「我为什么这周不做你昨天要的那个」",
+      "path": "atoms/product-innovation-24/04-demand-filtering/eisenhower.json"
+    },
+    {
+      "id": "atom_kano",
+      "name": "KANO 模型",
+      "nameEn": "Kano Model",
+      "frameworkId": "product-innovation-24",
+      "cellId": 4,
+      "cellName": "需求过滤",
+      "tags": [
+        "KANO",
+        "需求分层",
+        "优先级",
+        "用户满意度"
+      ],
+      "tagline": "需求满足度和用户满意度不是线性关系。KANO 把需求分 5 类：基本型（没有就骂、有了不加分）、期望型（越多越满意）、兴奋型（意外惊喜）、无差异型（用户不在意）",
+      "whenToUse": "MVP 范围界定（先满足基本，再押期望，最后埋兴奋） · 成熟产品找增长点（老基本已达标，要找新兴奋） · 竞品差异化分析 · 老板非要加功能时的反驳证据 · 市场成熟度诊断（兴奋点在几年内会退化为基本型）",
+      "path": "atoms/product-innovation-24/04-demand-filtering/kano.json"
+    },
+    {
+      "id": "atom_moscow",
+      "name": "MoSCoW 优先级",
+      "nameEn": "MoSCoW Prioritization",
+      "frameworkId": "product-innovation-24",
+      "cellId": 4,
+      "cellName": "需求过滤",
+      "tags": [
+        "MoSCoW",
+        "优先级",
+        "范围界定",
+        "DSDM"
+      ],
+      "tagline": "MoSCoW 不是四档优先级，是一条「本次交付的承诺线」。Must 是「不做就取消发布」，Should 是「不做会很痛但能活」，Could 是「做了锦上添花」，",
+      "whenToUse": "迭代范围谈判 · 与客户/老板对齐本次交付的硬边界 · 需求反复扩张时的收口工具 · 合同交付型项目（外包/乙方）的需求管理 · MVP 的「发布必须有什么」清单",
+      "path": "atoms/product-innovation-24/04-demand-filtering/moscow.json"
+    },
+    {
+      "id": "atom_rice",
+      "name": "RICE 评分",
+      "nameEn": "RICE Score",
+      "frameworkId": "product-innovation-24",
+      "cellId": 4,
+      "cellName": "需求过滤",
+      "tags": [
+        "RICE",
+        "优先级",
+        "量化评分",
+        "Intercom"
+      ],
+      "tagline": "RICE 把四个维度——Reach（触达人数）× Impact（影响力）× Confidence（置信度）÷ Effort（工作量）——合并成一个可比较的数字。",
+      "whenToUse": "执行期的迭代规划 · 同量级需求之间比大小 · 功能 vs 功能的横向对比 · 老板凭直觉压了一个需求，需要量化反驳 · 团队因优先级吵架时的仲裁工具",
+      "path": "atoms/product-innovation-24/04-demand-filtering/rice.json"
+    },
+    {
+      "id": "atom_competitor_analysis_overview",
+      "name": "竞品分析工具集",
+      "nameEn": "Competitor Analysis Toolkit",
+      "frameworkId": "product-innovation-24",
+      "cellId": 5,
+      "cellName": "竞品分析",
+      "tags": [
+        "竞品",
+        "竞争策略",
+        "市场情报",
+        "差异化",
+        "umbrella"
+      ],
+      "tagline": "竞品分析不是抄功能清单，而是用 4 把不同的尺子（功能、结构、力量、心智）逼出我们能赢的那条缝隙。换尺子比换数据更重要。",
+      "whenToUse": "新产品立项前评估赛道 · 老产品季度复盘失守阵地 · 融资 BP 写竞争壁垒章节 · 红海里寻找差异化空隙 · 研判巨头是否会下场",
+      "path": "atoms/product-innovation-24/05-competitor-analysis/competitor-analysis-overview.json"
+    },
+    {
+      "id": "atom_fct_analysis",
+      "name": "F&CT 功能竞品矩阵",
+      "nameEn": "Feature & Competitor Table",
+      "frameworkId": "product-innovation-24",
+      "cellId": 5,
+      "cellName": "竞品分析",
+      "tags": [
+        "F&CT",
+        "功能矩阵",
+        "差距分析",
+        "PRD"
+      ],
+      "tagline": "把竞品按用户决策维度（不是功能清单）排成一张表，让差距和空白格自己说话。F&CT 的关键是『选行选列』，而不是『打分填格』。",
+      "whenToUse": "PRD 启动前对齐功能边界 · 销售需要 battle card · 评估某个功能是否值得做 · 团队对竞品认知不一致时拉齐",
+      "path": "atoms/product-innovation-24/05-competitor-analysis/fct-analysis.json"
+    },
+    {
+      "id": "atom_perceptual_map",
+      "name": "知觉图",
+      "nameEn": "Perceptual Map",
+      "frameworkId": "product-innovation-24",
+      "cellId": 5,
+      "cellName": "竞品分析",
+      "tags": [
+        "知觉图",
+        "心智定位",
+        "二维矩阵",
+        "差异化"
+      ],
+      "tagline": "找两根用户心里真正在用的尺子（不是功能尺），把竞品撒在 2D 平面上，空白象限就是你的定位地。两根轴选错，整张图作废。",
+      "whenToUse": "做品牌定位 / 命名 · 给销售一张『我们站在哪里』的图 · 决定要 reposition 还是开新品类 · 早期向投资人解释机会",
+      "path": "atoms/product-innovation-24/05-competitor-analysis/perceptual-map.json"
+    },
+    {
+      "id": "atom_porter_five_forces",
+      "name": "波特五力模型",
+      "nameEn": "Porter's Five Forces",
+      "frameworkId": "product-innovation-24",
+      "cellId": 5,
+      "cellName": "竞品分析",
+      "tags": [
+        "五力模型",
+        "行业结构",
+        "议价权",
+        "进入壁垒"
+      ],
+      "tagline": "看清一个赛道是否值得进，不看竞品多少，看 5 股力把利润挤到哪里去了。利润流向决定战略选择。",
+      "whenToUse": "评估是否进入新赛道 · 判断现有赛道是否仍然性感 · 解释为什么自己越做越累却没钱 · 投资人尽调",
+      "path": "atoms/product-innovation-24/05-competitor-analysis/porter-five-forces.json"
+    },
+    {
+      "id": "atom_swot_analysis",
+      "name": "SWOT 分析",
+      "nameEn": "SWOT Analysis",
+      "frameworkId": "product-innovation-24",
+      "cellId": 5,
+      "cellName": "竞品分析",
+      "tags": [
+        "SWOT",
+        "战略",
+        "内外因"
+      ],
+      "tagline": "SWOT 的真正价值不是填四个格子，而是做交叉配对——SO 进攻、ST 防守、WO 修补、WT 撤退。没有交叉的 SWOT 是废纸。",
+      "whenToUse": "团队对自身优劣势认知不一致 · 战略复盘会议 · 写商业计划书 · 向上汇报战略选择",
+      "path": "atoms/product-innovation-24/05-competitor-analysis/swot-analysis.json"
+    },
+    {
+      "id": "atom_differentiator_statement",
+      "name": "差异化承诺语句",
+      "nameEn": "Differentiator Statement",
+      "frameworkId": "product-innovation-24",
+      "cellId": 6,
+      "cellName": "价值主张",
+      "tags": [
+        "差异化",
+        "承诺",
+        "GTM",
+        "壁垒"
+      ],
+      "tagline": "差异化不是『我们也有 X』，而是『只有我们 X』。一句合格的差异化语句必须能让对手听完后无法反驳『我们也行』。",
+      "whenToUse": "销售 battle card · 投放素材的钩子 · 融资问答最容易被问倒的『为什么是你』 · 内部团队质疑战略时",
+      "path": "atoms/product-innovation-24/06-value-proposition/differentiator-statement.json"
+    },
+    {
+      "id": "atom_job_pain_gain_map",
+      "name": "Job-Pain-Gain 地图",
+      "nameEn": "Job-Pain-Gain Map",
+      "frameworkId": "product-innovation-24",
+      "cellId": 6,
+      "cellName": "价值主张",
+      "tags": [
+        "JTBD",
+        "Pain",
+        "Gain",
+        "客户洞察"
+      ],
+      "tagline": "在画 VPC 之前，先用 JPG 把客户大脑里那张地图掏出来——每个 Job 必须配对至少一个真实 Pain 和一个具体 Gain，否则就是你脑补的客户。",
+      "whenToUse": "客户访谈结束后做综合 · 团队对客户认知不一致 · 进入 VPC 之前的素材准备 · 验证 ICP 假设",
+      "path": "atoms/product-innovation-24/06-value-proposition/job-pain-gain-map.json"
+    },
+    {
+      "id": "atom_positioning_statement",
+      "name": "定位声明",
+      "nameEn": "Positioning Statement (Geoffrey Moore)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 6,
+      "cellName": "价值主张",
+      "tags": [
+        "定位声明",
+        "Geoffrey Moore",
+        "一句话",
+        "Crossing the Chasm"
+      ],
+      "tagline": "Geoffrey Moore 的定位声明 = 客户 + 痛点 + 品类 + 利益 + 差异。一句话能不能让陌生人 30 秒复述出来，决定整条 GTM 的流速。",
+      "whenToUse": "首页 hero 文案 / 投资人电梯演讲 / 销售开场白 / 招聘 JD 第一段 / 内部对齐",
+      "path": "atoms/product-innovation-24/06-value-proposition/positioning-statement.json"
+    },
+    {
+      "id": "atom_value_proposition_overview",
+      "name": "价值主张设计",
+      "nameEn": "Value Proposition Design",
+      "frameworkId": "product-innovation-24",
+      "cellId": 6,
+      "cellName": "价值主张",
+      "tags": [
+        "价值主张",
+        "VPC",
+        "差异化",
+        "umbrella"
+      ],
+      "tagline": "价值主张不是一句营销文案，而是『客户痛 × 我们解 × 别人解不了』三件事都被锁死的契约。任何一项松动，转化率立刻塌方。",
+      "whenToUse": "首页 hero 区文案改 N 版仍不灵 · 销售解释不清『我们到底卖啥』 · 融资 BP 一句话被否 · 进入新客群前重设定位",
+      "path": "atoms/product-innovation-24/06-value-proposition/value-proposition-overview.json"
+    },
+    {
+      "id": "atom_vpc_canvas",
+      "name": "价值主张画布",
+      "nameEn": "Value Proposition Canvas (VPC)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 6,
+      "cellName": "价值主张",
+      "tags": [
+        "VPC",
+        "Strategyzer",
+        "Job-Pain-Gain",
+        "Fit"
+      ],
+      "tagline": "VPC 的价值不是画两个圆，而是逼问『每个 Pain 是否真有对应的 Reliever』——大多数产品死在 Pain 多但 Reliever 不准的 Misma",
+      "whenToUse": "新功能立项前 · 产品没人用但说不上为什么 · 需要把客户语言翻译成产品语言 · 跨团队对齐用户需求",
+      "path": "atoms/product-innovation-24/06-value-proposition/vpc-canvas.json"
+    },
+    {
+      "id": "atom_concept_definition_overview",
+      "name": "概念卡片",
+      "nameEn": "Concept Card",
+      "frameworkId": "product-innovation-24",
+      "cellId": 7,
+      "cellName": "概念定义",
+      "tags": [
+        "概念定义",
+        "MW",
+        "概念卡",
+        "umbrella"
+      ],
+      "tagline": "概念定义是把脑里的雾，凝结成一张能贴在墙上的卡。卡上必须能让任何路过的人 60 秒说出『这是什么 / 给谁 / 为什么会赢』。",
+      "whenToUse": "立项评审会 · 团队里 3 个人对产品有 3 个版本理解 · 跨部门拉投入 · MVP 启动前的最后一道关",
+      "path": "atoms/product-innovation-24/07-concept-definition/concept-definition-overview.json"
+    },
+    {
+      "id": "atom_concept_statement",
+      "name": "概念陈述",
+      "nameEn": "Concept Statement",
+      "frameworkId": "product-innovation-24",
+      "cellId": 7,
+      "cellName": "概念定义",
+      "tags": [
+        "概念陈述",
+        "立项",
+        "一段话"
+      ],
+      "tagline": "概念陈述是一段 100-150 字的散文，它的唯一任务是让一个陌生人读完后想说『这玩意儿我现在能买吗？』。如果读完只是『嗯还行』，就还没完成。",
+      "whenToUse": "用户调研里测概念吸引力 · 投资人冷启邮件 · 招聘首段 · 产品页 hero 副标题",
+      "path": "atoms/product-innovation-24/07-concept-definition/concept-statement.json"
+    },
+    {
+      "id": "atom_lean_canvas",
+      "name": "精益画布",
+      "nameEn": "Lean Canvas",
+      "frameworkId": "product-innovation-24",
+      "cellId": 7,
+      "cellName": "概念定义",
+      "tags": [
+        "Lean Canvas",
+        "Ash Maurya",
+        "商业模式",
+        "9 格"
+      ],
+      "tagline": "Lean Canvas 是 Ash Maurya 把 Business Model Canvas 改造成创业者专用的 9 格——重点不在画完，而在于哪一格『说不",
+      "whenToUse": "立项后 / MVP 之前 · 多业务对比筛选 · 创始人对外路演一页纸 · 团队对齐商业模式",
+      "path": "atoms/product-innovation-24/07-concept-definition/lean-canvas.json"
+    },
+    {
+      "id": "atom_mw_concept_card",
+      "name": "MW 概念卡",
+      "nameEn": "MW Concept Card",
+      "frameworkId": "product-innovation-24",
+      "cellId": 7,
+      "cellName": "概念定义",
+      "tags": [
+        "MW Concept",
+        "概念卡",
+        "一页纸",
+        "立项"
+      ],
+      "tagline": "MW 概念卡是把『谁、痛、解、为何赢』压成 6 个固定槽位的一页纸——固定的格式逼迫团队说人话，避免 PPT 的烟雾弹。",
+      "whenToUse": "立项评审 · 高管对齐 · 不熟的同事 1 分钟看懂 · MVP 之前的最后定稿",
+      "path": "atoms/product-innovation-24/07-concept-definition/mw-concept-card.json"
+    },
+    {
+      "id": "atom_press_release_first",
+      "name": "逆向新闻稿",
+      "nameEn": "Press Release-First (Amazon Working Backwards)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 7,
+      "cellName": "概念定义",
+      "tags": [
+        "Working Backwards",
+        "Amazon",
+        "Press Release",
+        "PR/FAQ"
+      ],
+      "tagline": "亚马逊『逆向工作法』要求在写一行代码之前先写发布日新闻稿——如果新闻稿读起来无趣，产品本身就不值得做。这是一个极致的客户视角强制器。",
+      "whenToUse": "立项前审视是否真有客户价值 · 大型项目对齐高管 · 团队陷入功能堆砌时拉回客户视角 · 写 PRD 之前的『北极星文档』",
+      "path": "atoms/product-innovation-24/07-concept-definition/press-release-first.json"
+    },
+    {
+      "id": "atom_blue_ocean_canvas",
+      "name": "蓝海战略画布",
+      "nameEn": "Blue Ocean Strategy Canvas",
+      "frameworkId": "product-innovation-24",
+      "cellId": 8,
+      "cellName": "机会地图",
+      "tags": [
+        "Blue Ocean",
+        "ERRC",
+        "战略画布",
+        "差异化"
+      ],
+      "tagline": "蓝海的核心动作不是『多做』而是『敢删』。ERRC 四个动词（消除/降低/提升/创造）逼你在行业默认值之外重画价值曲线，否则永远只是改良型红海玩家。",
+      "whenToUse": "进入红海 · 老品类做新品 · 客户都说『差不多』时 · 找定价依据",
+      "path": "atoms/product-innovation-24/08-opportunity-mapping/blue-ocean-canvas.json"
+    },
+    {
+      "id": "atom_north_star_framework",
+      "name": "北极星指标框架",
+      "nameEn": "North Star Framework",
+      "frameworkId": "product-innovation-24",
+      "cellId": 8,
+      "cellName": "机会地图",
+      "tags": [
+        "North Star",
+        "Amplitude",
+        "指标体系",
+        "战略对齐"
+      ],
+      "tagline": "北极星指标不是 DAU，而是『为客户创造的价值 × 公司能赚到的钱』在中间找到的那一个数。一个组织只能有一个北极星，否则就是没有北极星。",
+      "whenToUse": "组织内多团队各自为政 · OKR 漂移 · 高管争论该追什么指标 · 新业务定义成功",
+      "path": "atoms/product-innovation-24/08-opportunity-mapping/north-star-framework.json"
+    },
+    {
+      "id": "atom_opportunity_mapping_overview",
+      "name": "机会发现框架",
+      "nameEn": "Opportunity Discovery Frameworks",
+      "frameworkId": "product-innovation-24",
+      "cellId": 8,
+      "cellName": "机会地图",
+      "tags": [
+        "机会地图",
+        "OST",
+        "TAM",
+        "Blue Ocean",
+        "umbrella"
+      ],
+      "tagline": "机会不是一个名词，而是『结果 ↔ 痛点 ↔ 解法』之间的连接。机会地图的本质是用一棵树或一张图，把模糊的『要做啥』翻译成可下注的『往哪打』。",
+      "whenToUse": "季度规划要选下一个战场 · Roadmap 候选 idea 太多无法排序 · 老板问『我们的机会在哪』 · 进入新市场前评估天花板",
+      "path": "atoms/product-innovation-24/08-opportunity-mapping/opportunity-mapping-overview.json"
+    },
+    {
+      "id": "atom_opportunity_solution_tree",
+      "name": "机会解决方案树",
+      "nameEn": "Opportunity Solution Tree (OST)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 8,
+      "cellName": "机会地图",
+      "tags": [
+        "OST",
+        "Teresa Torres",
+        "Continuous Discovery",
+        "机会"
+      ],
+      "tagline": "Teresa Torres 的 OST 强迫团队在跳到解法之前，先把『机会』作为一层独立节点画出来——大多数糟糕产品的根因就是机会层被跳过了。",
+      "whenToUse": "Discovery 周/月度复盘 · idea 太多需要排序 · 老板拍解法但没人知道为什么 · 跨团队对齐战场",
+      "path": "atoms/product-innovation-24/08-opportunity-mapping/opportunity-solution-tree.json"
+    },
+    {
+      "id": "atom_tam_sam_som",
+      "name": "TAM-SAM-SOM 市场规模",
+      "nameEn": "TAM-SAM-SOM Calculator",
+      "frameworkId": "product-innovation-24",
+      "cellId": 8,
+      "cellName": "机会地图",
+      "tags": [
+        "TAM",
+        "SAM",
+        "SOM",
+        "市场规模",
+        "BP"
+      ],
+      "tagline": "TAM 不是抄报告里的最大数字，而是 top-down 和 bottom-up 两条算法必须交叉验证。两个数字差 10 倍以上时，要么市场假的，要么你算错了。",
+      "whenToUse": "融资 BP 市场章节 · 立项 ROI 估算 · 评估某个细分是否值得切 · 给 board / 高管讲故事",
+      "path": "atoms/product-innovation-24/08-opportunity-mapping/tam-sam-som.json"
+    },
+    {
+      "id": "atom_crazy_8s",
+      "name": "Crazy 8s 八格疯狂草图",
+      "nameEn": "Crazy 8s",
+      "frameworkId": "product-innovation-24",
+      "cellId": 9,
+      "cellName": "创意爆破",
+      "tags": [
+        "Crazy 8s",
+        "Design Sprint",
+        "草图",
+        "限时发散"
+      ],
+      "tagline": "把 A4 纸折成 8 格，8 分钟内画出 8 个差异化方案——每格 60 秒，时间压力会逼出第二轮、第三轮想法，那才是真正未被开发的解法层。",
+      "whenToUse": "Design Sprint 第 3 天 · 团队发散卡在 1-2 个想法时 · 需要快速让每个人贡献而不被强势者主导 · UX 方向探索",
+      "path": "atoms/product-innovation-24/09-ideation-explosion/crazy-8s.json"
+    },
+    {
+      "id": "atom_how_might_we",
+      "name": "How Might We 问句法",
+      "nameEn": "How Might We (HMW)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 9,
+      "cellName": "创意爆破",
+      "tags": [
+        "HMW",
+        "问题重构",
+        "Design Thinking",
+        "发散前置"
+      ],
+      "tagline": "好答案来自好问题。把痛点重写成'我们如何能…'句式，避开'为什么不能'（防御）和'我们应该'（命令），创造一种'有可能但还没解'的开放空间——这是所有发散方法的",
+      "whenToUse": "任何发散环节启动前 · 用户访谈结束后把痛点转化为机会 · 问题陈述太抽象或太具体时 · 团队对'解什么问题'存在分歧",
+      "path": "atoms/product-innovation-24/09-ideation-explosion/how-might-we.json"
+    },
+    {
+      "id": "atom_ideation_explosion_overview",
+      "name": "创意发散方法集",
+      "nameEn": "Ideation Explosion Toolkit",
+      "frameworkId": "product-innovation-24",
+      "cellId": 9,
+      "cellName": "创意爆破",
+      "tags": [
+        "创意",
+        "发散",
+        "工作坊",
+        "创新方法"
+      ],
+      "tagline": "好创意来自数量而非灵感。先用结构化发散逼出 50+ 个候选，再筛选——'先广再深'是创意爆破的铁律，跳过发散直接评判会扼杀最非显而易见的解。",
+      "whenToUse": "概念立项 · 卡壳无新想法时 · 团队共创工作坊 · 旧产品改版前的破局环节 · 探索差异化机会",
+      "path": "atoms/product-innovation-24/09-ideation-explosion/ideation-explosion-overview.json"
+    },
+    {
+      "id": "atom_lotus_blossom",
+      "name": "莲花图 Lotus Blossom",
+      "nameEn": "Lotus Blossom",
+      "frameworkId": "product-innovation-24",
+      "cellId": 9,
+      "cellName": "创意爆破",
+      "tags": [
+        "莲花图",
+        "发散",
+        "结构化创意",
+        "九宫格"
+      ],
+      "tagline": "九宫格中央放主题，外围八格写八个相关方向；每个方向再成为新九宫格的中心继续发散——一层 9 个、二层 64 个，强制把模糊主题展开成可操作的细叶。",
+      "whenToUse": "主题宏大时（如'让产品更社交'）· 需要系统性而非灵感型发散 · 战略主题分解 · 个人深度思考",
+      "path": "atoms/product-innovation-24/09-ideation-explosion/lotus-blossom.json"
+    },
+    {
+      "id": "atom_scamper",
+      "name": "SCAMPER 七问法",
+      "nameEn": "SCAMPER",
+      "frameworkId": "product-innovation-24",
+      "cellId": 9,
+      "cellName": "创意爆破",
+      "tags": [
+        "SCAMPER",
+        "创意",
+        "发散",
+        "改良创新"
+      ],
+      "tagline": "对一个已有产品/流程，依次问七个挑衅性的问题：替换 / 合并 / 改良 / 另用 / 去除 / 反转 / 重排——每个问题强迫你跳出'再加一个功能'的惯性，从结",
+      "whenToUse": "存量产品改版 · 模仿竞品后想找差异化 · 功能堆叠停滞期 · 团队对既有方案'看腻了'时",
+      "path": "atoms/product-innovation-24/09-ideation-explosion/scamper.json"
+    },
+    {
+      "id": "atom_ice_score",
+      "name": "ICE 评分",
+      "nameEn": "ICE Score",
+      "frameworkId": "product-innovation-24",
+      "cellId": 10,
+      "cellName": "创意筛选",
+      "tags": [
+        "ICE",
+        "增长",
+        "Sean Ellis",
+        "实验排序"
+      ],
+      "tagline": "ICE = Impact × Confidence × Ease。RICE 的简化版，专为'增长实验排序'而生——当你每周要从 30 个实验想法里挑 3 个跑，",
+      "whenToUse": "Growth Hacking 实验排序 · 每周/双周实验例会 · A/B 测试候选过多 · 小团队快速决策",
+      "path": "atoms/product-innovation-24/10-idea-filtering/ice-score.json"
+    },
+    {
+      "id": "atom_idea_filtering_overview",
+      "name": "创意优先级筛选",
+      "nameEn": "Idea Filtering Toolkit",
+      "frameworkId": "product-innovation-24",
+      "cellId": 10,
+      "cellName": "创意筛选",
+      "tags": [
+        "筛选",
+        "优先级",
+        "RICE",
+        "ICE",
+        "决策"
+      ],
+      "tagline": "发散后的 50 个想法不能全做。筛选不是'选最好的'，而是'用同一把尺让大家可比较'——尺子选错（如只看 ROI）会系统性淘汰长期价值；选对的尺让团队对齐而非内",
+      "whenToUse": "发散结束有 20+ 候选时 · 路线图季度规划 · 团队对'先做什么'有分歧 · 资源紧张需淘汰功能",
+      "path": "atoms/product-innovation-24/10-idea-filtering/idea-filtering-overview.json"
+    },
+    {
+      "id": "atom_impact_effort_matrix",
+      "name": "影响-成本矩阵",
+      "nameEn": "Impact-Effort Matrix",
+      "frameworkId": "product-innovation-24",
+      "cellId": 10,
+      "cellName": "创意筛选",
+      "tags": [
+        "2x2",
+        "矩阵",
+        "Quick Wins",
+        "可视化"
+      ],
+      "tagline": "把所有想法贴到 Impact↔Effort 两轴的 2×2 上，自动浮现四象限：Quick Wins（高影响低成本）、Big Bets（高影响高成本）、Fill",
+      "whenToUse": "工作坊白板共创 · 团队对优先级争论但缺数据时 · 向非 PM 利益相关方解释取舍 · 早期粗筛大量想法",
+      "path": "atoms/product-innovation-24/10-idea-filtering/impact-effort-matrix.json"
+    },
+    {
+      "id": "atom_pain_gain_filter",
+      "name": "Pain-Gain 筛选器",
+      "nameEn": "Pain-Gain Filter",
+      "frameworkId": "product-innovation-24",
+      "cellId": 10,
+      "cellName": "创意筛选",
+      "tags": [
+        "Pain",
+        "Gain",
+        "VPC",
+        "用户价值"
+      ],
+      "tagline": "把每个想法投到 Value Proposition Canvas 的 Pain Reliever / Gain Creator 两侧，问：它消除了哪个具体痛点？",
+      "whenToUse": "RICE/ICE 评分后想再做一次'用户视角'交叉检验 · 担心团队陷入功能堆砌 · VPC 已存在并希望延续到优先级阶段 · 每个候选都需要被'用户为什么会用'解释",
+      "path": "atoms/product-innovation-24/10-idea-filtering/pain-gain-filter.json"
+    },
+    {
+      "id": "atom_rice_score",
+      "name": "RICE 评分",
+      "nameEn": "RICE Score",
+      "frameworkId": "product-innovation-24",
+      "cellId": 10,
+      "cellName": "创意筛选",
+      "tags": [
+        "RICE",
+        "优先级",
+        "Intercom",
+        "评分"
+      ],
+      "tagline": "RICE = (Reach × Impact × Confidence) / Effort。Confidence 是关键——它强制你承认'我觉得有用但没证据'，",
+      "whenToUse": "季度路线图规划 · 候选想法 10-30 个 · 团队需要一种'看起来公平'的协作排序工具 · 工程资源紧张要砍",
+      "path": "atoms/product-innovation-24/10-idea-filtering/rice-score.json"
+    },
+    {
+      "id": "atom_demand_supply_canvas",
+      "name": "Demand-Supply Canvas",
+      "nameEn": "Demand-Supply Canvas",
+      "frameworkId": "product-innovation-24",
+      "cellId": 11,
+      "cellName": "供需匹配",
+      "tags": [
+        "DS Canvas",
+        "画布",
+        "对齐",
+        "可视化"
+      ],
+      "tagline": "一张分左右两侧的画布：左侧是需求（Jobs / Pains / Gains 三层），右侧是供给（产品 / 服务 / 渠道 / 商业模式四层）。中间用连线和颜色编",
+      "whenToUse": "立项汇报需要一页纸说清楚 · 多产品线团队对齐 · 重新评估老产品的市场契合度 · 为 MVP 选型提供输入",
+      "path": "atoms/product-innovation-24/11-supply-demand-match/demand-supply-canvas.json"
+    },
+    {
+      "id": "atom_job_solution_mapping",
+      "name": "Job-Solution 映射",
+      "nameEn": "Job-Solution Mapping",
+      "frameworkId": "product-innovation-24",
+      "cellId": 11,
+      "cellName": "供需匹配",
+      "tags": [
+        "JTBD",
+        "解决方案",
+        "映射",
+        "Outcome"
+      ],
+      "tagline": "把 JTBD 中的每个 Job Step 与拟做的解决方案模块一一对应，再加一列'用户期望的 Outcome 指标'——把'功能'强行翻译成'用户在哪一步变得更",
+      "whenToUse": "已经完成 JTBD 访谈或 Job Map · 团队把 Job 当成 'use case' 的列表用 · 需要把功能与用户成果挂钩做汇报 · 准备 OKR/北极星指标拆解",
+      "path": "atoms/product-innovation-24/11-supply-demand-match/job-solution-mapping.json"
+    },
+    {
+      "id": "atom_supply_demand_match_overview",
+      "name": "供需对齐画布",
+      "nameEn": "Supply Demand Match Canvas",
+      "frameworkId": "product-innovation-24",
+      "cellId": 11,
+      "cellName": "供需匹配",
+      "tags": [
+        "供需匹配",
+        "VPC",
+        "DS Canvas",
+        "对齐"
+      ],
+      "tagline": "筛过的想法不是答案，而是'供给假设'。供需匹配迫使团队把'我们能提供什么'与'用户真正需要什么'放到同一张画布上对照——错位的地方就是要么改产品要么改用户的决断",
+      "whenToUse": "想法已筛选要进入 MVP 选型前 · 跨团队（产品/业务/技术）需要同一份语言 · 担心做出'技术可行但没人要'的方案 · 重新定位现有产品",
+      "path": "atoms/product-innovation-24/11-supply-demand-match/supply-demand-match-overview.json"
+    },
+    {
+      "id": "atom_value_prop_match_map",
+      "name": "价值主张匹配图",
+      "nameEn": "Value Proposition Match Map",
+      "frameworkId": "product-innovation-24",
+      "cellId": 11,
+      "cellName": "供需匹配",
+      "tags": [
+        "VPC",
+        "价值主张",
+        "Strategyzer",
+        "Fit"
+      ],
+      "tagline": "Strategyzer VPC 的'Fit 阶段'：把 Customer Profile（Jobs/Pains/Gains）和 Value Map（Produc",
+      "whenToUse": "VPC 已经画完但没做 Fit 检查 · 价值主张文案前的对齐 · 销售/营销与产品对'卖点'认知不一致时 · 进入 MVP 前的最后审计",
+      "path": "atoms/product-innovation-24/11-supply-demand-match/value-prop-match-map.json"
+    },
+    {
+      "id": "atom_concierge_mvp",
+      "name": "Concierge MVP 管家式",
+      "nameEn": "Concierge MVP",
+      "frameworkId": "product-innovation-24",
+      "cellId": 12,
+      "cellName": "MVP 选型",
+      "tags": [
+        "Concierge",
+        "MVP",
+        "手工服务",
+        "Lean"
+      ],
+      "tagline": "完全不写代码：创始人亲手为 5-10 位用户提供手工服务，像酒店管家。目标不是规模，而是'近距离观察用户怎么真的使用'——产品形态会从这种近距离观察中浮现，比任",
+      "whenToUse": "未知用户工作流的全新品类 · 验证'用户会不会持续使用' · 创始人有时间亲自服务 · 用户单价高但人数少（B2B、咨询型）",
+      "path": "atoms/product-innovation-24/12-mvp-selection/concierge-mvp.json"
+    },
+    {
+      "id": "atom_landing_page_mvp",
+      "name": "Landing Page MVP 落地页式",
+      "nameEn": "Landing Page MVP",
+      "frameworkId": "product-innovation-24",
+      "cellId": 12,
+      "cellName": "MVP 选型",
+      "tags": [
+        "Landing Page",
+        "Smoke Test",
+        "MVP",
+        "需求验证"
+      ],
+      "tagline": "产品都还没做就先上一个落地页：清晰描述价值主张 + 行动按钮（注册/付款/预约）。用真金白银的转化率（不是问卷里的'感兴趣'）证明需求是否存在——这是验证'有没",
+      "whenToUse": "想法非常早期没有任何代码 · 想验证'人愿不愿付钱/留邮箱' · B2C 大众市场需要量化转化率 · 营销文案与定位也想顺便测试",
+      "path": "atoms/product-innovation-24/12-mvp-selection/landing-page-mvp.json"
+    },
+    {
+      "id": "atom_mechanical_turk_mvp",
+      "name": "Mechanical Turk MVP 人肉算法式",
+      "nameEn": "Mechanical Turk MVP",
+      "frameworkId": "product-innovation-24",
+      "cellId": 12,
+      "cellName": "MVP 选型",
+      "tags": [
+        "Mechanical Turk",
+        "人肉算法",
+        "众包",
+        "MVP"
+      ],
+      "tagline": "Wizard of Oz 的'分布式版'：把后端的人工处理通过众包平台（Amazon MTurk、自建运营团队）扩大到几十上百单/天。用户感知是'AI 在干活'",
+      "whenToUse": "AI / 内容审核 / 翻译 / 图像识别类产品早期 · Wizard of Oz 已通过但需要扩到更大规模 · 训练模型前要验证数据质量 · 单条任务可被陌生人 30 秒完成",
+      "path": "atoms/product-innovation-24/12-mvp-selection/mechanical-turk-mvp.json"
+    },
+    {
+      "id": "atom_mvp_selection_overview",
+      "name": "MVP 类型选型",
+      "nameEn": "MVP Types Selection",
+      "frameworkId": "product-innovation-24",
+      "cellId": 12,
+      "cellName": "MVP 选型",
+      "tags": [
+        "MVP",
+        "Lean Startup",
+        "验证",
+        "选型"
+      ],
+      "tagline": "MVP 不是'功能少的产品'，而是'用最少投入验证最大风险假设的实验'。MVP 选错类型 = 浪费三倍时间——选 Concierge 还是 Landing Pa",
+      "whenToUse": "供需对齐完成后进入第一次验证 · 立项前需要决定'第一刀切多薄' · 团队把 MVP 默认理解为'少做几个功能' · 想用最低成本砍掉错误方向",
+      "path": "atoms/product-innovation-24/12-mvp-selection/mvp-selection-overview.json"
+    },
+    {
+      "id": "atom_single_feature_mvp",
+      "name": "Single-Feature MVP 单功能式",
+      "nameEn": "Single-Feature MVP",
+      "frameworkId": "product-innovation-24",
+      "cellId": 12,
+      "cellName": "MVP 选型",
+      "tags": [
+        "Single Feature",
+        "MVP",
+        "聚焦",
+        "PMF"
+      ],
+      "tagline": "只做一个核心功能并把它做到极致，所有支持功能（搜索、设置、个性化）一律砍掉。它不是粗糙版完整产品，而是'某一个动作的最佳实现'——通过聚焦获得识别度，让早期用户",
+      "whenToUse": "已经验证需求要进入开发 · 团队倾向'一次性做完所有功能' · 想清晰建立产品定位 · 资源有限只能赌一点",
+      "path": "atoms/product-innovation-24/12-mvp-selection/single-feature-mvp.json"
+    },
+    {
+      "id": "atom_wizard_of_oz_mvp",
+      "name": "Wizard of Oz MVP 绿野仙踪式",
+      "nameEn": "Wizard of Oz MVP",
+      "frameworkId": "product-innovation-24",
+      "cellId": 12,
+      "cellName": "MVP 选型",
+      "tags": [
+        "Wizard of Oz",
+        "MVP",
+        "假装自动化",
+        "Lean"
+      ],
+      "tagline": "前端给用户看一个'看起来全自动'的产品界面，后端是人在手工处理。用户感受真实产品体验，团队用零代码验证复杂功能是否真有人愿意使用——AI 时代尤其常用，先用人脑",
+      "whenToUse": "复杂算法 / AI / 推荐 / 自动匹配类产品的早期验证 · 想测试'用户是否在意自动化背后的智能'而非工程问题 · Concierge 已通过想测更接近真实形态",
+      "path": "atoms/product-innovation-24/12-mvp-selection/wizard-of-oz-mvp.json"
+    },
+    {
+      "id": "atom_ab_test",
+      "name": "A/B 测试",
+      "nameEn": "A/B Test",
+      "frameworkId": "product-innovation-24",
+      "cellId": 13,
+      "cellName": "实验设计",
+      "tags": [
+        "实验设计",
+        "数据驱动",
+        "因果推断",
+        "增长"
+      ],
+      "tagline": "把用户随机分成 A、B 两组只看一个变量的差异，用统计显著性把「我感觉这样更好」替换成「数据证明这样更好」。A/B 不是用来证明你对，而是用来戳破你的偏见。",
+      "whenToUse": "已有足够流量（≥ 周访 10k） · 局部优化决策（按钮、文案、流程） · 增长指标提升 · 定价/付费墙策略 · 多个候选方案需要因果证据",
+      "path": "atoms/product-innovation-24/13-experiment-design/ab-test.json"
+    },
+    {
+      "id": "atom_concierge_test",
+      "name": "Concierge 管家测试",
+      "nameEn": "Concierge Test",
+      "frameworkId": "product-innovation-24",
+      "cellId": 13,
+      "cellName": "实验设计",
+      "tags": [
+        "实验设计",
+        "手动 MVP",
+        "深度学习",
+        "服务原型"
+      ],
+      "tagline": "把产品本应自动化的流程用人工 1 对 1 完成，亲手服务前 5-20 个真实用户。代价是慢，回报是深度——你会发现自动化方案永远学不到的真实需求。",
+      "whenToUse": "极早期阶段 · 不知道用户真正卡在哪一步 · 想验证愿付价格 · 复杂工作流难以一次性自动化 · B2B 高客单价产品",
+      "path": "atoms/product-innovation-24/13-experiment-design/concierge-test.json"
+    },
+    {
+      "id": "atom_experiment_design_overview",
+      "name": "假设验证实验设计",
+      "nameEn": "Hypothesis Validation Experiment Design",
+      "frameworkId": "product-innovation-24",
+      "cellId": 13,
+      "cellName": "实验设计",
+      "tags": [
+        "实验设计",
+        "假设验证",
+        "精益创业",
+        "MVP"
+      ],
+      "tagline": "在写一行代码之前，先用最低成本的实验把「最危险的假设」证伪或证实。实验不是为了证明你对，而是为了用真实数据替换 PPT 里的猜测。",
+      "whenToUse": "MVP 立项前 · 新功能投资决策 · 增长假设验证 · 商业模式打磨 · 销售前验证支付意愿",
+      "path": "atoms/product-innovation-24/13-experiment-design/experiment-design-overview.json"
+    },
+    {
+      "id": "atom_fake_door_test",
+      "name": "假门测试",
+      "nameEn": "Fake Door Test",
+      "frameworkId": "product-innovation-24",
+      "cellId": 13,
+      "cellName": "实验设计",
+      "tags": [
+        "实验设计",
+        "需求验证",
+        "功能优先级",
+        "in-product 测试"
+      ],
+      "tagline": "在你已有的产品里放一个「看起来能点」的新功能入口，用户点击后告诉他「即将上线，留个邮箱」。点击量直接告诉你这个功能值不值得做。",
+      "whenToUse": "已有产品想加新功能 · 多个功能候选要排优先级 · 不想浪费工程师时间在没人用的功能上 · 验证付费意愿",
+      "path": "atoms/product-innovation-24/13-experiment-design/fake-door-test.json"
+    },
+    {
+      "id": "atom_pretotyping",
+      "name": "Pretotyping 预型法",
+      "nameEn": "Pretotyping",
+      "frameworkId": "product-innovation-24",
+      "cellId": 13,
+      "cellName": "实验设计",
+      "tags": [
+        "实验设计",
+        "Alberto Savoia",
+        "TRI",
+        "市场吸引力"
+      ],
+      "tagline": "Alberto Savoia 提出：在「Build the right it」之前，先确认你的 it 是不是 right。用一个根本不能用的「假产品」搜集真人的",
+      "whenToUse": "想法刚萌芽 · 还没投资任何工程资源 · 想区分「市场失败」和「执行失败」 · 害怕掉进「TLAP 自我安慰」陷阱",
+      "path": "atoms/product-innovation-24/13-experiment-design/pretotyping.json"
+    },
+    {
+      "id": "atom_smoke_test",
+      "name": "Smoke Test 烟雾测试",
+      "nameEn": "Smoke Test",
+      "frameworkId": "product-innovation-24",
+      "cellId": 13,
+      "cellName": "实验设计",
+      "tags": [
+        "实验设计",
+        "Landing Page",
+        "需求验证",
+        "广告测试"
+      ],
+      "tagline": "在产品还不存在时，先做一个看起来「真的能用」的着陆页 + 投放小额广告，用真实点击与留资行为验证「有没有人愿意为这个想法举手」。",
+      "whenToUse": "产品想法早期 · 不确定是否有市场需求 · 需要快速排除「自嗨」想法 · 决定是否值得继续投入",
+      "path": "atoms/product-innovation-24/13-experiment-design/smoke-test.json"
+    },
+    {
+      "id": "atom_customer_journey_map",
+      "name": "客户旅程地图",
+      "nameEn": "Customer Journey Map",
+      "frameworkId": "product-innovation-24",
+      "cellId": 14,
+      "cellName": "体验地图",
+      "tags": [
+        "体验设计",
+        "CJM",
+        "用户旅程",
+        "情绪曲线"
+      ],
+      "tagline": "从单一 Persona 视角，把他与品牌的全部接触按时间顺序铺开（认知→考虑→购买→使用→忠诚），并叠加情绪曲线和痛点，让团队看到「人」而不是「漏斗」。",
+      "whenToUse": "产品已有目标客户但流失严重 · 跨渠道体验割裂 · 需要识别情绪低谷 · 客户成功优化",
+      "path": "atoms/product-innovation-24/14-experience-mapping/customer-journey-map.json"
+    },
+    {
+      "id": "atom_empathy_map",
+      "name": "共情地图",
+      "nameEn": "Empathy Map",
+      "frameworkId": "product-innovation-24",
+      "cellId": 14,
+      "cellName": "体验地图",
+      "tags": [
+        "共情",
+        "Empathy Map",
+        "Dave Gray",
+        "用户洞察"
+      ],
+      "tagline": "Dave Gray 设计的 6 格画布：Says / Thinks / Does / Feels / Pains / Gains，把一个用户的全部信号塞进一张纸",
+      "whenToUse": "用户访谈后整理 · 团队对用户认知不一致 · Persona 之外补充情绪与隐性动机 · 设计冲刺 Day 1 · 启动新项目",
+      "path": "atoms/product-innovation-24/14-experience-mapping/empathy-map.json"
+    },
+    {
+      "id": "atom_experience_mapping_overview",
+      "name": "用户体验地图",
+      "nameEn": "Experience Mapping",
+      "frameworkId": "product-innovation-24",
+      "cellId": 14,
+      "cellName": "体验地图",
+      "tags": [
+        "体验设计",
+        "用户旅程",
+        "服务设计",
+        "共情"
+      ],
+      "tagline": "把抽象的「用户体验」摊开成一张二维地图：横轴是时间（用户经历的阶段），纵轴是层次（行为、情绪、痛点、机会）。地图的真正价值不是画得漂亮，而是让团队 5 个人对着",
+      "whenToUse": "新产品概念落地前 · 跨部门对齐用户全流程 · 找改进机会 · 服务设计 · 重新设计转化漏斗 · 客户成功流程梳理",
+      "path": "atoms/product-innovation-24/14-experience-mapping/experience-mapping-overview.json"
+    },
+    {
+      "id": "atom_service_blueprint",
+      "name": "服务蓝图",
+      "nameEn": "Service Blueprint",
+      "frameworkId": "product-innovation-24",
+      "cellId": 14,
+      "cellName": "体验地图",
+      "tags": [
+        "服务设计",
+        "Service Blueprint",
+        "后台流程",
+        "运营协作"
+      ],
+      "tagline": "Customer Journey 只画台前，Service Blueprint 把舞台拆成 5 层：用户行为 → 前台动作 → 互动线 → 后台动作 → 可见线",
+      "whenToUse": "服务交付链很长 · 跨部门协作出现责任真空 · 客户投诉总在某个环节 · 数字+实体融合服务 · 客户成功流程优化",
+      "path": "atoms/product-innovation-24/14-experience-mapping/service-blueprint.json"
+    },
+    {
+      "id": "atom_storyboard",
+      "name": "故事板",
+      "nameEn": "Storyboard",
+      "frameworkId": "product-innovation-24",
+      "cellId": 14,
+      "cellName": "体验地图",
+      "tags": [
+        "故事板",
+        "叙事",
+        "共情",
+        "概念可视化"
+      ],
+      "tagline": "用 6-8 格漫画把「一个真实的人遇到问题 → 找到你的产品 → 生活变好」讲成一个 30 秒的故事。文字 PRD 让人睡着，故事板让人记住——这是建立团队共情",
+      "whenToUse": "新概念汇报 · 用户访谈输出整理 · 设计评审统一语言 · 创始团队对齐愿景 · 用户故事可视化",
+      "path": "atoms/product-innovation-24/14-experience-mapping/storyboard.json"
+    },
+    {
+      "id": "atom_user_flow",
+      "name": "用户流程图",
+      "nameEn": "User Flow",
+      "frameworkId": "product-innovation-24",
+      "cellId": 14,
+      "cellName": "体验地图",
+      "tags": [
+        "用户流",
+        "信息架构",
+        "决策树",
+        "可用性"
+      ],
+      "tagline": "把用户在产品里完成某个 task 的所有可能路径画成一棵决策树：起点（动机）→ 节点（屏幕/动作）→ 分支（成功/失败/放弃）→ 终点（目标达成）。流程图越早画",
+      "whenToUse": "新功能 PRD 之前 · 注册/支付/onboarding 转化优化 · 复杂权限/状态机 · 跨页面导航设计 · 工程评审",
+      "path": "atoms/product-innovation-24/14-experience-mapping/user-flow.json"
+    },
+    {
+      "id": "atom_ai_generated_prototype",
+      "name": "AI 生成原型",
+      "nameEn": "AI-Generated Prototype (v0 / Lovable)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 15,
+      "cellName": "原型制作",
+      "tags": [
+        "AI 原型",
+        "v0",
+        "Lovable",
+        "Bolt",
+        "vibe coding"
+      ],
+      "tagline": "2024-2026 年最大的原型革命：用一段自然语言 prompt + 一张参考截图，30 分钟得到一个可运行的 Next.js / Vite 网站。AI 原型",
+      "whenToUse": "1 天内要给老板看 demo · 验证一个完整产品概念 · landing page 烟雾测试 · 投资人 pitch · MVP 0 → 1 · 竞品快速复刻分析",
+      "path": "atoms/product-innovation-24/15-prototyping/ai-generated-prototype.json"
+    },
+    {
+      "id": "atom_code_prototype",
+      "name": "代码原型",
+      "nameEn": "Code Prototype",
+      "frameworkId": "product-innovation-24",
+      "cellId": 15,
+      "cellName": "原型制作",
+      "tags": [
+        "代码原型",
+        "可运行 demo",
+        "技术验证",
+        "Spike"
+      ],
+      "tagline": "当 Figma 原型回答不了「这个东西技术上行不行 / 性能够不够 / 接口好不好用」时，工程师就该花 1-3 天写一个 throwaway 的代码原型。代码原",
+      "whenToUse": "新技术可行性验证 · 性能压力测试 · 第三方 API 探索 · 算法效果验证 · 复杂动效真实手感 · 工程评估前的 Spike",
+      "path": "atoms/product-innovation-24/15-prototyping/code-prototype.json"
+    },
+    {
+      "id": "atom_hi_fi_mockup",
+      "name": "高保真视觉稿",
+      "nameEn": "Hi-Fi Mockup (Figma)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 15,
+      "cellName": "原型制作",
+      "tags": [
+        "Hi-Fi",
+        "Figma",
+        "视觉设计",
+        "Design System"
+      ],
+      "tagline": "Hi-Fi 是给「需要做最终决定」的人看的：CEO、客户、营销团队、工程实现团队。它的价值在于细节真实——按钮的圆角、留白、动效、文案口吻——所有人能像看真实产",
+      "whenToUse": "需要 CEO/客户拍板 · 营销素材准备 · 工程师交付实现稿 · 高质量 demo 演示 · App Store / Product Hunt 截图",
+      "path": "atoms/product-innovation-24/15-prototyping/hi-fi-mockup.json"
+    },
+    {
+      "id": "atom_interactive_prototype",
+      "name": "交互原型",
+      "nameEn": "Interactive Prototype",
+      "frameworkId": "product-innovation-24",
+      "cellId": 15,
+      "cellName": "原型制作",
+      "tags": [
+        "交互原型",
+        "Figma Prototype",
+        "可用性测试",
+        "动效"
+      ],
+      "tagline": "把高保真稿用线连起来变成「可点击的假产品」，是用真实用户测试可用性的最后一道防线。它的目标不是炫技，而是让被测者「忘记自己在测试」，露出真实的迷茫和惯性。",
+      "whenToUse": "可用性测试 · onboarding 流程验证 · 复杂手势/动效设计 · 远程用户测试（Maze、UserTesting） · 投资人 demo",
+      "path": "atoms/product-innovation-24/15-prototyping/interactive-prototype.json"
+    },
+    {
+      "id": "atom_lo_fi_wireframe",
+      "name": "低保真线框图",
+      "nameEn": "Lo-Fi Wireframe",
+      "frameworkId": "product-innovation-24",
+      "cellId": 15,
+      "cellName": "原型制作",
+      "tags": [
+        "线框图",
+        "Lo-Fi",
+        "信息架构",
+        "草图"
+      ],
+      "tagline": "用灰色矩形和 Lorem ipsum 故意让原型「看起来像草图」。当一张稿子有视觉成分时，反馈会变成「这个蓝色不好看」；当它是线框时，反馈才会回到「这里的信息层",
+      "whenToUse": "概念早期 · 与团队讨论结构而非视觉 · 信息架构设计 · 跨页面流程梳理 · 避免视觉细节干扰判断",
+      "path": "atoms/product-innovation-24/15-prototyping/lo-fi-wireframe.json"
+    },
+    {
+      "id": "atom_prototyping_overview",
+      "name": "原型快速制作",
+      "nameEn": "Rapid Prototyping",
+      "frameworkId": "product-innovation-24",
+      "cellId": 15,
+      "cellName": "原型制作",
+      "tags": [
+        "原型",
+        "Figma",
+        "AI 原型",
+        "可用性测试"
+      ],
+      "tagline": "原型不是为了好看，而是为了「让团队尽快指出哪里不对」。原型的精度应该匹配你要回答的问题：草图回答方向，线框回答结构，高保真回答交互，可运行代码回答可行性。错配=",
+      "whenToUse": "概念变成可视化前 · 用户测试前 · 与工程评审之前 · 投资人/老板汇报 · 跨设计师协作 · AI 时代用 v0 / Lovable 直出 demo",
+      "path": "atoms/product-innovation-24/15-prototyping/prototyping-overview.json"
+    },
+    {
+      "id": "atom_closed_beta",
+      "name": "封闭内测",
+      "nameEn": "Closed Beta",
+      "frameworkId": "product-innovation-24",
+      "cellId": 16,
+      "cellName": "首次发布",
+      "tags": [
+        "发布",
+        "Closed Beta",
+        "邀请制",
+        "种子用户"
+      ],
+      "tagline": "用「邀请码 / Waitlist / 申请制」筛选出 50-500 位高匹配度的种子用户，建立 1 对 1 关系。Closed Beta 的目标不是收入，而是收",
+      "whenToUse": "产品初步可用但还不稳定 · 需要深度定性反馈 · 想制造稀缺感 · B2B 高客单价 · 需要建立社群护城河",
+      "path": "atoms/product-innovation-24/16-first-launch/closed-beta.json"
+    },
+    {
+      "id": "atom_first_launch_overview",
+      "name": "首次发布策略",
+      "nameEn": "First Launch Strategy",
+      "frameworkId": "product-innovation-24",
+      "cellId": 16,
+      "cellName": "首次发布",
+      "tags": [
+        "发布",
+        "Launch",
+        "Go-to-Market",
+        "种子用户"
+      ],
+      "tagline": "首次发布不是「上线日」，而是一次用真实用户验证「我们建对了吗」的实验。最差的发布是「全网曝光后产品扛不住」，最好的发布是「每天只放 50 个新用户进来，但每个都",
+      "whenToUse": "MVP 准备就绪 · 第一次面向真实用户 · 决定增长策略 · 投资人/媒体首次曝光 · 验证 PMF 信号前的最后一关",
+      "path": "atoms/product-innovation-24/16-first-launch/first-launch-overview.json"
+    },
+    {
+      "id": "atom_press_release_first",
+      "name": "新闻稿先行",
+      "nameEn": "Press Release-First (Working Backwards)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 16,
+      "cellName": "首次发布",
+      "tags": [
+        "Working Backwards",
+        "Amazon",
+        "PR/FAQ",
+        "愿景驱动"
+      ],
+      "tagline": "Amazon 的「Working Backwards」核心动作：在写一行代码之前，先假装产品已经发布，写一份未来的新闻稿 + FAQ。如果你写不出让客户兴奋的新",
+      "whenToUse": "新产品立项 · 新功能投资决策 · 跨部门对齐愿景 · 高管/董事会评审 · 替代传统 PRD",
+      "path": "atoms/product-innovation-24/16-first-launch/press-release-first.json"
+    },
+    {
+      "id": "atom_product_hunt_launch",
+      "name": "Product Hunt 发布",
+      "nameEn": "Product Hunt Launch",
+      "frameworkId": "product-innovation-24",
+      "cellId": 16,
+      "cellName": "首次发布",
+      "tags": [
+        "发布",
+        "Product Hunt",
+        "Maker 社区",
+        "GTM"
+      ],
+      "tagline": "Product Hunt 是全球早期采纳者最集中的 24 小时聚光灯。一次成功的 PH launch 能在一天内带来 5-50k 访问、上千订阅、几位天使投资人",
+      "whenToUse": "面向开发者/设计师/创业者等早期采纳者 · 产品已经稳定可演示 · 想一次性获得 launch 流量与口碑 · 募资前的可见度积累",
+      "path": "atoms/product-innovation-24/16-first-launch/product-hunt-launch.json"
+    },
+    {
+      "id": "atom_soft_launch",
+      "name": "软发布",
+      "nameEn": "Soft Launch",
+      "frameworkId": "product-innovation-24",
+      "cellId": 16,
+      "cellName": "首次发布",
+      "tags": [
+        "发布",
+        "Soft Launch",
+        "灰度",
+        "区域测试"
+      ],
+      "tagline": "在小范围（一个城市、一个国家、一个用户群）静悄悄上线，不做任何 PR，让产品在没有聚光灯下暴露真实问题。等数据稳定再扩大——「先小后大」是降低发布风险的唯一姿势",
+      "whenToUse": "新 App / 新地区扩张 · 想暴露真实留存与崩溃率 · 不确定服务器承载 · 复杂本地化产品 · 多端协同不够稳",
+      "path": "atoms/product-innovation-24/16-first-launch/soft-launch.json"
+    },
+    {
+      "id": "atom_stealth_launch",
+      "name": "隐身发布",
+      "nameEn": "Stealth Launch",
+      "frameworkId": "product-innovation-24",
+      "cellId": 16,
+      "cellName": "首次发布",
+      "tags": [
+        "发布",
+        "Stealth",
+        "隐身模式",
+        "安静上线"
+      ],
+      "tagline": "完全不发任何 PR、不申请 PH、不发推、不告诉媒体——把产品悄悄上线，让真实自然流量（自然搜索、口碑、推荐）来检验产品本身有没有「自然引力」。这是验证 PMF",
+      "whenToUse": "想验证产品本身的 organic pull · 不想给竞品提前预警 · 公司战略需要保密 · 不希望被早期负面评论定义 · 验证留存而非首日流量",
+      "path": "atoms/product-innovation-24/16-first-launch/stealth-launch.json"
+    },
+    {
+      "id": "atom_cohort_tracking",
+      "name": "同期群追踪",
+      "nameEn": "Cohort Tracking",
+      "frameworkId": "product-innovation-24",
+      "cellId": 17,
+      "cellName": "数据采集",
+      "tags": [
+        "cohort",
+        "retention",
+        "lifecycle",
+        "analytics"
+      ],
+      "tagline": "总用户数会骗人，同期群不会。把用户按起始周分组，看他们在 N 周后还在不在，才是产品价值的真实证据。",
+      "whenToUse": "判断产品是否存在 PMF · 评估改版是否真正改善留存 · 识别『漏水的桶』· 为 LTV 建模",
+      "path": "atoms/product-innovation-24/17-data-harvesting/cohort-tracking.json"
+    },
+    {
+      "id": "atom_data_harvesting_overview",
+      "name": "产品数据采集体系",
+      "nameEn": "Product Data Harvesting System",
+      "frameworkId": "product-innovation-24",
+      "cellId": 17,
+      "cellName": "数据采集",
+      "tags": [
+        "data",
+        "analytics",
+        "instrumentation",
+        "dashboard",
+        "telemetry"
+      ],
+      "tagline": "数据不会自己跑出来。先有清晰的决策问题，再有埋点、漏斗、同期群和回放四件套，数据才能成为产品的眼睛而不是噪声。",
+      "whenToUse": "MVP 上线前 2 周设计埋点 · 验证 PMF 假设缺数据支撑 · 团队对功能效果各执一词 · 要建立产品健康度仪表盘",
+      "path": "atoms/product-innovation-24/17-data-harvesting/data-harvesting-overview.json"
+    },
+    {
+      "id": "atom_event_tracking_plan",
+      "name": "埋点方案",
+      "nameEn": "Event Tracking Plan",
+      "frameworkId": "product-innovation-24",
+      "cellId": 17,
+      "cellName": "数据采集",
+      "tags": [
+        "tracking",
+        "events",
+        "schema",
+        "instrumentation"
+      ],
+      "tagline": "Tracking Plan 是产品和数据团队的合同：定义『发生什么事』『带什么属性』『谁负责』，让上线即可分析，而不是事后补埋点。",
+      "whenToUse": "新功能开发前 · 重做数据底座 · 跨端口径需要统一 · 数据脏到无法分析",
+      "path": "atoms/product-innovation-24/17-data-harvesting/event-tracking-plan.json"
+    },
+    {
+      "id": "atom_funnel_analytics",
+      "name": "漏斗分析",
+      "nameEn": "Funnel Analytics",
+      "frameworkId": "product-innovation-24",
+      "cellId": 17,
+      "cellName": "数据采集",
+      "tags": [
+        "funnel",
+        "conversion",
+        "drop-off",
+        "analytics"
+      ],
+      "tagline": "漏斗不是描述工具，是定位工具。最大跌幅那一步就是下一次实验的优先级，没有漏斗的产品决策是盲飞。",
+      "whenToUse": "注册转化卡顿 · 付费率不达标 · onboarding 流失严重 · 想找到最高 ROI 的优化点",
+      "path": "atoms/product-innovation-24/17-data-harvesting/funnel-analytics.json"
+    },
+    {
+      "id": "atom_heatmap_session_replay",
+      "name": "热力图与会话回放",
+      "nameEn": "Heatmap & Session Replay",
+      "frameworkId": "product-innovation-24",
+      "cellId": 17,
+      "cellName": "数据采集",
+      "tags": [
+        "heatmap",
+        "session-replay",
+        "qualitative",
+        "ux-research"
+      ],
+      "tagline": "数字告诉你『发生了什么』，回放告诉你『为什么』。看 5 段流失用户的回放，往往比一周看仪表盘更接近真相。",
+      "whenToUse": "漏斗某一步流失莫名其妙 · 用户反馈与数据冲突 · 想发现 UX 死角 · 新功能上线后体验定性",
+      "path": "atoms/product-innovation-24/17-data-harvesting/heatmap-session-replay.json"
+    },
+    {
+      "id": "atom_build_measure_learn",
+      "name": "精益验证循环",
+      "nameEn": "Build-Measure-Learn Loop",
+      "frameworkId": "product-innovation-24",
+      "cellId": 18,
+      "cellName": "假设校验",
+      "tags": [
+        "lean-startup",
+        "bml",
+        "iteration",
+        "learning"
+      ],
+      "tagline": "精益循环的目标不是交付，是学习。每轮只问一个问题：我们下一步是保留、枢转还是放弃？学习速度决定创业死亡曲线。",
+      "whenToUse": "早期阶段资源有限 · 方向未定需要快速试错 · 避免陷入『完美主义陷阱』· 建立持续实验节奏",
+      "path": "atoms/product-innovation-24/18-hypothesis-check/build-measure-learn.json"
+    },
+    {
+      "id": "atom_falsifiable_hypothesis_card",
+      "name": "可证伪假设卡",
+      "nameEn": "Falsifiable Hypothesis Card",
+      "frameworkId": "product-innovation-24",
+      "cellId": 18,
+      "cellName": "假设校验",
+      "tags": [
+        "hypothesis",
+        "card",
+        "falsifiable",
+        "experiment-design"
+      ],
+      "tagline": "如果一条假设不能被证伪，它就是信仰不是假设。一张合格的假设卡必须写明：我们相信什么、怎样才算错、错了怎么办。",
+      "whenToUse": "启动一个新实验 · 把需求评审变为假设评审 · 规训团队的言之凿凿 · 建立决策审计轨迹",
+      "path": "atoms/product-innovation-24/18-hypothesis-check/falsifiable-hypothesis-card.json"
+    },
+    {
+      "id": "atom_hypothesis_check_overview",
+      "name": "数据假设校验法",
+      "nameEn": "Hypothesis Validation System",
+      "frameworkId": "product-innovation-24",
+      "cellId": 18,
+      "cellName": "假设校验",
+      "tags": [
+        "hypothesis",
+        "validation",
+        "experiment",
+        "lean",
+        "evidence"
+      ],
+      "tagline": "产品决策的本质是假设管理。把直觉写成可证伪的假设，用最小代价拿到证据，每轮只学一件事——这就是精益 PMF 的内核。",
+      "whenToUse": "团队陷入『我觉得』争论 · MVP 即将开发但缺乏证据 · 需要停止烧钱做错方向 · 建立实验文化",
+      "path": "atoms/product-innovation-24/18-hypothesis-check/hypothesis-check-overview.json"
+    },
+    {
+      "id": "atom_sequential_testing",
+      "name": "序贯假设检验",
+      "nameEn": "Sequential Hypothesis Testing",
+      "frameworkId": "product-innovation-24",
+      "cellId": 18,
+      "cellName": "假设校验",
+      "tags": [
+        "sequential",
+        "experiment",
+        "early-stopping",
+        "bayesian"
+      ],
+      "tagline": "序贯检验允许你在数据足够说话时就停止实验，而不是硬等固定样本——对低流量产品和高变动成本场景是救命稻草。",
+      "whenToUse": "流量很小等不起固定样本 · 差异很大想早停止损 · 需要持续评估而非单点判断 · 高风险实验要快速叫停",
+      "path": "atoms/product-innovation-24/18-hypothesis-check/sequential-testing.json"
+    },
+    {
+      "id": "atom_statistical_significance",
+      "name": "显著性检验",
+      "nameEn": "Statistical Significance Test",
+      "frameworkId": "product-innovation-24",
+      "cellId": 18,
+      "cellName": "假设校验",
+      "tags": [
+        "statistics",
+        "ab-test",
+        "p-value",
+        "power"
+      ],
+      "tagline": "没有显著性的 A/B 就是抛硬币。先算样本量，再跑实验，再看 p 值——顺序反了就是自欺欺人。",
+      "whenToUse": "跑 A/B 实验 · 对比改版前后指标 · 判断功能上线是否有真实影响 · 对抗『数据好看就发布』的偏见",
+      "path": "atoms/product-innovation-24/18-hypothesis-check/statistical-significance.json"
+    },
+    {
+      "id": "atom_aarrr",
+      "name": "AARRR 海盗指标",
+      "nameEn": "AARRR Pirate Metrics",
+      "frameworkId": "product-innovation-24",
+      "cellId": 19,
+      "cellName": "指标定义",
+      "tags": [
+        "aarrr",
+        "growth",
+        "funnel",
+        "pirate"
+      ],
+      "tagline": "把整个产品生命周期拆成 5 层漏斗：获取-激活-留存-收入-推荐。它的价值不是完整，而是强迫你看到哪一层最漏——那就是今年要修的地方。",
+      "whenToUse": "构建完整增长指标体系 · 诊断『漏水的桶』· 新任 Growth 负责人快速接手 · 向投资人讲增长故事",
+      "path": "atoms/product-innovation-24/19-metric-definition/aarrr.json"
+    },
+    {
+      "id": "atom_heart_framework",
+      "name": "HEART 体验指标框架",
+      "nameEn": "HEART Framework",
+      "frameworkId": "product-innovation-24",
+      "cellId": 19,
+      "cellName": "指标定义",
+      "tags": [
+        "heart",
+        "ux-metrics",
+        "google",
+        "experience"
+      ],
+      "tagline": "HEART 用 5 个维度量化用户体验：Happiness、Engagement、Adoption、Retention、Task Success。它让『体验好坏",
+      "whenToUse": "要给体验设立 KPI · 设计团队被问『你对业务的贡献是什么』· UX 改版后评估真实影响 · 对比多个产品线体验",
+      "path": "atoms/product-innovation-24/19-metric-definition/heart-framework.json"
+    },
+    {
+      "id": "atom_metric_system_overview",
+      "name": "北极星与指标体系",
+      "nameEn": "North Star & Metric System",
+      "frameworkId": "product-innovation-24",
+      "cellId": 19,
+      "cellName": "指标定义",
+      "tags": [
+        "north-star",
+        "metrics",
+        "okr",
+        "measurement"
+      ],
+      "tagline": "一个组织最多只能追一个北极星，但需要一棵可拆解的指标树让每个团队都知道自己在拉动哪片叶子。没有树，北极星只是墙上的一句话。",
+      "whenToUse": "团队目标不对齐 · 指标越来越多但决策越来越糊 · 高管层要对增长逻辑达成共识 · 建立产品仪表盘",
+      "path": "atoms/product-innovation-24/19-metric-definition/metric-system-overview.json"
+    },
+    {
+      "id": "atom_north_star_metric",
+      "name": "北极星指标",
+      "nameEn": "North Star Metric",
+      "frameworkId": "product-innovation-24",
+      "cellId": 19,
+      "cellName": "指标定义",
+      "tags": [
+        "north-star",
+        "metric",
+        "value",
+        "alignment"
+      ],
+      "tagline": "北极星 = 客户获得核心价值的次数 × 范围。它必须是客户实际用到产品而非仅仅付钱的那一刻，否则团队会为了短期收入伤害长期价值。",
+      "whenToUse": "组织跨部门对齐 · 融资沟通 · 长期产品战略 · 避免功能工厂陷阱",
+      "path": "atoms/product-innovation-24/19-metric-definition/north-star-metric.json"
+    },
+    {
+      "id": "atom_omtm",
+      "name": "OMTM 单一关键指标",
+      "nameEn": "One Metric That Matters",
+      "frameworkId": "product-innovation-24",
+      "cellId": 19,
+      "cellName": "指标定义",
+      "tags": [
+        "omtm",
+        "focus",
+        "lean-analytics",
+        "stage"
+      ],
+      "tagline": "当下阶段最重要的一个指标，其他全部暂时忽略。OMTM 强迫团队做取舍——同时盯 5 个 KPI 等于没有 KPI。",
+      "whenToUse": "早期团队决策涣散 · 每个阶段都要清晰的主攻方向 · 避免仪表盘瘫痪 · 与 Lean Analytics 五阶段配合",
+      "path": "atoms/product-innovation-24/19-metric-definition/omtm.json"
+    },
+    {
+      "id": "atom_engagement_score",
+      "name": "参与度综合评分",
+      "nameEn": "Engagement Score",
+      "frameworkId": "product-innovation-24",
+      "cellId": 20,
+      "cellName": "PMF 诊断",
+      "tags": [
+        "engagement",
+        "score",
+        "composite",
+        "health"
+      ],
+      "tagline": "单指标永远骗人，把频率、深度、广度三维加权成一个综合分，就能给每个用户打标——谁是铁粉、谁是边缘、谁快流失，一目了然。",
+      "whenToUse": "为大批用户做健康度打分 · 预测流失 · 指导 CSM 介入优先级 · 为销售线索做 PQL 评分",
+      "path": "atoms/product-innovation-24/20-pmf-diagnostics/engagement-score.json"
+    },
+    {
+      "id": "atom_nps",
+      "name": "NPS 净推荐值",
+      "nameEn": "Net Promoter Score",
+      "frameworkId": "product-innovation-24",
+      "cellId": 20,
+      "cellName": "PMF 诊断",
+      "tags": [
+        "nps",
+        "loyalty",
+        "recommendation",
+        "survey"
+      ],
+      "tagline": "NPS 的价值不在那个数字，而在后面的『为什么』。数字用来追趋势，评论用来听真相。只看分数不看引语，NPS 只是虚荣指标。",
+      "whenToUse": "跟踪长期客户忠诚度 · 改版后判断用户感受变化 · 找到推荐者与贬损者的差异 · 产出质性洞察",
+      "path": "atoms/product-innovation-24/20-pmf-diagnostics/nps.json"
+    },
+    {
+      "id": "atom_pmf_diagnostics_overview",
+      "name": "PMF 健康度诊断",
+      "nameEn": "PMF Diagnostics System",
+      "frameworkId": "product-innovation-24",
+      "cellId": 20,
+      "cellName": "PMF 诊断",
+      "tags": [
+        "pmf",
+        "diagnostic",
+        "retention",
+        "nps",
+        "fit"
+      ],
+      "tagline": "PMF 不是一个瞬间而是一个光谱。用 4 把尺子一起量：用户失去它会不会痛（Sean Ellis）、留下来的用户是否平坦（曲线）、会不会传出去（NPS）、热情用",
+      "whenToUse": "判断是否该加速投入 · 融资前自测 · 决定枢转还是坚持 · 向投资人讲清楚 PMF 程度",
+      "path": "atoms/product-innovation-24/20-pmf-diagnostics/pmf-diagnostics-overview.json"
+    },
+    {
+      "id": "atom_pmf_engine",
+      "name": "PMF Engine (Rahul Vohra)",
+      "nameEn": "PMF Engine",
+      "frameworkId": "product-innovation-24",
+      "cellId": 20,
+      "cellName": "PMF 诊断",
+      "tags": [
+        "pmf-engine",
+        "superhuman",
+        "rahul-vohra",
+        "process"
+      ],
+      "tagline": "PMF 不是等来的是造出来的。Rahul Vohra 的方法：聚焦『极度失望』用户的画像和 JTBD，同时强化吸引他们的特性、修掉阻碍中间用户变热情的路障。",
+      "whenToUse": "Sean Ellis 得分卡在 25-40% · 增长停滞但有铁粉 · 不知道该加特性还是改现有 · 需要系统化通往 PMF",
+      "path": "atoms/product-innovation-24/20-pmf-diagnostics/pmf-engine.json"
+    },
+    {
+      "id": "atom_retention_curve",
+      "name": "留存曲线分析",
+      "nameEn": "Retention Curve Analysis",
+      "frameworkId": "product-innovation-24",
+      "cellId": 20,
+      "cellName": "PMF 诊断",
+      "tags": [
+        "retention",
+        "curve",
+        "pmf",
+        "cohort"
+      ],
+      "tagline": "留存曲线能不能平坦化是 PMF 的硬证据。递减到零的曲线 = 漏桶 = 没 PMF；出现『微笑曲线』或稳定地板 = 有人真的离不开。",
+      "whenToUse": "判断产品是否具备 PMF · 评估改版的长期影响 · 决定是否投入获客预算 · 找到 Aha Moment",
+      "path": "atoms/product-innovation-24/20-pmf-diagnostics/retention-curve.json"
+    },
+    {
+      "id": "atom_sean_ellis_test",
+      "name": "Sean Ellis 测试 (40% 法则)",
+      "nameEn": "Sean Ellis Test",
+      "frameworkId": "product-innovation-24",
+      "cellId": 20,
+      "cellName": "PMF 诊断",
+      "tags": [
+        "sean-ellis",
+        "pmf",
+        "survey",
+        "40-percent"
+      ],
+      "tagline": "问一个问题：『如果明天不能再用这个产品，你会有多失望？』。『极度失望』的比例≥40% 是 PMF 的经验基线——低于此，强行增长会更快烧钱。",
+      "whenToUse": "验证是否达到 PMF · 决定是否加速获客 · 融资前自测 · 改版后复测",
+      "path": "atoms/product-innovation-24/20-pmf-diagnostics/sean-ellis-test.json"
+    },
+    {
+      "id": "atom_decision_reversibility_matrix",
+      "name": "决策可逆性矩阵（Type 1 / Type 2）",
+      "nameEn": "Decision Reversibility Matrix (Bezos)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 21,
+      "cellName": "决策时刻",
+      "tags": [
+        "decision-making",
+        "bezos",
+        "two-way-door",
+        "speed"
+      ],
+      "tagline": "Bezos 的双门理论：Type 1 是单向门（不可逆，需慎重），Type 2 是双向门（可撤销，需迅速）。Pivot 决策中最大的浪费是'把 Type 2 当",
+      "whenToUse": "Pivot 讨论卡在'我们再想想' · 团队过度延迟可逆决策 · 区分哪些决定要 CEO 拍板、哪些要小组长直接做 · 加速决策节奏",
+      "path": "atoms/product-innovation-24/21-pivot-decision/decision-reversibility-matrix.json"
+    },
+    {
+      "id": "atom_pivot_decision_overview",
+      "name": "转向 vs 坚持决策框架",
+      "nameEn": "Pivot vs Persevere Decision Framework",
+      "frameworkId": "product-innovation-24",
+      "cellId": 21,
+      "cellName": "决策时刻",
+      "tags": [
+        "pivot",
+        "decision-making",
+        "lean-startup",
+        "strategy"
+      ],
+      "tagline": "Pivot 不是放弃，而是基于已验证学习的战略转身。当核心假设被数据反驳时，需要结构化决策框架替代情绪化判断。",
+      "whenToUse": "PMF 信号长期模糊 · 增长曲线见顶 · 核心指标连续 3 个 cohort 不达标 · 团队对方向产生分歧 · 季度复盘发现假设证伪",
+      "path": "atoms/product-innovation-24/21-pivot-decision/pivot-decision-overview.json"
+    },
+    {
+      "id": "atom_pivot_types_10",
+      "name": "Pivot 十种类型",
+      "nameEn": "10 Pivot Types (Eric Ries)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 21,
+      "cellName": "决策时刻",
+      "tags": [
+        "pivot",
+        "lean-startup",
+        "taxonomy"
+      ],
+      "tagline": "Pivot 不是单一动作，而是 10 种结构化转向：放大、缩小、客户细分、客户需求、平台、商业架构、价值捕获、增长引擎、渠道、技术。先识别类型才能算清成本。",
+      "whenToUse": "已经决定要 Pivot 但不知道转向哪里 · 团队对'怎么转'有多种方案 · 需要向投资人解释 Pivot 不是乱跳",
+      "path": "atoms/product-innovation-24/21-pivot-decision/pivot-types-10.json"
+    },
+    {
+      "id": "atom_pivot_vs_persevere",
+      "name": "Pivot vs Persevere 仪式",
+      "nameEn": "Pivot vs Persevere Meeting (Lean Startup)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 21,
+      "cellName": "决策时刻",
+      "tags": [
+        "lean-startup",
+        "pivot",
+        "ritual",
+        "validated-learning"
+      ],
+      "tagline": "Eric Ries 提出的固定节奏会议：每隔几周强制问一次'我们有没有取得足够的已验证学习'，答案是 No 就 Pivot。把决策从'灵感时刻'变成'日历事件'",
+      "whenToUse": "建立产品迭代节奏 · MVP 上线后每 4-8 周一次 · 重要假设到了证伪窗口 · 创始人和产品负责人需要被强制对账时",
+      "path": "atoms/product-innovation-24/21-pivot-decision/pivot-vs-persevere.json"
+    },
+    {
+      "id": "atom_sunk_cost_audit",
+      "name": "沉没成本审计",
+      "nameEn": "Sunk Cost Audit",
+      "frameworkId": "product-innovation-24",
+      "cellId": 21,
+      "cellName": "决策时刻",
+      "tags": [
+        "pivot",
+        "decision-making",
+        "behavioral-economics",
+        "sunk-cost"
+      ],
+      "tagline": "Pivot 决策最大的敌人是'我们已经投入这么多了'。沉没成本审计强制把过去花掉的钱、时间、感情明确写下来，再划掉它们——因为它们不影响未来的最优决策。",
+      "whenToUse": "团队在 Pivot 讨论中反复回到'但是我们已经...' · 创始人与早期员工感情绑定过深 · 投资人施压保持原方向 · 准备砍掉运行 1 年以上的项目",
+      "path": "atoms/product-innovation-24/21-pivot-decision/sunk-cost-audit.json"
+    },
+    {
+      "id": "atom_aarrr_funnel",
+      "name": "AARRR 海盗指标漏斗",
+      "nameEn": "AARRR Pirate Metrics (vs Loop)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 22,
+      "cellName": "增长循环",
+      "tags": [
+        "aarrr",
+        "funnel",
+        "pirate-metrics",
+        "metrics"
+      ],
+      "tagline": "Dave McClure 的五环漏斗：Acquisition → Activation → Retention → Referral → Revenue。它仍然",
+      "whenToUse": "产品 0-1 阶段第一次建立指标 · 团队对'增长由什么组成'缺乏共识 · 需要快速找到漏斗最大流失环 · 准备从 AARRR 升级到 Loop 之前的诊断",
+      "path": "atoms/product-innovation-24/22-growth-loops/aarrr-funnel.json"
+    },
+    {
+      "id": "atom_engagement_loop",
+      "name": "参与度循环（Hook Model）",
+      "nameEn": "Engagement Loop (Nir Eyal Hook)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 22,
+      "cellName": "增长循环",
+      "tags": [
+        "engagement",
+        "hook-model",
+        "retention",
+        "habit"
+      ],
+      "tagline": "Nir Eyal 的 Hook 模型：触发 → 行动 → 多变奖励 → 投入。每次循环让用户对产品的依赖加深一点，把'我用它'变成'我离不开它'。注意：必须配合",
+      "whenToUse": "留存曲线在 D7-D30 急速下滑 · 用户激活后未形成习惯 · 设计 onboarding 后的'第二天体验' · 改造任何高频功能",
+      "path": "atoms/product-innovation-24/22-growth-loops/engagement-loop.json"
+    },
+    {
+      "id": "atom_growth_loop_canvas",
+      "name": "Growth Loop Canvas",
+      "nameEn": "Growth Loop Canvas",
+      "frameworkId": "product-innovation-24",
+      "cellId": 22,
+      "cellName": "增长循环",
+      "tags": [
+        "growth-canvas",
+        "reforge",
+        "loop-design"
+      ],
+      "tagline": "Reforge 推广的画布工具：用六个字段（输入 → 行动 → 输出 → 再投资）把任何增长循环标准化呈现，让团队对'循环到底是什么'有一致理解。",
+      "whenToUse": "团队第一次设计增长循环 · 已有多个增长想法需要并排比较 · 向高管解释增长策略 · 跨职能对齐工程/营销/产品对循环的认知",
+      "path": "atoms/product-innovation-24/22-growth-loops/growth-loop-canvas.json"
+    },
+    {
+      "id": "atom_growth_loops_overview",
+      "name": "增长循环设计",
+      "nameEn": "Growth Loops Design",
+      "frameworkId": "product-innovation-24",
+      "cellId": 22,
+      "cellName": "增长循环",
+      "tags": [
+        "growth",
+        "loops",
+        "compounding",
+        "growth-canvas"
+      ],
+      "tagline": "漏斗是线性的、一次性的；循环是闭合的、复利的。每一次新用户的输出（内容、邀请、数据）变成下一次获客的输入，增长才会真正自驱。",
+      "whenToUse": "PMF 已验证开始规模化 · 付费获客 ROI 见顶 · 想从'每月找新客'改为'让产品自己拉新' · 季度增长策略制定",
+      "path": "atoms/product-innovation-24/22-growth-loops/growth-loops-overview.json"
+    },
+    {
+      "id": "atom_network_effect_map",
+      "name": "网络效应地图",
+      "nameEn": "Network Effect Map",
+      "frameworkId": "product-innovation-24",
+      "cellId": 22,
+      "cellName": "增长循环",
+      "tags": [
+        "network-effects",
+        "nfx",
+        "moat",
+        "platform"
+      ],
+      "tagline": "NFX 把网络效应分为 16 类（直接、间接、双边、数据、社交、协议等）。识别你产品里到底是哪一类，决定了你能造多深的护城河和需要多大的种子规模。",
+      "whenToUse": "讨论产品长期护城河 · 双边或多边市场的早期冷启动设计 · 投资人质疑'你和竞品有什么不一样' · 评估某新功能是否在加强网络效应",
+      "path": "atoms/product-innovation-24/22-growth-loops/network-effect-map.json"
+    },
+    {
+      "id": "atom_viral_coefficient",
+      "name": "病毒系数 K",
+      "nameEn": "Viral Coefficient (K-factor)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 22,
+      "cellName": "增长循环",
+      "tags": [
+        "viral",
+        "k-factor",
+        "growth-math",
+        "referral"
+      ],
+      "tagline": "K = 每用户发出的邀请数 × 邀请的转化率。K ≥ 1 时增长自驱，K < 1 时只是放大付费获客的杠杆。先算清 K，再决定是否押注病毒增长。",
+      "whenToUse": "设计任何邀请/分享功能前 · 评估病毒增长是否真正可行 · 团队对'分享按钮能不能救我们'抱有幻想时 · 季度增长复盘",
+      "path": "atoms/product-innovation-24/22-growth-loops/viral-coefficient.json"
+    },
+    {
+      "id": "atom_gist_planning",
+      "name": "GIST 规划法",
+      "nameEn": "GIST Planning (Goals · Ideas · Step-projects · Tasks)",
+      "frameworkId": "product-innovation-24",
+      "cellId": 23,
+      "cellName": "演进路线",
+      "tags": [
+        "gist",
+        "itamar-gilad",
+        "planning",
+        "roadmap-alternative"
+      ],
+      "tagline": "Itamar Gilad 提出 GIST 取代传统路线图：Goals 年度不变，Ideas 持续累积排序，Step-projects 是 ≤10 周的可验证投资",
+      "whenToUse": "团队厌倦了传统年度路线图 · 想建立持续学习文化 · 产品 ideas 多但筛选机制弱 · 已采用敏捷但 backlog 失控",
+      "path": "atoms/product-innovation-24/23-roadmap-planning/gist-planning.json"
+    },
+    {
+      "id": "atom_now_next_later",
+      "name": "Now-Next-Later 路线图",
+      "nameEn": "Now-Next-Later Roadmap",
+      "frameworkId": "product-innovation-24",
+      "cellId": 23,
+      "cellName": "演进路线",
+      "tags": [
+        "now-next-later",
+        "roadmap",
+        "janna-bastow"
+      ],
+      "tagline": "Janna Bastow 提出的三栏路线图：Now 是正在做的、Next 是下一个周期可能做的、Later 是远期愿景。三栏的承诺度递减，没有具体日期，避免被甘",
+      "whenToUse": "团队习惯了甘特图但路线图频繁延期 · 需要既给客户希望又不做出无法兑现的承诺 · 早中期产品 · 跨团队对齐方向不对齐细节",
+      "path": "atoms/product-innovation-24/23-roadmap-planning/now-next-later.json"
+    },
+    {
+      "id": "atom_okr_planning",
+      "name": "OKR 规划",
+      "nameEn": "OKR Planning",
+      "frameworkId": "product-innovation-24",
+      "cellId": 23,
+      "cellName": "演进路线",
+      "tags": [
+        "okr",
+        "objectives",
+        "key-results",
+        "doerr"
+      ],
+      "tagline": "OKR 不是 KPI 不是 todo list。Objective 是定性的方向，Key Results 是定量的'怎么知道我们到了'。3-5 个 KR、季度刷",
+      "whenToUse": "公司导入 OKR 但写得像 KPI · 跨团队想对齐但又不想强行干预细节 · 路线图与目标脱节 · 新 PM 第一次写 OKR",
+      "path": "atoms/product-innovation-24/23-roadmap-planning/okr-planning.json"
+    },
+    {
+      "id": "atom_outcome_based_roadmap",
+      "name": "结果导向路线图",
+      "nameEn": "Outcome-Based Roadmap",
+      "frameworkId": "product-innovation-24",
+      "cellId": 23,
+      "cellName": "演进路线",
+      "tags": [
+        "outcomes",
+        "roadmap",
+        "teresa-torres",
+        "outcome-vs-output"
+      ],
+      "tagline": "把路线图从'要交付的功能'改为'要达到的用户行为变化'。功能可以变，结果不能变。Teresa Torres 强调：路线图回答的是'我们想看到用户做什么不一样'。",
+      "whenToUse": "团队疲于交付 feature 却看不到指标变化 · 高管把路线图当 backlog · 产品经理被销售 demand 列表淹没 · 已建立持续发现习惯",
+      "path": "atoms/product-innovation-24/23-roadmap-planning/outcome-based-roadmap.json"
+    },
+    {
+      "id": "atom_roadmap_planning_overview",
+      "name": "产品路线图规划法",
+      "nameEn": "Product Roadmap Planning",
+      "frameworkId": "product-innovation-24",
+      "cellId": 23,
+      "cellName": "演进路线",
+      "tags": [
+        "roadmap",
+        "planning",
+        "agile",
+        "outcomes"
+      ],
+      "tagline": "好的路线图不是甘特图，而是'有取舍的方向声明'。它要回答：我们为什么做这个、要达到什么结果、什么暂时不做、何时重新评估。",
+      "whenToUse": "季度/半年规划周期 · 跨团队对齐方向 · 高管或投资人需要清晰的下一步 · 销售需要对客户讲未来 · 已验证 PMF 进入规模化阶段",
+      "path": "atoms/product-innovation-24/23-roadmap-planning/roadmap-planning-overview.json"
+    },
+    {
+      "id": "atom_theme_based_roadmap",
+      "name": "主题导向路线图",
+      "nameEn": "Theme-Based Roadmap",
+      "frameworkId": "product-innovation-24",
+      "cellId": 23,
+      "cellName": "演进路线",
+      "tags": [
+        "themes",
+        "roadmap",
+        "bruce-mccarthy"
+      ],
+      "tagline": "Bruce McCarthy 提倡：把路线图组织成 3-5 个'主题'（客户问题群），而不是离散功能列表。主题让团队保持聚焦同时给执行留足空间。",
+      "whenToUse": "公司战略涉及多个用户问题领域 · 想避免功能列表的零散感 · 路线图需要同时服务产品/营销/销售三方解读 · 中大型产品组合",
+      "path": "atoms/product-innovation-24/23-roadmap-planning/theme-based-roadmap.json"
+    },
+    {
+      "id": "atom_growth_stage_org_design",
+      "name": "增长期组织设计",
+      "nameEn": "Growth-Stage Org Design",
+      "frameworkId": "product-innovation-24",
+      "cellId": 24,
+      "cellName": "规模准备",
+      "tags": [
+        "org-design",
+        "scaling",
+        "team-topology",
+        "leadership"
+      ],
+      "tagline": "10 人 → 50 人 → 150 人是三个组织断点。每个断点要求重新设计：职能分组、汇报层级、决策权限、沟通机制。沿用旧结构是规模化最常见的死因。",
+      "whenToUse": "团队即将跨过 10/50/150 人 · 决策瓶颈集中在创始人 · 跨团队冲突增多 · 新招的中高管无法发挥",
+      "path": "atoms/product-innovation-24/24-scale-readiness/growth-stage-org-design.json"
+    },
+    {
+      "id": "atom_operational_maturity_model",
+      "name": "运营成熟度模型",
+      "nameEn": "Operational Maturity Model",
+      "frameworkId": "product-innovation-24",
+      "cellId": 24,
+      "cellName": "规模准备",
+      "tags": [
+        "maturity-model",
+        "operations",
+        "scaling",
+        "process"
+      ],
+      "tagline": "把运营能力分为 5 级：救火 → 反应 → 主动 → 系统化 → 优化。规模化前必须从 1-2 级跃迁到 3 级，否则团队增长 = 救火指数级增长。",
+      "whenToUse": "团队人数将在 6 个月内翻倍 · 客户支持工单暴增 · 故障频率上升 · COO/运营总监新上任做盘点",
+      "path": "atoms/product-innovation-24/24-scale-readiness/operational-maturity-model.json"
+    },
+    {
+      "id": "atom_pricing_packaging_tier",
+      "name": "定价与套餐分层设计",
+      "nameEn": "Pricing & Packaging Tier Design",
+      "frameworkId": "product-innovation-24",
+      "cellId": 24,
+      "cellName": "规模准备",
+      "tags": [
+        "pricing",
+        "packaging",
+        "tiers",
+        "monetization"
+      ],
+      "tagline": "规模化前必须把定价从'单一价'升级为'分层套餐'：让小客户低门槛进来，大客户为真正在意的功能多付钱。Free / Pro / Team / Enterprise",
+      "whenToUse": "PMF 后准备扩张 · 大客户开始主动询问 Enterprise 选项 · ARPU 增长停滞 · 销售反馈定价不灵活 · 准备引入 Sales-led 路径",
+      "path": "atoms/product-innovation-24/24-scale-readiness/pricing-packaging-tier.json"
+    },
+    {
+      "id": "atom_scale_readiness_overview",
+      "name": "规模化准备清单",
+      "nameEn": "Scale Readiness Checklist",
+      "frameworkId": "product-innovation-24",
+      "cellId": 24,
+      "cellName": "规模准备",
+      "tags": [
+        "scale",
+        "readiness",
+        "growth-stage",
+        "operations"
+      ],
+      "tagline": "PMF 不是终点，而是规模化的起跑线。规模化准备 = 在踩油门之前确认五个系统都到位：产品稳定性、单位经济、组织、运营、定价。任一环不齐就放大问题。",
+      "whenToUse": "刚验证 PMF 准备融资/扩张 · 团队从 10 人涨到 50 人前夜 · 客户量增长 10 倍前的关键 6 个月 · 新一轮融资前自检",
+      "path": "atoms/product-innovation-24/24-scale-readiness/scale-readiness-overview.json"
+    },
+    {
+      "id": "atom_scaling_readiness_checklist",
+      "name": "规模化就绪检查表",
+      "nameEn": "Scaling Readiness Checklist",
+      "frameworkId": "product-innovation-24",
+      "cellId": 24,
+      "cellName": "规模准备",
+      "tags": [
+        "checklist",
+        "scale",
+        "due-diligence"
+      ],
+      "tagline": "把'我们准备好了吗'拆成 30+ 个可勾选项目：从 P99 延迟、SLO、CI/CD、On-call、客户成功到合规、安全、财务流程。任何一项 No 都是放大风",
+      "whenToUse": "准备 B 轮融资前的内部审计 · 大客户合同签订前的就绪检查 · 新区域市场扩张前 · 收购方尽调前的自我准备",
+      "path": "atoms/product-innovation-24/24-scale-readiness/scaling-readiness-checklist.json"
+    },
+    {
+      "id": "atom_tech_debt_audit",
+      "name": "技术债审计",
+      "nameEn": "Tech Debt Audit",
+      "frameworkId": "product-innovation-24",
+      "cellId": 24,
+      "cellName": "规模准备",
+      "tags": [
+        "tech-debt",
+        "engineering",
+        "scale",
+        "audit"
+      ],
+      "tagline": "技术债不是'代码烂'，而是'未来速度的负利率'。规模化前必须把债分类（蓄意/被迫/腐烂/无知），算清利息，决定哪些先还、哪些可继续付息。",
+      "whenToUse": "规模化前夕 · 工程团队抱怨速度变慢 · 故障频次上升 · 新功能评估时间越来越长 · 引入新工程师上手周期变长",
+      "path": "atoms/product-innovation-24/24-scale-readiness/tech-debt-audit.json"
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-1775575997594-project",
+      "name": "等保测评",
+      "innovationStage": "develop",
+      "atomsUsed": []
+    }
+  ]
+}

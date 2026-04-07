@@ -1,0 +1,40 @@
+{
+  "id": "atom_rice",
+  "schemaVersion": 1,
+  "name": "RICE 评分",
+  "nameEn": "RICE Score",
+  "frameworkId": "product-innovation-24",
+  "cellId": 4,
+  "tags": ["RICE", "优先级", "量化评分", "Intercom"],
+  "parentAtomId": "atom_demand_filtering_toolkit",
+  "relationType": "child",
+  "coreIdea": "RICE 把四个维度——Reach（触达人数）× Impact（影响力）× Confidence（置信度）÷ Effort（工作量）——合并成一个可比较的数字。它的真实价值不在于算出精确分数，而是强迫团队把「我觉得很重要」翻译成「多少人、多大影响、我多确定、花多少」。争议往往发生在 Confidence 列，这一列暴露了谁的直觉在裸奔。",
+  "whenToUse": "执行期的迭代规划 · 同量级需求之间比大小 · 功能 vs 功能的横向对比 · 老板凭直觉压了一个需求，需要量化反驳 · 团队因优先级吵架时的仲裁工具",
+  "keySteps": [
+    "1. 列出候选需求清单，统一描述格式",
+    "2. Reach：本季度会被这个功能触达的用户数（真实人数，不是百分比）",
+    "3. Impact：按 Intercom 原版打分 3/2/1/0.5/0.25（巨大 / 高 / 中 / 低 / 极小）",
+    "4. Confidence：你对前面三个数字有多少把握 100% / 80% / 50%",
+    "5. Effort：工程人月（不是人日，强迫团队粗估不是精算）",
+    "6. 计算 R×I×C / E 得出分数，由高到低排序",
+    "7. 检查 Confidence < 50% 的高分项：这些需要先做 spike 降低不确定性，而不是直接做"
+  ],
+  "aiSkillPrompt": "你是一位精通 Intercom RICE 打分法的资深产品经理。请按以下流程执行：\n\n## 输入\n{请在此处填入：需求清单（5-15 条） + 产品当前月活或目标用户总数 + 团队工程容量（人月）+ 每条需求你掌握的背景信息}\n\n## 任务\n1. 为每条需求打分 R / I / C / E：\n   - Reach：本季度实际触达人数（绝对数，不用百分比）+ 数据来源\n   - Impact：3 / 2 / 1 / 0.5 / 0.25 中选择 + 理由\n   - Confidence：100% / 80% / 50% 中选择 + 理由\n   - Effort：人月 + 估算依据\n2. 计算 RICE 分数，按分数降序输出一张主表\n3. 对每条需求明确标注「数据支撑」还是「团队直觉」——标注直觉的需要说明未来如何降低不确定性\n4. 找出 Confidence < 50% 但分数很高的「赌博型需求」，给出先做什么 Spike / 实验来提升置信度\n5. 找出 Effort 占比最大的 Top 2 需求，质问是否能拆小\n6. 给出「本季度建议做的 Top 5」+「建议延后的 Top 3」+ 每条一句拒绝话术\n\n## 输出格式\n章节 1：打分表（Markdown 表格：需求 | R | I | C | E | 分数 | 理由）。章节 2：赌博型需求的 Spike 建议。章节 3：可拆分需求建议。章节 4：Top 5 必做 + Top 3 延后 + 拒绝话术。\n\n## 约束\n- Reach 必须是真实数字，禁止写「所有用户」\n- Impact 只能从 5 个档位选，禁止自创 1.5 / 2.5\n- Confidence 必须有证据或明确声明为直觉\n- 不允许给 3 个以上需求打 100% Confidence\n- 全文不超过 1500 字",
+  "example": {
+    "title": "经典案例 · Intercom 自研 RICE",
+    "content": "Intercom 产品团队 2016 年发明 RICE 是因为之前用简单的「高中低」标签时，产品会议总变成嗓门大小的比赛。引入 RICE 后，第一个惊喜发现是团队最热衷的一个「AI 自动回复」功能 Reach = 2000、Impact = 1、Confidence = 50%、Effort = 6 人月，分数只有 166；而一个无人重视的「收件箱筛选器」Reach = 15000、Impact = 2、Confidence = 100%、Effort = 1 人月，分数 30000。团队被数字打脸后改做筛选器，留存提升 8%。RICE 的价值就是让团队停止凭感觉吵架。"
+  },
+  "bookmarks": [
+    {
+      "id": "bm_rice_01",
+      "type": "link",
+      "title": "Intercom · RICE: Simple prioritization for product managers",
+      "url": "https://www.intercom.com/blog/rice-simple-prioritization-for-product-managers/",
+      "note": "Sean McBride 原版博客",
+      "addedAt": "2026-04-07T00:00:00Z"
+    }
+  ],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}

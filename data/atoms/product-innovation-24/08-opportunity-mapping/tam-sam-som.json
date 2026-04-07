@@ -1,0 +1,30 @@
+{
+  "id": "atom_tam_sam_som",
+  "schemaVersion": 1,
+  "name": "TAM-SAM-SOM 市场规模",
+  "nameEn": "TAM-SAM-SOM Calculator",
+  "frameworkId": "product-innovation-24",
+  "cellId": 8,
+  "tags": ["TAM", "SAM", "SOM", "市场规模", "BP"],
+  "parentAtomId": "atom_opportunity_mapping_overview",
+  "relationType": "child",
+  "coreIdea": "TAM 不是抄报告里的最大数字，而是 top-down 和 bottom-up 两条算法必须交叉验证。两个数字差 10 倍以上时，要么市场假的，要么你算错了。",
+  "whenToUse": "融资 BP 市场章节 · 立项 ROI 估算 · 评估某个细分是否值得切 · 给 board / 高管讲故事",
+  "keySteps": [
+    "Top-down：从公开行业报告往下乘渗透率",
+    "Bottom-up：从 ICP 数量 × 客单价 × 频次往上加",
+    "交叉验证两个数字，如差距太大检查假设",
+    "圈出 SAM（我们能服务的子集）",
+    "圈出 SOM（3 年内现实可拿下的份额）",
+    "用 1 句话讲出『为什么这个市场现在打开』"
+  ],
+  "aiSkillPrompt": "你是一位早期投资分析师，擅长用 top-down + bottom-up 双算法估算 TAM-SAM-SOM。我将提供我的产品和目标市场，请你帮我做交叉验证的市场估算。\n\n## 输入\n- 产品一句话：{请在此处填入}\n- 目标客户描述（含地理范围）：{请在此处填入}\n- 客单价 / 商业模式：{请在此处填入}\n- 已知行业数据 / 信源：{请在此处填入}\n\n## 任务\n1. Top-down 算法：列公式与每一步乘数，给出 TAM 估算\n2. Bottom-up 算法：列 ICP 数量 × 客单价 × 频次，给出 TAM 估算\n3. 对两个结果做差异分析；若差距 > 10 倍，指出最可疑的假设\n4. 推算 SAM（地理 / 渠道 / 细分约束后）\n5. 推算 3 年 SOM（基于现实份额假设）\n6. 写 1 句话『市场时机为何现在打开』\n7. 列出 3 个最该实地验证的关键假设\n\n## 输出格式\nMarkdown：两个算法各一表 + 差异分析 + SAM/SOM 表 + 时机句 + 假设清单\n\n## 约束\n- 每个数字必须有信源或假设标注\n- 禁止用『万亿市场』『十亿用户』式空话\n- SOM 不能超过 SAM 的 30%",
+  "example": {
+    "title": "Stripe 的早期 TAM 论证",
+    "content": "Top-down: 全球电商 GMV × 支付费率。Bottom-up: 全球开发者数 × 接入率 × 平均处理量。两个算法都指向 $1T+ 的支付流水，验证了赛道天花板足够。SOM 三年内只锚 0.1% 即可证明商业模型成立。"
+  },
+  "bookmarks": [],
+  "stats": { "usedInProjects": [], "useCount": 0 },
+  "createdAt": "2026-04-07T00:00:00Z",
+  "updatedAt": "2026-04-07T00:00:00Z"
+}
