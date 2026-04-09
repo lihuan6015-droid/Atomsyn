@@ -41,11 +41,11 @@ export function Sidebar() {
     atomsApi.list().then((a) => setAllAtoms(a as AtomAny[])).catch(() => setAllAtoms([]))
   }, [])
 
-  // Auto-group by role (exclude skill-inventory — has its own Skill Map page)
+  // Auto-group by role (exclude skill-inventory and methodology — they have their own views)
   const roleGroups = useMemo(() => {
     const map = new Map<string, number>()
     for (const a of allAtoms) {
-      if (a.kind === 'skill-inventory') continue
+      if (a.kind === 'skill-inventory' || a.kind === 'methodology') continue
       const role = (a as any).role as string | undefined
       const key = role || '未分类'
       map.set(key, (map.get(key) || 0) + 1)

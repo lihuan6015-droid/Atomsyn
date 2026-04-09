@@ -30,12 +30,12 @@ export function RoleView({ atoms, role }: Props) {
   })
 
   const allInRole = useMemo(() => {
-    // Exclude skill-inventory (has its own Skill Map page)
-    const nonSkill = atoms.filter((a) => a.kind !== 'skill-inventory')
+    // Exclude methodology (has its own Framework skeleton) and skill-inventory
+    const validAtoms = atoms.filter((a) => a.kind !== 'skill-inventory' && a.kind !== 'methodology')
     if (role === '未分类') {
-      return nonSkill.filter((a) => !(a as any).role)
+      return validAtoms.filter((a) => !(a as any).role)
     }
-    return nonSkill.filter((a) => (a as any).role === role)
+    return validAtoms.filter((a) => (a as any).role === role)
   }, [atoms, role])
 
   // Collect unique dimension values with counts
