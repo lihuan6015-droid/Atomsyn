@@ -70,6 +70,10 @@ allowed-tools: Bash
   "insight": "核心学习, 要有推理过程不只是结论 (必填, 50-4000 字符)",
   "tags": ["kebab-case", "标签", "1-8 个"],
   "keySteps": ["可选 · 下次会怎么做的 3-6 条要点"],
+  "role": "必填 · 角色维度 (产品 | 工程 | 设计 | 学习 | 研究 | ...)",
+  "situation": "必填 · 情境维度 (踩坑当下 | 代码审查 | 对话AI | 复盘 | ...)",
+  "activity": "必填 · 活动维度 (调试 | 分析 | 验证 | 试错 | ...)",
+  "insight_type": "必填 · 洞察类型 (反直觉 | 方法验证 | 方法证伪 | 情绪复盘 | 关系观察 | 时机判断 | 原则提炼 | 纯好奇)",
   "sourceAgent": "可选 · 默认 claude-code",
   "codeArtifacts": [
     {
@@ -85,19 +89,45 @@ allowed-tools: Bash
 }
 ```
 
-**你不需要生成**: `id` / `schemaVersion` / `kind` / `createdAt` / `updatedAt` / `stats` —— CLI 会自动填。
+**你不需要生成**: `id` / `schemaVersion` / `kind` / `subKind` / `createdAt` / `updatedAt` / `stats` —— CLI 会自动填。
+
+**四维分类字段 (role / situation / activity / insight_type) 是必填的**, CLI 会校验。如果缺少会阻止写入并给出明确提示。你需要根据对话内容推断这四个字段:
+
+- **role**: 用户在对话中扮演的角色 → 参考: 产品, 工程, 设计, 学习, 研究, 咨询, 决策, 创作, 协作, 教学, 辅导, 自我管理, 运营, 销售, 项目管理
+- **situation**: 经验发生时的情境 → 参考: 会议, 访谈, 独立思考, 阅读, 对话AI, 复盘, 踩坑当下, 灵感闪现, 冲突, 决策关口, 紧急修复, 新功能开发, 架构重构, 代码审查, 方案评审
+- **activity**: 用户正在做的事 → 参考: 分析, 判断, 说服, 倾听, 试错, 验证, 综合, 表达, 拒绝, 妥协, 观察, 提问, 记录, 教授, 调试
+- **insight_type**: 洞察的性质 → 只能从以下选值: 反直觉, 方法验证, 方法证伪, 情绪复盘, 关系观察, 时机判断, 原则提炼, 纯好奇
+
+**重要**: 上述候选值仅供参考, **必须先通过 Step 1.5 查询已有分类,优先复用已有维度值,避免维度膨胀**。比如系统里已有 `role: "工程"`, 就不要新造 `role: "软件工程"`。
 
 **诚实约束**: 任何你没在对话里真实看到的字段,**不要编**。`insight` 字数不够就诚实承认"对话没覆盖到这么深",让用户决定是补充细节还是放弃沉淀。
 
-### Step 2 · 如果是"更新模式",先查已有 atom
+### Step 1.5 · 查重 + 获取已有分类维度 (write / update 模式都必须执行)
 
-如果你在 Step 0 判断这是一次更新(用户提到"之前那条 / 合并进去 / 补充到"等),先用 `atomsyn-cli find` 定位已有原子:
+在调用 write 或 update 之前,**先查一下已有经验和分类维度**:
 
 ```bash
-atomsyn-cli find --query "<2-4 个关键词>"
+atomsyn-cli find --query "<2-4 个关键词>" --with-taxonomy
 ```
 
-返回 stdout 是一份 JSON,`results` 数组里每条是 `{id, name, tags, path, score}`,按命中分数降序。挑最相关那条的 `id`,如果不确定就把 top 3 快速报给用户让他选。
+返回 JSON 中包含:
+- `results` 数组: 已有的相关经验, 每条包含 `{id, name, tags, role, situation, activity, insight_type, score}`
+- `taxonomy` 对象: 系统中所有已有的维度值 `{roles, situations, activities, insight_types}`
+
+**利用 taxonomy 信息**:
+1. 如果 taxonomy 中有和你打算用的值相近的已有值, **使用已有值** (例如系统里有 "工程" 就不要写 "软件工程")
+2. 如果发现相似经验 (score > 0), 考虑是否应该用 update 而非 write
+3. 只有 taxonomy 中确实没有合适值时, 才引入新的维度值
+
+### Step 2 · 如果是"更新模式",先查已有 atom
+
+如果你在 Step 0 判断这是一次更新(用户提到"之前那条 / 合并进去 / 补充到"等),Step 1.5 已经执行了 find,直接用那里返回的结果。如果还没执行:
+
+```bash
+atomsyn-cli find --query "<2-4 个关键词>" --with-taxonomy
+```
+
+返回 stdout 是一份 JSON,`results` 数组里每条是 `{id, name, tags, role, situation, activity, insight_type, path, score}`,按命中分数降序。挑最相关那条的 `id`,如果不确定就把 top 3 快速报给用户让他选。
 
 **如果找不到相似的**:告诉用户"atomsyn 里没有匹配的经验,我会新建一条",然后切到新建模式。
 

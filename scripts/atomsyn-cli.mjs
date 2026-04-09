@@ -156,9 +156,31 @@ function normalizeExperienceAtom(atom) {
     )
   }
 
+  // V2.0: Validate four-dimension classification fields (required for crystallized experience)
+  const CLASSIFICATION_FIELDS = {
+    role: '角色维度 (产品 | 工程 | 设计 | 学习 | 研究 | 咨询 | 决策 | 创作 | 协作 | 教学 | 辅导 | 自我管理 | 运营 | 销售 | 项目管理)',
+    situation: '情境维度 (会议 | 访谈 | 独立思考 | 阅读 | 对话AI | 复盘 | 踩坑当下 | 灵感闪现 | 冲突 | 决策关口 | 紧急修复 | 新功能开发 | 架构重构 | 代码审查 | 方案评审)',
+    activity: '活动维度 (分析 | 判断 | 说服 | 倾听 | 试错 | 验证 | 综合 | 表达 | 拒绝 | 妥协 | 观察 | 提问 | 记录 | 教授 | 调试)',
+    insight_type: '洞察类型 (反直觉 | 方法验证 | 方法证伪 | 情绪复盘 | 关系观察 | 时机判断 | 原则提炼 | 纯好奇)',
+  }
+  const missingClassification = Object.entries(CLASSIFICATION_FIELDS)
+    .filter(([k]) => !(k in atom) || atom[k] == null || atom[k] === '')
+  if (missingClassification.length) {
+    const details = missingClassification
+      .map(([k, hint]) => `  - ${k}: ${hint}`)
+      .join('\n')
+    die(
+      `Input is missing required classification fields:\n${details}\n\n` +
+      `These four-dimension fields are required for experience atoms. ` +
+      `Please add them to your JSON and retry. ` +
+      `TIP: Run \`atomsyn-cli find --query "<keywords>" --with-taxonomy\` first to see existing dimension values and reuse them.`
+    )
+  }
+
   // Auto-assign bookkeeping fields
   atom.kind = 'experience'
   atom.schemaVersion = 1
+  atom.subKind = atom.subKind || 'crystallized'
   atom.sourceAgent =
     atom.sourceAgent || process.env.ATOMSYN_AGENT || 'claude-code'
 
@@ -614,6 +636,11 @@ function mergeAtomFields(existing, incoming) {
     'relatedAtoms',
     'sessionId',
     'sourceAgent',
+    'role',
+    'situation',
+    'activity',
+    'insight_type',
+    'subKind',
   ]
   for (const f of contentFields) {
     if (incoming[f] !== undefined) merged[f] = incoming[f]

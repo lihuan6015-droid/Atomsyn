@@ -23,6 +23,9 @@ import {
   TrendingDown,
   Eye,
   PencilLine,
+  Tag,
+  Check,
+  X,
 } from 'lucide-react'
 import { atomsApi, frameworksApi, projectsApi, trackUsage, usageApi } from '@/lib/dataApi'
 import { useAppStore } from '@/stores/useAppStore'
@@ -43,7 +46,13 @@ import { NewAtomDialog } from './NewAtomDialog'
 
 export default function AtomDetailPage() {
   const { atomId } = useParams<{ atomId: string }>()
-  const [atom, setAtom] = useState<Atom | null>(null)
+  const [atom, setAtom] = useState<(Atom & Record<string, any>) | null>(null)
+
+  // Safe accessors for fields that may not exist on non-methodology atoms
+  const bookmarks = atom?.bookmarks ?? []
+  const tags = atom?.tags ?? []
+  const keySteps = atom?.keySteps ?? []
+  const stats = atom?.stats ?? { usedInProjects: [], useCount: 0, aiInvokeCount: 0, humanViewCount: 0 } as any
   const [framework, setFramework] = useState<Framework | null>(null)
   const [siblings, setSiblings] = useState<Atom[]>([])
   const [parent, setParent] = useState<Atom | null>(null)
@@ -55,6 +64,13 @@ export default function AtomDetailPage() {
   const [bmType, setBmType] = useState<'link' | 'text'>('link')
   const [agentEvents, setAgentEvents] = useState<AgentUsageEvent[]>([])
   const [mergePickerOpen, setMergePickerOpen] = useState(false)
+  const [editingClassification, setEditingClassification] = useState(false)
+  const [classificationDraft, setClassificationDraft] = useState({
+    role: '',
+    situation: '',
+    activity: '',
+    insight_type: '',
+  })
   const showToast = useAppStore((s) => s.showToast)
 
   useEffect(() => {
@@ -65,18 +81,39 @@ export default function AtomDetailPage() {
       setAtom(a)
       trackUsage({ type: 'atom-open', atomId: a.id })
       atomsApi.trackView(a.id).catch(() => undefined) // V2.0 M2: bump humanViewCount
-      try {
-        const fw = await frameworksApi.get(a.frameworkId)
-        if (!cancelled) setFramework(fw)
-      } catch {}
+      if (a.frameworkId) {
+        try {
+          const fw = await frameworksApi.get(a.frameworkId)
+          if (!cancelled) setFramework(fw)
+        } catch {}
+      }
       try {
         const all = await atomsApi.list()
         if (cancelled) return
-        setSiblings(
-          all.filter(
-            (x) => x.frameworkId === a.frameworkId && x.cellId === a.cellId && x.id !== a.id
+        // Compute siblings based on atom kind
+        if ((a as any).kind === 'methodology' && a.frameworkId) {
+          // Methodology atoms: same framework + same cell
+          setSiblings(
+            all.filter(
+              (x) => x.frameworkId === a.frameworkId && x.cellId === a.cellId && x.id !== a.id
+            )
           )
-        )
+        } else if ((a as any).kind === 'experience' && (a as any).role) {
+          // Experience atoms: same role, exclude uncategorized (no role) and skill-inventory
+          const myRole = (a as any).role
+          setSiblings(
+            all.filter(
+              (x) =>
+                x.id !== a.id &&
+                (x as any).kind === 'experience' &&
+                (x as any).role &&
+                (x as any).role === myRole
+            )
+          )
+        } else {
+          // Uncategorized or skill-inventory: no siblings
+          setSiblings([])
+        }
         if (a.parentAtomId) {
           const p = all.find((x) => x.id === a.parentAtomId)
           setParent(p ?? null)
@@ -132,7 +169,7 @@ export default function AtomDetailPage() {
     }
     const updated: Atom = {
       ...atom,
-      bookmarks: [...atom.bookmarks, newBm as Atom['bookmarks'][number]],
+      bookmarks: [...(atom.bookmarks ?? []), newBm as Atom['bookmarks'][number]],
       updatedAt: new Date().toISOString(),
     }
     try {
@@ -147,13 +184,13 @@ export default function AtomDetailPage() {
     }
   }
 
-  const usedProjects = projects.filter((p) => atom.stats.usedInProjects.includes(p.id))
+  const usedProjects = projects.filter((p) => (atom.stats?.usedInProjects ?? []).includes(p.id))
 
   const handleToggleDemote = async () => {
-    const nextDemoted = !atom.stats.userDemoted
+    const nextDemoted = !atom.stats?.userDemoted
     const updated: Atom = {
       ...atom,
-      stats: { ...atom.stats, userDemoted: nextDemoted },
+      stats: { ...stats, userDemoted: nextDemoted },
       updatedAt: new Date().toISOString(),
     }
     try {
@@ -166,10 +203,10 @@ export default function AtomDetailPage() {
   }
 
   const handleToggleLock = async () => {
-    const nextLocked = !atom.stats.locked
+    const nextLocked = !atom.stats?.locked
     const updated: Atom = {
       ...atom,
-      stats: { ...atom.stats, locked: nextLocked },
+      stats: { ...stats, locked: nextLocked },
       updatedAt: new Date().toISOString(),
     }
     try {
@@ -221,16 +258,30 @@ export default function AtomDetailPage() {
               className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>返回知识图书馆</span>
+              <span>返回</span>
             </Link>
             <span className="text-neutral-300 dark:text-neutral-700">·</span>
-            <div className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
-              <span>{framework?.name ?? '...'}</span>
-              <ChevronRight className="w-3 h-3" />
-              <span className="text-violet-500 dark:text-violet-400 font-medium">
-                {String(atom.cellId).padStart(2, '0')} · {cell?.name ?? ''}
-              </span>
-            </div>
+            {atom.kind === 'methodology' && atom.frameworkId ? (
+              <div className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
+                <span>{framework?.name ?? '...'}</span>
+                <ChevronRight className="w-3 h-3" />
+                <span className="text-violet-500 dark:text-violet-400 font-medium">
+                  {String(atom.cellId).padStart(2, '0')} · {cell?.name ?? ''}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
+                <span>{(atom as any).role || ((atom as any).kind === 'skill-inventory' ? 'Skill' : '经验')}</span>
+                {((atom as any).activity || (atom as any).insight_type) && (
+                  <>
+                    <ChevronRight className="w-3 h-3" />
+                    <span className="text-violet-500 dark:text-violet-400 font-medium">
+                      {(atom as any).activity || (atom as any).insight_type}
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
           </div>
           <div className="relative">
             <button
@@ -272,6 +323,7 @@ export default function AtomDetailPage() {
       <main className="max-w-3xl mx-auto px-6 lg:px-10 py-10">
         {/* Card Header */}
         <div className="mb-8">
+          {atom.kind === 'methodology' && atom.cellId && (
           <div className="flex items-center gap-2 mb-3">
             <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[10px] font-mono font-semibold tracking-wider border border-violet-500/20">
               STEP {String(atom.cellId).padStart(2, '0')}
@@ -289,9 +341,10 @@ export default function AtomDetailPage() {
               </>
             )}
           </div>
+          )}
           <h1 className="text-4xl font-bold tracking-tight leading-tight flex items-center gap-3 flex-wrap">
             <span>{atom.name}</span>
-            {atom.stats.locked && (
+            {atom.stats?.locked && (
               <span
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-medium border border-amber-500/30"
                 title="已锁定 · agent 写入操作被拦截"
@@ -308,7 +361,7 @@ export default function AtomDetailPage() {
           )}
 
           <div className="flex items-center flex-wrap gap-1.5 mt-4">
-            {atom.tags.map((t) => (
+            {tags.map((t) => (
               <span
                 key={t}
                 className="px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-900 text-[10px] text-neutral-600 dark:text-neutral-400"
@@ -319,7 +372,8 @@ export default function AtomDetailPage() {
           </div>
         </div>
 
-        {/* Three-piece default visible */}
+        {/* Methodology-specific sections */}
+        {atom.kind === 'methodology' && atom.coreIdea && (
         <section className="mb-7 animate-fade-in">
           <div className="flex items-center gap-2 mb-2.5">
             <div className="w-6 h-6 rounded-lg bg-violet-500/10 flex items-center justify-center">
@@ -333,7 +387,9 @@ export default function AtomDetailPage() {
             {atom.coreIdea}
           </p>
         </section>
+        )}
 
+        {atom.kind === 'methodology' && atom.whenToUse && (
         <section className="mb-7 animate-fade-in">
           <div className="flex items-center gap-2 mb-2.5">
             <div className="w-6 h-6 rounded-lg bg-sky-500/10 flex items-center justify-center">
@@ -358,10 +414,130 @@ export default function AtomDetailPage() {
             })}
           </div>
         </section>
+        )}
 
+        {atom.kind === 'methodology' && atom.aiSkillPrompt && (
         <SkillPromptBox atomId={atom.id} prompt={atom.aiSkillPrompt} />
+        )}
 
-        {/* Collapsible sections */}
+        {/* Experience-specific: show insight + sourceContext */}
+        {atom.kind === 'experience' && (atom as any).insight && (
+        <section className="mb-7 animate-fade-in">
+          <div className="flex items-center gap-2 mb-2.5">
+            <div className="w-6 h-6 rounded-lg bg-sky-500/10 flex items-center justify-center">
+              <Lightbulb className="w-3.5 h-3.5 text-sky-500" />
+            </div>
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+              经验洞察
+            </h2>
+          </div>
+          <div className="text-[15px] leading-relaxed text-neutral-800 dark:text-neutral-200 pl-8 whitespace-pre-wrap">
+            {(atom as any).insight}
+          </div>
+          {(atom as any).sourceContext && (
+            <p className="text-xs text-neutral-500 pl-8 mt-2">
+              来源: {(atom as any).sourceContext}
+            </p>
+          )}
+        </section>
+        )}
+
+        {/* Experience-specific: classification editor */}
+        {(atom as any).kind === 'experience' && (
+        <section className="mb-7 animate-fade-in">
+          <div className="flex items-center gap-2 mb-2.5">
+            <div className="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+              <Tag className="w-3.5 h-3.5 text-emerald-500" />
+            </div>
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 flex-1">
+              分类维度
+            </h2>
+            {!editingClassification && (
+              <button
+                onClick={() => {
+                  setClassificationDraft({
+                    role: (atom as any).role || '',
+                    situation: (atom as any).situation || '',
+                    activity: (atom as any).activity || '',
+                    insight_type: (atom as any).insight_type || '',
+                  })
+                  setEditingClassification(true)
+                }}
+                className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] text-neutral-500 hover:text-violet-500 hover:bg-violet-500/10 transition-colors"
+              >
+                <Pencil className="w-3 h-3" />
+                编辑
+              </button>
+            )}
+          </div>
+          {editingClassification ? (
+            <div className="pl-8 space-y-2.5">
+              <ClassificationInput
+                label="角色"
+                value={classificationDraft.role}
+                onChange={(v) => setClassificationDraft((d) => ({ ...d, role: v }))}
+                suggestions={['产品', '工程', '设计', '学习', '研究', '咨询', '决策', '创作', '协作', '教学', '辅导', '自我管理', '运营', '销售', '项目管理']}
+                colorClass="bg-violet-500/10 text-violet-600 border-violet-500/20"
+              />
+              <ClassificationInput
+                label="情境"
+                value={classificationDraft.situation}
+                onChange={(v) => setClassificationDraft((d) => ({ ...d, situation: v }))}
+                suggestions={['会议', '访谈', '独立思考', '阅读', '对话AI', '复盘', '踩坑当下', '灵感闪现', '冲突', '决策关口', '紧急修复', '新功能开发', '架构重构', '代码审查', '方案评审']}
+                colorClass="bg-sky-500/10 text-sky-600 border-sky-500/20"
+              />
+              <ClassificationInput
+                label="活动"
+                value={classificationDraft.activity}
+                onChange={(v) => setClassificationDraft((d) => ({ ...d, activity: v }))}
+                suggestions={['分析', '判断', '说服', '倾听', '试错', '验证', '综合', '表达', '拒绝', '妥协', '观察', '提问', '记录', '教授', '调试']}
+                colorClass="bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+              />
+              <ClassificationInput
+                label="洞察"
+                value={classificationDraft.insight_type}
+                onChange={(v) => setClassificationDraft((d) => ({ ...d, insight_type: v }))}
+                suggestions={['反直觉', '方法验证', '方法证伪', '情绪复盘', '关系观察', '时机判断', '原则提炼', '纯好奇']}
+                colorClass="bg-amber-500/10 text-amber-600 border-amber-500/20"
+              />
+              <div className="flex gap-2 pt-1">
+                <button
+                  onClick={async () => {
+                    const updated = { ...atom, ...classificationDraft, updatedAt: new Date().toISOString() }
+                    try {
+                      await atomsApi.update(atom.id, updated as any)
+                      setAtom(updated as any)
+                      setEditingClassification(false)
+                      showToast('✓ 分类已更新')
+                    } catch (e) {
+                      showToast(e instanceof Error ? e.message : '保存失败')
+                    }
+                  }}
+                  className="flex items-center gap-1 px-3 h-7 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-xs font-medium transition-colors"
+                >
+                  <Check className="w-3 h-3" />
+                  保存
+                </button>
+                <button
+                  onClick={() => setEditingClassification(false)}
+                  className="flex items-center gap-1 px-3 h-7 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs text-neutral-500"
+                >
+                  <X className="w-3 h-3" />
+                  取消
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="pl-8 flex flex-wrap gap-2">
+              <ClassificationBadge label="角色" value={(atom as any).role} colorClass="bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20" />
+              <ClassificationBadge label="情境" value={(atom as any).situation} colorClass="bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20" />
+              <ClassificationBadge label="活动" value={(atom as any).activity} colorClass="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" />
+              <ClassificationBadge label="洞察" value={(atom as any).insight_type} colorClass="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" />
+            </div>
+          )}
+        </section>
+        )}
+
         <div className="space-y-1">
           <div className="flex items-center gap-2 px-1 mb-2">
             <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-800" />
@@ -371,14 +547,14 @@ export default function AtomDetailPage() {
             <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-800" />
           </div>
 
-          {atom.keySteps && atom.keySteps.length > 0 && (
+          {keySteps.length > 0 && (
             <CollapseSection
               title="关键步骤"
               icon={<ListOrdered className="w-4 h-4" />}
-              badge={`${atom.keySteps.length} 步`}
+              badge={`${keySteps.length} 步`}
             >
               <div className="space-y-2.5">
-                {atom.keySteps.map((s, i) => (
+                {keySteps.map((s, i) => (
                   <div
                     key={i}
                     className="flex gap-3 text-sm text-neutral-700 dark:text-neutral-300"
@@ -422,7 +598,7 @@ export default function AtomDetailPage() {
                 >
                   <div className="text-sm font-medium">{parent.name}</div>
                   <div className="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">
-                    {parent.nameEn || parent.coreIdea.slice(0, 40)}
+                    {parent.nameEn || (parent.coreIdea ? parent.coreIdea.slice(0, 40) : parent.tags?.join(' · ') || '')}
                   </div>
                 </Link>
               </>
@@ -441,7 +617,7 @@ export default function AtomDetailPage() {
                     >
                       <div className="text-sm font-medium truncate">{s.name}</div>
                       <div className="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">
-                        {s.nameEn || s.tags.join(' · ')}
+                        {s.nameEn || (s.tags ?? []).join(' · ')}
                       </div>
                     </Link>
                   ))}
@@ -458,12 +634,12 @@ export default function AtomDetailPage() {
             icon={<Bookmark className="w-4 h-4" />}
             badge={
               <span className="px-1.5 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[10px] font-mono font-semibold">
-                {atom.bookmarks.length}
+                {bookmarks.length}
               </span>
             }
           >
             <div className="space-y-2">
-              {atom.bookmarks.map((b) => (
+              {bookmarks.map((b) => (
                 <a
                   key={b.id}
                   href={b.url || '#'}
@@ -559,14 +735,14 @@ export default function AtomDetailPage() {
           <CollapseSection
             title="使用统计"
             icon={<BarChart3 className="w-4 h-4" />}
-            badge={`共 ${(atom.stats.aiInvokeCount ?? 0) + (atom.stats.humanViewCount ?? 0)} 次访问`}
+            badge={`共 ${(stats.aiInvokeCount ?? 0) + (stats.humanViewCount ?? 0)} 次访问`}
           >
             <div className="grid grid-cols-3 gap-3 mb-4">
-              <Stat label="AI 调用" value={`${atom.stats.aiInvokeCount ?? 0}`} suffix="次" />
-              <Stat label="人类查看" value={`${atom.stats.humanViewCount ?? 0}`} suffix="次" />
+              <Stat label="AI 调用" value={`${stats.aiInvokeCount ?? 0}`} suffix="次" />
+              <Stat label="人类查看" value={`${stats.humanViewCount ?? 0}`} suffix="次" />
               <Stat
                 label="最近使用"
-                value={atom.stats.lastUsedAt ? formatDate(atom.stats.lastUsedAt) : '—'}
+                value={stats.lastUsedAt ? formatDate(stats.lastUsedAt) : '—'}
               />
             </div>
             {usedProjects.length > 0 && (
@@ -703,26 +879,26 @@ export default function AtomDetailPage() {
                   onClick={handleToggleDemote}
                   className={
                     'inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg border text-xs transition-colors ' +
-                    (atom.stats.userDemoted
+                    (atom.stats?.userDemoted
                       ? 'border-rose-400/40 bg-rose-500/10 text-rose-600 dark:text-rose-400'
                       : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-rose-400/60 hover:text-rose-500')
                   }
                 >
                   <TrendingDown className="w-3 h-3" />
-                  {atom.stats.userDemoted ? '✓ 已降权 · 点击恢复' : '降权'}
+                  {atom.stats?.userDemoted ? '✓ 已降权 · 点击恢复' : '降权'}
                 </button>
 
                 <button
                   onClick={handleToggleLock}
                   className={
                     'inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg border text-xs transition-colors ' +
-                    (atom.stats.locked
+                    (atom.stats?.locked
                       ? 'border-amber-400/50 bg-amber-500/10 text-amber-600 dark:text-amber-400'
                       : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-amber-400/60 hover:text-amber-500')
                   }
                 >
                   <Lock className="w-3 h-3" />
-                  {atom.stats.locked ? '✓ 已锁定 · 点击解锁' : '锁定'}
+                  {atom.stats?.locked ? '✓ 已锁定 · 点击解锁' : '锁定'}
                 </button>
               </div>
               <div className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-2 leading-relaxed">
@@ -780,4 +956,57 @@ function agentChipClass(name: string) {
   let h = 0
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0
   return palette[h % palette.length]
+}
+
+function ClassificationBadge({ label, value, colorClass }: { label: string; value?: string; colorClass: string }) {
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-medium ${colorClass}`}>
+      <span className="text-[10px] opacity-60 uppercase">{label}</span>
+      <span>{value || '未设置'}</span>
+    </span>
+  )
+}
+
+function ClassificationInput({
+  label,
+  value,
+  onChange,
+  suggestions,
+  colorClass,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  suggestions: string[]
+  colorClass: string
+}) {
+  return (
+    <div>
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1.5">
+        {label}
+      </div>
+      <div className="flex flex-wrap gap-1.5 mb-1.5">
+        {suggestions.map((s) => (
+          <button
+            key={s}
+            onClick={() => onChange(s)}
+            className={`px-2 py-0.5 rounded-md border text-[11px] font-medium transition-all ${
+              value === s
+                ? 'bg-violet-500 text-white border-violet-500'
+                : `${colorClass} hover:scale-[1.03]`
+            }`}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={`输入${label}...`}
+        className="w-full max-w-xs text-sm px-2 py-1 rounded-md border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 focus:outline-none focus:border-violet-400"
+      />
+    </div>
+  )
 }
