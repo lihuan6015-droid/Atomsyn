@@ -118,7 +118,7 @@ export function SeedUpdateDialog({ open, result, onClose, onSynced }: Props) {
               className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 flex items-center gap-2"
             >
               方法论库有新版本
-              <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-700 dark:text-violet-300 ring-1 ring-violet-500/30">
+              <span className="text-[0.6875rem] font-mono px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-700 dark:text-violet-300 ring-1 ring-violet-500/30">
                 {result.installedVersion ?? '—'} → {result.seedVersion}
               </span>
             </h2>
@@ -142,7 +142,7 @@ export function SeedUpdateDialog({ open, result, onClose, onSynced }: Props) {
           {/* Changelog */}
           {latestNotes.length > 0 && (
             <section>
-              <div className="text-[11px] uppercase tracking-wider text-neutral-500 mb-2">
+              <div className="text-[0.6875rem] uppercase tracking-wider text-neutral-500 mb-2">
                 更新内容
               </div>
               <ul className="space-y-1.5 text-xs text-neutral-700 dark:text-neutral-300">
@@ -158,7 +158,7 @@ export function SeedUpdateDialog({ open, result, onClose, onSynced }: Props) {
 
           {/* Diff stats */}
           <section>
-            <div className="text-[11px] uppercase tracking-wider text-neutral-500 mb-2">
+            <div className="text-[0.6875rem] uppercase tracking-wider text-neutral-500 mb-2">
               文件变更
             </div>
             <div className="grid grid-cols-4 gap-2">
@@ -222,7 +222,7 @@ export function SeedUpdateDialog({ open, result, onClose, onSynced }: Props) {
           </section>
 
           {diff.userModifiedKept.length > 0 && (
-            <div className="flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-800 dark:text-amber-200">
+            <div className="flex items-start gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[0.6875rem] text-amber-800 dark:text-amber-200">
               <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
               <span className="leading-relaxed">
                 {diff.userModifiedKept.length} 个文件已被你本地修改,同步时将保留你的版本。
@@ -290,7 +290,7 @@ function StatCard({
       )}
     >
       <div className="text-lg font-semibold tabular-nums">{value}</div>
-      <div className="text-[10px] uppercase tracking-wider opacity-80 mt-0.5">
+      <div className="text-[0.625rem] uppercase tracking-wider opacity-80 mt-0.5">
         {label}
       </div>
     </div>
@@ -313,16 +313,16 @@ function FileGroup({
     <div>
       <div
         className={cn(
-          'inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium ring-1',
+          'inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[0.625rem] font-medium ring-1',
           COLORS[color],
         )}
       >
         {label} · {files.length}
       </div>
       {hint && (
-        <span className="ml-2 text-[10px] text-neutral-500">{hint}</span>
+        <span className="ml-2 text-[0.625rem] text-neutral-500">{hint}</span>
       )}
-      <ul className="mt-1.5 space-y-0.5 font-mono text-[10px] text-neutral-600 dark:text-neutral-400">
+      <ul className="mt-1.5 space-y-0.5 font-mono text-[0.625rem] text-neutral-600 dark:text-neutral-400">
         {files.map((f) => (
           <li key={f} className="truncate" title={f}>
             {f}

@@ -322,7 +322,7 @@ export default function SkillMapPage() {
             <button
               type="button"
               onClick={openCreate}
-              className="ml-2 inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg text-[11px] font-medium border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 hover:border-violet-400 hover:text-violet-500 dark:hover:border-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/40 transition-colors"
+              className="ml-2 inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg text-[0.6875rem] font-medium border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 hover:border-violet-400 hover:text-violet-500 dark:hover:border-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/40 transition-colors"
               title="手动添加 skill（非常规路径，建议用重新扫描）"
             >
               <Plus className="w-3 h-3" />
@@ -387,7 +387,7 @@ export default function SkillMapPage() {
                   <span className={cn('w-3 h-3 rounded-sm', TOOL_META[t].dotBg)} />
                   {TOOL_META[t].label}
                   {counts[t] ? (
-                    <span className="text-[10px] text-neutral-400 font-mono">{counts[t]}</span>
+                    <span className="text-[0.625rem] text-neutral-400 font-mono">{counts[t]}</span>
                   ) : null}
                 </button>
               ))}
@@ -504,7 +504,7 @@ export default function SkillMapPage() {
                     {/* Always-visible bottom info row: type chip + mtime.
                         Replaces the old hover-only L1 tag row so the card
                         footer is never empty and users can scan types fast. */}
-                    <div className="mt-3 flex items-center justify-between gap-2 text-[10px]">
+                    <div className="mt-3 flex items-center justify-between gap-2 text-[0.625rem]">
                       {(() => {
                         const skType = getSkillType(it)
                         return skType ? (
@@ -648,14 +648,14 @@ function SkillDetailOverlay({
           <div className="flex-1 min-w-0">
             <h2
               id="skill-detail-title"
-              className="text-[15px] font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 flex items-center gap-1.5"
+              className="text-[0.9375rem] font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 flex items-center gap-1.5"
             >
               {item.name}
               {item.userMarked === 'favorite' && <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />}
               {item.userMarked === 'forgotten' && <Moon className="w-3.5 h-3.5 text-sky-500" />}
               {item.userMarked === 'unused' && <Hourglass className="w-3.5 h-3.5 text-neutral-400" />}
             </h2>
-            <p className="text-[11px] text-neutral-400 dark:text-neutral-500 mt-0.5 flex items-center gap-2">
+            <p className="text-[0.6875rem] text-neutral-400 dark:text-neutral-500 mt-0.5 flex items-center gap-2">
               <span>{meta.label}</span>
               {skillType && (
                 <>
@@ -688,7 +688,7 @@ function SkillDetailOverlay({
         <div className="flex-1 min-h-0 overflow-y-auto p-5 space-y-4">
           {/* Mark segmented control */}
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1.5">标记</div>
+            <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1.5">标记</div>
             <div className="inline-flex items-center gap-0.5 p-0.5 bg-neutral-100 dark:bg-white/[0.04] rounded-lg">
               {(
                 [
@@ -713,7 +713,7 @@ function SkillDetailOverlay({
                       }
                     }}
                     className={cn(
-                      'px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors flex items-center gap-1',
+                      'px-2.5 py-1 text-[0.6875rem] font-medium rounded-md transition-colors flex items-center gap-1',
                       active
                         ? 'bg-white dark:bg-white/10 shadow-sm text-neutral-900 dark:text-white'
                         : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white',
@@ -732,13 +732,13 @@ function SkillDetailOverlay({
               frontmatter description (the scanner will usually fill it
               from the first paragraph of the body). */}
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1.5">描述</div>
+            <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1.5">描述</div>
             {item.rawDescription ? (
-              <p className="text-[13px] text-neutral-700 dark:text-neutral-300 leading-relaxed">
+              <p className="text-[0.8125rem] text-neutral-700 dark:text-neutral-300 leading-relaxed">
                 {item.rawDescription}
               </p>
             ) : (
-              <p className="text-[12px] italic text-neutral-400">（这个 skill 没有提供描述）</p>
+              <p className="text-[0.75rem] italic text-neutral-400">（这个 skill 没有提供描述）</p>
             )}
           </div>
 
@@ -748,7 +748,7 @@ function SkillDetailOverlay({
             <button
               type="button"
               onClick={() => setShowRawFrontmatter((s) => !s)}
-              className="text-[10px] uppercase tracking-wider text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 mb-1.5 flex items-center gap-1 transition-colors"
+              className="text-[0.625rem] uppercase tracking-wider text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 mb-1.5 flex items-center gap-1 transition-colors"
             >
               <ChevronDown
                 className={cn(
@@ -759,7 +759,7 @@ function SkillDetailOverlay({
               原始 Frontmatter (JSON)
             </button>
             {showRawFrontmatter && (
-              <pre className="text-[11px] font-mono bg-neutral-50 dark:bg-white/[0.02] rounded-lg p-3 overflow-x-auto text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap break-words border border-neutral-200/70 dark:border-white/5">
+              <pre className="text-[0.6875rem] font-mono bg-neutral-50 dark:bg-white/[0.02] rounded-lg p-3 overflow-x-auto text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap break-words border border-neutral-200/70 dark:border-white/5">
 {JSON.stringify(item.frontmatter, null, 2)}
               </pre>
             )}
@@ -767,21 +767,21 @@ function SkillDetailOverlay({
 
           {/* AI summary */}
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1.5">AI 摘要</div>
+            <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1.5">AI 摘要</div>
             {item.aiGeneratedSummary ? (
-              <p className="text-[13px] text-neutral-700 dark:text-neutral-300 leading-relaxed">
+              <p className="text-[0.8125rem] text-neutral-700 dark:text-neutral-300 leading-relaxed">
                 {item.aiGeneratedSummary}
               </p>
             ) : (
-              <p className="text-[12px] italic text-neutral-400">AI 尚未生成摘要</p>
+              <p className="text-[0.75rem] italic text-neutral-400">AI 尚未生成摘要</p>
             )}
           </div>
 
           {/* Typical scenarios */}
           {item.typicalScenarios?.length ? (
             <div>
-              <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1.5">典型场景</div>
-              <ul className="text-[13px] text-neutral-600 dark:text-neutral-400 space-y-1 list-disc list-inside">
+              <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1.5">典型场景</div>
+              <ul className="text-[0.8125rem] text-neutral-600 dark:text-neutral-400 space-y-1 list-disc list-inside">
                 {item.typicalScenarios.map((s, i) => (
                   <li key={i}>{s}</li>
                 ))}
@@ -791,15 +791,15 @@ function SkillDetailOverlay({
 
           {/* Local path */}
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1.5">本地路径</div>
+            <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1.5">本地路径</div>
             <div className="flex items-center gap-2 p-3 rounded-lg bg-neutral-50 dark:bg-white/[0.02] border border-neutral-200/70 dark:border-white/5">
-              <code className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400 truncate flex-1">
+              <code className="text-[0.6875rem] font-mono text-neutral-500 dark:text-neutral-400 truncate flex-1">
                 {item.localPath}
               </code>
               <button
                 type="button"
                 onClick={() => onOpenFolder(item.localPath)}
-                className="shrink-0 px-2 py-1 rounded-md text-[11px] font-medium border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-white/5 transition-colors flex items-center gap-1"
+                className="shrink-0 px-2 py-1 rounded-md text-[0.6875rem] font-medium border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-white/5 transition-colors flex items-center gap-1"
               >
                 <ExternalLink className="w-3 h-3" />
                 打开
@@ -815,7 +815,7 @@ function SkillDetailOverlay({
             disabled={locked}
             title={locked ? '已锁定，不可删除' : '从 Atomsyn 索引移除 (不删除磁盘源文件)'}
             onClick={() => onDelete(item)}
-            className="px-3 py-1.5 rounded-lg text-[12px] font-medium border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg text-[0.75rem] font-medium border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
           >
             <Trash2 className="w-3.5 h-3.5" />
             从索引移除
@@ -825,7 +825,7 @@ function SkillDetailOverlay({
               type="button"
               disabled={enrichingId !== null}
               onClick={() => onEnrich(item)}
-              className="px-3 py-1.5 rounded-lg text-[12px] font-medium bg-gradient-to-r from-violet-500/10 to-sky-500/10 border border-violet-500/30 text-violet-600 dark:text-violet-400 hover:from-violet-500/20 hover:to-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg text-[0.75rem] font-medium bg-gradient-to-r from-violet-500/10 to-sky-500/10 border border-violet-500/30 text-violet-600 dark:text-violet-400 hover:from-violet-500/20 hover:to-sky-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
             >
               {enrichingId === item.id ? (
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -839,7 +839,7 @@ function SkillDetailOverlay({
               disabled={locked}
               title={locked ? '已锁定，不可编辑' : undefined}
               onClick={() => onEdit(item)}
-              className="px-3 py-1.5 rounded-lg text-[12px] font-medium border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg text-[0.75rem] font-medium border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-1.5"
             >
               <Pencil className="w-3.5 h-3.5" />
               编辑
@@ -875,7 +875,7 @@ function RescanButton({
         }
       }}
       className={cn(
-        'ml-2 inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg text-[11px] font-medium transition-colors',
+        'ml-2 inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg text-[0.6875rem] font-medium transition-colors',
         'border border-neutral-200 dark:border-neutral-800',
         'text-neutral-600 dark:text-neutral-300',
         'hover:border-violet-400 hover:text-violet-500 dark:hover:border-violet-500',

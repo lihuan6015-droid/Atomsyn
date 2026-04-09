@@ -100,7 +100,7 @@ export function NewProjectDialog({ open, onClose, onCreated }: Props) {
       showToast('项目已创建')
       onCreated?.(created)
       onClose()
-      navigate(`/playground/${created.id}`)
+      navigate(`/atom/playground/${created.id}`)
     } catch (err: any) {
       showToast(`创建失败: ${err.message ?? err}`)
     } finally {
@@ -228,7 +228,7 @@ function Field({
         {required && <span className="text-rose-500 ml-0.5">*</span>}
       </div>
       {children}
-      {error && <div className="text-[11px] text-rose-500 mt-1">{error}</div>}
+      {error && <div className="text-[0.6875rem] text-rose-500 mt-1">{error}</div>}
     </label>
   )
 }

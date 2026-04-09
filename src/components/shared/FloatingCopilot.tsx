@@ -1,3 +1,8 @@
+/**
+ * @deprecated V2.0-layout: Superseded by the "AI 对话" entry in GlobalSidebar.
+ * The floating button is no longer rendered in AppShell.
+ * TODO(v2.x): Delete this file once ChatPage is confirmed stable.
+ */
 import { Sparkles } from 'lucide-react'
 import { useAppStore } from '@/stores/useAppStore'
 

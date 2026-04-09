@@ -1,0 +1,100 @@
+{
+  "id": "cognitive-psychology-basics",
+  "schemaVersion": 1,
+  "name": "认知心理学基础",
+  "nameEn": "Cognitive Psychology Basics",
+  "source": "综合",
+  "version": "1.0",
+  "description": "认知偏误、决策心理、学习理论与情绪管理的心理学基础框架",
+  "layoutType": "tree",
+  "tree": {
+    "roots": [
+      {
+        "id": "cognitive-biases",
+        "name": "认知偏误",
+        "nameEn": "Cognitive Biases",
+        "color": "#A78BFA",
+        "atomCategoryPath": "cognitive-psychology-basics/cognitive-biases",
+        "children": [
+          {
+            "id": "confirmation-bias",
+            "name": "确认偏误",
+            "nameEn": "Confirmation Bias",
+            "atomCategoryPath": "cognitive-psychology-basics/cognitive-biases/confirmation-bias"
+          },
+          {
+            "id": "anchoring",
+            "name": "锚定效应",
+            "nameEn": "Anchoring Effect",
+            "atomCategoryPath": "cognitive-psychology-basics/cognitive-biases/anchoring"
+          }
+        ]
+      },
+      {
+        "id": "decision-psychology",
+        "name": "决策心理",
+        "nameEn": "Decision Psychology",
+        "color": "#60A5FA",
+        "atomCategoryPath": "cognitive-psychology-basics/decision-psychology",
+        "children": [
+          {
+            "id": "prospect-theory",
+            "name": "前景理论",
+            "nameEn": "Prospect Theory",
+            "atomCategoryPath": "cognitive-psychology-basics/decision-psychology/prospect-theory"
+          },
+          {
+            "id": "bounded-rationality",
+            "name": "有限理性",
+            "nameEn": "Bounded Rationality",
+            "atomCategoryPath": "cognitive-psychology-basics/decision-psychology/bounded-rationality"
+          }
+        ]
+      },
+      {
+        "id": "learning-theory",
+        "name": "学习理论",
+        "nameEn": "Learning Theory",
+        "color": "#34D399",
+        "atomCategoryPath": "cognitive-psychology-basics/learning-theory",
+        "children": [
+          {
+            "id": "deliberate-practice",
+            "name": "刻意练习",
+            "nameEn": "Deliberate Practice",
+            "atomCategoryPath": "cognitive-psychology-basics/learning-theory/deliberate-practice"
+          },
+          {
+            "id": "spaced-repetition",
+            "name": "间隔重复",
+            "nameEn": "Spaced Repetition",
+            "atomCategoryPath": "cognitive-psychology-basics/learning-theory/spaced-repetition"
+          }
+        ]
+      },
+      {
+        "id": "emotion-management",
+        "name": "情绪管理",
+        "nameEn": "Emotion Management",
+        "color": "#FBBF24",
+        "atomCategoryPath": "cognitive-psychology-basics/emotion-management",
+        "children": [
+          {
+            "id": "emotional-intelligence",
+            "name": "情绪智力",
+            "nameEn": "Emotional Intelligence",
+            "atomCategoryPath": "cognitive-psychology-basics/emotion-management/emotional-intelligence"
+          },
+          {
+            "id": "stress-response",
+            "name": "压力应对",
+            "nameEn": "Stress Response",
+            "atomCategoryPath": "cognitive-psychology-basics/emotion-management/stress-response"
+          }
+        ]
+      }
+    ]
+  },
+  "createdAt": "2026-04-11T00:00:00Z",
+  "updatedAt": "2026-04-11T00:00:00Z"
+}

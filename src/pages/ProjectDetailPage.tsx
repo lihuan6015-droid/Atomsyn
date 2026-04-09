@@ -61,7 +61,7 @@ export default function ProjectDetailPage() {
     try {
       await projectsApi.remove(project.id)
       showToast('项目已删除')
-      navigate('/playground')
+      navigate('/atom/playground')
     } catch (e: any) {
       showToast(`删除失败: ${e.message ?? e}`)
     }
@@ -83,7 +83,7 @@ export default function ProjectDetailPage() {
         <div className="text-center">
           <h2 className="text-lg font-semibold">项目不存在</h2>
           <Link
-            to="/playground"
+            to="/atom/playground"
             className="text-sm text-stage-discover hover:underline mt-2 inline-block"
           >
             返回项目列表
@@ -101,7 +101,7 @@ export default function ProjectDetailPage() {
         {/* Header */}
         <div>
           <Link
-            to="/playground"
+            to="/atom/playground"
             className="inline-flex items-center gap-1.5 text-xs text-neutral-500 hover:text-stage-discover transition-colors mb-3"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
@@ -113,14 +113,14 @@ export default function ProjectDetailPage() {
                 <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
                 <span
                   className={cn(
-                    'text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wider',
+                    'text-[0.625rem] font-medium px-2 py-0.5 rounded-full uppercase tracking-wider',
                     stageClass
                   )}
                 >
                   {STAGE_LABELS[project.innovationStage] ?? project.innovationStage}
                 </span>
                 {project.status && (
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800/80">
+                  <span className="text-[0.625rem] font-mono px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800/80">
                     {project.status}
                   </span>
                 )}
@@ -130,7 +130,7 @@ export default function ProjectDetailPage() {
                   {project.description}
                 </p>
               )}
-              <div className="text-[11px] text-neutral-400 font-mono mt-2">{project.id}</div>
+              <div className="text-[0.6875rem] text-neutral-400 font-mono mt-2">{project.id}</div>
             </div>
             <div className="relative">
               <button
@@ -164,7 +164,7 @@ export default function ProjectDetailPage() {
 
         {/* Stage progress */}
         <div className="rounded-2xl border border-neutral-200/80 dark:border-neutral-800/80 bg-white/40 dark:bg-neutral-900/40 glass p-5">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 mb-3">
+          <div className="text-[0.625rem] font-mono uppercase tracking-wider text-neutral-400 mb-3">
             创新阶段
           </div>
           <StageProgress current={project.innovationStage} history={project.stageHistory} />
@@ -186,16 +186,16 @@ export default function ProjectDetailPage() {
               return (
                 <Link
                   key={atom.id}
-                  to={`/atoms/${atom.id}`}
+                  to={`/atom/atoms/${atom.id}`}
                   className="group p-4 rounded-xl border border-neutral-200/80 dark:border-neutral-800/80 bg-white/60 dark:bg-neutral-900/40 hover:border-stage-discover/40 cell-glow"
                 >
                   <div className="text-sm font-medium truncate group-hover:text-stage-discover transition-colors">
                     {atom.name}
                   </div>
-                  <div className="text-[11px] text-neutral-400 font-mono truncate mt-0.5">
+                  <div className="text-[0.6875rem] text-neutral-400 font-mono truncate mt-0.5">
                     {atom.frameworkId}
                   </div>
-                  <div className="mt-3 inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-stage-discover/10 text-stage-discover">
+                  <div className="mt-3 inline-flex items-center gap-1 text-[0.625rem] font-medium px-2 py-0.5 rounded-full bg-stage-discover/10 text-stage-discover">
                     {count} 实践
                   </div>
                 </Link>

@@ -215,7 +215,7 @@ export function SkillFormDialog({
             >
               {mode === 'edit' ? '编辑 skill' : '手动添加 skill'}
             </h2>
-            <div className="text-[11px] text-neutral-500 mt-0.5">
+            <div className="text-[0.6875rem] text-neutral-500 mt-0.5">
               {mode === 'edit'
                 ? '可编辑名称 / 描述 / 标签 / 标记 · frontmatter 为只读'
                 : '常规路径是扫描目录 · 手动添加仅供特殊情况使用'}
@@ -234,7 +234,7 @@ export function SkillFormDialog({
 
         <div className="px-5 py-4 space-y-4 max-h-[70vh] overflow-y-auto">
           {mode === 'create' && (
-            <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-700 dark:text-amber-300">
+            <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-[0.6875rem] text-amber-700 dark:text-amber-300">
               <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
               <div>
                 手动添加的条目若 <code className="font-mono">localPath</code>{' '}
@@ -287,7 +287,7 @@ export function SkillFormDialog({
               readOnly={mode === 'edit'}
             />
             {mode === 'edit' && (
-              <div className="text-[10px] text-neutral-400 mt-0.5">
+              <div className="text-[0.625rem] text-neutral-400 mt-0.5">
                 localPath 由扫描器维护 · 只读
               </div>
             )}
@@ -298,7 +298,7 @@ export function SkillFormDialog({
               {form.tags.map((t) => (
                 <span
                   key={t}
-                  className="inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-300 border border-violet-500/30"
+                  className="inline-flex items-center gap-1 text-[0.6875rem] font-mono px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-300 border border-violet-500/30"
                 >
                   #{t}
                   <button
@@ -328,7 +328,7 @@ export function SkillFormDialog({
                 <label
                   key={m.id}
                   className={cn(
-                    'inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border text-[11px] font-medium cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-violet-500/40',
+                    'inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border text-[0.6875rem] font-medium cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-violet-500/40',
                     form.userMarked === m.id
                       ? 'bg-violet-500/10 border-violet-500/40 text-violet-600 dark:text-violet-300'
                       : 'border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 hover:border-violet-400/50',
@@ -354,28 +354,28 @@ export function SkillFormDialog({
             <Field label="只读元数据">
               <div className="space-y-2">
                 <div>
-                  <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
+                  <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1">
                     File Mtime
                   </div>
-                  <code className="block text-[11px] font-mono text-neutral-500 dark:text-neutral-400">
+                  <code className="block text-[0.6875rem] font-mono text-neutral-500 dark:text-neutral-400">
                     {initial.fileMtime}
                   </code>
                 </div>
                 {initial.fileHash && (
                   <div>
-                    <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
+                    <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1">
                       File Hash
                     </div>
-                    <code className="block text-[11px] font-mono text-neutral-500 dark:text-neutral-400 truncate">
+                    <code className="block text-[0.6875rem] font-mono text-neutral-500 dark:text-neutral-400 truncate">
                       {initial.fileHash}
                     </code>
                   </div>
                 )}
                 <div>
-                  <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
+                  <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1">
                     Frontmatter
                   </div>
-                  <pre className="text-[11px] font-mono bg-neutral-50 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800/60 rounded-lg p-2.5 overflow-x-auto text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap break-words max-h-40">
+                  <pre className="text-[0.6875rem] font-mono bg-neutral-50 dark:bg-neutral-950 border border-neutral-200/60 dark:border-neutral-800/60 rounded-lg p-2.5 overflow-x-auto text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap break-words max-h-40">
 {JSON.stringify(initial.frontmatter, null, 2)}
                   </pre>
                 </div>
@@ -385,7 +385,7 @@ export function SkillFormDialog({
         </div>
 
         {submitError && (
-          <div className="mx-5 mb-2 px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-[11px] text-rose-600 dark:text-rose-400">
+          <div className="mx-5 mb-2 px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-[0.6875rem] text-rose-600 dark:text-rose-400">
             {submitError}
           </div>
         )}
@@ -430,12 +430,12 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-[11px] font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+      <label className="block text-[0.6875rem] font-medium text-neutral-600 dark:text-neutral-400 mb-1">
         {label}
         {required && <span className="ml-1 text-rose-500">*</span>}
       </label>
       {children}
-      {error && <div className="mt-1 text-[11px] text-rose-500">{error}</div>}
+      {error && <div className="mt-1 text-[0.6875rem] text-rose-500">{error}</div>}
     </div>
   )
 }

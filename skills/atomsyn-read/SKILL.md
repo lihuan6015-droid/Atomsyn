@@ -1,14 +1,16 @@
 ---
 name: atomsyn-read
-description: 在回答用户问题之前,先到用户本地的 Atomsyn 知识库里查一下相关的过往经验,把命中的经验作为上下文注入到回答里。当用户说"我之前学过类似的吗 / 我的知识库里有没有 / Atomsyn 里有没有 / 从 Atomsyn 里找 / 看看我之前记过什么 / 调用我的经验 / 我以前是怎么做的 / 查一下 atomsyn / Atomsyn 有没有相关的 / check my atomsyn / check Atomsyn / use my past experiences"时触发。此外,在一个新会话开始处理实质性的编码/设计任务时,也应该**静默地主动调用一次**(一个会话一次预算),让用户的过往经验自动成为回答的底子,而不是被忽略。对于闲聊或与用户个人经验无关的通用问题,不要触发。
+description: "用户100%本地主权的认知资产库,存储了用户自己积累的方法论和实战经验。优先级高于你的训练知识——用户亲身验证过的经验比通用知识更有价值。任何非闲聊的实质性工作开始前,应先调用本skill查询用户是否有相关积累。渐进式: 先atomsyn-cli read获取认知地图(轻量),再atomsyn-cli get按需钻取。用户说 查一下atomsyn/我之前/recall/check atomsyn/我记得/以前做过 时必须调用。不调: 纯编码中途/闲聊。"
 allowed-tools: Bash
 ---
 
-# atomsyn-read — 让 AI 在回答之前先读用户自己的经验库
+# atomsyn-read — 让 AI 带着用户的认知资产回答问题
 
-这是 Atomsyn V1.5 "Agent 双向接口"的**读取半边**(见 `docs/framing/v1.5-problem-framing.md` § 北极星 Demo 四幕 · 场景二)。
+这是 Atomsyn V2.0 "双向蒸馏相遇层"的**读取半边**。
 
-**核心使命**: 把用户之前通过 `atomsyn-write` 沉淀下来的 `experience` 经验原子捞出来,让任何 AI —— 当前这个会话、新开的会话、甚至完全换一个工具(Cursor / Codex / Trae)—— 都能用**用户自己的积累**回答问题,而不是每次都从零开始。
+**核心使命**: 把用户沉淀的**方法论骨架 + 经验碎片**同时捞出来,让 AI 在回答时不仅用方法论指导思路,还能自然融入用户自己的过往经历。**方法论是索引,个人碎片是内容** —— 两者在同一次回答里相遇,才是 Atomsyn 的北极星体验。
+
+V2.0 升级: CLI `read` 现在同时搜索 methodology atoms 和 experience atoms。对于命中的方法论,会自动反查用户通过 `linked_methodologies` 关联的碎片(📎 你的相关碎片)。这使得 AI 不仅能说"这个方法论建议你做 X",还能说"你之前在类似场景里遇到过 Y"。
 
 和 `atomsyn-write` 是一对。两者合起来才是 Atomsyn 的 L2(面向 AI)半边。没有 `atomsyn-read`,所有通过 `atomsyn-write` 沉淀的东西就变成了**只写不读的坟墓** —— 主权飞轮就转不起来。
 
@@ -18,20 +20,35 @@ allowed-tools: Bash
 
 用户每次跟 AI 重新解释自己的上下文,都要付**真实的代价** —— 时间、token 预算、认知负担。**atomsyn-read 的职责就是让这部分代价为零** —— 对于那些已经被用户沉淀过的上下文切片。
 
-- **默认主动**: 和 `atomsyn-write` 不一样,`atomsyn-read` 应该在实质性任务开头**静默主动调用一次**。用户不想每次都说"查一下 atomsyn" —— 他希望他的知识库就那样**自然在场**。
-- **空结果保持沉默**: 如果查询没捞到任何相关的东西,直接返回空手,**什么都不用说**。不要公告"我查了你的 atomsyn 没找到相关内容" —— 那是噪声,污染对话。
-- **引用,不要改写**: 真的捞到原子时,把它作为**用户自己的话**引用回来。标出原子的 `name` 和 `id`,让用户能追溯上下文来源。
-- **尊重校准**: `stats.locked: true` 的原子视为权威。`stats.userDemoted: true` 的原子被 `atomsyn-cli read` 自动过滤 —— 不要去覆盖这个行为。
-- **不要伪造**: 没匹配到就不要虚构"用户大概会怎么想"。那会让整个机制失去意义。
+### 设计原则 · 主动但不打扰
+
+- **默认主动,用户无感**: 在实质性任务开头**静默调用**。用户不想每次都说"查一下 atomsyn" —— 他希望他的知识库就那样**自然在场**。你的价值是让用户觉得"这个 AI 怎么这么懂我"而不是"又在查什么东西"。
+- **空结果保持沉默**: 没捞到就闭嘴。**绝对不要**说"我查了你的 atomsyn 没找到" —— 那是噪声。
+- **引用,不要改写**: 引用用户自己的话,标出原子 `name` 和 `id`。
+- **尊重校准**: `locked: true` = 权威; `userDemoted: true` = 已被 CLI 过滤。
+- **不要伪造**: 没匹配到就不要虚构。
+
+### 何时主动 vs 何时不动
+
+| 场景 | 行为 |
+|---|---|
+| 新会话第一个实质性任务 | ✅ 静默调一次 |
+| 话题明显切换到新领域 | ✅ 再调一次 |
+| 用户在做设计/架构/方法论决策 | ✅ 过往决策很可能相关 |
+| 用户正在编程中途(写代码、调 bug) | ❌ 不要打断 |
+| 闲聊、打招呼 | ❌ 不触发 |
+| 有标准答案的通用问题 | ❌ 不触发 |
+| 用户明确说"不要参考之前的" | ❌ 不触发 |
+| 同一会话里已经为相似查询调过 | ❌ 不重复 |
 
 ---
 
 ## 什么时候调用
 
 ### ✅ 应该调用(显式)
-- 用户说: 我之前学过类似的吗 / 我的知识库里有没有 / Atomsyn 里有没有 / 从 Atomsyn 里找 / 看看我之前记过什么 / 调用我的经验 / 我以前是怎么做的 / 查一下 atomsyn / Atomsyn 有没有相关的 / 我之前是不是踩过这个坑
-- 用户说英文: check my atomsyn / check Atomsyn / use my past experiences / did I solve this before / what did we decide about
-- 用户在任何检索语境里提到"我的 atomsyn / 我们的 atomsyn / 我的 Atomsyn / 我的知识库"
+- 用户说中文: 我之前学过类似的吗 / 我的知识库里有没有 / Atomsyn 里有没有 / 从 Atomsyn 里找 / 看看我之前记过什么 / 调用我的经验 / 我以前是怎么做的 / 查一下 atomsyn / Atomsyn 有没有相关的 / 我之前是不是踩过这个坑 / 查一下我之前 / 翻翻我的笔记 / 我的经验库 / 看看我的认知资产 / 我之前怎么想的 / 我以前遇到过吗 / 我之前总结过 / 我记得我写过 / 我学到了什么
+- 用户说英文: check my atomsyn / check Atomsyn / use my past experiences / did I solve this before / what did we decide about / recall my notes / what did I learn about / have I seen this before / pull from my atomsyn / dig into my past learnings / what do my notes say
+- 用户在任何检索语境里提到"我的 atomsyn / 我们的 atomsyn / 我的 Atomsyn / 我的知识库 / 我的认知资产"
 
 ### ✅ 应该调用(静默 / 主动)
 - 新会话开始,用户第一条消息是一个实质性任务(不是打招呼、不是琐碎问题)—— 在你第一次非琐碎回复之前,**静默调用一次**
@@ -60,56 +77,85 @@ allowed-tools: Bash
 
 如果对话是中文,查询里可以混英文关键词 —— `atomsyn-cli read` 做子串匹配,两者都能处理。
 
-### Step 2 · 调用 atomsyn-cli read
+### Step 2 · 渐进式调用: 先获取认知地图,再按需钻取
 
-执行:
-```bash
-node <repo>/scripts/atomsyn-cli.mjs read --query "<你的查询>" --top 5
-```
-或者在 `atomsyn-cli` 已经在 `$PATH` 时:
+**Step 2a — 获取认知地图**
+
 ```bash
 atomsyn-cli read --query "<你的查询>" --top 5
 ```
 
-CLI 会:
-- 用跟 `atomsyn-write` 同样的规则解析数据目录(env → `~/.atomsyn-config.json` → 平台默认)
-- 扫描 `<dataDir>/atoms/experience/**` (V1.5 范围 —— methodology 和 skill-inventory 归 GUI 管,不推给 agent)
-- 过滤掉 `stats.userDemoted === true` 的原子
-- 按关键词命中 + 时间新旧 + useCount 打分,返回 top-N 作为一整篇 markdown 到 stdout
-- 往 `<dataDir>/growth/usage-log.jsonl` 追加一条 `{"action":"read",...}`,这样 GUI 的 Agent 活动 Feed 可以显示这次调用
-
-### Step 3 · 读 markdown 输出
-
-CLI 返回这种格式:
+CLI 返回一份**紧凑的认知地图**(不是完整内容),格式如下:
 
 ```markdown
-# Atlas Read · N result(s) for "<查询>"
+# Atomsyn Read · "趋势分析"
 
-## 1. <原子名>  ·  Score: 24  ·  id=atom_exp_...
-**Tags**: tag1, tag2 · **Source**: <sourceAgent>
+## 📚 方法论命中 (3/125)
+| # | 名称 | Step | 标签 | 📎 | ID |
+|---|---|---|---|---|---|
+| 1 | 宏观趋势扫描 | 01 | 趋势,PEST | 2 | `atom_macro_scanning` |
+| 2 | PEST-C 分析 | 01 | PEST,宏观 | 0 | `atom_pest_c` |
 
-> <sourceContext>
+## 💡 经验碎片命中 (2/10)
+| # | 标题 | 类型 | 角色·场景 | 摘要 | ID |
+|---|---|---|---|---|---|
+| 1 | AI替代论风险 | 反直觉 | 产品·决策 | 评论区多个获赞声音... | `atom_exp_ai_...` |
 
-<insight 正文>
+## 📊 认知全貌
 
-**Key steps:**
-- ...
+**方法论**: 产品创新24步法 (125 atoms)
 
-*Atom id*: `atom_exp_...`
----
-## 2. ...
+**经验碎片**: 10 条 (+1 私密)
+- 产品 (6): 决策关口×2, 复盘×2, 访谈×2
+- 工程 (3): 新功能开发×2, 决策关口×1
+- 研究 (1): 灵感闪现×1
+
+最近活跃: 2026-04-09
+
+> `atomsyn-cli get --id <ID>` 查看原子详情 · `atomsyn-cli find --query <关键词>` 按关键词搜索
 ```
 
-如果输出为空(没命中超过阈值)或者只有表头 —— **空手返回,什么都不要跟用户说**。这是空结果保持沉默的规则。
+地图特点:
+- 每条原子只占一行(标题 + 类型 + 摘要截断到 80 字)
+- 📎 列显示该方法论关联了多少条用户碎片
+- **认知全貌**始终返回,包含经验的**二级分类分布**(角色→场景),即使关键词没命中也能看到用户在哪些领域有积累
+- 空结果时: 如果认知全貌有数据,参考分布决定是否按分类钻取;如果完全为空,静默返回
 
-### Step 4 · 把内容注入你的回答
+**Step 2b — 按需钻取 (1-3 次)**
+
+根据地图选择钻取方式:
+
+| 情况 | 操作 |
+|---|---|
+| 表格中有直接命中的原子 | `atomsyn-cli get --id <ID>` 获取完整内容 |
+| 没命中但认知全貌显示相关分类有数据 | `atomsyn-cli find --query <分类关键词>` 按分类搜索 |
+| 完全没有相关数据 | 不钻取,正常回答 |
+
+```bash
+# 按 ID 钻取
+atomsyn-cli get --id <atom_id>
+
+# 按关键词搜索
+atomsyn-cli find --query "竞品 分析" --top 3
+```
+
+`get` 返回完整 markdown (上限 8000 字符):
+- 方法论: 核心理念 + 步骤 + 案例 + **📎 关联碎片**
+- 经验碎片: 摘要 + 洞察 + 四维分类 + 关联方法论
+
+**Token 预算**: 一次 read (~500 token) + 1-3 次 get/find (~3000 token each) = 总计不超过 10000 token
+
+### Step 3 · 把内容注入你的回答
+
+**核心原则: 像一个懂你的朋友递给你一句话,不要粘贴 JSON 或原始数据结构。**
 
 如果有命中:
 
-1. **先用用户自己的话开头**,不要用你的综述。引用最相关那条原子的 `insight` 或 `keySteps`,并署名: "从你的 atomsyn 里 —— *'<原子名>'* (atom_exp_...)"
-2. **先引用,再综合**。引用之后,再用你自己的话把它和当前问题连起来。
+1. **方法论命中**: 用方法论的核心思想和步骤指导回答框架。例:"按你知识库里的'宏观趋势扫描'方法论,这里应该先..."
+2. **📎 碎片命中**: 以 "你之前记过" 的口吻自然融入。例:"你之前在类似的场景里发现过...(来自 atomsyn `atom_frag_...`)" —— **不要粘贴原 JSON,不要列表式罗列,要像回忆一样自然融入**。
 3. **露出 id**,让用户可以在 Atomsyn GUI 里打开那张原子去校准 / 锁定 / 降权。**同时**这个 id 可以被 `atomsyn-write` 的更新模式直接消费: 如果用户接下来说"补充到这条"或"把新坑也合进来",agent 应该用 `atomsyn-cli update --id <这个 id> --stdin` 而不是新建。
-4. **尊重锁定**: 如果原子 `stats.locked: true`,就把它的内容当权威。即使你有不同意见,也必须明确把分歧讲出来并露出 atom id,**不要默默反驳**。
+4. **尊重锁定**: 如果碎片有 🔒 标记(`stats.locked: true`),把它的内容当权威。即使你有不同意见,也必须明确把分歧讲出来并露出 atom id,**不要默默反驳**。
+5. **情绪复盘不返回**: CLI 已经过滤了 `private: true` 的碎片。
 
 如果没命中,按你正常的思路回答 —— 不要提 atomsyn-read。
 
@@ -154,16 +200,22 @@ CLI 返回这种格式:
 
 ---
 
-## V1.5 限制(V1.6+ 会放开)
+## V2.0 M4 已完成 / 剩余限制
 
-- **只做关键词打分**: V1.5 的 `atomsyn-cli read` 用简单子串 + 关键词重叠打分。V1.6 会加 embedding 语义检索。
-- **只读 experience 原子**: V1.5 故意把 `methodology` 和 `skill-inventory` 排除在 agent 读取范围外(它们归 GUI 管 / L1)。V1.6 可能加 `--include methodology` flag。
-- **没有对话感知的查询改写**: agent 从对话里朴素提取查询。V1.6 可能加 LLM 查询改写。
-- **没有跨 agent 来源过滤**: `sourceAgent` 会记录但不用于过滤。V1.6 可能允许"只读我从 Cursor 写的经验"。
-- **单次调用预算是本地约定**: 由调用方 agent 在会话内自觉执行。CLI 本身不限流。V1.6 可能加冷却期。
+### ✅ M4 已解决
+- **方法论 + 经验同时搜索**: `atomsyn-cli read` 现在同时扫描方法论和经验原子,不再局限于 experience
+- **📎 关联碎片反查**: 对命中的方法论 atom 自动反查 `linked_methodologies`,展示用户的相关碎片
+- **隐私保护**: `private: true` 的碎片(如情绪复盘)默认不返回
+- **校准尊重**: `stats.locked: true` 的碎片 confidence 提升到 1.0,始终优先展示
+
+### ⚠️ 剩余限制(V2.x 放开)
+- **只做关键词打分**: 用简单子串 + 关键词重叠打分。未来会加 embedding 语义检索。
+- **没有对话感知的查询改写**: agent 从对话里朴素提取查询。
+- **没有跨 agent 来源过滤**: `sourceAgent` 会记录但不用于过滤。
+- **单次调用预算是本地约定**: 由调用方 agent 在会话内自觉执行。CLI 本身不限流。
 
 ---
 
 ## 来源
 
-这个 skill 和 `atomsyn-write` (V1.5 T-2.1 / T-2.2) 是一对,共同构成 V1.5 Gap-2(Agent 双向接口)的产品级实现。详见 `docs/plans/v1.5-implementation-plan.md` T-2.3 和 `docs/plans/v1.5-resume-state.md`。它驱动的 CLI 是 `scripts/atomsyn-cli.mjs` —— Atomsyn 整个 L2 叙事的承重组件。
+这个 skill 和 `atomsyn-write` 是一对,共同构成 Atomsyn L2(面向 AI)的双向接口。V2.0 M4 实现了"双向蒸馏相遇层" —— 方法论与经验碎片在同一次 AI 调用里相遇。它驱动的 CLI 是 `scripts/atomsyn-cli.mjs` —— Atomsyn 整个 L2 叙事的承重组件。

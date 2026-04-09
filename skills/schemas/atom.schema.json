@@ -30,7 +30,7 @@
     "name": { "type": "string", "minLength": 1 },
     "nameEn": { "type": "string" },
     "frameworkId": { "type": "string" },
-    "cellId": { "type": "integer", "minimum": 1 },
+    "cellId": { "oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "string", "minLength": 1 }], "description": "Cell/category/node identifier. Integer for matrix layouts, string for list/tree." },
     "tags": { "type": "array", "items": { "type": "string" } },
     "parentAtomId": { "type": "string" },
     "relationType": { "type": "string", "enum": ["child", "sibling", "parent"] },

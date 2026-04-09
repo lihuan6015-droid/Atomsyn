@@ -271,7 +271,7 @@ export function QuickIngestDialog({ open, onClose, onIngested }: Props) {
                     className="w-full rounded-xl bg-white dark:bg-white/5 border border-neutral-200/70 dark:border-white/10 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/40 resize-none"
                     disabled={classifying || saving}
                   />
-                  <p className="text-[11px] text-neutral-400 mt-1">
+                  <p className="text-[0.6875rem] text-neutral-400 mt-1">
                     未来将支持 URL 和图片输入
                   </p>
                 </div>
@@ -290,7 +290,7 @@ export function QuickIngestDialog({ open, onClose, onIngested }: Props) {
                       <span className="text-xs font-semibold text-violet-600 dark:text-violet-400">
                         分类预览
                       </span>
-                      <span className="text-[10px] text-neutral-500 font-mono">
+                      <span className="text-[0.625rem] text-neutral-500 font-mono">
                         confidence: {(result.confidence * 100).toFixed(0)}%
                       </span>
                     </div>
@@ -304,7 +304,7 @@ export function QuickIngestDialog({ open, onClose, onIngested }: Props) {
                       {(() => {
                         const ic = getInsightColor(result.insight_type)
                         return (
-                          <span className={cn('px-2 py-0.5 rounded-full text-[11px] font-medium', ic.bg, ic.text, ic.darkBg, ic.darkText)}>
+                          <span className={cn('px-2 py-0.5 rounded-full text-[0.6875rem] font-medium', ic.bg, ic.text, ic.darkBg, ic.darkText)}>
                             {result.insight_type}
                           </span>
                         )
@@ -312,7 +312,7 @@ export function QuickIngestDialog({ open, onClose, onIngested }: Props) {
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {result.tags.map((t) => (
-                        <span key={t} className="px-2 py-0.5 rounded-full text-[10px] bg-neutral-100 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 font-mono">
+                        <span key={t} className="px-2 py-0.5 rounded-full text-[0.625rem] bg-neutral-100 dark:bg-white/5 text-neutral-600 dark:text-neutral-400 font-mono">
                           {t}
                         </span>
                       ))}
@@ -366,7 +366,7 @@ function Chip({ label, color }: { label: string; color: 'sky' | 'emerald' | 'amb
     amber: 'bg-amber-500/10 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
   }
   return (
-    <span className={cn('px-2 py-0.5 rounded-full text-[11px] font-medium', styles[color])}>
+    <span className={cn('px-2 py-0.5 rounded-full text-[0.6875rem] font-medium', styles[color])}>
       {label}
     </span>
   )

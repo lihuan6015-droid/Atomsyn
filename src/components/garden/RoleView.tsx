@@ -149,7 +149,7 @@ export function RoleView({ atoms, role }: Props) {
           {hasAnyFilter && (
             <button
               onClick={clearFilters}
-              className="flex items-center gap-1 px-2 py-0.5 text-[10px] text-neutral-500 hover:text-red-500 transition-colors"
+              className="flex items-center gap-1 px-2 py-0.5 text-[0.625rem] text-neutral-500 hover:text-red-500 transition-colors"
             >
               <X className="w-3 h-3" />
               清除筛选
@@ -160,7 +160,7 @@ export function RoleView({ atoms, role }: Props) {
 
       {/* Results count when filtered */}
       {hasAnyFilter && (
-        <div className="text-[11px] text-neutral-400 dark:text-neutral-500">
+        <div className="text-[0.6875rem] text-neutral-400 dark:text-neutral-500">
           筛选结果: {filtered.length} / {allInRole.length} 条
         </div>
       )}
@@ -213,7 +213,7 @@ function FilterRow({
 }) {
   return (
     <div className="flex items-center gap-1.5 flex-wrap">
-      <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 w-8 shrink-0">
+      <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 w-8 shrink-0">
         {label}
       </span>
       {items.map(([value, count]) => {
@@ -223,13 +223,13 @@ function FilterRow({
             key={value}
             onClick={() => onToggle(value)}
             className={cn(
-              'inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[11px] font-medium transition-all',
+              'inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-[0.6875rem] font-medium transition-all',
               isActive ? activeColorClass : colorClass,
               'hover:scale-[1.03] active:scale-95',
             )}
           >
             {value}
-            <span className={cn('text-[10px] font-mono', isActive ? 'opacity-80' : 'opacity-60')}>
+            <span className={cn('text-[0.625rem] font-mono', isActive ? 'opacity-80' : 'opacity-60')}>
               {count}
             </span>
           </button>

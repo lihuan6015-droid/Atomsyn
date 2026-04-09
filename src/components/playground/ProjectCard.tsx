@@ -39,11 +39,11 @@ export function ProjectCard({ project }: Props) {
           <h3 className="font-semibold text-base truncate group-hover:text-stage-discover transition-colors">
             {project.name}
           </h3>
-          <p className="text-[11px] text-neutral-400 font-mono mt-0.5 truncate">{project.slug}</p>
+          <p className="text-[0.6875rem] text-neutral-400 font-mono mt-0.5 truncate">{project.slug}</p>
         </div>
         <span
           className={cn(
-            'shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wider',
+            'shrink-0 text-[0.625rem] font-medium px-2 py-0.5 rounded-full uppercase tracking-wider',
             stageClass
           )}
         >
@@ -64,7 +64,7 @@ export function ProjectCard({ project }: Props) {
             {project.pinnedAtoms.length} 原子
           </span>
           {project.status && (
-            <span className="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800/80 text-[10px] uppercase tracking-wider">
+            <span className="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800/80 text-[0.625rem] uppercase tracking-wider">
               {project.status}
             </span>
           )}

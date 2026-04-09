@@ -49,7 +49,7 @@ export function PracticeRow({ practice, atom }: Props) {
         {STATUS_ICON[practice.status]}
         <div className="min-w-0 flex-1">
           <div className="text-sm font-medium truncate">{practice.title}</div>
-          <div className="text-[11px] text-neutral-500 mt-0.5 flex items-center gap-2">
+          <div className="text-[0.6875rem] text-neutral-500 mt-0.5 flex items-center gap-2">
             {atom ? (
               <Link
                 to={`/atoms/${atom.id}`}
@@ -107,7 +107,7 @@ export function PracticeRow({ practice, atom }: Props) {
 function DetailBlock({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="text-[10px] font-mono uppercase tracking-wider text-neutral-400 mb-1">
+      <div className="text-[0.625rem] font-mono uppercase tracking-wider text-neutral-400 mb-1">
         {label}
       </div>
       <div className="text-neutral-700 dark:text-neutral-300 leading-relaxed">{children}</div>

@@ -39,21 +39,21 @@ export function SkillPromptBox({ atomId, prompt }: Props) {
           <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             AI Skill Prompt
           </h2>
-          <span className="text-[10px] text-neutral-400 dark:text-neutral-500 font-mono">
+          <span className="text-[0.625rem] text-neutral-400 dark:text-neutral-500 font-mono">
             · 复制后粘到任意 AI 对话框
           </span>
         </div>
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => copy(prompt, 'atom-prompt-copy')}
-            className="flex items-center gap-1.5 px-2.5 h-7 rounded-lg bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:border-violet-400 dark:hover:border-violet-500 transition-colors text-[11px] font-medium"
+            className="flex items-center gap-1.5 px-2.5 h-7 rounded-lg bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 hover:border-violet-400 dark:hover:border-violet-500 transition-colors text-[0.6875rem] font-medium"
           >
             <Copy className="w-3 h-3" />
             复制
           </button>
           <button
             onClick={() => setFillOpen(true)}
-            className="flex items-center gap-1.5 px-2.5 h-7 rounded-lg bg-violet-500 hover:bg-violet-600 text-white transition-colors text-[11px] font-medium shadow-lg shadow-violet-500/25"
+            className="flex items-center gap-1.5 px-2.5 h-7 rounded-lg bg-violet-500 hover:bg-violet-600 text-white transition-colors text-[0.6875rem] font-medium shadow-lg shadow-violet-500/25"
           >
             <Target className="w-3 h-3" />
             填充后复制
@@ -75,7 +75,7 @@ export function SkillPromptBox({ atomId, prompt }: Props) {
         </pre>
 
         <div className="flex items-center justify-between px-5 py-2.5 border-t border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50">
-          <div className="flex items-center gap-2 text-[10px] text-neutral-400 dark:text-neutral-500">
+          <div className="flex items-center gap-2 text-[0.625rem] text-neutral-400 dark:text-neutral-500">
             <CheckCircle2 className="w-3 h-3" />
             <span>
               共 {charCount} 字 · {placeholderCount} 个占位符
@@ -83,7 +83,7 @@ export function SkillPromptBox({ atomId, prompt }: Props) {
           </div>
           <button
             onClick={() => setExpanded((e) => !e)}
-            className="text-[10px] text-violet-500 hover:text-violet-600 font-medium flex items-center gap-1"
+            className="text-[0.625rem] text-violet-500 hover:text-violet-600 font-medium flex items-center gap-1"
           >
             {expanded ? '收起' : '展开全部'}
             {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}

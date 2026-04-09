@@ -1,12 +1,31 @@
 ---
 name: atomsyn-write
-description: 把当前对话里的关键学习沉淀进用户本地 Atomsyn 知识库,或者**更新/补充已有经验**。两种模式:(1) 新建 — 当用户说"帮我记下来 / 这个要记住 / 存到我的 atomsyn / 存到 Atomsyn / 加到 Atomsyn / 加到我的知识库 / Atomsyn 记一下 / 别让我忘了 / save to my atomsyn / save to Atomsyn / remember this for me / crystallize this"时。(2) 更新 — 当用户说"更新那条经验 / 补充到之前那条 / 把这个也合进 X 里 / 修正刚才的 / 合并进旧的 / update that atom / merge into the existing one"时,应先用 atomsyn-cli find 定位已有 id,再用 atomsyn-cli update 合并,**绝对不要**新建一条重复的。只在用户明确要求时调用,不要主动触发。
+description: "沉淀经验到用户的本地Atomsyn知识库(产品方法论+个人经验碎片)。核心判断: 这段对话中是否产生了「如果不记下来,未来的自己或未来的AI就不会知道」的认知? 如果是,在自然停顿时简短问一句'要沉淀到Atomsyn吗?'。不打断正在进行的工作流,不沉淀可搜索的通用知识。用户说 记下来/存到atomsyn/remember/crystallize/别让我忘了/沉淀一下 时立即执行。"
 allowed-tools: Bash
 ---
 
 # atomsyn-write — 让 AI 帮用户把经验沉淀进本地知识库
 
-这是 Atomsyn V1.5 "Agent 双向接口"的**写入半边**(见 `docs/framing/v1.5-problem-framing.md` § 北极星 Demo 四幕 · 场景一)。
+这是 Atomsyn "Agent 双向接口"的**写入半边**。
+
+## 主动建议哲学
+
+人性是懒惰的 —— 用户不会主动说"帮我存一下"。**你的职责是在恰当的时机主动建议沉淀**,但绝不在用户专注工作时打断。
+
+### 何时主动建议 vs 何时不动
+
+| 场景 | 行为 |
+|---|---|
+| 一段深度技术讨论/决策/复盘刚结束 | ✅ 简短问一句"这个洞察要沉淀到 Atomsyn 吗?" |
+| 用户踩了一个坑并解决了 | ✅ "这个踩坑经验要记下来吗?" |
+| 一个开发任务完成,有可复用的模式 | ✅ "要把这个模式沉淀下来吗?" |
+| 用户明确说记下来/存到 atomsyn | ✅ 立即执行 |
+| 用户正在编程中途 | ❌ 不打断 |
+| 闲聊 | ❌ 不触发 |
+| 简单问答(标准答案) | ❌ 没有沉淀价值 |
+| 对话刚开始,还没产生有价值的内容 | ❌ 不触发 |
+
+**关键**: 主动建议 ≠ 主动执行。除非用户明确说"记下来",否则只是**提议**,由用户决定。系统会自动关联相关方法论,用户完全无需维护。
 
 **核心使命**: 当用户说"帮我记下来"的时候,你要把**当前对话里最近那一段有价值的学习**,结构化成一张符合 schema 的 `experience` 原子卡片,写进用户电脑上的 Atomsyn 数据目录。这样未来任何 AI (同一个会话 / 新开会话 / 甚至换一个工具比如 Cursor) 都可以通过 `atomsyn-read` 把它作为上下文调用回来。
 
@@ -61,14 +80,30 @@ allowed-tools: Bash
 
 ### Step 1 · 提炼用户视角的字段
 
-从当前对话里,抽取**最小自包含的那一段**,组装成下面这份**精简 JSON**(这是 CLI 的正式输入契约):
+从当前对话里,抽取**最小自包含的那一段**,组装成下面这份**精简 JSON**(这是 CLI 的正式输入契约)。
+
+#### ⚠️ 硬性约束速查 (构造 JSON 前必读)
+
+| 字段 | 必填 | 约束 |
+|---|---|---|
+| `name` | **必填** | ≤120 字符。**不要用 `title`**, CLI 只认 `name` |
+| `sourceContext` | **必填** | ≤300 字符 |
+| `insight` | **必填** | 50-4000 字符 |
+| `tags` | **必填** | **1-8 个**字符串数组,多了会被拒绝 |
+| `role` | **必填** | 先查 taxonomy 复用已有值 |
+| `situation` | **必填** | 先查 taxonomy 复用已有值 |
+| `activity` | **必填** | 先查 taxonomy 复用已有值 |
+| `insight_type` | **必填** | 只能从 8 个枚举值中选 |
+| `confidence` | **仅 ingest** | write 模式不要传此字段 |
+| `title` | **不存在** | CLI 不认此字段,用 `name` |
+| 传输方式 | — | **用临时文件 `--input`**,不要 echo pipe |
 
 ```json
 {
   "name": "人类可读的中文/英文标题 (必填, ≤120 字符)",
   "sourceContext": "1-2 句情境描述 (必填, ≤300 字符)",
-  "insight": "核心学习, 要有推理过程不只是结论 (必填, 50-4000 字符)",
-  "tags": ["kebab-case", "标签", "1-8 个"],
+  "insight": "核心学习, 要有推理过程不只是结论 (必填, 50-4000 字符)。你可以使用完整的 Markdown 语法排版，如果有配图请直接使用相对路径图片语法插入（例如：`![错误表现](error.png)`），图片后续步骤中会要求你移入。",
+  "tags": ["1-8 个字符串标签"],
   "keySteps": ["可选 · 下次会怎么做的 3-6 条要点"],
   "role": "必填 · 角色维度 (产品 | 工程 | 设计 | 学习 | 研究 | ...)",
   "situation": "必填 · 情境维度 (踩坑当下 | 代码审查 | 对话AI | 复盘 | ...)",
@@ -82,6 +117,9 @@ allowed-tools: Bash
       "filename": "可选",
       "description": "可选"
     }
+  ],
+  "screenshots": [
+    "可选 · 在本字段仅填入关联的图片纯文件名，例如：[\"image.png\"]。不要包含任何路径。在拿到 CLI 的回调路径后，你再去执行对应的图片拷贝操作。"
   ],
   "relatedFrameworks": ["可选 · 相关方法论骨架 id"],
   "relatedAtoms": ["可选 · 用户之前沉淀的其他 atom id"],
@@ -133,21 +171,29 @@ atomsyn-cli find --query "<2-4 个关键词>" --with-taxonomy
 
 ### Step 3 · 调用 atomsyn-cli (write 或 update)
 
-**新建** (CLI 安装好之后):
+**重要: 使用临时文件传 JSON,不要用 echo pipe。** JSON 内容经常包含换行符、引号等特殊字符,echo pipe 会导致 shell 转义错误。
+
+**新建**:
 ```bash
-echo '<你 Step 1 构造的 JSON>' | atomsyn-cli write --stdin
+# 1. 先把 JSON 写到临时文件 (用 Write tool,不要用 echo)
+# Write to /tmp/atomsyn_write.json
+# 2. 再用 --input 参数传给 CLI
+atomsyn-cli write --input /tmp/atomsyn_write.json
 ```
 
 **更新已有** (Step 2 拿到 id 之后):
 ```bash
-echo '<你 Step 1 构造的 JSON,只放要变的字段即可>' | atomsyn-cli update --id <atomId> --stdin
+# 同样先写临时文件,再传给 CLI
+atomsyn-cli update --id <atomId> --input /tmp/atomsyn_write.json
 ```
 
 `update` 是 **merge 语义**: 你只需要传要变/要补的字段(name / insight / keySteps / tags / codeArtifacts 等),CLI 会把它们合进已有原子,保留 id / createdAt / 用户的 locked/userDemoted 状态,自动更新 updatedAt,并在必要时原子迁移 slug 文件夹。如果只是补一条 keySteps 项,**也要把完整的新 keySteps 数组传过去**(覆盖不是 append,这样语义清晰)。
 
 **降级路径** (在 Atomsyn 项目仓库内,`atomsyn-cli` 还没装到 PATH):
 ```bash
-echo '<JSON>' | node /path/to/atomsyn/scripts/atomsyn-cli.mjs write --stdin
+atomsyn-cli write --input /tmp/atomsyn_write.json
+# 或
+node /path/to/atomsyn/scripts/atomsyn-cli.mjs write --input /tmp/atomsyn_write.json
 # 或
 echo '<JSON>' | node /path/to/atomsyn/scripts/atomsyn-cli.mjs update --id <id> --stdin
 ```
@@ -172,6 +218,15 @@ CLI 成功时会在 stdout 返回一份 JSON:
 ```
 
 失败时 CLI 非零退出 + stderr 打印错误(例如 `insight must be 50-4000 characters` 或 `Atom is locked`)。你**读这份 stderr 告诉用户发生了什么**,不要 retry 同样的 payload —— 要么修正输入(比如 insight 太短补充内容)要么放弃。
+
+### Step 3.5 · 迁移配图 (如果有)
+
+如果你在 Step 1 的 `screenshots` 或 `insight` 里引用了配图文件（纯文件名）：
+由于你现在通过 Step 3 里的回调 `path` 字段知道了 JSON 文件的真实绝对路径（例如 `/Users/xxx/atomsyn/atoms/experience/slug/atom_exp_123.json`），你**必须**提取出它所在的父目录，并执行 Bash 的 `cp` 操作，将源图片文件复制到该目录下：
+```bash
+cp /原始系统路径/error.png /Users/xxx/atomsyn/atoms/experience/slug/
+```
+**这一步非常关键**，只有图片被真正物理移入与 JSON 相同的目录下，前端渲染引擎才能根据相对路径原生且安全地解析出图片。
 
 ### Step 4 · 给用户确认回执
 

@@ -26,7 +26,7 @@ export function CollapseSection({ title, badge, icon, defaultOpen = false, child
         <ChevronRight className={cn('chevron w-4 h-4 text-neutral-400', open && 'open')} />
         {icon && <span className="text-neutral-500">{icon}</span>}
         <span className="text-sm font-medium flex-1">{title}</span>
-        {badge && <span className="text-[10px] text-neutral-400 font-mono">{badge}</span>}
+        {badge && <span className="text-[0.625rem] text-neutral-400 font-mono">{badge}</span>}
       </button>
       <div className={cn('collapse-content', open && 'open')}>
         <div className="collapse-inner">

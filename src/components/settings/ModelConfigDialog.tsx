@@ -50,6 +50,7 @@ export function ModelConfigDialog({ open, onClose, modelType, editModel }: Props
   const [apiKey, setApiKey] = useState('')
   const [showKey, setShowKey] = useState(false)
   const [name, setName] = useState('')
+  const [maxCtxTokens, setMaxCtxTokens] = useState('128')
 
   // Test connection
   const [testing, setTesting] = useState(false)
@@ -70,6 +71,7 @@ export function ModelConfigDialog({ open, onClose, modelType, editModel }: Props
       setModelId(editModel.modelId)
       setName(editModel.name)
       setApiKey(getModelApiKey(editModel.id))
+      setMaxCtxTokens(String(editModel.maxContextTokens ?? 128))
     } else {
       setProvider('')
       setCustomName('')
@@ -77,6 +79,7 @@ export function ModelConfigDialog({ open, onClose, modelType, editModel }: Props
       setModelId('')
       setName('')
       setApiKey('')
+      setMaxCtxTokens('128')
     }
   }, [open, editModel])
 
@@ -124,6 +127,8 @@ export function ModelConfigDialog({ open, onClose, modelType, editModel }: Props
         name.trim() ||
         `${PROVIDER_MAP.get(provider as ProviderId)?.name ?? provider} ${modelId}`
 
+      const ctxTokens = parseInt(maxCtxTokens, 10) || 128
+
       if (isEdit && editModel) {
         updateModel(editModel.id, {
           name: displayName,
@@ -131,6 +136,7 @@ export function ModelConfigDialog({ open, onClose, modelType, editModel }: Props
           customProviderName: provider === 'custom' ? customName : undefined,
           baseUrl,
           modelId,
+          maxContextTokens: ctxTokens,
         })
         if (apiKey) setModelApiKey(editModel.id, apiKey)
       } else {
@@ -141,6 +147,7 @@ export function ModelConfigDialog({ open, onClose, modelType, editModel }: Props
           customProviderName: provider === 'custom' ? customName : undefined,
           baseUrl,
           modelId,
+          maxContextTokens: ctxTokens,
           enabled: true,
           isDefault: false,
         })
@@ -232,7 +239,7 @@ export function ModelConfigDialog({ open, onClose, modelType, editModel }: Props
                       alt={p.name}
                       className="w-5 h-5 rounded object-contain"
                     />
-                    <span className="text-[13px] whitespace-nowrap">{p.name}</span>
+                    <span className="text-[0.8125rem] whitespace-nowrap">{p.name}</span>
                   </button>
                 ))}
               </div>
@@ -292,10 +299,49 @@ export function ModelConfigDialog({ open, onClose, modelType, editModel }: Props
                   {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              <p className="text-[11px] text-neutral-500 mt-1">
+              <p className="text-[0.6875rem] text-neutral-500 mt-1">
                 存储在浏览器本地（localStorage），不会写入项目文件。
               </p>
             </Field>
+
+            {/* Max Context Tokens */}
+            {modelType === 'llm' && (
+              <Field label="最大上下文窗口 (K tokens)">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={maxCtxTokens}
+                    onChange={(e) => setMaxCtxTokens(e.target.value)}
+                    className={inputClass + ' w-24'}
+                    placeholder="128"
+                    min={8}
+                    max={2048}
+                    step={8}
+                  />
+                  <span className="text-xs text-neutral-400">K</span>
+                  <div className="flex gap-1 ml-2">
+                    {[32, 64, 128, 200, 256].map((v) => (
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() => setMaxCtxTokens(String(v))}
+                        className={
+                          'px-2 py-0.5 rounded text-[0.6875rem] transition-colors ' +
+                          (maxCtxTokens === String(v)
+                            ? 'bg-violet-500/15 text-violet-600 dark:text-violet-400'
+                            : 'bg-neutral-100 dark:bg-white/5 text-neutral-500 hover:bg-neutral-200 dark:hover:bg-white/10')
+                        }
+                      >
+                        {v}K
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-[0.6875rem] text-neutral-500 mt-1">
+                  聊天模块在上下文不超过此限制的 40-50% 前完整保留历史对话，超出后才触发渐进裁剪。
+                </p>
+              </Field>
+            )}
 
             {/* Test connection + Save */}
             <div className="flex items-center gap-3 pt-1">

@@ -1,6 +1,6 @@
 [package]
 name = "atomsyn"
-version = "0.1.5"
+version = "0.1.0"
 description = "Atomsyn — Personal Meta-Skill Vault"
 authors = ["circlelee"]
 edition = "2021"

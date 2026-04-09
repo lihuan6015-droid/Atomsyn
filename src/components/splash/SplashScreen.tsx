@@ -148,20 +148,20 @@ export function SplashScreen({ onComplete, autoAdvance = false }: Props) {
             Atomsyn
           </h1>
           <p className={cn('text-xs uppercase tracking-[0.2em]', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
-            v1.5 · 个人主权元认知层
+            认知双向操作系统
           </p>
         </div>
 
         {/* Tagline */}
-        <p className={cn('max-w-md text-center text-sm', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
-          你的知识库 · 100% 在你本地 · 为你和你授权的 AI 服务
+        <p className={cn('max-w-md text-center text-sm leading-relaxed', isDark ? 'text-neutral-400' : 'text-neutral-500')}>
+          让你积累的认知，在需要时醒来
         </p>
 
         {webMode && (
           <div
             className={cn(
               'rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1',
-              'text-[11px] font-medium uppercase tracking-wider text-amber-300',
+              'text-[0.6875rem] font-medium uppercase tracking-wider text-amber-300',
             )}
           >
             开发模式 · Web Preview

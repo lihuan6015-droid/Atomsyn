@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
+import { convertFileSrc } from '@tauri-apps/api/core'
+import ReactMarkdown from 'react-markdown'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
   ChevronRight,
@@ -26,10 +29,16 @@ import {
   Tag,
   Check,
   X,
+  ZoomIn,
+  ZoomOut,
+  RotateCw,
+  Download
 } from 'lucide-react'
 import { atomsApi, frameworksApi, projectsApi, trackUsage, usageApi } from '@/lib/dataApi'
 import { useAppStore } from '@/stores/useAppStore'
+import { useNotesStore } from '@/stores/useNotesStore'
 import type { Atom, AtomAny, Framework, Project } from '@/types'
+import { isMatrixFramework } from '@/types'
 
 interface AgentUsageEvent {
   ts: string
@@ -43,9 +52,46 @@ import { CollapseSection } from '@/components/shared/CollapseSection'
 import { SkillPromptBox } from '@/components/atom/SkillPromptBox'
 import { SpotlightPalette } from '@/components/atlas/SpotlightPalette'
 import { NewAtomDialog } from './NewAtomDialog'
+import { RelatedFragmentsPanel } from '@/components/atom/RelatedFragmentsPanel'
+import { LinkedMethodologiesSection } from '@/components/atom/LinkedMethodologiesSection'
+
+function getMediaUrl(url: string, absPath?: string) {
+  if (!url || !absPath) return url
+  // Handle absolute or external URLs natively
+  if (url.startsWith('http')) return url
+
+  let filename = url
+  // Fallback for legacy atoms:// protocol
+  if (url.startsWith('atoms://')) {
+    filename = url.replace(/atoms:\/\/.*?\//, '') 
+  }
+  if (filename.startsWith('./')) {
+    filename = filename.substring(2)
+  }
+
+  try {
+    const splitIdx = absPath.lastIndexOf('/atoms/')
+    if (splitIdx !== -1) {
+      const dataDir = absPath.substring(0, splitIdx)
+      const relFile = absPath.substring(splitIdx + 1)
+      const relDir = relFile.substring(0, relFile.lastIndexOf('/'))
+      const localAbsPath = `${dataDir}/${relDir}/${filename}`
+      
+      // In development (npm run tauri:dev), Tauri asset protocol permissions might be restricted.
+      // We rely on the Vite dev server's /api/fs/ proxy.
+      // In production built apps, we must use convertFileSrc.
+      if ('__TAURI_INTERNALS__' in window && import.meta.env.PROD) {
+        return convertFileSrc(localAbsPath)
+      }
+      return `/api/fs/${relDir}/${filename}`
+    }
+  } catch {}
+  return url
+}
 
 export default function AtomDetailPage() {
   const { atomId } = useParams<{ atomId: string }>()
+  const navigate = useNavigate()
   const [atom, setAtom] = useState<(Atom & Record<string, any>) | null>(null)
 
   // Safe accessors for fields that may not exist on non-methodology atoms
@@ -64,14 +110,54 @@ export default function AtomDetailPage() {
   const [bmType, setBmType] = useState<'link' | 'text'>('link')
   const [agentEvents, setAgentEvents] = useState<AgentUsageEvent[]>([])
   const [mergePickerOpen, setMergePickerOpen] = useState(false)
-  const [editingClassification, setEditingClassification] = useState(false)
-  const [classificationDraft, setClassificationDraft] = useState({
-    role: '',
-    situation: '',
-    activity: '',
-    insight_type: '',
-  })
+  const [mergeCandidates, setMergeCandidates] = useState<Atom[]>([])
+
+  // Image Preview State
+  const [previewImage, setPreviewImage] = useState<string | null>(null)
+  const [previewScale, setPreviewScale] = useState(1)
+  const [previewRotation, setPreviewRotation] = useState(0)
+
+  // ─── Inline editing state ──────────────────────────────────────────
+  const [editingField, setEditingField] = useState<'title' | 'insight' | 'sourceContext' | 'classification' | null>(null)
+  const [editDraft, setEditDraft] = useState<Record<string, string>>({})
+  const editingClassification = editingField === 'classification'
+  const classificationDraft = {
+    role: editDraft.role ?? '',
+    situation: editDraft.situation ?? '',
+    activity: editDraft.activity ?? '',
+    insight_type: editDraft.insight_type ?? '',
+  }
+  const setClassificationDraft = (fn: (d: typeof classificationDraft) => typeof classificationDraft) => {
+    setEditDraft((prev) => {
+      const next = fn({
+        role: prev.role ?? '',
+        situation: prev.situation ?? '',
+        activity: prev.activity ?? '',
+        insight_type: prev.insight_type ?? '',
+      })
+      return { ...prev, ...next }
+    })
+  }
   const showToast = useAppStore((s) => s.showToast)
+
+  /** Save a single field or multiple fields to the atom */
+  async function saveField(updates: Record<string, string>) {
+    if (!atom) return
+    // Also sync name/title for experience atoms
+    if ('title' in updates && (atom as any).kind === 'experience') {
+      updates.name = updates.title
+    }
+    const updated = { ...atom, ...updates, updatedAt: new Date().toISOString() }
+    try {
+      await atomsApi.update(atom.id, updated as any)
+      setAtom(updated as any)
+      setEditingField(null)
+      setEditDraft({})
+      showToast('✓ 已更新')
+    } catch (e: any) {
+      showToast(e?.message ?? '保存失败')
+    }
+  }
 
   useEffect(() => {
     if (!atomId) return
@@ -138,17 +224,31 @@ export default function AtomDetailPage() {
     }
   }, [atomId])
 
+  // Keyboard navigation for preview
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && previewImage) {
+        setPreviewImage(null)
+        setPreviewScale(1)
+        setPreviewRotation(0)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [previewImage])
+
   if (!atom) {
     return <div className="p-10 text-sm text-neutral-500">加载原子中...</div>
   }
 
-  const cell = framework?.matrix.cells.find((c) => c.stepNumber === atom.cellId)
+  const cell = (framework && isMatrixFramework(framework)) ? framework.matrix.cells.find((c) => c.stepNumber === atom.cellId) : undefined
 
   const handleDelete = async () => {
     if (!confirm(`确认删除「${atom.name}」？此操作不可恢复。`)) return
     try {
       await atomsApi.remove(atom.id)
       showToast('✓ 已删除')
+      window.dispatchEvent(new CustomEvent('atomsyn:atoms-changed'))
       window.history.back()
     } catch (e) {
       showToast(e instanceof Error ? e.message : '删除失败')
@@ -245,7 +345,7 @@ export default function AtomDetailPage() {
   })()
 
   const sortedAgentEvents = [...agentEvents].sort((a, b) => (a.ts < b.ts ? 1 : -1))
-  const mergeCandidates = siblings
+  // mergeCandidates is already provided by siblings state
 
   return (
     <div className="hero-gradient min-h-[calc(100vh-56px)]">
@@ -299,15 +399,6 @@ export default function AtomDetailPage() {
                 <button
                   onClick={() => {
                     setMenuOpen(false)
-                    showToast('编辑功能即将上线')
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left"
-                >
-                  <Pencil className="w-3.5 h-3.5" /> 编辑
-                </button>
-                <button
-                  onClick={() => {
-                    setMenuOpen(false)
                     handleDelete()
                   }}
                   className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left text-red-500"
@@ -325,16 +416,16 @@ export default function AtomDetailPage() {
         <div className="mb-8">
           {atom.kind === 'methodology' && atom.cellId && (
           <div className="flex items-center gap-2 mb-3">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[10px] font-mono font-semibold tracking-wider border border-violet-500/20">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[0.625rem] font-mono font-semibold tracking-wider border border-violet-500/20">
               STEP {String(atom.cellId).padStart(2, '0')}
             </div>
-            <span className="text-[11px] text-neutral-500 dark:text-neutral-400">
+            <span className="text-[0.6875rem] text-neutral-500 dark:text-neutral-400">
               {cell?.name} · {cell?.nameEn}
             </span>
             {atom.parentAtomId && (
               <>
                 <span className="text-neutral-300 dark:text-neutral-700">·</span>
-                <span className="text-[11px] text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
+                <span className="text-[0.6875rem] text-neutral-500 dark:text-neutral-400 flex items-center gap-1">
                   <GitFork className="w-3 h-3" />
                   子原子
                 </span>
@@ -342,18 +433,47 @@ export default function AtomDetailPage() {
             )}
           </div>
           )}
-          <h1 className="text-4xl font-bold tracking-tight leading-tight flex items-center gap-3 flex-wrap">
-            <span>{atom.name}</span>
+          {editingField === 'title' ? (
+            <div className="flex items-center gap-2">
+              <input
+                autoFocus
+                value={editDraft.title ?? ''}
+                onChange={(e) => setEditDraft((d) => ({ ...d, title: e.target.value }))}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') saveField({ title: editDraft.title ?? '' })
+                  if (e.key === 'Escape') { setEditingField(null); setEditDraft({}) }
+                }}
+                className="text-3xl font-bold tracking-tight flex-1 bg-transparent border-b-2 border-violet-400 dark:border-violet-500 focus:outline-none dark:text-white"
+              />
+              <button onClick={() => saveField({ title: editDraft.title ?? '' })} className="p-1.5 rounded-lg bg-violet-500 text-white hover:bg-violet-600"><Check className="w-4 h-4" /></button>
+              <button onClick={() => { setEditingField(null); setEditDraft({}) }} className="p-1.5 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-500"><X className="w-4 h-4" /></button>
+            </div>
+          ) : (
+          <h1 className="text-4xl font-bold tracking-tight leading-tight flex items-center gap-3 flex-wrap group/title">
+            <span>{atom.name || (atom as any).title || atom.id}</span>
             {atom.stats?.locked && (
               <span
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-medium border border-amber-500/30"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[0.6875rem] font-medium border border-amber-500/30"
                 title="已锁定 · agent 写入操作被拦截"
               >
                 <Lock className="w-3 h-3" />
                 已锁定
               </span>
             )}
+            {(atom as any).kind === 'experience' && (
+              <button
+                onClick={() => {
+                  setEditDraft({ title: atom.name || (atom as any).title || '' })
+                  setEditingField('title')
+                }}
+                className="opacity-0 group-hover/title:opacity-100 transition-opacity p-1 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                title="编辑标题"
+              >
+                <Pencil className="w-3.5 h-3.5 text-neutral-400" />
+              </button>
+            )}
           </h1>
+          )}
           {atom.nameEn && (
             <p className="text-lg text-neutral-500 dark:text-neutral-400 mt-1 font-mono">
               {atom.nameEn}
@@ -364,7 +484,7 @@ export default function AtomDetailPage() {
             {tags.map((t) => (
               <span
                 key={t}
-                className="px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-900 text-[10px] text-neutral-600 dark:text-neutral-400"
+                className="px-2 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-900 text-[0.625rem] text-neutral-600 dark:text-neutral-400"
               >
                 {t}
               </span>
@@ -383,7 +503,7 @@ export default function AtomDetailPage() {
               核心理念
             </h2>
           </div>
-          <p className="text-[15px] leading-relaxed text-neutral-800 dark:text-neutral-200 pl-8">
+          <p className="text-[0.9375rem] leading-relaxed text-neutral-800 dark:text-neutral-200 pl-8">
             {atom.coreIdea}
           </p>
         </section>
@@ -420,24 +540,154 @@ export default function AtomDetailPage() {
         <SkillPromptBox atomId={atom.id} prompt={atom.aiSkillPrompt} />
         )}
 
-        {/* Experience-specific: show insight + sourceContext */}
-        {(atom as any).kind === 'experience' && (atom as any).insight && (
+        {/* Experience-specific: show insight/summary + sourceContext */}
+        {(atom as any).kind === 'experience' && ((atom as any).insight || (atom as any).summary) && (
         <section className="mb-7 animate-fade-in">
-          <div className="flex items-center gap-2 mb-2.5">
+          <div className="flex items-center gap-2 mb-2.5 group/insight-header">
             <div className="w-6 h-6 rounded-lg bg-sky-500/10 flex items-center justify-center">
               <Lightbulb className="w-3.5 h-3.5 text-sky-500" />
             </div>
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 flex-1">
               经验洞察
             </h2>
+            {editingField !== 'insight' && (
+              <button
+                onClick={() => {
+                  setEditDraft({ insight: (atom as any).insight || (atom as any).summary || '' })
+                  setEditingField('insight')
+                }}
+                className="opacity-0 group-hover/insight-header:opacity-100 transition-opacity flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.625rem] text-neutral-500 hover:text-violet-500 hover:bg-violet-500/10"
+                title="编辑经验洞察"
+              >
+                <Pencil className="w-3 h-3" />
+              </button>
+            )}
           </div>
-          <div className="text-[15px] leading-relaxed text-neutral-800 dark:text-neutral-200 pl-8 whitespace-pre-wrap">
-            {(atom as any).insight}
+          {editingField === 'insight' ? (
+            <div className="pl-8 space-y-2">
+              <textarea
+                autoFocus
+                value={editDraft.insight ?? ''}
+                onChange={(e) => setEditDraft((d) => ({ ...d, insight: e.target.value }))}
+                rows={Math.max(6, (editDraft.insight ?? '').split('\n').length + 2)}
+                className="w-full text-[0.875rem] leading-relaxed bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-violet-400/40 resize-y font-mono dark:text-neutral-200"
+                placeholder="Markdown 格式..."
+              />
+              <div className="flex gap-2">
+                <button onClick={() => saveField({ insight: editDraft.insight ?? '' })} className="flex items-center gap-1 px-3 h-7 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-xs font-medium transition-colors"><Check className="w-3 h-3" />保存</button>
+                <button onClick={() => { setEditingField(null); setEditDraft({}) }} className="flex items-center gap-1 px-3 h-7 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs text-neutral-500"><X className="w-3 h-3" />取消</button>
+              </div>
+            </div>
+          ) : (
+          <div className="text-[0.9375rem] leading-relaxed text-neutral-800 dark:text-neutral-200 pl-8 prose prose-sm dark:prose-invert max-w-none prose-img:m-0 prose-p:my-2">
+            <ReactMarkdown
+              components={{
+                img: (props) => {
+                  const { node, onDrag, onDragStart, onDragEnd, onAnimationStart, draggable, ...rest } = props as any;
+                  const resolvedUrl = getMediaUrl(rest.src || '', (atom as any)._absPath)
+                  return (
+                    <motion.img
+                      layoutId={resolvedUrl}
+                      src={resolvedUrl}
+                      alt={rest.alt}
+                      title={rest.title}
+                      className="image-safe-fit rounded-lg border border-neutral-200 dark:border-neutral-800 my-4 shadow-sm cursor-zoom-in hover:opacity-95 transition-opacity"
+                      style={{ maxHeight: '480px' }}
+                      onClick={() => {
+                        setPreviewScale(1)
+                        setPreviewRotation(0)
+                        setPreviewImage(resolvedUrl)
+                      }}
+                    />
+                  )
+                }
+              }}
+            >
+              {(atom as any).insight || (atom as any).summary}
+            </ReactMarkdown>
           </div>
-          {(atom as any).sourceContext && (
-            <p className="text-xs text-neutral-500 pl-8 mt-2">
-              来源: {(atom as any).sourceContext}
-            </p>
+          )}
+          {/* Source context — hover to edit */}
+          {((atom as any).sourceContext || editingField === 'sourceContext') && (
+            editingField === 'sourceContext' ? (
+              <div className="pl-8 mt-2 flex items-center gap-2">
+                <span className="text-xs text-neutral-500 shrink-0">来源:</span>
+                <input
+                  autoFocus
+                  value={editDraft.sourceContext ?? ''}
+                  onChange={(e) => setEditDraft((d) => ({ ...d, sourceContext: e.target.value }))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') saveField({ sourceContext: editDraft.sourceContext ?? '' })
+                    if (e.key === 'Escape') { setEditingField(null); setEditDraft({}) }
+                  }}
+                  className="flex-1 text-xs bg-transparent border-b border-violet-400 dark:border-violet-500 focus:outline-none dark:text-neutral-300"
+                />
+                <button onClick={() => saveField({ sourceContext: editDraft.sourceContext ?? '' })} className="p-0.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"><Check className="w-3 h-3 text-violet-500" /></button>
+                <button onClick={() => { setEditingField(null); setEditDraft({}) }} className="p-0.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"><X className="w-3 h-3 text-neutral-400" /></button>
+              </div>
+            ) : (
+              <p className="text-xs text-neutral-500 pl-8 mt-2 group/ctx inline-flex items-center gap-1.5">
+                来源: {(atom as any).sourceContext}
+                <button
+                  onClick={() => {
+                    setEditDraft({ sourceContext: (atom as any).sourceContext || '' })
+                    setEditingField('sourceContext')
+                  }}
+                  className="opacity-0 group-hover/ctx:opacity-100 transition-opacity p-0.5 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  title="编辑来源"
+                >
+                  <Pencil className="w-2.5 h-2.5 text-neutral-400" />
+                </button>
+              </p>
+            )
+          )}
+          {(atom as any).context?.source === 'note' && (atom as any).context?.noteId && (
+            <button
+              onClick={() => {
+                useNotesStore.getState().setActiveNote((atom as any).context.noteId)
+                navigate('/notes')
+              }}
+              className="text-xs text-amber-600 dark:text-amber-400 hover:underline pl-8 mt-1 inline-flex items-center gap-1"
+            >
+              📝 查看原始笔记
+            </button>
+          )}
+          {Array.isArray((atom as any).screenshots) && (atom as any).screenshots.length > 0 && (
+            <div className="pl-8 mt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Filter out images already rendered in the markdown insight as ![]() syntax */}
+                {(atom as any).screenshots
+                  .filter((sUrl: string) => {
+                    if (!(atom as any).insight) return true;
+                    // Escape special regex chars in filename
+                    const escapedFile = sUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const mdImageRegex = new RegExp(`!\\[.*?\\]\\(.*?${escapedFile}\\)`, 'i');
+                    return !(atom as any).insight.match(mdImageRegex);
+                  })
+                  .map((sUrl: string, idx: number) => {
+                  const resolvedUrl = getMediaUrl(sUrl, (atom as any)._absPath)
+                  return (
+                    <motion.div 
+                      key={idx} 
+                      layoutId={resolvedUrl}
+                      className="group relative aspect-video sm:aspect-auto rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden bg-neutral-50 dark:bg-neutral-900/50 flex items-center justify-center p-2 hover:border-violet-400/50 transition-colors"
+                    >
+                      <img 
+                        src={resolvedUrl} 
+                        alt={`截图 ${idx + 1}`} 
+                        className="image-safe-fit cursor-zoom-in group-hover:scale-[1.02] transition-transform duration-300 rounded-md" 
+                        style={{ maxHeight: '320px' }} 
+                        onClick={() => {
+                          setPreviewScale(1)
+                          setPreviewRotation(0)
+                          setPreviewImage(resolvedUrl)
+                        }}
+                      />
+                    </motion.div>
+                  )
+                })}
+              </div>
+            </div>
           )}
         </section>
         )}
@@ -445,7 +695,7 @@ export default function AtomDetailPage() {
         {/* Experience-specific: classification editor */}
         {(atom as any).kind === 'experience' && (
         <section className="mb-7 animate-fade-in">
-          <div className="flex items-center gap-2 mb-2.5">
+          <div className="flex items-center gap-2 mb-2.5 group/classify">
             <div className="w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center">
               <Tag className="w-3.5 h-3.5 text-emerald-500" />
             </div>
@@ -455,18 +705,18 @@ export default function AtomDetailPage() {
             {!editingClassification && (
               <button
                 onClick={() => {
-                  setClassificationDraft({
+                  setEditDraft({
                     role: (atom as any).role || '',
                     situation: (atom as any).situation || '',
                     activity: (atom as any).activity || '',
                     insight_type: (atom as any).insight_type || '',
                   })
-                  setEditingClassification(true)
+                  setEditingField('classification')
                 }}
-                className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] text-neutral-500 hover:text-violet-500 hover:bg-violet-500/10 transition-colors"
+                className="opacity-0 group-hover/classify:opacity-100 transition-opacity flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.625rem] text-neutral-500 hover:text-violet-500 hover:bg-violet-500/10"
+                title="编辑分类维度"
               >
                 <Pencil className="w-3 h-3" />
-                编辑
               </button>
             )}
           </div>
@@ -502,24 +752,14 @@ export default function AtomDetailPage() {
               />
               <div className="flex gap-2 pt-1">
                 <button
-                  onClick={async () => {
-                    const updated = { ...atom, ...classificationDraft, updatedAt: new Date().toISOString() }
-                    try {
-                      await atomsApi.update(atom.id, updated as any)
-                      setAtom(updated as any)
-                      setEditingClassification(false)
-                      showToast('✓ 分类已更新')
-                    } catch (e) {
-                      showToast(e instanceof Error ? e.message : '保存失败')
-                    }
-                  }}
+                  onClick={() => saveField(classificationDraft)}
                   className="flex items-center gap-1 px-3 h-7 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-xs font-medium transition-colors"
                 >
                   <Check className="w-3 h-3" />
                   保存
                 </button>
                 <button
-                  onClick={() => setEditingClassification(false)}
+                  onClick={() => { setEditingField(null); setEditDraft({}) }}
                   className="flex items-center gap-1 px-3 h-7 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 text-xs text-neutral-500"
                 >
                   <X className="w-3 h-3" />
@@ -541,7 +781,7 @@ export default function AtomDetailPage() {
         <div className="space-y-1">
           <div className="flex items-center gap-2 px-1 mb-2">
             <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-800" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+            <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
               更多细节
             </span>
             <div className="flex-1 h-px bg-neutral-200 dark:bg-neutral-800" />
@@ -559,7 +799,7 @@ export default function AtomDetailPage() {
                     key={i}
                     className="flex gap-3 text-sm text-neutral-700 dark:text-neutral-300"
                   >
-                    <span className="shrink-0 w-5 h-5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[11px] font-semibold flex items-center justify-center">
+                    <span className="shrink-0 w-5 h-5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[0.6875rem] font-semibold flex items-center justify-center">
                       {i + 1}
                     </span>
                     <span>{s}</span>
@@ -576,7 +816,7 @@ export default function AtomDetailPage() {
               badge={atom.example.title}
             >
               <div className="rounded-lg bg-amber-500/5 border border-amber-500/20 p-3.5">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1.5">
+                <div className="text-[0.625rem] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1.5">
                   {atom.example.title}
                 </div>
                 <p className="text-sm text-neutral-700 dark:text-neutral-300 leading-relaxed">
@@ -589,7 +829,7 @@ export default function AtomDetailPage() {
           <CollapseSection title="相关原子" icon={<GitFork className="w-4 h-4" />}>
             {parent && (
               <>
-                <div className="text-[10px] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-semibold mb-2">
+                <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-semibold mb-2">
                   父级
                 </div>
                 <Link
@@ -597,7 +837,7 @@ export default function AtomDetailPage() {
                   className="block rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-3 py-2 hover:border-violet-400 transition-colors mb-3"
                 >
                   <div className="text-sm font-medium">{parent.name}</div>
-                  <div className="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">
+                  <div className="text-[0.6875rem] text-neutral-500 dark:text-neutral-400 truncate">
                     {parent.nameEn || (parent.coreIdea ? parent.coreIdea.slice(0, 40) : parent.tags?.join(' · ') || '')}
                   </div>
                 </Link>
@@ -605,7 +845,7 @@ export default function AtomDetailPage() {
             )}
             {siblings.length > 0 && (
               <>
-                <div className="text-[10px] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-semibold mb-2">
+                <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-semibold mb-2">
                   兄弟
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -615,8 +855,8 @@ export default function AtomDetailPage() {
                       key={s.id}
                       className="block rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-3 py-2 hover:border-violet-400 transition-colors"
                     >
-                      <div className="text-sm font-medium truncate">{s.name}</div>
-                      <div className="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">
+                      <div className="text-sm font-medium truncate">{s.name || (s as any).title || s.id}</div>
+                      <div className="text-[0.6875rem] text-neutral-500 dark:text-neutral-400 truncate">
                         {s.nameEn || (s.tags ?? []).join(' · ')}
                       </div>
                     </Link>
@@ -625,15 +865,23 @@ export default function AtomDetailPage() {
               </>
             )}
             {!parent && siblings.length === 0 && (
-              <div className="text-[11px] text-neutral-400">暂无相关原子</div>
+              <div className="text-[0.6875rem] text-neutral-400">暂无相关原子</div>
             )}
           </CollapseSection>
+
+          {/* V2.0 M4: 关联碎片 (方法论页) / 关联方法论 (碎片页) */}
+          {atom.kind === 'methodology' && (
+            <RelatedFragmentsPanel methodologyAtomId={atom.id} />
+          )}
+          {(atom as any).kind === 'experience' && Array.isArray((atom as any).linked_methodologies) && (atom as any).linked_methodologies.length > 0 && (
+            <LinkedMethodologiesSection atomIds={(atom as any).linked_methodologies} />
+          )}
 
           <CollapseSection
             title="个人收藏夹"
             icon={<Bookmark className="w-4 h-4" />}
             badge={
-              <span className="px-1.5 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[10px] font-mono font-semibold">
+              <span className="px-1.5 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[0.625rem] font-mono font-semibold">
                 {bookmarks.length}
               </span>
             }
@@ -653,13 +901,13 @@ export default function AtomDetailPage() {
                     ) : (
                       <FileText className="w-3 h-3 text-emerald-500" />
                     )}
-                    <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-semibold">
+                    <span className="text-[0.625rem] uppercase tracking-wider text-neutral-400 font-semibold">
                       {b.type === 'link' ? '链接' : '笔记'}
                     </span>
                   </div>
                   <div className="text-sm font-medium">{b.title}</div>
                   {(b.url || b.content || b.note) && (
-                    <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">
+                    <div className="text-[0.6875rem] text-neutral-500 dark:text-neutral-400 mt-0.5 truncate">
                       {b.url || b.content || b.note}
                     </div>
                   )}
@@ -672,7 +920,7 @@ export default function AtomDetailPage() {
                     <button
                       onClick={() => setBmType('link')}
                       className={
-                        'px-2 py-0.5 rounded text-[10px] font-medium ' +
+                        'px-2 py-0.5 rounded text-[0.625rem] font-medium ' +
                         (bmType === 'link'
                           ? 'bg-violet-500 text-white'
                           : 'bg-neutral-100 dark:bg-neutral-800')
@@ -683,7 +931,7 @@ export default function AtomDetailPage() {
                     <button
                       onClick={() => setBmType('text')}
                       className={
-                        'px-2 py-0.5 rounded text-[10px] font-medium ' +
+                        'px-2 py-0.5 rounded text-[0.625rem] font-medium ' +
                         (bmType === 'text'
                           ? 'bg-violet-500 text-white'
                           : 'bg-neutral-100 dark:bg-neutral-800')
@@ -747,7 +995,7 @@ export default function AtomDetailPage() {
             </div>
             {usedProjects.length > 0 && (
               <>
-                <div className="text-[10px] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-semibold mb-2">
+                <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-semibold mb-2">
                   反向跳转到项目
                 </div>
                 <div className="space-y-1.5">
@@ -760,7 +1008,7 @@ export default function AtomDetailPage() {
                       <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                         <span className="text-sm font-medium">{p.name}</span>
-                        <span className="text-[10px] text-neutral-400 font-mono">
+                        <span className="text-[0.625rem] text-neutral-400 font-mono">
                           · {p.innovationStage} 阶段
                         </span>
                       </div>
@@ -776,13 +1024,13 @@ export default function AtomDetailPage() {
             title="🔗 调用历史"
             icon={<History className="w-4 h-4" />}
             badge={
-              <span className="px-1.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 text-[10px] font-mono font-semibold">
+              <span className="px-1.5 py-0.5 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 text-[0.625rem] font-mono font-semibold">
                 {agentEvents.length}
               </span>
             }
           >
             {agentEvents.length === 0 ? (
-              <div className="text-[11px] text-neutral-400 dark:text-neutral-500 py-3">
+              <div className="text-[0.6875rem] text-neutral-400 dark:text-neutral-500 py-3">
                 尚无 agent 调用记录 · 通过 atlas-write / atlas-read 触发后会出现
               </div>
             ) : (
@@ -792,13 +1040,13 @@ export default function AtomDetailPage() {
                     <div
                       key={name}
                       className={
-                        'inline-flex items-center gap-1.5 px-2 py-1 rounded-md border text-[11px] ' +
+                        'inline-flex items-center gap-1.5 px-2 py-1 rounded-md border text-[0.6875rem] ' +
                         agentChipClass(name)
                       }
                     >
                       <span className="font-medium">{name}</span>
-                      <span className="font-mono text-[10px] opacity-70">× {info.count}</span>
-                      <span className="text-[10px] opacity-60">· {formatDate(info.lastTs)}</span>
+                      <span className="font-mono text-[0.625rem] opacity-70">× {info.count}</span>
+                      <span className="text-[0.625rem] opacity-60">· {formatDate(info.lastTs)}</span>
                     </div>
                   ))}
                 </div>
@@ -809,7 +1057,7 @@ export default function AtomDetailPage() {
                   {sortedAgentEvents.map((e, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-2 px-3 py-2 text-[11px] border-b border-neutral-100 dark:border-neutral-900 last:border-b-0"
+                      className="flex items-start gap-2 px-3 py-2 text-[0.6875rem] border-b border-neutral-100 dark:border-neutral-900 last:border-b-0"
                     >
                       {e.action === 'write' ? (
                         <PencilLine className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" />
@@ -834,7 +1082,7 @@ export default function AtomDetailPage() {
             )}
 
             <div className="mt-4 pt-3 border-t border-neutral-200/70 dark:border-neutral-800/70">
-              <div className="text-[10px] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-semibold mb-2">
+              <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 font-semibold mb-2">
                 校准
               </div>
               <div className="flex flex-wrap gap-2">
@@ -852,7 +1100,7 @@ export default function AtomDetailPage() {
                       onMouseLeave={() => setMergePickerOpen(false)}
                     >
                       {mergeCandidates.length === 0 ? (
-                        <div className="px-3 py-2 text-[11px] text-neutral-400">
+                        <div className="px-3 py-2 text-[0.6875rem] text-neutral-400">
                           同骨架 / 同单元格内暂无其他原子
                         </div>
                       ) : (
@@ -864,7 +1112,7 @@ export default function AtomDetailPage() {
                           >
                             <div className="font-medium truncate">{s.name}</div>
                             {s.nameEn && (
-                              <div className="text-[10px] text-neutral-400 truncate font-mono">
+                              <div className="text-[0.625rem] text-neutral-400 truncate font-mono">
                                 {s.nameEn}
                               </div>
                             )}
@@ -885,23 +1133,10 @@ export default function AtomDetailPage() {
                   }
                 >
                   <TrendingDown className="w-3 h-3" />
-                  {atom.stats?.userDemoted ? '✓ 已降权 · 点击恢复' : '降权'}
-                </button>
-
-                <button
-                  onClick={handleToggleLock}
-                  className={
-                    'inline-flex items-center gap-1.5 px-2.5 h-7 rounded-lg border text-xs transition-colors ' +
-                    (atom.stats?.locked
-                      ? 'border-amber-400/50 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                      : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-amber-400/60 hover:text-amber-500')
-                  }
-                >
-                  <Lock className="w-3 h-3" />
                   {atom.stats?.locked ? '✓ 已锁定 · 点击解锁' : '锁定'}
                 </button>
               </div>
-              <div className="text-[10px] text-neutral-400 dark:text-neutral-500 mt-2 leading-relaxed">
+              <div className="text-[0.625rem] text-neutral-400 dark:text-neutral-500 mt-2 leading-relaxed">
                 降权会降低该原子在 atlas-read 结果中的权重 · 锁定会拦截 agent 的写入操作
               </div>
             </div>
@@ -911,6 +1146,135 @@ export default function AtomDetailPage() {
 
       <SpotlightPalette />
       <NewAtomDialog />
+
+      <AnimatePresence>
+        {previewImage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-6 lg:p-12">
+            {/* Backdrop: clicking anywhere else closes the modal */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-zoom-out" 
+              onClick={() => {
+                setPreviewImage(null)
+                setPreviewScale(1)
+                setPreviewRotation(0)
+              }} 
+            />
+
+            {/* The actual Preview Window */}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-[85vw] h-[80vh] max-w-5xl max-h-[800px] flex flex-col bg-neutral-900 border border-white/10 rounded-2xl shadow-[0_32px_128px_-32px_rgba(0,0,0,0.8)] overflow-hidden z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Window Header */}
+              <div className="flex items-center justify-between px-4 h-12 bg-neutral-800/50 border-b border-white/5">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex gap-1.5 mr-2">
+                    <button 
+                      onClick={() => setPreviewImage(null)}
+                      className="w-3 h-3 rounded-full bg-rose-500 hover:bg-rose-600 transition-colors" 
+                    />
+                    <div className="w-3 h-3 rounded-full bg-amber-500/50" />
+                    <div className="w-3 h-3 rounded-full bg-emerald-500/50" />
+                  </div>
+                  <Eye className="w-3.5 h-3.5 text-white/40" />
+                  <span className="text-[0.6875rem] font-medium text-white/70 tracking-tight">资源预览</span>
+                </div>
+
+                <div className="flex items-center gap-1 bg-white/5 rounded-lg p-0.5 border border-white/5">
+                  <button
+                    onClick={() => setPreviewScale((s) => Math.min(s + 0.25, 4))}
+                    className="p-1.5 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                  >
+                    <ZoomIn className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setPreviewScale((s) => Math.max(s - 0.25, 0.25))}
+                    className="p-1.5 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                  >
+                    <ZoomOut className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setPreviewRotation((r) => r + 90)}
+                    className="p-1.5 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+                  >
+                    <RotateCw className="w-3.5 h-3.5" />
+                  </button>
+                  <div className="w-px h-3 bg-white/10 mx-0.5" />
+                  <button
+                    onClick={() => {
+                      setPreviewScale(1)
+                      setPreviewRotation(0)
+                    }}
+                    className="px-2 h-6 rounded-md hover:bg-white/10 text-[0.625rem] font-medium text-white/50 hover:text-white"
+                  >
+                    重置
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <a
+                    href={previewImage}
+                    download
+                    target="_blank"
+                    rel="noreferrer"
+                    className="p-1.5 rounded-md hover:bg-white/10 text-white/50 hover:text-white"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                  </a>
+                  <button
+                    onClick={() => setPreviewImage(null)}
+                    className="p-1.5 rounded-md hover:bg-rose-500/20 text-rose-300 hover:text-white"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Window Content: Scalable/Draggable Area */}
+              <div className="flex-1 relative overflow-hidden bg-[radial-gradient(circle_at_center,_#1a1a1b_0%,_#0a0a0b_100%)] cursor-grab active:cursor-grabbing">
+                <motion.div
+                  layoutId={previewImage}
+                  drag
+                  dragConstraints={{ left: -1500, right: 1500, top: -1500, bottom: 1500 }}
+                  dragElastic={0.1}
+                  className="absolute inset-0 flex items-center justify-center p-12"
+                  style={{ 
+                    scale: previewScale,
+                    rotate: `${previewRotation}deg`
+                  }}
+                >
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="max-w-full max-h-full object-contain shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6)] rounded-sm pointer-events-none"
+                    style={{ 
+                      minWidth: '200px',
+                      imageRendering: (previewScale > 2) ? 'pixelated' : 'auto'
+                    }}
+                    onWheel={(e) => {
+                      if (e.deltaY < 0) setPreviewScale((s) => Math.min(s + 0.1, 4))
+                      else setPreviewScale((s) => Math.max(s - 0.1, 0.25))
+                    }}
+                  />
+                </motion.div>
+
+            </div>
+            
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 px-5 py-2 rounded-2xl bg-black/40 border border-white/10 backdrop-blur-md pointer-events-none z-20">
+              <span className="text-[0.625rem] text-white/50 font-mono tracking-widest uppercase">
+                Drag to Pan · Scroll to Zoom
+              </span>
+            </div>
+            </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
     </div>
   )
 }
@@ -918,7 +1282,7 @@ export default function AtomDetailPage() {
 function Stat({ label, value, suffix }: { label: string; value: string; suffix?: string }) {
   return (
     <div className="rounded-lg bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800 px-3 py-2.5">
-      <div className="text-[10px] uppercase tracking-wider text-neutral-400 font-semibold">
+      <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 font-semibold">
         {label}
       </div>
       <div className="text-xl font-bold tabular-nums mt-1">
@@ -960,8 +1324,8 @@ function agentChipClass(name: string) {
 
 function ClassificationBadge({ label, value, colorClass }: { label: string; value?: string; colorClass: string }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-medium ${colorClass}`}>
-      <span className="text-[10px] opacity-60 uppercase">{label}</span>
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[0.6875rem] font-medium ${colorClass}`}>
+      <span className="text-[0.625rem] opacity-60 uppercase">{label}</span>
       <span>{value || '未设置'}</span>
     </span>
   )
@@ -982,7 +1346,7 @@ function ClassificationInput({
 }) {
   return (
     <div>
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1.5">
+      <div className="text-[0.625rem] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 mb-1.5">
         {label}
       </div>
       <div className="flex flex-wrap gap-1.5 mb-1.5">
@@ -990,7 +1354,7 @@ function ClassificationInput({
           <button
             key={s}
             onClick={() => onChange(s)}
-            className={`px-2 py-0.5 rounded-md border text-[11px] font-medium transition-all ${
+            className={`px-2 py-0.5 rounded-md border text-[0.6875rem] font-medium transition-all ${
               value === s
                 ? 'bg-violet-500 text-white border-violet-500'
                 : `${colorClass} hover:scale-[1.03]`

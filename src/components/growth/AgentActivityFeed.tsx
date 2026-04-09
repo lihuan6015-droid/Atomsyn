@@ -196,7 +196,7 @@ export function AgentActivityFeed({ open, onClose }: Props) {
           </div>
           {agents.length > 0 && (
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[10px] uppercase tracking-wider text-neutral-400 mr-1">agent</span>
+              <span className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mr-1">agent</span>
               <FilterPill active={agentFilter === 'all'} onClick={() => setAgentFilter('all')}>
                 全部
               </FilterPill>
@@ -251,13 +251,13 @@ export function AgentActivityFeed({ open, onClose }: Props) {
                         isOpen && 'rotate-90',
                       )}
                     />
-                    <span className="flex items-center gap-1 text-[10px] text-neutral-400 font-mono shrink-0">
+                    <span className="flex items-center gap-1 text-[0.625rem] text-neutral-400 font-mono shrink-0">
                       <Clock className="w-3 h-3" />
                       {relTime(e.ts)}
                     </span>
                     <span
                       className={cn(
-                        'inline-flex items-center px-1.5 py-0.5 rounded-md border text-[10px] font-medium shrink-0',
+                        'inline-flex items-center px-1.5 py-0.5 rounded-md border text-[0.625rem] font-medium shrink-0',
                         chipClass,
                       )}
                     >
@@ -273,7 +273,7 @@ export function AgentActivityFeed({ open, onClose }: Props) {
                     </span>
                   </button>
                   {isOpen && (
-                    <div className="px-3 pb-3 pl-9 space-y-1.5 text-[11px] text-neutral-500 dark:text-neutral-400 border-t border-neutral-200/50 dark:border-neutral-800/50 pt-2">
+                    <div className="px-3 pb-3 pl-9 space-y-1.5 text-[0.6875rem] text-neutral-500 dark:text-neutral-400 border-t border-neutral-200/50 dark:border-neutral-800/50 pt-2">
                       {e.query && (
                         <div>
                           <span className="text-neutral-400">query:</span>{' '}
@@ -290,7 +290,7 @@ export function AgentActivityFeed({ open, onClose }: Props) {
                           <span className="text-neutral-400">atomId:</span>{' '}
                           {atom ? (
                             <a
-                              href={`#/atoms/${e.atomId}`}
+                              href={`#/atom/atoms/${e.atomId}`}
                               className="text-violet-600 dark:text-violet-400 hover:underline font-mono"
                             >
                               {e.atomId}
@@ -310,7 +310,7 @@ export function AgentActivityFeed({ open, onClose }: Props) {
                           <span className="text-neutral-400">context:</span> {e.sourceContext}
                         </div>
                       )}
-                      <div className="text-[10px] text-neutral-400 font-mono pt-1">
+                      <div className="text-[0.625rem] text-neutral-400 font-mono pt-1">
                         {new Date(e.ts).toLocaleString()}
                       </div>
                     </div>
@@ -338,7 +338,7 @@ function FilterPill({
     <button
       onClick={onClick}
       className={cn(
-        'inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium border transition-colors',
+        'inline-flex items-center gap-1 px-2 py-1 rounded-md text-[0.625rem] font-medium border transition-colors',
         active
           ? 'bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20'
           : 'text-neutral-500 dark:text-neutral-400 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900',

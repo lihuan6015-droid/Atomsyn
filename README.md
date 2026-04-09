@@ -10,7 +10,7 @@
 >
 > *Atomsyn — your meta-cognition, rematerialized.*
 
-📄 **PRD**: [`docs/PRD-v2.0.md`](docs/PRD-v2.0.md) — 当前版本（V2.0 进行中）
+📄 **PRD**: [`docs/PRD-v2.0.md`](docs/PRD-v2.0.md) — 当前版本 0.1.0
 🎯 **战略文档**: [`docs/framing/v2.0-problem-framing.md`](docs/framing/v2.0-problem-framing.md) — 价值主张与北极星
 📋 **执行计划**: [`docs/plans/v2.0-implementation-plan.md`](docs/plans/v2.0-implementation-plan.md)
 🎨 **视觉原型**: [`docs/mockups/atlas.html`](docs/mockups/atlas.html) · [`docs/mockups/atom-card.html`](docs/mockups/atom-card.html)

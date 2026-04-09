@@ -1,6 +1,22 @@
 /**
- * AI Copilot side panel.
- * Slides in from the right; chat with the methodology navigator.
+ * @deprecated V2.0-layout: This component is superseded by ChatPage (/chat).
+ *
+ * ChatPage now handles both:
+ * - Methodology navigation (previously this panel's chat mode)
+ * - Quick knowledge ingest (previously QuickIngestDialog)
+ *
+ * This file is retained temporarily so existing code references compile.
+ * TODO(v2.x): Once ChatPage is confirmed to fully cover all CopilotPanel
+ * functionality (chat, recommendations, atom navigation), delete this file
+ * and remove the related state from useAppStore.ts:
+ * - copilotOpen, openCopilot, closeCopilot, toggleCopilot
+ *
+ * Migration checklist:
+ * [ ] All callCopilot() logic is in ChatPage
+ * [ ] Atom recommendation cards render in ChatPage
+ * [ ] Pin/unpin is replaced by ChatPage being a full page
+ * [ ] FloatingCopilot.tsx is deleted
+ * [ ] This file is deleted
  */
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -98,7 +114,7 @@ export function CopilotPanel() {
   }
 
   function openAtom(atomId: string) {
-    navigate(`/atoms/${atomId}`)
+    navigate(`/atom/atoms/${atomId}`)
     if (!pinned) close()
   }
 
@@ -144,7 +160,7 @@ export function CopilotPanel() {
                 </div>
                 <div>
                   <div className="text-sm font-semibold">方法论副驾驶</div>
-                  <div className="text-[11px] text-neutral-500 dark:text-neutral-400">
+                  <div className="text-[0.6875rem] text-neutral-500 dark:text-neutral-400">
                     场景导航 · 只读模式
                   </div>
                 </div>
@@ -233,22 +249,22 @@ export function CopilotPanel() {
                               key={r.atomId}
                               className="rounded-xl bg-white dark:bg-white/5 border border-neutral-200/60 dark:border-white/10 p-2.5"
                             >
-                              <div className="text-[13px] font-medium leading-snug">
+                              <div className="text-[0.8125rem] font-medium leading-snug">
                                 {atomName(r.atomId)}
                               </div>
                               {atomTagline(r.atomId) && (
-                                <div className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-0.5 line-clamp-2">
+                                <div className="text-[0.6875rem] text-neutral-500 dark:text-neutral-400 mt-0.5 line-clamp-2">
                                   {atomTagline(r.atomId)}
                                 </div>
                               )}
                               {r.reason && (
-                                <div className="text-[11px] text-violet-600 dark:text-violet-300 mt-1">
+                                <div className="text-[0.6875rem] text-violet-600 dark:text-violet-300 mt-1">
                                   {r.reason}
                                 </div>
                               )}
                               <button
                                 onClick={() => openAtom(r.atomId)}
-                                className="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-sky-600 dark:text-sky-300 hover:underline"
+                                className="mt-2 inline-flex items-center gap-1 text-[0.6875rem] font-medium text-sky-600 dark:text-sky-300 hover:underline"
                               >
                                 打开这张卡片 <ArrowRight className="w-3 h-3" />
                               </button>
@@ -257,7 +273,7 @@ export function CopilotPanel() {
                         </div>
                       )}
                       {t.ai?.followUp && (
-                        <div className="text-[11px] italic text-neutral-500 dark:text-neutral-400 pt-1">
+                        <div className="text-[0.6875rem] italic text-neutral-500 dark:text-neutral-400 pt-1">
                           {t.ai.followUp}
                         </div>
                       )}

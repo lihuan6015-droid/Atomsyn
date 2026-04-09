@@ -94,7 +94,7 @@ export function SkeletonView({ skeleton, allAtoms }: Props) {
                 >
                   <Plus className="w-3 h-3 text-violet-500 shrink-0" />
                   <span className="truncate">{(a as any).name || (a as any).title}</span>
-                  <span className="text-[10px] text-neutral-400 font-mono shrink-0 ml-auto">
+                  <span className="text-[0.625rem] text-neutral-400 font-mono shrink-0 ml-auto">
                     {a.tags?.[0]}
                   </span>
                 </button>

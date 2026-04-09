@@ -325,7 +325,7 @@ function Field({
         {required && <span className="text-rose-500 ml-0.5">*</span>}
       </div>
       {children}
-      {error && <div className="text-[11px] text-rose-500 mt-1">{error}</div>}
+      {error && <div className="text-[0.6875rem] text-rose-500 mt-1">{error}</div>}
     </label>
   )
 }

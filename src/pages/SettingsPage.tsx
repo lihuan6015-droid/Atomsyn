@@ -8,6 +8,7 @@ import {
   Database,
   Download,
   Eye,
+  FolderOpen,
   Info,
   Loader2,
   Moon,
@@ -18,9 +19,10 @@ import {
   ShieldCheck,
   X,
   Plus,
-  AlertTriangle,
 } from 'lucide-react'
-import { appVersionApi, indexApi, seedApi, usageApi } from '@/lib/dataApi'
+import { appVersionApi, indexApi, seedApi } from '@/lib/dataApi'
+import { getDataDirInfo, describeDataSource, type DataDirInfo } from '@/lib/dataPath'
+import { openContainingFolder } from '@/lib/openPath'
 import { APP_RELEASES_URL, APP_VERSION } from '@/lib/appVersionCheck'
 import { SeedUpdateDialog } from '@/components/seed/SeedUpdateDialog'
 import type { AppVersionResult, SeedCheckResult } from '@/types'
@@ -32,13 +34,12 @@ import { ModelConfigDialog } from '@/components/settings/ModelConfigDialog'
 import { cn } from '@/lib/cn'
 import { useAppStore } from '@/stores/useAppStore'
 
-type SectionKey = 'ai' | 'appearance' | 'data' | 'agents' | 'updates' | 'about'
+type SectionKey = 'ai' | 'appearance' | 'data' | 'updates' | 'about'
 
 const SECTIONS: { key: SectionKey; label: string; icon: typeof Bot }[] = [
-  { key: 'ai', label: 'AI 副驾驶', icon: Bot },
+  { key: 'ai', label: '模型', icon: Bot },
   { key: 'appearance', label: '外观', icon: Palette },
   { key: 'data', label: '数据', icon: Database },
-  { key: 'agents', label: 'Agent 权限', icon: ShieldCheck },
   { key: 'updates', label: '版本与更新', icon: Download },
   { key: 'about', label: '关于', icon: Info },
 ]
@@ -50,7 +51,7 @@ export function SettingsPage() {
     <div className="flex h-full">
       {/* Sidebar */}
       <aside className="w-56 shrink-0 border-r border-neutral-200/70 dark:border-white/10 p-4 space-y-1">
-        <div className="text-[11px] uppercase tracking-wider text-neutral-500 px-2 mb-2">
+        <div className="text-[0.6875rem] uppercase tracking-wider text-neutral-500 px-2 mb-2">
           设置
         </div>
         {SECTIONS.map((s) => {
@@ -79,7 +80,6 @@ export function SettingsPage() {
         {active === 'ai' && <AISection />}
         {active === 'appearance' && <AppearanceSection />}
         {active === 'data' && <DataSection />}
-        {active === 'agents' && <AgentPermissionsSection />}
         {active === 'updates' && <UpdatesSection />}
         {active === 'about' && <AboutSection />}
       </main>
@@ -171,7 +171,7 @@ function AISection() {
     <div className="max-w-3xl space-y-8">
       <header>
         <h1 className="text-xl font-semibold flex items-center gap-2">
-          <Bot className="w-5 h-5 text-violet-500" /> AI 模型配置
+          <Bot className="w-5 h-5 text-violet-500" /> 模型配置
         </h1>
         <p className="text-sm text-neutral-500 mt-1">
           配置多个模型提供商，支持 LLM / VLM / ASR / Embedding 四类模型。
@@ -231,14 +231,14 @@ function AISection() {
                       {/* Name + model ID */}
                       <div className="flex-1 min-w-0">
                         <div className="text-sm font-medium truncate">{m.name}</div>
-                        <div className="text-[11px] text-neutral-500 font-mono truncate">
+                        <div className="text-[0.6875rem] text-neutral-500 font-mono truncate">
                           {m.modelId}
                         </div>
                       </div>
 
                       {/* Default badge */}
                       {m.isDefault && (
-                        <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium bg-violet-500/15 text-violet-600 dark:text-violet-400">
+                        <span className="shrink-0 px-2 py-0.5 rounded-full text-[0.625rem] font-medium bg-violet-500/15 text-violet-600 dark:text-violet-400">
                           默认
                         </span>
                       )}
@@ -266,7 +266,7 @@ function AISection() {
                       {!m.isDefault && (
                         <button
                           onClick={() => setDefault(m.id)}
-                          className="text-[11px] text-neutral-500 hover:text-violet-500 shrink-0"
+                          className="text-[0.6875rem] text-neutral-500 hover:text-violet-500 shrink-0"
                           title="设为默认"
                         >
                           设为默认
@@ -283,13 +283,13 @@ function AISection() {
                         <div className="flex items-center gap-1 shrink-0">
                           <button
                             onClick={() => handleDelete(m.id)}
-                            className="text-[11px] text-red-500 hover:text-red-600"
+                            className="text-[0.6875rem] text-red-500 hover:text-red-600"
                           >
                             确认
                           </button>
                           <button
                             onClick={() => setConfirmDelete(null)}
-                            className="text-[11px] text-neutral-400"
+                            className="text-[0.6875rem] text-neutral-400"
                           >
                             取消
                           </button>
@@ -366,8 +366,11 @@ function AISection() {
           className="hidden"
           onChange={handleImport}
         />
-        <span className="text-[11px] text-neutral-400">导出不含 API Key，导入后请手动补充</span>
+        <span className="text-[0.6875rem] text-neutral-400">导出不含 API Key，导入后请手动补充</span>
       </section>
+
+      {/* Agent permissions (global) */}
+      <AgentPermissionsInline />
 
       {/* Dialog */}
       <ModelConfigDialog
@@ -386,28 +389,68 @@ function AISection() {
 function AppearanceSection() {
   const theme = useAppStore((s) => s.theme)
   const setTheme = useAppStore((s) => s.setTheme)
+  const uiScale = useAppStore((s) => s.uiScale)
+  const setUIScale = useAppStore((s) => s.setUIScale)
+
+  const SCALE_OPTIONS: { value: 90 | 100 | 110 | 120; label: string }[] = [
+    { value: 90, label: '紧凑' },
+    { value: 100, label: '标准' },
+    { value: 110, label: '舒适' },
+    { value: 120, label: '大字' },
+  ]
+
   return (
     <div className="max-w-xl space-y-6">
       <header>
         <h1 className="text-xl font-semibold flex items-center gap-2">
           <Palette className="w-5 h-5 text-sky-500" /> 外观
         </h1>
-        <p className="text-sm text-neutral-500 mt-1">选择你喜欢的主题。</p>
+        <p className="text-sm text-neutral-500 mt-1">主题和界面缩放。</p>
       </header>
-      <div className="grid grid-cols-2 gap-3">
-        <ThemeCard
-          active={theme === 'light'}
-          onClick={() => setTheme('light')}
-          icon={<Sun className="w-5 h-5" />}
-          label="明亮"
-        />
-        <ThemeCard
-          active={theme === 'dark'}
-          onClick={() => setTheme('dark')}
-          icon={<Moon className="w-5 h-5" />}
-          label="暗黑"
-        />
-      </div>
+
+      {/* Theme */}
+      <section className="space-y-2">
+        <h2 className="text-xs font-medium text-neutral-600 dark:text-neutral-300">主题</h2>
+        <div className="grid grid-cols-2 gap-3">
+          <ThemeCard
+            active={theme === 'light'}
+            onClick={() => setTheme('light')}
+            icon={<Sun className="w-5 h-5" />}
+            label="明亮"
+          />
+          <ThemeCard
+            active={theme === 'dark'}
+            onClick={() => setTheme('dark')}
+            icon={<Moon className="w-5 h-5" />}
+            label="暗黑"
+          />
+        </div>
+      </section>
+
+      {/* UI Scale */}
+      <section className="space-y-2">
+        <h2 className="text-xs font-medium text-neutral-600 dark:text-neutral-300">界面缩放</h2>
+        <div className="flex gap-2">
+          {SCALE_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setUIScale(opt.value)}
+              className={cn(
+                'flex-1 py-2.5 rounded-xl border text-sm font-medium transition-all',
+                uiScale === opt.value
+                  ? 'border-violet-500/60 bg-violet-500/10 text-violet-700 dark:text-violet-300'
+                  : 'border-neutral-200/70 dark:border-white/10 hover:bg-neutral-50 dark:hover:bg-white/5 text-neutral-600 dark:text-neutral-400',
+              )}
+            >
+              <div>{opt.label}</div>
+              <div className="text-[0.6875rem] font-normal mt-0.5 opacity-60">{opt.value}%</div>
+            </button>
+          ))}
+        </div>
+        <p className="text-[0.6875rem] text-neutral-500">
+          调整全局界面文字和元素的缩放比例。
+        </p>
+      </section>
     </div>
   )
 }
@@ -445,6 +488,11 @@ function ThemeCard({
 function DataSection() {
   const showToast = useAppStore((s) => s.showToast)
   const [busy, setBusy] = useState(false)
+  const [dataDirInfo, setDataDirInfo] = useState<DataDirInfo | null>(null)
+
+  useEffect(() => {
+    getDataDirInfo().then(setDataDirInfo).catch(() => undefined)
+  }, [])
 
   async function rebuild() {
     setBusy(true)
@@ -458,6 +506,12 @@ function DataSection() {
     }
   }
 
+  async function handleOpenFolder() {
+    if (!dataDirInfo?.path) return
+    const result = await openContainingFolder(dataDirInfo.path + '/dummy')
+    showToast(result.message)
+  }
+
   return (
     <div className="max-w-xl space-y-6">
       <header>
@@ -466,11 +520,24 @@ function DataSection() {
         </h1>
         <p className="text-sm text-neutral-500 mt-1">本地数据存放位置和索引管理。</p>
       </header>
-      <div className="rounded-2xl border border-neutral-200/70 dark:border-white/10 p-4 space-y-2">
+      <div className="rounded-2xl border border-neutral-200/70 dark:border-white/10 p-4 space-y-3">
         <div className="text-xs text-neutral-500">数据目录</div>
-        <code className="block text-xs bg-neutral-100 dark:bg-white/5 px-2 py-1 rounded">
-          ./data
+        <code className="block text-xs bg-neutral-100 dark:bg-white/5 px-3 py-2 rounded-lg break-all">
+          {dataDirInfo?.path ?? '加载中...'}
         </code>
+        {dataDirInfo && (
+          <div className="text-[0.6875rem] text-neutral-400">
+            来源：{describeDataSource(dataDirInfo)}
+          </div>
+        )}
+        <button
+          onClick={handleOpenFolder}
+          disabled={!dataDirInfo}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300/70 dark:border-white/10 text-xs hover:bg-neutral-100 dark:hover:bg-white/5 disabled:opacity-50"
+        >
+          <FolderOpen className="w-3.5 h-3.5" />
+          在文件管理器中打开
+        </button>
       </div>
       <button
         onClick={rebuild}
@@ -504,7 +571,7 @@ function AboutSection() {
           <span className="text-neutral-500">App：</span> Atomsyn
         </div>
         <div>
-          <span className="text-neutral-500">Version：</span> 0.1.0 alpha
+          <span className="text-neutral-500">Version：</span> v{APP_VERSION}
         </div>
         <div>
           <span className="text-neutral-500">PRD：</span>{' '}
@@ -529,308 +596,82 @@ function AboutSection() {
 }
 
 // ---------------------------------------------------------------------------
-// Agent Permissions (V1.5 · T-6.3)
+// Agent Permissions — simplified global toggles (merged into AI/Model section)
 // ---------------------------------------------------------------------------
-interface AgentPermissionEntry {
-  agentName: string
+interface GlobalAgentPerms {
   canRead: boolean
   canWrite: boolean
   requireConfirmWrite: boolean
-  lastSeenAt?: string
-  totalWrites?: number
-  totalReads?: number
-}
-interface AgentPermissionsConfig {
-  agents: Record<string, AgentPermissionEntry>
   updatedAt: string
 }
 
-const AGENT_PERM_STORAGE = 'atomsyn:agent-permissions'
-// TODO(v1.6): persist to ~/.atomsyn-config.json via Tauri command
-const AGENT_CHIP_COLORS = [
-  'bg-violet-500/10 text-violet-700 dark:text-violet-300 ring-violet-500/30',
-  'bg-sky-500/10 text-sky-700 dark:text-sky-300 ring-sky-500/30',
-  'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-500/30',
-  'bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-amber-500/30',
-  'bg-pink-500/10 text-pink-700 dark:text-pink-300 ring-pink-500/30',
-]
-function hashColor(name: string) {
-  let h = 0
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0
-  return AGENT_CHIP_COLORS[h % AGENT_CHIP_COLORS.length]
-}
-function loadAgentPerms(): AgentPermissionsConfig {
+const AGENT_PERM_STORAGE = 'atomsyn:agent-permissions-global'
+
+function loadGlobalAgentPerms(): GlobalAgentPerms {
   try {
     const raw = localStorage.getItem(AGENT_PERM_STORAGE)
     if (raw) return JSON.parse(raw)
   } catch {
     /* ignore */
   }
-  return { agents: {}, updatedAt: new Date().toISOString() }
+  return { canRead: true, canWrite: true, requireConfirmWrite: false, updatedAt: new Date().toISOString() }
 }
-function saveAgentPerms(cfg: AgentPermissionsConfig) {
+function saveGlobalAgentPerms(cfg: GlobalAgentPerms) {
   localStorage.setItem(AGENT_PERM_STORAGE, JSON.stringify(cfg))
 }
-function relativeTime(iso?: string): string {
-  if (!iso) return '从未'
-  const diff = Date.now() - new Date(iso).getTime()
-  if (diff < 60_000) return '刚刚'
-  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)} 分钟前`
-  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)} 小时前`
-  return `${Math.floor(diff / 86_400_000)} 天前`
-}
+/** Simplified global agent permissions — embedded in the Model section */
+function AgentPermissionsInline() {
+  const [perms, setPerms] = useState<GlobalAgentPerms>(() => loadGlobalAgentPerms())
 
-function AgentPermissionsSection() {
-  const showToast = useAppStore((s) => s.showToast)
-  const [cfg, setCfg] = useState<AgentPermissionsConfig>(() => loadAgentPerms())
-  const [loading, setLoading] = useState(true)
-  const [manualName, setManualName] = useState('')
-
-  useEffect(() => {
-    usageApi
-      .list()
-      .then((events) => {
-        // V1.5 agent events carry loose shape: { action, agentName, ts, ... }
-        const anyEvents = events as unknown as Array<Record<string, unknown>>
-        const stats: Record<
-          string,
-          { writes: number; reads: number; lastSeenAt: string }
-        > = {}
-        for (const e of anyEvents) {
-          const name = typeof e.agentName === 'string' ? e.agentName : null
-          const action = typeof e.action === 'string' ? e.action : null
-          const ts = typeof e.ts === 'string' ? e.ts : null
-          if (!name || !action) continue
-          if (action !== 'read' && action !== 'write') continue
-          if (!stats[name]) stats[name] = { writes: 0, reads: 0, lastSeenAt: ts ?? '' }
-          if (action === 'write') stats[name].writes++
-          else stats[name].reads++
-          if (ts && ts > stats[name].lastSeenAt) stats[name].lastSeenAt = ts
-        }
-        setCfg((prev) => {
-          const next: AgentPermissionsConfig = {
-            ...prev,
-            agents: { ...prev.agents },
-          }
-          for (const [name, s] of Object.entries(stats)) {
-            const existing = next.agents[name]
-            next.agents[name] = {
-              agentName: name,
-              canRead: existing?.canRead ?? true,
-              canWrite: existing?.canWrite ?? true,
-              requireConfirmWrite: existing?.requireConfirmWrite ?? false,
-              lastSeenAt: s.lastSeenAt || existing?.lastSeenAt,
-              totalWrites: s.writes,
-              totalReads: s.reads,
-            }
-          }
-          next.updatedAt = new Date().toISOString()
-          saveAgentPerms(next)
-          return next
-        })
-      })
-      .catch(() => {
-        /* ignore */
-      })
-      .finally(() => setLoading(false))
-  }, [])
-
-  function updateAgent(name: string, patch: Partial<AgentPermissionEntry>) {
-    setCfg((prev) => {
-      const existing = prev.agents[name]
-      if (!existing) return prev
-      const next: AgentPermissionsConfig = {
-        ...prev,
-        agents: {
-          ...prev.agents,
-          [name]: { ...existing, ...patch },
-        },
-        updatedAt: new Date().toISOString(),
-      }
-      saveAgentPerms(next)
+  function update(patch: Partial<GlobalAgentPerms>) {
+    setPerms((prev) => {
+      const next = { ...prev, ...patch, updatedAt: new Date().toISOString() }
+      saveGlobalAgentPerms(next)
       return next
     })
-    showToast(`✓ 已更新 ${name} 权限`)
   }
-
-  function removeAgent(name: string) {
-    setCfg((prev) => {
-      const { [name]: _removed, ...rest } = prev.agents
-      void _removed
-      const next: AgentPermissionsConfig = {
-        agents: rest,
-        updatedAt: new Date().toISOString(),
-      }
-      saveAgentPerms(next)
-      return next
-    })
-    showToast(`✓ 已移除 ${name}`)
-  }
-
-  function addManual() {
-    const name = manualName.trim()
-    if (!name) return
-    if (cfg.agents[name]) {
-      showToast(`${name} 已存在`)
-      return
-    }
-    setCfg((prev) => {
-      const next: AgentPermissionsConfig = {
-        agents: {
-          ...prev.agents,
-          [name]: {
-            agentName: name,
-            canRead: true,
-            canWrite: true,
-            requireConfirmWrite: false,
-          },
-        },
-        updatedAt: new Date().toISOString(),
-      }
-      saveAgentPerms(next)
-      return next
-    })
-    setManualName('')
-    showToast(`✓ 已添加 ${name}`)
-  }
-
-  const list = Object.values(cfg.agents).sort((a, b) =>
-    a.agentName.localeCompare(b.agentName)
-  )
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <header>
-        <h1 className="text-xl font-semibold flex items-center gap-2">
-          <Bot className="w-5 h-5 text-violet-500" /> Agent 权限
-        </h1>
-        <p className="text-sm text-neutral-500 mt-1">
-          管理哪些 AI agent 可以读写你的 Atomsyn。
-        </p>
-      </header>
-
-      {/* V1.5 warning banner */}
-      <div className="flex items-start gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs text-amber-800 dark:text-amber-200">
-        <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
-        <div className="leading-relaxed">
-          <div className="font-medium mb-0.5">V1.5 暂未启用硬性拦截</div>
-          配置暂存于浏览器本地，Tauri 桌面版将写入{' '}
-          <code className="text-[11px]">~/.atomsyn-config.json</code>。
-          当前开关仅作为 UI 契约，真实权限强制将在 V1.6 接入。
-        </div>
+    <section className="space-y-3 pt-2 border-t border-neutral-200/50 dark:border-white/5">
+      <h2 className="text-sm font-semibold text-neutral-700 dark:text-neutral-200 flex items-center gap-2">
+        <ShieldCheck className="w-4 h-4 text-violet-500" />
+        Agent 权限
+      </h2>
+      <p className="text-xs text-neutral-500">
+        控制所有 AI Agent（Claude Code、Cursor 等）对 Atomsyn 知识库的访问权限。
+      </p>
+      <div className="rounded-2xl border border-neutral-200/70 dark:border-white/10 bg-white/50 dark:bg-white/[0.02] p-4 space-y-1">
+        <PermToggle
+          icon={<Eye className="w-3.5 h-3.5" />}
+          label="读权限"
+          checked={perms.canRead}
+          onChange={(v) => update({ canRead: v })}
+        />
+        <PermToggle
+          icon={<Pen className="w-3.5 h-3.5" />}
+          label="写权限"
+          checked={perms.canWrite}
+          onChange={(v) => update({ canWrite: v })}
+        />
+        <PermToggle
+          icon={<ShieldCheck className="w-3.5 h-3.5" />}
+          label="写入需确认"
+          checked={perms.requireConfirmWrite}
+          onChange={(v) => update({ requireConfirmWrite: v })}
+        />
       </div>
-
-      {loading ? (
-        <div className="text-sm text-neutral-500 flex items-center gap-2">
-          <Loader2 className="w-4 h-4 animate-spin" /> 正在读取使用日志…
-        </div>
-      ) : list.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-neutral-300/70 dark:border-white/10 px-4 py-8 text-center text-sm text-neutral-500">
-          尚未发现任何 agent · 在 Claude Code 里调用 atlas-write / atlas-read
-          后会自动出现
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {list.map((a) => (
-            <div
-              key={a.agentName}
-              className="rounded-2xl border border-neutral-200/70 dark:border-white/10 bg-white/50 dark:bg-white/[0.02] p-4 space-y-3"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <span
-                    className={cn(
-                      'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium ring-1',
-                      hashColor(a.agentName)
-                    )}
-                  >
-                    <Bot className="w-3 h-3" />
-                    {a.agentName}
-                  </span>
-                  <div className="text-[11px] text-neutral-500 mt-2">
-                    {a.totalWrites ?? 0} 次写入 · {a.totalReads ?? 0} 次读取 · 最近活跃{' '}
-                    {relativeTime(a.lastSeenAt)}
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeAgent(a.agentName)}
-                  className="p-1.5 rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-500/10 transition-colors"
-                  title="移除"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="space-y-1 pt-1 border-t border-neutral-200/60 dark:border-white/5">
-                <PermToggle
-                  icon={<Eye className="w-3.5 h-3.5" />}
-                  label="读权限"
-                  checked={a.canRead}
-                  onChange={(v) => updateAgent(a.agentName, { canRead: v })}
-                />
-                <PermToggle
-                  icon={<Pen className="w-3.5 h-3.5" />}
-                  label="写权限"
-                  checked={a.canWrite}
-                  onChange={(v) => updateAgent(a.agentName, { canWrite: v })}
-                />
-                <PermToggle
-                  icon={<ShieldCheck className="w-3.5 h-3.5" />}
-                  label="写入需确认"
-                  badge="V1.5 UI 只 · V1.6 生效"
-                  checked={a.requireConfirmWrite}
-                  onChange={(v) =>
-                    updateAgent(a.agentName, { requireConfirmWrite: v })
-                  }
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Manual add */}
-      <div className="rounded-2xl border border-neutral-200/70 dark:border-white/10 p-4">
-        <div className="text-xs font-medium text-neutral-600 dark:text-neutral-300 mb-2">
-          手动添加 agent
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={manualName}
-            onChange={(e) => setManualName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') addManual()
-            }}
-            className={inputClass}
-            placeholder="例如 cursor、windsurf、codex-cli …"
-          />
-          <button
-            type="button"
-            onClick={addManual}
-            disabled={!manualName.trim()}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-br from-violet-500 to-sky-500 text-white text-sm shadow-lg shadow-violet-500/30 disabled:opacity-50 hover:scale-[1.02] active:scale-95 transition-transform shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            添加 agent
-          </button>
-        </div>
-      </div>
-    </div>
+    </section>
   )
 }
 
 function PermToggle({
   icon,
   label,
-  badge,
   checked,
   onChange,
 }: {
   icon: React.ReactNode
   label: string
-  badge?: string
   checked: boolean
   onChange: (v: boolean) => void
 }) {
@@ -839,11 +680,6 @@ function PermToggle({
       <span className="flex items-center gap-2 text-sm text-neutral-700 dark:text-neutral-200">
         <span className="text-neutral-400">{icon}</span>
         {label}
-        {badge && (
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-300 ring-1 ring-amber-500/30 font-normal">
-            {badge}
-          </span>
-        )}
       </span>
       <button
         type="button"
@@ -990,7 +826,7 @@ function UpdatesSection() {
           <div className="text-neutral-700 dark:text-neutral-300">
             {appResult?.latest
               ? `v${appResult.latest}`
-              : '即将发布到 GitHub · V1.5 为本地版本'}
+              : `v${APP_VERSION}`}
           </div>
           <div className="text-neutral-500">Releases</div>
           <a

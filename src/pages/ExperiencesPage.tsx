@@ -274,7 +274,7 @@ export function ExperiencesPage() {
               <BookMarked className="w-5 h-5 text-violet-500" />
               我的经验
             </h1>
-            <div className="text-[11px] text-neutral-500 mt-0.5">
+            <div className="text-[0.6875rem] text-neutral-500 mt-0.5">
               {items.length} 张经验原子 · 由 agent 沉淀
             </div>
           </div>
@@ -299,7 +299,7 @@ export function ExperiencesPage() {
         {/* Filter bar */}
         <div className="max-w-5xl mx-auto px-6 pb-3 space-y-2.5">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] text-neutral-500 mr-1">来源</span>
+            <span className="text-[0.6875rem] text-neutral-500 mr-1">来源</span>
             <FilterChip active={agent === 'all'} onClick={() => setAgent('all')}>
               全部
             </FilterChip>
@@ -316,7 +316,7 @@ export function ExperiencesPage() {
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] text-neutral-500 mr-1">时间</span>
+            <span className="text-[0.6875rem] text-neutral-500 mr-1">时间</span>
             {(['all', 'today', 'week', 'month'] as DateRange[]).map((r) => (
               <FilterChip key={r} active={range === r} onClick={() => setRange(r)}>
                 {{ all: '全部', today: '今天', week: '本周', month: '本月' }[r]}
@@ -326,7 +326,7 @@ export function ExperiencesPage() {
 
           {allTags.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[11px] text-neutral-500 mr-1">标签</span>
+              <span className="text-[0.6875rem] text-neutral-500 mr-1">标签</span>
               {allTags.slice(0, 12).map((t) => (
                 <FilterChip key={t} active={activeTags.has(t)} onClick={() => toggleTag(t)}>
                   #{t}
@@ -418,7 +418,7 @@ export function ExperiencesPage() {
                           e.stopPropagation()
                           openEdit(it)
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none"
+                        className="w-full flex items-center gap-2 px-3 py-1.5 text-[0.6875rem] font-medium text-neutral-700 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-white/5 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none"
                       >
                         <Pencil className="w-3 h-3" /> 编辑
                       </button>
@@ -430,7 +430,7 @@ export function ExperiencesPage() {
                           e.stopPropagation()
                           requestDelete(it)
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-1.5 text-[11px] font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none"
+                        className="w-full flex items-center gap-2 px-3 py-1.5 text-[0.6875rem] font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-none"
                       >
                         <Trash2 className="w-3 h-3" /> 删除
                       </button>
@@ -450,25 +450,25 @@ export function ExperiencesPage() {
                         </span>
                         <span
                           className={cn(
-                            'text-[10px] px-1.5 py-0.5 rounded-md border font-mono',
+                            'text-[0.625rem] px-1.5 py-0.5 rounded-md border font-mono',
                             agentColor(it.sourceAgent || 'user')
                           )}
                         >
                           {it.sourceAgent || 'user'}
                         </span>
                         {locked && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                          <span className="text-[0.625rem] px-1.5 py-0.5 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1">
                             <Lock className="w-2.5 h-2.5" /> 已锁定
                           </span>
                         )}
                         {demoted && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-neutral-500/15 text-neutral-500 border border-neutral-500/30 flex items-center gap-1">
+                          <span className="text-[0.625rem] px-1.5 py-0.5 rounded-md bg-neutral-500/15 text-neutral-500 border border-neutral-500/30 flex items-center gap-1">
                             <Moon className="w-2.5 h-2.5" /> 降权
                           </span>
                         )}
                       </div>
                     </div>
-                    <span className="text-[10px] text-neutral-400 shrink-0 font-mono">
+                    <span className="text-[0.625rem] text-neutral-400 shrink-0 font-mono">
                       {relTime(it.createdAt)}
                     </span>
                   </div>
@@ -485,13 +485,13 @@ export function ExperiencesPage() {
                       {it.tags.slice(0, 5).map((t) => (
                         <span
                           key={t}
-                          className="text-[10px] px-1.5 py-0.5 rounded-md bg-neutral-100 dark:bg-white/5 text-neutral-500 font-mono"
+                          className="text-[0.625rem] px-1.5 py-0.5 rounded-md bg-neutral-100 dark:bg-white/5 text-neutral-500 font-mono"
                         >
                           #{t}
                         </span>
                       ))}
                       {it.tags.length > 5 && (
-                        <span className="text-[10px] text-neutral-400">
+                        <span className="text-[0.625rem] text-neutral-400">
                           +{it.tags.length - 5}
                         </span>
                       )}
@@ -503,20 +503,20 @@ export function ExperiencesPage() {
                 {open && (
                   <div className="border-t border-neutral-200/60 dark:border-neutral-800/60 px-5 py-4 space-y-3 bg-neutral-50/40 dark:bg-white/[0.01]">
                     <div>
-                      <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
+                      <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1">
                         洞察
                       </div>
-                      <div className="text-[13px] leading-relaxed whitespace-pre-wrap text-neutral-700 dark:text-neutral-200">
+                      <div className="text-[0.8125rem] leading-relaxed whitespace-pre-wrap text-neutral-700 dark:text-neutral-200">
                         {it.insight}
                       </div>
                     </div>
 
                     {it.keySteps && it.keySteps.length > 0 && (
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
+                        <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1">
                           关键步骤
                         </div>
-                        <ol className="text-[13px] leading-relaxed text-neutral-700 dark:text-neutral-200 list-decimal pl-5 space-y-1">
+                        <ol className="text-[0.8125rem] leading-relaxed text-neutral-700 dark:text-neutral-200 list-decimal pl-5 space-y-1">
                           {it.keySteps.map((s, i) => (
                             <li key={i}>{s}</li>
                           ))}
@@ -526,7 +526,7 @@ export function ExperiencesPage() {
 
                     {it.codeArtifacts && it.codeArtifacts.length > 0 && (
                       <div>
-                        <div className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
+                        <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 mb-1">
                           代码片段
                         </div>
                         <div className="space-y-2">
@@ -535,11 +535,11 @@ export function ExperiencesPage() {
                               key={i}
                               className="rounded-lg border border-neutral-200/60 dark:border-white/10 overflow-hidden"
                             >
-                              <div className="text-[10px] font-mono px-2 py-1 bg-neutral-100 dark:bg-white/5 text-neutral-500 flex justify-between">
+                              <div className="text-[0.625rem] font-mono px-2 py-1 bg-neutral-100 dark:bg-white/5 text-neutral-500 flex justify-between">
                                 <span>{c.language}</span>
                                 {c.filename && <span>{c.filename}</span>}
                               </div>
-                              <pre className="text-[11px] font-mono p-2.5 overflow-x-auto whitespace-pre text-neutral-700 dark:text-neutral-300">
+                              <pre className="text-[0.6875rem] font-mono p-2.5 overflow-x-auto whitespace-pre text-neutral-700 dark:text-neutral-300">
                                 {c.code}
                               </pre>
                             </div>
@@ -550,7 +550,7 @@ export function ExperiencesPage() {
 
                     {((it.relatedFrameworks && it.relatedFrameworks.length > 0) ||
                       (it.relatedAtoms && it.relatedAtoms.length > 0)) && (
-                      <div className="text-[11px] text-neutral-500 space-y-0.5">
+                      <div className="text-[0.6875rem] text-neutral-500 space-y-0.5">
                         {it.relatedFrameworks && it.relatedFrameworks.length > 0 && (
                           <div>
                             关联骨架：
@@ -639,7 +639,7 @@ function FilterChip({
     <button
       onClick={onClick}
       className={cn(
-        'h-7 px-2.5 rounded-lg text-[11px] font-medium border transition-colors',
+        'h-7 px-2.5 rounded-lg text-[0.6875rem] font-medium border transition-colors',
         active
           ? 'bg-violet-500 text-white border-violet-500 shadow-sm shadow-violet-500/30'
           : 'bg-white/40 dark:bg-white/[0.03] border-neutral-200/60 dark:border-white/10 text-neutral-600 dark:text-neutral-400 hover:border-violet-400/50',
@@ -666,7 +666,7 @@ function ActionBtn({
     <button
       onClick={onClick}
       className={cn(
-        'h-7 px-2.5 rounded-lg text-[11px] font-medium border flex items-center gap-1 transition-colors',
+        'h-7 px-2.5 rounded-lg text-[0.6875rem] font-medium border flex items-center gap-1 transition-colors',
         active
           ? 'bg-amber-500/15 border-amber-500/40 text-amber-600 dark:text-amber-300'
           : 'bg-white/40 dark:bg-white/[0.03] border-neutral-200/60 dark:border-white/10 text-neutral-600 dark:text-neutral-400 hover:border-violet-400/50'

@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Framework",
-  "description": "A skeleton organizing knowledge atoms (e.g. Product Innovation 24-Step)",
+  "description": "A skeleton organizing knowledge atoms. V2.1: supports matrix, list, and tree layouts.",
   "type": "object",
-  "required": ["id", "schemaVersion", "name", "layoutType", "matrix", "createdAt", "updatedAt"],
+  "required": ["id", "schemaVersion", "name", "layoutType", "createdAt", "updatedAt"],
   "properties": {
     "id": { "type": "string" },
     "schemaVersion": { "type": "integer", "const": 1 },
@@ -12,7 +12,7 @@
     "source": { "type": "string" },
     "version": { "type": "string" },
     "description": { "type": "string" },
-    "layoutType": { "type": "string", "enum": ["matrix"] },
+    "layoutType": { "type": "string", "enum": ["matrix", "list", "tree"] },
     "matrix": {
       "type": "object",
       "required": ["rows", "columns", "columnHeaders", "cells"],
@@ -50,7 +50,72 @@
         }
       }
     },
+    "list": {
+      "type": "object",
+      "required": ["categories"],
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "color", "atomCategoryPath"],
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "nameEn": { "type": "string" },
+              "color": { "type": "string" },
+              "description": { "type": "string" },
+              "tagline": { "type": "string" },
+              "atomCategoryPath": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "tree": {
+      "type": "object",
+      "required": ["roots"],
+      "properties": {
+        "roots": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/TreeNode" }
+        }
+      }
+    },
     "createdAt": { "type": "string" },
     "updatedAt": { "type": "string" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "layoutType": { "const": "matrix" } } },
+      "then": { "required": ["matrix"] }
+    },
+    {
+      "if": { "properties": { "layoutType": { "const": "list" } } },
+      "then": { "required": ["list"] }
+    },
+    {
+      "if": { "properties": { "layoutType": { "const": "tree" } } },
+      "then": { "required": ["tree"] }
+    }
+  ],
+  "definitions": {
+    "TreeNode": {
+      "type": "object",
+      "required": ["id", "name", "atomCategoryPath"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nameEn": { "type": "string" },
+        "color": { "type": "string" },
+        "description": { "type": "string" },
+        "tagline": { "type": "string" },
+        "atomCategoryPath": { "type": "string" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/TreeNode" }
+        }
+      }
+    }
   }
 }

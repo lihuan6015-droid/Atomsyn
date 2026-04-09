@@ -72,7 +72,7 @@ export function PsychologicalCheckDialog({ open, month, onClose, onSaved }: Prop
                   </div>
                   <div>
                     <div className="text-base font-semibold">月末心理自查</div>
-                    <div className="text-[11px] text-neutral-500">
+                    <div className="text-[0.6875rem] text-neutral-500">
                       {month} · 3 个问题，30 秒
                     </div>
                   </div>

@@ -56,7 +56,7 @@ export function StageProgress({ current, history = [] }: Props) {
               <div className="flex items-center gap-1.5">
                 <span
                   className={cn(
-                    'text-[10px] font-mono uppercase tracking-wider',
+                    'text-[0.625rem] font-mono uppercase tracking-wider',
                     isCurrent
                       ? `text-stage-${s.id}`
                       : isCompleted

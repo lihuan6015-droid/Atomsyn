@@ -1,0 +1,21 @@
+{
+  "id": "ui-ux-patterns",
+  "schemaVersion": 1,
+  "name": "UI/UX 设计模式",
+  "nameEn": "UI/UX Design Patterns",
+  "source": "综合",
+  "version": "1.0",
+  "description": "涵盖信息架构、交互模式、视觉设计、可用性与无障碍的设计模式库",
+  "layoutType": "list",
+  "list": {
+    "categories": [
+      { "id": "information-architecture", "name": "信息架构", "nameEn": "Information Architecture", "color": "#A78BFA", "atomCategoryPath": "ui-ux-patterns/information-architecture" },
+      { "id": "interaction-patterns",     "name": "交互模式", "nameEn": "Interaction Patterns",     "color": "#60A5FA", "atomCategoryPath": "ui-ux-patterns/interaction-patterns" },
+      { "id": "visual-design",            "name": "视觉设计", "nameEn": "Visual Design",            "color": "#34D399", "atomCategoryPath": "ui-ux-patterns/visual-design" },
+      { "id": "usability",                "name": "可用性",   "nameEn": "Usability",                "color": "#FBBF24", "atomCategoryPath": "ui-ux-patterns/usability" },
+      { "id": "accessibility",            "name": "无障碍",   "nameEn": "Accessibility",            "color": "#FB923C", "atomCategoryPath": "ui-ux-patterns/accessibility" }
+    ]
+  },
+  "createdAt": "2026-04-11T00:00:00Z",
+  "updatedAt": "2026-04-11T00:00:00Z"
+}

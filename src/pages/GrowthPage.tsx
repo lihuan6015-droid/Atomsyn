@@ -4,8 +4,12 @@
  */
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Activity, BarChart3, Flame, Sprout, TrendingUp } from 'lucide-react'
-import { atomsApi, projectsApi, psychApi, usageApi } from '@/lib/dataApi'
+import { motion } from 'framer-motion'
+import { Activity, BarChart3, Flame, Radar, Sparkles, Sprout } from 'lucide-react'
+import { analysisApi, atomsApi, projectsApi, psychApi, usageApi } from '@/lib/dataApi'
+import { AnalysisView } from '@/components/growth/AnalysisView'
+import { RadarChart } from '@/components/growth/RadarChart'
+import type { AnalysisReport } from '@/types'
 import type {
   Atom,
   Project,
@@ -41,10 +45,12 @@ export function GrowthPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [usage, setUsage] = useState<UsageEvent[]>([])
   const [psych, setPsych] = useState<PsychologicalEntry[]>([])
+  const [latestReport, setLatestReport] = useState<AnalysisReport | null>(null)
   const [loading, setLoading] = useState(true)
 
   const [month, setMonth] = useState<string>(ymKey(new Date()))
   const [psychOpen, setPsychOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState<'overview' | 'analysis'>('overview')
 
   useEffect(() => {
     Promise.all([
@@ -58,6 +64,12 @@ export function GrowthPage() {
       setUsage(u)
       setPsych(ps)
       setLoading(false)
+
+      // Fetch latest completed report for radar chart
+      analysisApi.listReports().then((reports) => {
+        const completed = reports.find((r) => r.status === 'completed' && r.analysis?.radar)
+        if (completed) setLatestReport(completed)
+      }).catch(() => {})
 
       // Maybe show monthly check
       const now = new Date()
@@ -165,14 +177,53 @@ export function GrowthPage() {
             首页 / <span className="text-neutral-700 dark:text-neutral-200">成长</span>
           </div>
         </div>
-        <input
-          type="month"
-          value={month}
-          onChange={(e) => setMonth(e.target.value)}
-          className="rounded-xl bg-white dark:bg-white/5 border border-neutral-200/70 dark:border-white/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/40"
-        />
+
+        <div className="flex items-center gap-3">
+          {/* Date picker — only visible on overview tab, but occupies space always for stable layout */}
+          <div className="w-[140px]">
+            {activeTab === 'overview' && (
+              <input
+                type="month"
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}
+                className="w-full rounded-xl bg-white dark:bg-white/5 border border-neutral-200/70 dark:border-white/10 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/40"
+              />
+            )}
+          </div>
+
+          {/* Segmented Control — macOS style, always in fixed position */}
+          <div className="flex items-center bg-neutral-100 dark:bg-neutral-800/60 rounded-xl p-1">
+            {([
+              { id: 'overview' as const, label: '概览', icon: <BarChart3 className="w-3.5 h-3.5" /> },
+              { id: 'analysis' as const, label: '认知洞察', icon: <Sparkles className="w-3.5 h-3.5" /> },
+            ]).map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="relative flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-medium rounded-lg transition-colors"
+              >
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId="growth-tab-indicator"
+                    className="absolute inset-0 bg-white dark:bg-neutral-700 rounded-lg shadow-sm"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span className={`relative z-10 flex items-center gap-1.5 ${activeTab === tab.id ? 'text-neutral-900 dark:text-neutral-100' : 'text-neutral-500 dark:text-neutral-400'}`}>
+                  {tab.icon}
+                  {tab.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
       </header>
 
+      {/* Tab content */}
+      {activeTab === 'analysis' ? (
+        <AnalysisView />
+      ) : (
+      <>
       {/* Stats grid */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard label="知识原子总数" value={stats.atomCount} icon={<Sprout className="w-4 h-4" />} tone="violet" />
@@ -202,7 +253,7 @@ export function GrowthPage() {
               )
             })}
           </div>
-          <div className="text-[11px] text-neutral-500 mt-2 flex items-center gap-2">
+          <div className="text-[0.6875rem] text-neutral-500 mt-2 flex items-center gap-2">
             少 <span className="inline-block w-3 h-3 rounded bg-emerald-500/15" />
             <span className="inline-block w-3 h-3 rounded bg-emerald-500/40" />
             <span className="inline-block w-3 h-3 rounded bg-emerald-500/70" />
@@ -221,7 +272,7 @@ export function GrowthPage() {
                 return (
                   <li key={a.id}>
                     <button
-                      onClick={() => navigate(`/atoms/${a.id}`)}
+                      onClick={() => navigate(`/atom/atoms/${a.id}`)}
                       className="w-full text-left group"
                     >
                       <div className="flex items-center justify-between text-xs mb-1">
@@ -273,22 +324,24 @@ export function GrowthPage() {
         </Card>
 
         <Card
-          title="心理自查趋势"
-          icon={<TrendingUp className="w-4 h-4 text-pink-500" />}
+          title="认知雷达"
+          icon={<Radar className="w-4 h-4 text-violet-500" />}
         >
-          {psychSorted.length === 0 ? (
-            <EmptyState text="还没有自查记录，下个月末会自动弹出 3 题。" />
+          {latestReport?.analysis?.radar ? (
+            <div className="flex flex-col items-center">
+              <RadarChart data={latestReport.analysis.radar} size={200} />
+              <div className="text-[0.625rem] text-neutral-400 dark:text-neutral-500 mt-2">
+                基于最近一次认知洞察报告 · {new Date(latestReport.createdAt).toLocaleDateString()}
+              </div>
+            </div>
           ) : (
-            <PsychSparkline entries={psychSorted} />
+            <EmptyState text="暂无雷达数据。前往「认知洞察」生成一份分析报告即可。" />
           )}
-          <button
-            onClick={() => setPsychOpen(true)}
-            className="mt-3 text-[11px] text-pink-600 dark:text-pink-300 hover:underline"
-          >
-            手动开始本月自查 →
-          </button>
         </Card>
       </section>
+
+      </>
+      )}
 
       <PsychologicalCheckDialog
         open={psychOpen}
@@ -328,7 +381,7 @@ function StatCard({
         toneMap[tone]
       }
     >
-      <div className="flex items-center justify-between text-[11px] uppercase tracking-wider opacity-80">
+      <div className="flex items-center justify-between text-[0.6875rem] uppercase tracking-wider opacity-80">
         <span>{label}</span>
         {icon}
       </div>
@@ -402,7 +455,7 @@ function PsychSparkline({ entries }: { entries: PsychologicalEntry[] }) {
         <path d={pathFor(conf)} fill="none" stroke="#34d399" strokeWidth={2} />
         <path d={pathFor(tool)} fill="none" stroke="#f472b6" strokeWidth={2} />
       </svg>
-      <div className="flex items-center gap-3 text-[10px] text-neutral-500 mt-1">
+      <div className="flex items-center gap-3 text-[0.625rem] text-neutral-500 mt-1">
         <Legend color="#a78bfa" label="频率↓越好" />
         <Legend color="#34d399" label="信心↑" />
         <Legend color="#f472b6" label="笃定↑" />

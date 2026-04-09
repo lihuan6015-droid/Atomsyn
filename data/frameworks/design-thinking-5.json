@@ -1,0 +1,30 @@
+{
+  "id": "design-thinking-5",
+  "schemaVersion": 1,
+  "name": "设计思维5步法",
+  "nameEn": "Design Thinking 5 Phases",
+  "source": "IDEO / Stanford d.school",
+  "version": "1.0",
+  "description": "覆盖从共情到测试的完整设计思维闭环",
+  "layoutType": "matrix",
+  "matrix": {
+    "rows": 1,
+    "columns": 5,
+    "columnHeaders": [
+      { "id": "empathize", "name": "Empathize 共情", "color": "#A78BFA" },
+      { "id": "define",    "name": "Define 定义",    "color": "#60A5FA" },
+      { "id": "ideate",    "name": "Ideate 构思",    "color": "#34D399" },
+      { "id": "prototype", "name": "Prototype 原型", "color": "#FBBF24" },
+      { "id": "test",      "name": "Test 测试",      "color": "#FB923C" }
+    ],
+    "cells": [
+      { "stepNumber": 1, "column": "empathize", "row": 1, "name": "共情",   "nameEn": "Empathize",  "tagline": "理解用户的真实需求",     "atomCategoryPath": "design-thinking-5/01-empathize" },
+      { "stepNumber": 2, "column": "define",    "row": 1, "name": "定义",   "nameEn": "Define",     "tagline": "聚焦核心问题",           "atomCategoryPath": "design-thinking-5/02-define" },
+      { "stepNumber": 3, "column": "ideate",    "row": 1, "name": "构思",   "nameEn": "Ideate",     "tagline": "发散创意方案",           "atomCategoryPath": "design-thinking-5/03-ideate" },
+      { "stepNumber": 4, "column": "prototype", "row": 1, "name": "原型",   "nameEn": "Prototype",  "tagline": "快速构建可触摸的方案",   "atomCategoryPath": "design-thinking-5/04-prototype" },
+      { "stepNumber": 5, "column": "test",      "row": 1, "name": "测试",   "nameEn": "Test",       "tagline": "验证与迭代",             "atomCategoryPath": "design-thinking-5/05-test" }
+    ]
+  },
+  "createdAt": "2026-04-11T00:00:00Z",
+  "updatedAt": "2026-04-11T00:00:00Z"
+}

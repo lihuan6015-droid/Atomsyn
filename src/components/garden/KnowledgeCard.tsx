@@ -41,7 +41,7 @@ export function KnowledgeCard({ atom }: Props) {
 
   return (
     <button
-      onClick={() => navigate(`/atoms/${atom.id}`)}
+      onClick={() => navigate(`/atom/atoms/${atom.id}`)}
       className={cn(
         'w-full text-left rounded-xl border border-neutral-200/60 dark:border-white/8 px-4 py-3',
         'bg-white/80 dark:bg-white/[0.02] hover:border-neutral-300 dark:hover:border-white/15',
@@ -57,9 +57,9 @@ export function KnowledgeCard({ atom }: Props) {
 
       {/* Row 2: kind + tags */}
       <div className="flex items-center gap-1.5 mt-1.5">
-        <span className={cn('text-[10px] font-medium', accentClass)}>{kindLabel}</span>
+        <span className={cn('text-[0.625rem] font-medium', accentClass)}>{kindLabel}</span>
         {tags.map((t) => (
-          <span key={t} className="px-1.5 py-0.5 rounded text-[10px] bg-neutral-100 dark:bg-white/5 text-neutral-500 font-mono">
+          <span key={t} className="px-1.5 py-0.5 rounded text-[0.625rem] bg-neutral-100 dark:bg-white/5 text-neutral-500 font-mono">
             {t}
           </span>
         ))}

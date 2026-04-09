@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
 import { SplashScreen } from '@/components/splash/SplashScreen'
 import { LegacyMigrationDialog } from '@/components/migration/LegacyMigrationDialog'
@@ -15,11 +15,20 @@ import {
   SkillMapPage,
 } from '@/pages/_placeholder'
 import { GardenPage } from '@/pages/GardenPage'
+import { ChatPage } from '@/pages/ChatPage'
+import BookshelfPage from '@/pages/BookshelfPage'
+import { NotesPage } from '@/pages/NotesPage'
 import { useEffect } from 'react'
 import { appVersionApi, indexApi, seedApi, skillScanApi } from '@/lib/dataApi'
 import { SeedUpdateDialog } from '@/components/seed/SeedUpdateDialog'
 import { useAppStore } from '@/stores/useAppStore'
 import type { SeedCheckResult } from '@/types'
+
+/** Legacy /atoms/:atomId → /atom/atoms/:atomId redirect */
+function LegacyAtomRedirect() {
+  const { atomId } = useParams()
+  return <Navigate to={`/atom/atoms/${atomId}`} replace />
+}
 
 export default function App() {
   const [migrationResolved, setMigrationResolved] = useState<boolean>(
@@ -90,20 +99,31 @@ export default function App() {
       <Routes>
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route element={<AppShell />}>
-          <Route index element={<Navigate to="/garden" replace />} />
-          {/* V2.0 M3: Memory Garden replaces Library + Experiences */}
-          <Route path="/garden" element={<GardenPage />} />
-          {/* Legacy routes → redirect to garden */}
-          <Route path="/atlas" element={<Navigate to="/garden" replace />} />
-          <Route path="/atlas/:frameworkId" element={<Navigate to="/garden" replace />} />
-          <Route path="/experiences" element={<Navigate to="/garden" replace />} />
-          <Route path="/atoms/:atomId" element={<AtomDetailPage />} />
-          <Route path="/playground" element={<PlaygroundPage />} />
-          <Route path="/playground/:projectId" element={<ProjectDetailPage />} />
-          <Route path="/growth" element={<GrowthPage />} />
-          <Route path="/skills" element={<SkillMapPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="*" element={<Navigate to="/garden" replace />} />
+          <Route index element={<Navigate to="/chat" replace />} />
+          {/* ─── Chat mode ─── */}
+          <Route path="/chat" element={<ChatPage />} />
+          {/* ─── Atom mode ─── */}
+          <Route path="/atom" element={<Navigate to="/atom/garden" replace />} />
+          <Route path="/atom/garden" element={<GardenPage />} />
+          <Route path="/atom/atoms/:atomId" element={<AtomDetailPage />} />
+          <Route path="/atom/playground" element={<PlaygroundPage />} />
+          <Route path="/atom/playground/:projectId" element={<ProjectDetailPage />} />
+          <Route path="/atom/growth" element={<GrowthPage />} />
+          <Route path="/atom/skills" element={<SkillMapPage />} />
+          <Route path="/atom/bookshelf" element={<BookshelfPage />} />
+          {/* ─── Notes mode ─── */}
+          <Route path="/notes" element={<NotesPage />} />
+          {/* ─── Legacy redirects ─── */}
+          <Route path="/garden" element={<Navigate to="/atom/garden" replace />} />
+          <Route path="/atlas" element={<Navigate to="/atom/garden" replace />} />
+          <Route path="/atlas/:frameworkId" element={<Navigate to="/atom/garden" replace />} />
+          <Route path="/experiences" element={<Navigate to="/atom/garden" replace />} />
+          <Route path="/atoms/:atomId" element={<LegacyAtomRedirect />} />
+          <Route path="/playground" element={<Navigate to="/atom/playground" replace />} />
+          <Route path="/growth" element={<Navigate to="/atom/growth" replace />} />
+          <Route path="/skills" element={<Navigate to="/atom/skills" replace />} />
+          <Route path="/settings" element={<Navigate to="/chat" replace />} />
+          <Route path="*" element={<Navigate to="/chat" replace />} />
         </Route>
       </Routes>
     </BrowserRouter>

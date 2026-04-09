@@ -10,12 +10,12 @@ Experiences / Skill Map / Settings). **L2** = AI-facing interface via
 Code and Cursor.
 
 📄 PRD: `docs/PRD.md` (V1) · `docs/PRD-v1.5-delta.md` (V1.5 增量) · **`docs/PRD-v2.0.md` (V2.0 ← 当前)**
-🎯 战略: `docs/framing/v1.5-problem-framing.md` · **`docs/framing/v2.0-problem-framing.md` (Atomsyn 北极星)**
+🎯 战略: `docs/framing/v1.5-problem-framing.md` · `docs/framing/v2.0-problem-framing.md` (V2.0 战略锚点) · **`docs/framing/v2.x-north-star.md` (V2.x 北极星 ← 当前)**
 🛠 V1.5 归档: `docs/plans/v1.5-implementation-plan.md` · `docs/plans/v1.5-resume-state.md` · `docs/releases/v1.5.md`
 🚀 V2.0 启动: `docs/plans/v2.0-handoff.md` · `docs/plans/v2.0-implementation-plan.md` · **`docs/plans/v2.0-m0-complete.md` (M0 完成 + M1 交接)**
 🎨 Visual mockups: `docs/mockups/atlas.html`, `docs/mockups/atom-card.html`
 
-**当前版本**: V2.0 进行中 (2026-04-09 起步)。产品将改名 **Atomsyn** (M0 第一件事)。旧名 `ccl-atlas` / `atlas-cli` 在 M0 完成后不再使用 (单用户 MVP,无兼容层)。启动新会话前先读 `docs/framing/v2.0-problem-framing.md` + `docs/PRD-v2.0.md`。
+**当前版本**: V2.1 (P0+P1 已交付)。产品定位:**认知双向操作系统 (仓库 + 结构 + 教练)**。已交付: 方法库泛化 (P0) + 统计可视化 (P0) + 认知洞察/AI复盘 (P1) + 导师模式 Skill (P1) + 认知雷达轻量版 (P1) + 书架占位页 (P2占位)。下一步: §6 聊天模块改进 + §4 书架功能实现。启动新会话前先读 `docs/framing/v2.x-north-star.md` (北极星) + `docs/plans/v2.x-vision-handoff.md` (V2.x 愿景交接)。
 
 ---
 

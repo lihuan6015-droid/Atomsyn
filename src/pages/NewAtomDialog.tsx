@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { X, Plus, ChevronDown, ChevronRight } from 'lucide-react'
 import { atomsApi, frameworksApi, trackUsage } from '@/lib/dataApi'
 import { useAppStore } from '@/stores/useAppStore'
-import type { Framework, FrameworkCell } from '@/types'
+import type { Framework } from '@/types'
+import { getFrameworkNodeIds } from '@/types'
 
 export function NewAtomDialog() {
   const [open, setOpen] = useState(false)
@@ -14,7 +15,7 @@ export function NewAtomDialog() {
 
   // form
   const [frameworkId, setFrameworkId] = useState<string>('')
-  const [cellId, setCellId] = useState<number>(1)
+  const [cellId, setCellId] = useState<number | string>(1)
   const [name, setName] = useState('')
   const [nameEn, setNameEn] = useState('')
   const [coreIdea, setCoreIdea] = useState('')
@@ -24,10 +25,14 @@ export function NewAtomDialog() {
   const [keySteps, setKeySteps] = useState('')
   const [exampleTitle, setExampleTitle] = useState('')
   const [exampleContent, setExampleContent] = useState('')
-  const [parentAtomId, setParentAtomId] = useState('')
 
   useEffect(() => {
-    const handler = () => setOpen(true)
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail
+      if (detail?.frameworkId) setFrameworkId(detail.frameworkId)
+      if (detail?.cellId !== undefined) setCellId(detail.cellId)
+      setOpen(true)
+    }
     window.addEventListener('ccl:open-new-atom', handler)
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open) setOpen(false)
@@ -58,7 +63,16 @@ export function NewAtomDialog() {
   }, [open, activeFrameworkId])
 
   const currentFw = frameworks.find((f) => f.id === frameworkId)
-  const cells: FrameworkCell[] = currentFw?.matrix.cells ?? []
+  const nodes = currentFw ? getFrameworkNodeIds(currentFw) : []
+  const hasNodes = nodes.length > 0
+
+  // Reset cellId when framework changes
+  useEffect(() => {
+    if (currentFw) {
+      const fwNodes = getFrameworkNodeIds(currentFw)
+      if (fwNodes.length > 0) setCellId(fwNodes[0].id)
+    }
+  }, [frameworkId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const reset = () => {
     setName('')
@@ -70,7 +84,6 @@ export function NewAtomDialog() {
     setKeySteps('')
     setExampleTitle('')
     setExampleContent('')
-    setParentAtomId('')
     setAdvanced(false)
   }
 
@@ -81,7 +94,16 @@ export function NewAtomDialog() {
     }
     setSaving(true)
     try {
+      // Generate atom id: atom_<slug> where slug is derived from English name or pinyin-ish transliteration
+      const slugBase = (nameEn.trim() || name.trim())
+        .toLowerCase()
+        .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '_')
+        .replace(/^_|_$/g, '')
+        .slice(0, 40)
+      const atomId = `atom_${slugBase || 'untitled'}`
       await atomsApi.create({
+        id: atomId,
+        kind: 'methodology' as const,
         name: name.trim(),
         nameEn: nameEn.trim() || undefined,
         frameworkId,
@@ -101,12 +123,12 @@ export function NewAtomDialog() {
           exampleTitle.trim() || exampleContent.trim()
             ? { title: exampleTitle.trim(), content: exampleContent.trim() }
             : undefined,
-        parentAtomId: parentAtomId.trim() || undefined,
         bookmarks: [],
         stats: { usedInProjects: [], useCount: 0, aiInvokeCount: 0, humanViewCount: 0 },
       })
       showToast('✓ 已创建新原子')
       trackUsage({ type: 'atom-create' })
+      window.dispatchEvent(new CustomEvent('atomsyn:atoms-changed'))
       reset()
       setOpen(false)
     } catch (err) {
@@ -139,7 +161,7 @@ export function NewAtomDialog() {
           {/* Framework + cell */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>骨架</Label>
+              <Label required>骨架</Label>
               <select
                 value={frameworkId}
                 onChange={(e) => setFrameworkId(e.target.value)}
@@ -153,23 +175,32 @@ export function NewAtomDialog() {
               </select>
             </div>
             <div>
-              <Label>所属步骤</Label>
-              <select
-                value={cellId}
-                onChange={(e) => setCellId(Number(e.target.value))}
-                className={selectCls}
-              >
-                {cells.map((c) => (
-                  <option key={c.stepNumber} value={c.stepNumber}>
-                    {String(c.stepNumber).padStart(2, '0')} · {c.name}
-                  </option>
-                ))}
-              </select>
+              <Label required>{currentFw?.layoutType === 'matrix' ? '所属步骤' : '所属分类'}</Label>
+              {hasNodes ? (
+                <select
+                  value={String(cellId)}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setCellId(currentFw?.layoutType === 'matrix' ? Number(val) : val)
+                  }}
+                  className={selectCls}
+                >
+                  {nodes.map((n) => (
+                    <option key={String(n.id)} value={String(n.id)}>
+                      {typeof n.id === 'number' ? String(n.id).padStart(2, '0') + ' · ' : ''}{n.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
+                  该方法库尚未定义分类结构，请先编辑方法库添加分类
+                </p>
+              )}
             </div>
           </div>
 
           <div>
-            <Label>名称 *</Label>
+            <Label required>名称</Label>
             <input value={name} onChange={(e) => setName(e.target.value)} className={inputCls} />
           </div>
           <div>
@@ -199,12 +230,12 @@ export function NewAtomDialog() {
             />
           </div>
           <div>
-            <Label>AI Skill Prompt *</Label>
+            <Label required>AI Skill Prompt</Label>
             <textarea
               rows={5}
               value={aiSkillPrompt}
               onChange={(e) => setAiSkillPrompt(e.target.value)}
-              className={textareaCls + ' font-mono text-[12px]'}
+              className={textareaCls + ' font-mono text-[0.75rem]'}
               placeholder="可使用 {请在此处填入} 作为占位符"
             />
           </div>
@@ -252,14 +283,6 @@ export function NewAtomDialog() {
                   className={textareaCls}
                 />
               </div>
-              <div>
-                <Label>父原子 ID</Label>
-                <input
-                  value={parentAtomId}
-                  onChange={(e) => setParentAtomId(e.target.value)}
-                  className={inputCls}
-                />
-              </div>
             </div>
           )}
         </div>
@@ -273,7 +296,7 @@ export function NewAtomDialog() {
           </button>
           <button
             onClick={onSave}
-            disabled={saving}
+            disabled={saving || !hasNodes}
             className="px-3 h-8 rounded-lg bg-violet-500 hover:bg-violet-600 disabled:opacity-50 text-white text-xs font-medium shadow-lg shadow-violet-500/25 transition-colors"
           >
             {saving ? '保存中...' : '创建'}
@@ -290,10 +313,11 @@ const textareaCls =
   'mt-1 w-full rounded-lg border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-500/40'
 const selectCls = inputCls
 
-function Label({ children }: { children: React.ReactNode }) {
+function Label({ children, required }: { children: React.ReactNode; required?: boolean }) {
   return (
-    <label className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold">
+    <label className="text-[0.625rem] uppercase tracking-wider text-neutral-500 font-semibold">
       {children}
+      {required && <span className="text-red-500 ml-0.5">*</span>}
     </label>
   )
 }

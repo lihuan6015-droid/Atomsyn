@@ -54,23 +54,114 @@ export interface FrameworkCell {
   featured?: boolean
 }
 
-export interface Framework {
+// ----- List layout (V2.1) ----------------------------------------------------
+
+export interface FrameworkListCategory {
+  id: string
+  name: string
+  nameEn?: string
+  color: string // CSS hex
+  description?: string
+  tagline?: string
+  atomCategoryPath: string // e.g. "ui-ux-patterns/information-architecture"
+}
+
+export interface FrameworkListLayout {
+  categories: FrameworkListCategory[]
+}
+
+// ----- Tree layout (V2.1) ----------------------------------------------------
+
+export interface FrameworkTreeNode {
+  id: string
+  name: string
+  nameEn?: string
+  color?: string // root nodes should set color; children inherit
+  description?: string
+  tagline?: string
+  atomCategoryPath: string
+  children?: FrameworkTreeNode[]
+}
+
+export interface FrameworkTreeLayout {
+  roots: FrameworkTreeNode[]
+}
+
+// ----- Framework (V2.1: matrix | list | tree) --------------------------------
+
+export type FrameworkLayoutType = 'matrix' | 'list' | 'tree'
+
+interface FrameworkBase {
   id: string
   schemaVersion: 1
   name: string
-  nameEn: string
+  nameEn?: string
   source?: string
   version?: string
   description?: string
-  layoutType: 'matrix'
-  matrix: {
-    rows: number
-    columns: number
-    columnHeaders: StageColumnHeader[]
-    cells: FrameworkCell[]
-  }
   createdAt: string
   updatedAt: string
+}
+
+export type Framework =
+  | (FrameworkBase & { layoutType: 'matrix'; matrix: { rows: number; columns: number; columnHeaders: StageColumnHeader[]; cells: FrameworkCell[] } })
+  | (FrameworkBase & { layoutType: 'list'; list: FrameworkListLayout })
+  | (FrameworkBase & { layoutType: 'tree'; tree: FrameworkTreeLayout })
+
+// ----- Framework helpers (V2.1) ----------------------------------------------
+
+/** Type guard: framework uses matrix layout. */
+export function isMatrixFramework(fw: Framework): fw is FrameworkBase & { layoutType: 'matrix'; matrix: { rows: number; columns: number; columnHeaders: StageColumnHeader[]; cells: FrameworkCell[] } } {
+  return fw.layoutType === 'matrix'
+}
+
+/** Type guard: framework uses list layout. */
+export function isListFramework(fw: Framework): fw is FrameworkBase & { layoutType: 'list'; list: FrameworkListLayout } {
+  return fw.layoutType === 'list'
+}
+
+/** Type guard: framework uses tree layout. */
+export function isTreeFramework(fw: Framework): fw is FrameworkBase & { layoutType: 'tree'; tree: FrameworkTreeLayout } {
+  return fw.layoutType === 'tree'
+}
+
+/** Get the total number of cells/categories/nodes in any framework layout. */
+export function getFrameworkNodeCount(fw: Framework): number {
+  if (fw.layoutType === 'matrix') return fw.matrix?.cells?.length ?? 0
+  if (fw.layoutType === 'list') return fw.list?.categories?.length ?? 0
+  if (fw.layoutType === 'tree') {
+    let count = 0
+    const roots = fw.tree?.roots
+    if (!roots || !Array.isArray(roots)) return 0
+    function walk(nodes: FrameworkTreeNode[]) { for (const n of nodes) { count++; if (n.children) walk(n.children) } }
+    walk(roots)
+    return count
+  }
+  return 0
+}
+
+/** Extract all cell/category/node identifiers from any framework layout. */
+export function getFrameworkNodeIds(fw: Framework): Array<{ id: string | number; name: string; path: string }> {
+  if (fw.layoutType === 'matrix') {
+    return (fw.matrix?.cells ?? []).map((c) => ({ id: c.stepNumber, name: c.name, path: c.atomCategoryPath }))
+  }
+  if (fw.layoutType === 'list') {
+    return (fw.list?.categories ?? []).map((c) => ({ id: c.id, name: c.name, path: c.atomCategoryPath }))
+  }
+  if (fw.layoutType === 'tree') {
+    const roots = fw.tree?.roots
+    if (!roots || !Array.isArray(roots)) return []
+    const result: Array<{ id: string | number; name: string; path: string }> = []
+    function walk(nodes: FrameworkTreeNode[]) {
+      for (const n of nodes) {
+        result.push({ id: n.id, name: n.name, path: n.atomCategoryPath })
+        if (n.children) walk(n.children)
+      }
+    }
+    walk(roots)
+    return result
+  }
+  return []
 }
 
 // =============================================================================
@@ -141,7 +232,8 @@ export interface MethodologyAtom {
   name: string
   nameEn?: string
   frameworkId: string
-  cellId: number
+  /** Cell/category/node identifier. Number for matrix layouts, string for list/tree. */
+  cellId: number | string
   tags: string[]
   parentAtomId?: string
   relationType?: AtomRelationType
@@ -289,8 +381,10 @@ export interface ExperienceFragment {
   confidence: number
   context?: {
     domain_hint?: string
-    source?: 'cli' | 'gui' | 'agent'
+    source?: 'cli' | 'gui' | 'agent' | 'note'
     ingestModel?: string
+    /** ID of the source note when crystallized from a note */
+    noteId?: string
   }
   /** True for emotion retrospectives — hidden from default skill retrieval */
   private?: boolean
@@ -396,7 +490,7 @@ export interface IndexedAtom {
   name: string
   nameEn?: string
   frameworkId: string
-  cellId: number
+  cellId: number | string
   cellName: string
   tags: string[]
   tagline: string
@@ -473,6 +567,7 @@ export type UsageEventType =
   | 'practice-create'
   | 'project-create'
   | 'copilot-query'
+  | 'chat-send'
 
 export interface UsageEvent {
   ts: string // ISO timestamp
@@ -559,4 +654,230 @@ export interface AppVersionResult {
   reason?: string
   releaseUrl?: string
   changelogUrl?: string
+}
+
+// =============================================================================
+// V2.0 M6 · Notes module types (re-exported from notes.ts)
+// =============================================================================
+
+export type {
+  CrystallizeStatus,
+  NoteGroup,
+  NotesMeta,
+  NotesSortOrder,
+  NoteMeta,
+  Note,
+} from './notes'
+
+export { defaultNotesMeta, defaultNoteMeta } from './notes'
+
+// =============================================================================
+// V2.1 · Framework coverage statistics (GET /api/frameworks/:id/stats)
+// =============================================================================
+
+export interface FrameworkStatsNode {
+  nodeId: string | number
+  name: string
+  methodologyCount: number
+  fragmentCount: number
+  methodologyIds: string[]
+}
+
+export interface FrameworkStatsTotal {
+  nodeCount: number
+  coveredNodes: number
+  totalMethodologies: number
+  totalFragments: number
+  coveragePercent: number
+}
+
+export interface FrameworkStats {
+  frameworkId: string
+  frameworkName: string
+  nodes: FrameworkStatsNode[]
+  total: FrameworkStatsTotal
+}
+
+// =============================================================================
+// V2.1 P1 · Analysis types (GET /api/analysis/*)
+// =============================================================================
+
+export interface DimensionAnalysis {
+  total: number
+  byRole: Record<string, number>
+  bySituation: Record<string, number>
+  byActivity: Record<string, number>
+  byInsightType: Record<string, number>
+  crossMatrix: {
+    roles: string[]
+    situations: string[]
+    counts: number[][]
+  }
+  recency: {
+    recent: number   // 30 天内
+    moderate: number // 30-90 天
+    stale: number    // 90 天+
+  }
+}
+
+export interface TimelineMonth {
+  month: string
+  fragmentCount: number
+  methodologyCount: number
+  topRoles: string[]
+  topInsightTypes: string[]
+}
+
+export interface TimelineAnalysis {
+  months: TimelineMonth[]
+  streak: {
+    current: number
+    longest: number
+  }
+  velocity: {
+    last7d: number
+    last30d: number
+    trend: 'up' | 'down' | 'stable'
+  }
+}
+
+export interface CoverageFrameworkEntry {
+  id: string
+  name: string
+  layoutType: string
+  nodeCount: number
+  coveredNodes: number
+  coveragePercent: number
+  totalFragments: number
+}
+
+export interface CoverageAnalysis {
+  frameworks: CoverageFrameworkEntry[]
+  overall: {
+    totalNodes: number
+    coveredNodes: number
+    coveragePercent: number
+    totalFragments: number
+  }
+}
+
+export interface UncoveredMethodology {
+  frameworkId: string
+  frameworkName: string
+  nodeId: string | number
+  nodeName: string
+  methodologyCount: number
+}
+
+export interface StaleDimension {
+  dimension: 'role' | 'situation' | 'activity' | 'insight_type'
+  value: string
+  lastSeenAt: string
+  daysSince: number
+}
+
+export interface GapAnalysis {
+  uncoveredMethodologies: UncoveredMethodology[]
+  staleDimensions: StaleDimension[]
+  theoryPracticeRatio: {
+    methodologies: number
+    fragments: number
+    ratio: number
+  }
+}
+
+export interface AnalysisSnapshot {
+  dimensions: DimensionAnalysis
+  timeline: TimelineAnalysis
+  coverage: CoverageAnalysis
+  gaps: GapAnalysis
+}
+
+export interface RadarDimension {
+  axis: string        // 维度名称 e.g. "认知深度"
+  score: number       // 0-100 分值
+  description: string // 一句话解读
+}
+
+export interface AnalysisReportResult {
+  summary: string
+  strengths: string[]
+  blindSpots: string[]
+  suggestions: string[]
+  narrative: string
+  radar?: RadarDimension[]  // 认知雷达各维度评分
+}
+
+export interface AnalysisReport {
+  id: string
+  createdAt: string
+  timeRange: {
+    from: string
+    to: string
+    label: string
+  }
+  status: 'generating' | 'completed' | 'failed'
+  snapshot: AnalysisSnapshot
+  analysis?: AnalysisReportResult
+  modelUsed?: string
+}
+
+// =============================================================================
+// Chat Module — Sessions, Memory, Messages (V2.x)
+// =============================================================================
+
+export interface ChatAttachment {
+  id: string
+  type: 'image' | 'file'
+  name: string
+  /** base64-encoded data for images, text content for files */
+  data: string
+  mediaType: string
+  size: number
+}
+
+export interface ChatMessageRecord {
+  id: string
+  role: 'user' | 'assistant'
+  content: string               // raw text (may contain [[atom:id|name]] markers)
+  timestamp: string
+  attachments?: ChatAttachment[]
+  metadata?: {
+    model?: string
+    tokens?: number
+    skillsUsed?: string[]
+  }
+}
+
+export interface ChatSession {
+  id: string                    // sess_<timestamp>
+  title: string                 // auto-generated from first message, user can rename
+  createdAt: string
+  updatedAt: string
+  modelId?: string              // model used to create this session
+  messages: ChatMessageRecord[]
+  summary?: string              // cached summary for context compression (after 6+ turns)
+}
+
+export interface ChatSessionIndexEntry {
+  id: string
+  title: string
+  updatedAt: string
+  messageCount: number
+  preview: string               // first 80 chars of last message
+}
+
+export interface ChatSessionIndex {
+  sessions: ChatSessionIndexEntry[]
+}
+
+export type MemoryType = 'preference' | 'decision' | 'context'
+
+export interface MemoryEntry {
+  id: string                    // mem_<timestamp>
+  type: MemoryType
+  content: string               // concise one-liner
+  source: 'auto' | 'user'      // auto=AI extracted, user=explicitly saved
+  sessionId: string
+  createdAt: string
 }

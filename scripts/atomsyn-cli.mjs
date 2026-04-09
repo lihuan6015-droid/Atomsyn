@@ -74,6 +74,74 @@ async function readStdin() {
   })
 }
 
+/**
+ * Robust JSON parser — handles common shell-induced corruption:
+ * 1. BOM stripping
+ * 2. Literal unescaped newlines/tabs within string values → escape them
+ * 3. Trailing commas in arrays/objects
+ *
+ * Fast path: try JSON.parse first. Only if it fails, apply fixups and retry.
+ */
+function parseJsonRobust(raw) {
+  const trimmed = raw.replace(/^\uFEFF/, '').trim()
+  try {
+    return JSON.parse(trimmed)
+  } catch (firstErr) {
+    // Fixup: escape control characters inside JSON string values
+    let fixed = ''
+    let inString = false
+    let escaped = false
+    for (let i = 0; i < trimmed.length; i++) {
+      const ch = trimmed[i]
+      const code = trimmed.charCodeAt(i)
+      if (escaped) { fixed += ch; escaped = false; continue }
+      if (ch === '\\' && inString) { fixed += ch; escaped = true; continue }
+      if (ch === '"') { inString = !inString; fixed += ch; continue }
+      if (inString && code < 0x20) {
+        if (ch === '\n') fixed += '\\n'
+        else if (ch === '\r') fixed += '\\r'
+        else if (ch === '\t') fixed += '\\t'
+        else fixed += '\\u' + code.toString(16).padStart(4, '0')
+        continue
+      }
+      fixed += ch
+    }
+    // Fix trailing commas: ,] or ,}
+    fixed = fixed.replace(/,\s*([}\]])/g, '$1')
+    try { return JSON.parse(fixed) }
+    catch { throw firstErr }
+  }
+}
+
+/**
+ * Tokenize a query string for Chinese-aware keyword matching.
+ * Splits by whitespace, then further splits CJK phrases (>2 chars)
+ * into 2-char bigrams — the most common Chinese word length.
+ *
+ * "AI原生应用 市场竞品调研分析" → ["ai原生应用", "原生", "应用", "市场竞品调研分析", "市场", "竞品", "调研", "分析"]
+ */
+function tokenizeQuery(query) {
+  const raw = query.toLowerCase().split(/\s+/).filter(Boolean)
+  const CJK = /[\u4e00-\u9fff\u3400-\u4dbf]/
+  const tokens = new Set()
+  for (const term of raw) {
+    tokens.add(term)
+    // For CJK-containing terms longer than 2 chars, extract 2-char bigrams
+    if (term.length > 2 && CJK.test(term)) {
+      // Extract non-overlapping 2-char CJK segments
+      const cjkOnly = term.replace(/[^\u4e00-\u9fff\u3400-\u4dbf]/g, '')
+      for (let i = 0; i + 1 < cjkOnly.length; i += 2) {
+        tokens.add(cjkOnly.slice(i, i + 2))
+      }
+      // Also extract overlapping bigrams for better coverage
+      for (let i = 0; i + 1 < cjkOnly.length; i++) {
+        tokens.add(cjkOnly.slice(i, i + 2))
+      }
+    }
+  }
+  return [...tokens]
+}
+
 function deriveSlug(str) {
   return String(str || 'atom')
     .toLowerCase()
@@ -286,9 +354,9 @@ async function cmdWrite(args) {
 
   let atom
   try {
-    atom = JSON.parse(input)
+    atom = parseJsonRobust(input)
   } catch (err) {
-    die(`Input is not valid JSON: ${err.message}`)
+    die(`Input is not valid JSON: ${err.message}\nTip: 如仍失败,请先写入临时文件,再用 --input /tmp/atomsyn_write.json`)
   }
 
   normalizeExperienceAtom(atom)
@@ -361,7 +429,7 @@ async function cmdWrite(args) {
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: read (V1.5 stub — basic keyword search)
+// Subcommand: read (V2.0 M4 — cognitive map mode)
 // ---------------------------------------------------------------------------
 
 async function cmdRead(args) {
@@ -370,99 +438,204 @@ async function cmdRead(args) {
   if (!query) die(`read requires --query "search terms"`)
 
   const { path: dataDir } = resolveDataDir()
-  const experienceDir = join(dataDir, 'atoms', 'experience')
+  const atomsDir = join(dataDir, 'atoms')
+  const experienceDir = join(atomsDir, 'experience')
 
-  // V1.5 stub implementation: walk experience/**/*.json and do naive keyword scoring.
-  // T-2.4 in Sprint 2 may upgrade this to use knowledge-index.json + Fuse.js-style search.
-  const files = await walkJson(experienceDir)
-  const q = query.toLowerCase()
-  const qTerms = q.split(/\s+/).filter(Boolean)
+  const qTerms = tokenizeQuery(query)
 
-  const scored = []
-  for (const f of files) {
-    try {
-      const atom = JSON.parse(await readFile(f, 'utf8'))
-      if (atom.stats?.userDemoted) continue
-      const haystack = (
-        (atom.name || '') +
-        ' ' +
-        (atom.insight || '') +
-        ' ' +
-        (atom.sourceContext || '') +
-        ' ' +
-        (atom.tags || []).join(' ')
-      ).toLowerCase()
-      let score = 0
-      for (const term of qTerms) {
-        const occurrences = haystack.split(term).length - 1
-        score += occurrences
-      }
-      if (score > 0) scored.push({ atom, score, path: f })
-    } catch {
-      /* skip corrupted */
+  // --- Phase 1: Score methodology atoms across all framework dirs ---
+  const methodologyResults = []
+  const frameworkDirs = []
+  let totalMethodologyCount = 0
+  const frameworkNames = []
+  if (existsSync(atomsDir)) {
+    const { readdir: rd } = await import('node:fs/promises')
+    const topEntries = await rd(atomsDir, { withFileTypes: true })
+    for (const e of topEntries) {
+      if (!e.isDirectory()) continue
+      if (['experience', 'methodology', 'skill-inventory'].includes(e.name)) continue
+      frameworkDirs.push(join(atomsDir, e.name))
+      frameworkNames.push(e.name)
     }
   }
 
-  scored.sort((a, b) => b.score - a.score)
-  const results = scored.slice(0, top)
+  for (const fdir of frameworkDirs) {
+    const files = await walkJson(fdir)
+    totalMethodologyCount += files.length
+    for (const f of files) {
+      try {
+        const atom = JSON.parse(await readFile(f, 'utf8'))
+        if (atom.kind === 'skill-inventory') { totalMethodologyCount--; continue }
+        const haystack = (
+          (atom.name || '') + ' ' + (atom.nameEn || '') + ' ' +
+          (atom.coreIdea || '') + ' ' + (atom.whenToUse || '') + ' ' +
+          (atom.tags || []).join(' ')
+        ).toLowerCase()
+        let score = 0
+        for (const term of qTerms) score += haystack.split(term).length - 1
+        if (score > 0) methodologyResults.push({ atom, score, path: f })
+      } catch { /* skip */ }
+    }
+  }
+  methodologyResults.sort((a, b) => b.score - a.score)
+  const topMethodologies = methodologyResults.slice(0, top)
 
+  // --- Phase 2: Score experience atoms ---
+  const experienceFiles = await walkJson(experienceDir)
+  const experienceResults = []
+  let totalExperienceCount = 0
+  let privateCount = 0
+  const roleCounts = {}
+  const roleSituationMap = {} // role → { situation → count }
+  let latestActivity = ''
+
+  for (const f of experienceFiles) {
+    try {
+      const atom = JSON.parse(await readFile(f, 'utf8'))
+      totalExperienceCount++
+      if (atom.private) { privateCount++; continue }
+      if (atom.stats?.userDemoted) continue
+      // Track role → situation distribution
+      const role = atom.role || '未分类'
+      const situation = atom.situation || '未分类'
+      roleCounts[role] = (roleCounts[role] || 0) + 1
+      if (!roleSituationMap[role]) roleSituationMap[role] = {}
+      roleSituationMap[role][situation] = (roleSituationMap[role][situation] || 0) + 1
+      // Track latest activity
+      const ts = atom.updatedAt || atom.createdAt || ''
+      if (ts > latestActivity) latestActivity = ts
+
+      const haystack = (
+        (atom.name || atom.title || '') + ' ' +
+        (atom.insight || atom.summary || '') + ' ' +
+        (atom.sourceContext || '') + ' ' +
+        (atom.role || '') + ' ' + (atom.situation || '') + ' ' +
+        (atom.activity || '') + ' ' + (atom.tags || []).join(' ')
+      ).toLowerCase()
+      let score = 0
+      for (const term of qTerms) score += haystack.split(term).length - 1
+      if (score > 0) experienceResults.push({ atom, score, path: f })
+    } catch { /* skip */ }
+  }
+  experienceResults.sort((a, b) => b.score - a.score)
+  const topExperiences = experienceResults.slice(0, top)
+
+  // --- Phase 3: Count related fragments for each methodology hit ---
+  const { findRelatedFragmentsBatch } = await import('./lib/findRelatedFragments.mjs')
+  const methodologyIds = topMethodologies.map(r => r.atom.id)
+  const relatedMap = methodologyIds.length > 0
+    ? await findRelatedFragmentsBatch(dataDir, methodologyIds, { threshold: 0.5, top: 10 })
+    : new Map()
+
+  // --- Phase 4: Usage logging (no stats bump — moved to get) ---
   const agentName = process.env.ATOMSYN_AGENT || 'unknown'
   const now = new Date().toISOString()
 
-  // Append read log
   try {
     await appendUsageLog(dataDir, {
-      ts: now,
-      action: 'read',
-      query,
-      returned: results.length,
+      ts: now, action: 'read', query,
+      methodologyHits: topMethodologies.length,
+      experienceHits: topExperiences.length,
       agentName,
     })
-  } catch {
-    /* non-fatal */
-  }
+  } catch { /* non-fatal */ }
 
-  // V2.0 M2: increment aiInvokeCount on each returned atom
-  for (const { atom, path: filePath } of results) {
-    try {
-      const raw = JSON.parse(await readFile(filePath, 'utf8'))
-      raw.stats = raw.stats || {}
-      raw.stats.aiInvokeCount = (raw.stats.aiInvokeCount || 0) + 1
-      raw.stats.lastUsedAt = now
-      raw.stats.invokedByAgent = raw.stats.invokedByAgent || {}
-      raw.stats.invokedByAgent[agentName] = (raw.stats.invokedByAgent[agentName] || 0) + 1
-      await writeFile(filePath, JSON.stringify(raw, null, 2) + '\n')
-    } catch {
-      /* non-fatal: don't fail read over a stats bump */
-    }
-  }
-
-  // Render as markdown for agent consumption
-  if (results.length === 0) {
-    console.log(`# No matching experience atoms for: "${query}"\n\n(Data dir: ${dataDir})\n`)
+  // --- Phase 5: Render compact cognitive map ---
+  if (topMethodologies.length === 0 && topExperiences.length === 0) {
+    // Even with no hits, show cognitive overview
+    const lines = [`# Atomsyn Read · "${query}" · 无直接命中`, '']
+    lines.push(...await renderCognitiveOverview(dataDir, frameworkNames, totalMethodologyCount, totalExperienceCount, privateCount, roleSituationMap, latestActivity))
+    console.log(lines.join('\n'))
     return
   }
 
-  const lines = [`# Atlas Read · ${results.length} result(s) for "${query}"`, '']
-  for (const { atom, score } of results) {
-    lines.push(`## ${atom.name}`)
-    lines.push(`**Score**: ${score} · **Tags**: ${(atom.tags || []).join(', ')} · **Source**: ${atom.sourceAgent}`)
+  const lines = [`# Atomsyn Read · "${query}"`, '']
+
+  // Section 1: Methodology hits (compact table)
+  if (topMethodologies.length > 0) {
+    lines.push(`## 📚 方法论命中 (${topMethodologies.length}/${totalMethodologyCount})`)
     lines.push('')
-    lines.push(`> ${atom.sourceContext}`)
-    lines.push('')
-    lines.push(atom.insight)
-    lines.push('')
-    if (atom.keySteps && atom.keySteps.length) {
-      lines.push('**Key steps:**')
-      for (const s of atom.keySteps) lines.push(`- ${s}`)
-      lines.push('')
+    lines.push('| # | 名称 | 框架 | Step | 标签 | 📎 | ID |')
+    lines.push('|---|---|---|---|---|---|---|')
+    for (let i = 0; i < topMethodologies.length; i++) {
+      const { atom, score } = topMethodologies[i]
+      const fw = atom.frameworkId || '-'
+      const step = atom.cellId ? String(atom.cellId).padStart(2, '0') : '-'
+      const tags = (atom.tags || []).slice(0, 3).join(', ')
+      const relatedCount = (relatedMap.get(atom.id) || []).length
+      lines.push(`| ${i + 1} | ${atom.name} | ${fw} | ${step} | ${tags} | ${relatedCount} | \`${atom.id}\` |`)
     }
-    lines.push(`*Atom id*: \`${atom.id}\``)
-    lines.push('')
-    lines.push('---')
     lines.push('')
   }
+
+  // Section 2: Experience hits (compact table)
+  if (topExperiences.length > 0) {
+    const visibleCount = totalExperienceCount - privateCount
+    lines.push(`## 💡 经验碎片命中 (${topExperiences.length}/${visibleCount})`)
+    lines.push('')
+    lines.push('| # | 标题 | 类型 | 角色·场景 | 摘要 | ID |')
+    lines.push('|---|---|---|---|---|---|')
+    for (let i = 0; i < topExperiences.length; i++) {
+      const { atom } = topExperiences[i]
+      const title = (atom.title || atom.name || '').slice(0, 30)
+      const itype = atom.insight_type || '-'
+      const dims = `${atom.role || '-'}·${atom.situation || '-'}`
+      const summary = (atom.summary || atom.insight || '').slice(0, 80).replace(/\n/g, ' ')
+      lines.push(`| ${i + 1} | ${title} | ${itype} | ${dims} | ${summary} | \`${atom.id}\` |`)
+    }
+    lines.push('')
+  }
+
+  // Section 3: Cognitive overview
+  lines.push(...await renderCognitiveOverview(dataDir, frameworkNames, totalMethodologyCount, totalExperienceCount, privateCount, roleSituationMap, latestActivity))
+
   console.log(lines.join('\n'))
+}
+
+async function renderCognitiveOverview(dataDir, frameworkNames, methodologyCount, experienceCount, privateCount, roleSituationMap, latestActivity) {
+  const lines = []
+  lines.push('## 📊 认知全貌')
+  lines.push('')
+  // Merge framework names from atom dirs + data/frameworks/*.json
+  const allFwNames = new Set(frameworkNames)
+  const fwDir = join(dataDir, 'frameworks')
+  if (existsSync(fwDir)) {
+    try {
+      const fwFiles = await readdir(fwDir)
+      for (const f of fwFiles) {
+        if (!f.endsWith('.json')) continue
+        try {
+          const fw = JSON.parse(await readFile(join(fwDir, f), 'utf8'))
+          if (fw.id) allFwNames.add(fw.id)
+        } catch { /* skip */ }
+      }
+    } catch { /* skip */ }
+  }
+  const fwList = allFwNames.size > 0 ? [...allFwNames].join(', ') : '(无)'
+  lines.push(`**方法论**: ${fwList} (${methodologyCount} atoms)`)
+  lines.push('')
+  const totalVisible = experienceCount - privateCount
+  lines.push(`**经验碎片**: ${totalVisible} 条${privateCount > 0 ? ` (+${privateCount} 私密)` : ''}`)
+  // Two-level distribution: role → situation
+  const sortedRoles = Object.entries(roleSituationMap).sort((a, b) => {
+    const aTotal = Object.values(a[1]).reduce((s, c) => s + c, 0)
+    const bTotal = Object.values(b[1]).reduce((s, c) => s + c, 0)
+    return bTotal - aTotal
+  })
+  for (const [role, situations] of sortedRoles) {
+    const roleTotal = Object.values(situations).reduce((s, c) => s + c, 0)
+    const sitStr = Object.entries(situations)
+      .sort((a, b) => b[1] - a[1])
+      .map(([s, c]) => `${s}×${c}`)
+      .join(', ')
+    lines.push(`- ${role} (${roleTotal}): ${sitStr}`)
+  }
+  lines.push('')
+  if (latestActivity) lines.push(`最近活跃: ${latestActivity.slice(0, 10)}`)
+  lines.push('')
+  lines.push('> `atomsyn-cli get --id <ID>` 查看原子详情 · `atomsyn-cli find --query <关键词>` 按关键词搜索')
+  lines.push('')
+  return lines
 }
 
 async function walkJson(dir) {
@@ -484,8 +657,10 @@ async function walkJson(dir) {
 // ---------------------------------------------------------------------------
 
 async function findAtomFileById(dataDir, atomId) {
-  const root = join(dataDir, 'atoms', 'experience')
-  const files = await walkJson(root)
+  // Search ALL atom directories (experience + framework dirs + methodology + skill-inventory)
+  const atomsRoot = join(dataDir, 'atoms')
+  if (!existsSync(atomsRoot)) return null
+  const files = await walkJson(atomsRoot)
   for (const f of files) {
     try {
       const atom = JSON.parse(await readFile(f, 'utf8'))
@@ -500,26 +675,128 @@ async function findAtomFileById(dataDir, atomId) {
 async function cmdGet(args) {
   const id = getFlag(args, '--id')
   if (!id) die('get requires --id <atomId>')
+  const jsonMode = args.includes('--json')
   const { path: dataDir } = resolveDataDir()
   const hit = await findAtomFileById(dataDir, id)
   if (!hit) {
-    console.log(JSON.stringify({ ok: false, found: false, id }))
-    process.exit(2) // distinct exit code so scripts can branch on "not found"
+    if (jsonMode) console.log(JSON.stringify({ ok: false, found: false, id }))
+    else console.log(`# Not found: \`${id}\``)
+    process.exit(2)
   }
-  console.log(
-    JSON.stringify(
-      {
-        ok: true,
-        found: true,
-        id: hit.atom.id,
-        name: hit.atom.name,
-        path: hit.file,
-        atom: hit.atom,
-      },
-      null,
-      2,
-    ),
-  )
+
+  const atom = hit.atom
+  const agentName = process.env.ATOMSYN_AGENT || 'unknown'
+  const now = new Date().toISOString()
+
+  // Bump aiInvokeCount (moved from read in M4)
+  try {
+    const raw = JSON.parse(await readFile(hit.file, 'utf8'))
+    raw.stats = raw.stats || {}
+    raw.stats.aiInvokeCount = (raw.stats.aiInvokeCount || 0) + 1
+    raw.stats.lastUsedAt = now
+    raw.stats.invokedByAgent = raw.stats.invokedByAgent || {}
+    raw.stats.invokedByAgent[agentName] = (raw.stats.invokedByAgent[agentName] || 0) + 1
+    await writeFile(hit.file, JSON.stringify(raw, null, 2) + '\n')
+  } catch { /* non-fatal */ }
+
+  // JSON mode: return raw atom (for programmatic use)
+  if (jsonMode) {
+    console.log(JSON.stringify({ ok: true, found: true, id: atom.id, name: atom.name, path: hit.file, atom }, null, 2))
+    return
+  }
+
+  // Markdown mode (default): human/agent-friendly output with token protection
+  const MAX_CHARS = 8000
+  const lines = []
+
+  if (atom.kind === 'methodology') {
+    lines.push(`# ${atom.name}${atom.nameEn ? ` (${atom.nameEn})` : ''}`)
+    lines.push(`*ID*: \`${atom.id}\` · *Kind*: methodology`)
+    if (atom.frameworkId) lines.push(`*Framework*: ${atom.frameworkId} · *Step*: ${String(atom.cellId || '').padStart(2, '0')}`)
+    lines.push('')
+    if (atom.tags?.length) lines.push(`**Tags**: ${atom.tags.join(', ')}`)
+    lines.push('')
+    if (atom.coreIdea) { lines.push('## 核心理念'); lines.push(atom.coreIdea); lines.push('') }
+    if (atom.whenToUse) { lines.push('## 何时使用'); lines.push(atom.whenToUse); lines.push('') }
+    if (atom.keySteps?.length) {
+      lines.push('## 关键步骤')
+      for (const s of atom.keySteps) lines.push(`- ${s}`)
+      lines.push('')
+    }
+    if (atom.example?.title) {
+      lines.push(`## 案例: ${atom.example.title}`)
+      lines.push(atom.example.content || '')
+      lines.push('')
+    }
+    // Skip aiSkillPrompt (too long, not needed for read context)
+
+    // 📎 Related fragments (reverse-lookup)
+    try {
+      const { findRelatedFragments } = await import('./lib/findRelatedFragments.mjs')
+      const frags = await findRelatedFragments(dataDir, atom.id, { threshold: 0.5, top: 5 })
+      if (frags.length > 0) {
+        lines.push('## 📎 你的相关碎片')
+        lines.push('')
+        for (const { atom: frag, confidence, locked } of frags) {
+          const lockTag = locked ? ' 🔒' : ''
+          const title = frag.title || frag.name || '(无标题)'
+          const summary = (frag.summary || frag.insight || '').slice(0, 150)
+          const dims = [frag.role, frag.situation].filter(Boolean).join('·')
+          const date = (frag.createdAt || '').slice(0, 10)
+          lines.push(`### ${title}${lockTag}`)
+          lines.push(`*${frag.insight_type || '-'}* · ${dims} · ${date} · confidence: ${confidence.toFixed(2)}`)
+          if (summary) lines.push(`> ${summary}`)
+          lines.push(`*ID*: \`${frag.id}\``)
+          lines.push('')
+        }
+      }
+    } catch { /* non-fatal: findRelatedFragments might not have data */ }
+  } else if (atom.kind === 'experience') {
+    const title = atom.title || atom.name || '(无标题)'
+    lines.push(`# ${title}`)
+    lines.push(`*ID*: \`${atom.id}\` · *Kind*: experience${atom.subKind ? ` (${atom.subKind})` : ''}`)
+    lines.push('')
+    if (atom.tags?.length) lines.push(`**Tags**: ${atom.tags.join(', ')}`)
+    const dims = []
+    if (atom.role) dims.push(`角色:${atom.role}`)
+    if (atom.situation) dims.push(`场景:${atom.situation}`)
+    if (atom.activity) dims.push(`活动:${atom.activity}`)
+    if (atom.insight_type) dims.push(`类型:${atom.insight_type}`)
+    if (dims.length) lines.push(`**维度**: ${dims.join(' · ')}`)
+    lines.push('')
+    if (atom.summary) { lines.push('## 摘要'); lines.push(atom.summary); lines.push('') }
+    if (atom.insight) { lines.push('## 洞察'); lines.push(atom.insight); lines.push('') }
+    if (atom.sourceContext) { lines.push('## 背景'); lines.push(atom.sourceContext); lines.push('') }
+    if (atom.rawContent) { lines.push('## 原始内容'); lines.push(atom.rawContent); lines.push('') }
+    if (atom.keySteps?.length) {
+      lines.push('## 要点')
+      for (const s of atom.keySteps) lines.push(`- ${s}`)
+      lines.push('')
+    }
+    if (atom.linked_methodologies?.length) {
+      lines.push(`## 关联方法论`)
+      for (const mid of atom.linked_methodologies) lines.push(`- \`${mid}\``)
+      lines.push('')
+    }
+  } else {
+    // skill-inventory or unknown kind: minimal output
+    lines.push(`# ${atom.name || atom.id}`)
+    lines.push(`*ID*: \`${atom.id}\` · *Kind*: ${atom.kind || 'unknown'}`)
+    lines.push('')
+    if (atom.tags?.length) lines.push(`**Tags**: ${atom.tags.join(', ')}`)
+    lines.push('')
+    if (atom.coreIdea || atom.insight || atom.summary) {
+      lines.push(atom.coreIdea || atom.insight || atom.summary)
+      lines.push('')
+    }
+  }
+
+  // Token protection: truncate if too long
+  let output = lines.join('\n')
+  if (output.length > MAX_CHARS) {
+    output = output.slice(0, MAX_CHARS) + '\n\n... (内容已截断, 完整内容请用 `--json` 查看)'
+  }
+  console.log(output)
 }
 
 async function cmdFind(args) {
@@ -529,8 +806,7 @@ async function cmdFind(args) {
   const { path: dataDir } = resolveDataDir()
   const root = join(dataDir, 'atoms', 'experience')
   const files = await walkJson(root)
-  const q = query.toLowerCase().trim()
-  const qTerms = q ? q.split(/\s+/).filter(Boolean) : []
+  const qTerms = query.trim() ? tokenizeQuery(query) : []
 
   // V2.0 M2: collect dimension values for taxonomy
   const dimSets = { roles: new Set(), situations: new Set(), activities: new Set(), insight_types: new Set() }
@@ -681,9 +957,9 @@ async function cmdUpdate(args) {
 
   let incoming
   try {
-    incoming = JSON.parse(input)
+    incoming = parseJsonRobust(input)
   } catch (err) {
-    die(`Input is not valid JSON: ${err.message}`)
+    die(`Input is not valid JSON: ${err.message}\nTip: 如仍失败,请先写入临时文件,再用 --input /tmp/atomsyn_write.json`)
   }
 
   const { path: dataDir, source } = resolveDataDir()
@@ -907,6 +1183,7 @@ async function cmdInstallSkill(args) {
   const skillsSrc = join(PROJECT_ROOT, 'skills')
   const atomsynWriteSrc = join(skillsSrc, 'atomsyn-write')
   const atomsynReadSrc = join(skillsSrc, 'atomsyn-read')
+  const atomsynMentorSrc = join(skillsSrc, 'atomsyn-mentor')
 
   if (!existsSync(atomsynWriteSrc) || !existsSync(atomsynReadSrc)) {
     die(
@@ -939,16 +1216,20 @@ async function cmdInstallSkill(args) {
     const dir = TARGET_SKILL_DIRS[t]()
     const writeDst = join(dir, 'atomsyn-write')
     const readDst = join(dir, 'atomsyn-read')
+    const mentorDst = join(dir, 'atomsyn-mentor')
 
     if (dryRun) {
-      results.push({ step: 'skill-copy', target: t, writeDst, readDst, dryRun: true })
+      results.push({ step: 'skill-copy', target: t, writeDst, readDst, mentorDst, dryRun: true })
       continue
     }
 
     await mkdir(dir, { recursive: true })
     await copyDirRecursive(atomsynWriteSrc, writeDst)
     await copyDirRecursive(atomsynReadSrc, readDst)
-    results.push({ step: 'skill-copy', target: t, writeDst, readDst, ok: true })
+    if (existsSync(atomsynMentorSrc)) {
+      await copyDirRecursive(atomsynMentorSrc, mentorDst)
+    }
+    results.push({ step: 'skill-copy', target: t, writeDst, readDst, mentorDst, ok: true })
   }
 
   // Auto-append PATH export to shell rc unless --no-path was passed
@@ -1046,9 +1327,9 @@ async function cmdIngest(args) {
 
   let fragment
   try {
-    fragment = JSON.parse(input)
-  } catch {
-    die('Invalid JSON input. Agent should generate structured JSON per the classify prompt.')
+    fragment = parseJsonRobust(input)
+  } catch (err) {
+    die(`Invalid JSON input: ${err.message}\nTip: 如仍失败,请先写入临时文件,再用 --input /tmp/atomsyn_write.json`)
   }
 
   // Required fields validation
@@ -1093,24 +1374,39 @@ async function cmdIngest(args) {
     updatedAt: now,
   }
 
-  // Semantic alignment: find related existing atoms
+  // M4: Semantic alignment — auto-link to methodology atoms (no LLM, keyword scoring)
   if (atom.linked_methodologies.length === 0) {
     try {
-      const experienceDir = join(dataDir, 'atoms', 'experience')
-      const files = await walkJson(experienceDir)
-      const q = (atom.title + ' ' + atom.tags.join(' ')).toLowerCase()
-      const qTerms = q.split(/\s+/).filter(Boolean)
-      for (const f of files) {
-        try {
-          const existing = JSON.parse(await readFile(f, 'utf8'))
-          if (existing.id === id) continue
-          const haystack = ((existing.name || existing.title || '') + ' ' + (existing.tags || []).join(' ')).toLowerCase()
-          let score = 0
-          for (const t of qTerms) score += haystack.split(t).length - 1
-          if (score >= 3) atom.linked_methodologies.push(existing.id)
-        } catch { /* skip */ }
+      const atomsRoot = join(dataDir, 'atoms')
+      const qTerms = tokenizeQuery(atom.title + ' ' + atom.tags.join(' ') + ' ' + (atom.role || '') + ' ' + (atom.summary || ''))
+
+      // Scan methodology atoms across all framework dirs
+      if (existsSync(atomsRoot)) {
+        const { readdir: rd } = await import('node:fs/promises')
+        const topEntries = await rd(atomsRoot, { withFileTypes: true })
+        const scored = []
+        for (const e of topEntries) {
+          if (!e.isDirectory()) continue
+          if (['experience', 'methodology', 'skill-inventory'].includes(e.name)) continue
+          const fwFiles = await walkJson(join(atomsRoot, e.name))
+          for (const f of fwFiles) {
+            try {
+              const mAtom = JSON.parse(await readFile(f, 'utf8'))
+              if (mAtom.kind === 'skill-inventory') continue
+              const haystack = (
+                (mAtom.name || '') + ' ' + (mAtom.nameEn || '') + ' ' +
+                (mAtom.coreIdea || '') + ' ' + (mAtom.whenToUse || '') + ' ' +
+                (mAtom.tags || []).join(' ')
+              ).toLowerCase()
+              let score = 0
+              for (const t of qTerms) score += haystack.split(t).length - 1
+              if (score >= 2) scored.push({ id: mAtom.id, score })
+            } catch { /* skip */ }
+          }
+        }
+        scored.sort((a, b) => b.score - a.score)
+        atom.linked_methodologies = scored.slice(0, 5).map(s => s.id)
       }
-      atom.linked_methodologies = atom.linked_methodologies.slice(0, 5)
     } catch { /* non-fatal */ }
   }
 
@@ -1163,6 +1459,95 @@ async function cmdIngest(args) {
 // Main dispatcher
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// mentor — P1 cognitive review command
+// ---------------------------------------------------------------------------
+
+async function cmdMentor(args) {
+  const { path: dataDir } = resolveDataDir()
+
+  // Parse --range and --format flags
+  let range = 'month'
+  let format = 'report'
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--range' && args[i + 1]) range = args[++i]
+    if (args[i] === '--format' && args[i + 1]) format = args[++i]
+  }
+
+  const months = range === 'week' ? 1 : range === 'month' ? 1 : 12
+  const { analyzeDimensions, analyzeTimeline, analyzeCoverage, analyzeGaps } = await import('./lib/analysis.mjs')
+
+  const [dimensions, timeline, coverage, gaps] = await Promise.all([
+    analyzeDimensions(dataDir),
+    analyzeTimeline(dataDir, months),
+    analyzeCoverage(dataDir),
+    analyzeGaps(dataDir),
+  ])
+
+  if (format === 'data') {
+    console.log(JSON.stringify({ dimensions, timeline, coverage, gaps }, null, 2))
+    return
+  }
+
+  // --- Markdown report ---
+  const rangeLabel = range === 'week' ? '近一周' : range === 'month' ? '近一月' : '全部'
+  const lines = []
+
+  lines.push(`## 📊 认知复盘 · ${rangeLabel}`)
+  lines.push('')
+
+  // Overall stats
+  lines.push(`### 总体画像`)
+  lines.push(`- 经验碎片: **${dimensions.total}** 条`)
+  lines.push(`- 近 7 天: **${timeline.velocity.last7d}** 条 · 近 30 天: **${timeline.velocity.last30d}** 条 · 趋势: ${timeline.velocity.trend === 'up' ? '📈 上升' : timeline.velocity.trend === 'down' ? '📉 下降' : '➡️ 稳定'}`)
+  lines.push(`- 连续产出: **${timeline.streak.current}** 天 (最长 ${timeline.streak.longest} 天)`)
+  lines.push(`- 知行比: **${gaps.theoryPracticeRatio.ratio}** (${gaps.theoryPracticeRatio.fragments} 碎片 / ${gaps.theoryPracticeRatio.methodologies} 方法论)`)
+  lines.push('')
+
+  // Top roles
+  const topRoles = Object.entries(dimensions.byRole).sort((a, b) => b[1] - a[1]).slice(0, 5)
+  if (topRoles.length > 0) {
+    lines.push(`### 💪 活跃角色`)
+    topRoles.forEach(([role, count]) => lines.push(`- **${role}**: ${count} 条碎片`))
+    lines.push('')
+  }
+
+  // Coverage
+  if (coverage.frameworks.length > 0) {
+    lines.push(`### 📚 框架覆盖率`)
+    coverage.frameworks.forEach((fw) => {
+      const bar = '█'.repeat(Math.round(fw.coveragePercent / 10)) + '░'.repeat(10 - Math.round(fw.coveragePercent / 10))
+      lines.push(`- ${fw.name}: ${bar} **${fw.coveragePercent}%** (${fw.coveredNodes}/${fw.nodeCount})`)
+    })
+    lines.push('')
+  }
+
+  // Gaps
+  const gapItems = []
+  gaps.uncoveredMethodologies.slice(0, 5).forEach((u) => {
+    gapItems.push(`- **${u.frameworkName}** / ${u.nodeName} — ${u.methodologyCount} 个方法论但无实践`)
+  })
+  gaps.staleDimensions.slice(0, 3).forEach((s) => {
+    gapItems.push(`- "${s.value}" 已 ${s.daysSince} 天未新增`)
+  })
+  if (gaps.theoryPracticeRatio.ratio < 3) {
+    gapItems.push(`- 知行比 ${gaps.theoryPracticeRatio.ratio} (建议 > 3)`)
+  }
+  if (gapItems.length > 0) {
+    lines.push(`### ⚠️ 盲区警示`)
+    gapItems.forEach((l) => lines.push(l))
+    lines.push('')
+  }
+
+  lines.push('---')
+  lines.push('💡 想深入讨论某个话题？直接追问我。')
+
+  console.log(lines.join('\n'))
+
+  // Log usage (must include ts + type for GrowthPage compatibility)
+  await appendUsageLog(dataDir, { ts: new Date().toISOString(), type: 'mentor', action: 'mentor', range, format })
+}
+
 const HELP = `${color.bold}${color.cyan}atomsyn-cli${color.reset} — Atomsyn V2.0 CLI
 
 Usage:
@@ -1189,6 +1574,8 @@ Usage:
                                          into ~/.claude/skills and/or
                                          ~/.cursor/skills, plus a stable
                                          CLI shim at ~/.atomsyn/bin/atomsyn-cli
+  atomsyn-cli mentor [--range week|month|all] [--format data|report]
+                                         Cognitive review: analyze knowledge gaps
   atomsyn-cli --help                       Show this help
 
 Write input (loose — CLI owns all bookkeeping):
@@ -1244,6 +1631,9 @@ async function main() {
         break
       case 'install-skill':
         await cmdInstallSkill(rest)
+        break
+      case 'mentor':
+        await cmdMentor(rest)
         break
       default:
         die(`Unknown command: ${cmd}. Run atomsyn-cli --help for usage.`)

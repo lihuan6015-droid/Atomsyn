@@ -381,7 +381,7 @@ async function processSkillFile(skillPath, rootPath, summary, seenSet) {
 
     const now = new Date().toISOString()
 
-    if (existing && existing.fileMtime === mtimeIso) {
+    if (existing && existing.fileMtime === mtimeIso && existing.fileHash === fileHash) {
       summary.unchanged++
       log(`${color.dim}  unchanged  ${color.reset}${id}`)
       return

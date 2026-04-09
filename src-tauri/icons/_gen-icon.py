@@ -17,9 +17,12 @@ from PIL import Image, ImageDraw, ImageFilter, ImageEnhance
 ROOT = Path(__file__).parent
 # V2.0: user provided a pre-composited icon with gloss + shadow baked in.
 # Much better quality than our PIL compositing. Use it directly as master.
-ICON_PATH = ROOT.parent.parent / "image.png"
+# V2.0-layout: switched to Atomsyn_logo_svg.png — pure transparent-bg atom
+# icon. The composite_icon() path below will add the macOS rounded-square
+# background, gradient, inner bevel, gloss and drop shadow programmatically.
+ICON_PATH = ROOT.parent.parent / "non-existent-to-force-composite.png"
 # Fallback: raw logo for compositing (kept but no longer default path)
-LOGO_PATH = ROOT.parent.parent / "Atomsyn_logo.png"
+LOGO_PATH = ROOT.parent.parent / "src/assets/atomsyn-logo.png"
 OUT_DIR = ROOT
 
 SIZE = 1024
@@ -121,8 +124,8 @@ def composite_icon():
         top = (h - sq) // 2
         logo = logo.crop((left, top, left + sq, top + sq))
 
-    # Resize logo to fit inside icon with padding
-    logo_size = int(SIZE * 0.66)
+    # Resize logo to fit inside icon with customized scaling to match internal CSS
+    logo_size = int(SIZE * 1.20)
     logo = logo.resize((logo_size, logo_size), Image.LANCZOS)
 
     # Enhance logo saturation slightly
@@ -167,17 +170,54 @@ def composite_icon():
     bg = Image.alpha_composite(bg, ihighlight)
 
     # 6. Glossy overlay
+    # 6. Glossy overlay
     gloss = glossy_overlay(SIZE, RADIUS)
     bg = Image.alpha_composite(bg, gloss)
 
-    # 7. Apply rounded mask — final icon, no outer shadow (macOS dock
-    #    and Windows taskbar add their own shadows; baking one in looks
-    #    dated and adds a dark border artefact at small sizes).
+    # 7. Apply rounded mask — final icon core.
     mask = rounded_rect_mask(SIZE, RADIUS)
     final = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     final.paste(bg, mask=mask)
 
-    return final
+    # --- Scale down to macOS standard padding (824x824) ---
+    MAC_APP_SIZE = 824
+    scaled = final.resize((MAC_APP_SIZE, MAC_APP_SIZE), Image.LANCZOS)
+    
+    # 8. Add macOS intrinsic drop shadow
+    canvas = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    
+    offset_x = (SIZE - MAC_APP_SIZE) // 2
+    offset_y = (SIZE - MAC_APP_SIZE) // 2
+    sr = int(MAC_APP_SIZE * 0.22)
+
+    # Large ambient shadow
+    shadow1 = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    draw1 = ImageDraw.Draw(shadow1)
+    s_offset_y1 = offset_y + 16
+    draw1.rounded_rectangle(
+        [offset_x, s_offset_y1, offset_x + MAC_APP_SIZE, s_offset_y1 + MAC_APP_SIZE],
+        radius=sr,
+        fill=(0, 0, 0, 45),
+    )
+    shadow1 = shadow1.filter(ImageFilter.GaussianBlur(20))
+    
+    # Sharp close shadow
+    shadow2 = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    draw2 = ImageDraw.Draw(shadow2)
+    s_offset_y2 = offset_y + 6
+    draw2.rounded_rectangle(
+        [offset_x, s_offset_y2, offset_x + MAC_APP_SIZE, s_offset_y2 + MAC_APP_SIZE],
+        radius=sr,
+        fill=(0, 0, 0, 30),
+    )
+    shadow2 = shadow2.filter(ImageFilter.GaussianBlur(8))
+    
+    # Composite shadows and the scaled icon
+    canvas = Image.alpha_composite(canvas, shadow1)
+    canvas = Image.alpha_composite(canvas, shadow2)
+    canvas.paste(scaled, (offset_x, offset_y), scaled)
+
+    return canvas
 
 def generate_all_sizes(master):
     """Generate all icon sizes needed for Tauri build."""

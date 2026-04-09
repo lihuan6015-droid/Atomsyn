@@ -4,6 +4,7 @@ import { cn } from '@/lib/cn'
 import { atomsApi, frameworksApi, projectsApi } from '@/lib/dataApi'
 import { useAppStore } from '@/stores/useAppStore'
 import type { Atom, Framework, InnovationStage, Project, StageColumnId } from '@/types'
+import { isMatrixFramework } from '@/types'
 
 // Map a project's innovationStage → the framework column id it represents.
 // Both share the same identifier scheme today; kept as a function for clarity
@@ -75,8 +76,10 @@ export function PinAtomDialog({ open, project, onClose, onUpdated }: Props) {
   const cellColumnIndex = useMemo(() => {
     const m = new Map<string, StageColumnId>()
     for (const f of frameworks) {
-      for (const c of f.matrix?.cells ?? []) {
-        m.set(`${f.id}::${c.stepNumber}`, c.column as StageColumnId)
+      if (isMatrixFramework(f)) {
+        for (const c of f.matrix.cells) {
+          m.set(`${f.id}::${c.stepNumber}`, c.column as StageColumnId)
+        }
       }
     }
     return m
@@ -166,7 +169,7 @@ export function PinAtomDialog({ open, project, onClose, onUpdated }: Props) {
         <div className="px-6 py-3 border-b border-neutral-200/80 dark:border-neutral-800/80 space-y-3">
           {/* Stage filter row */}
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 shrink-0 mr-1">
+            <span className="text-[0.625rem] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500 shrink-0 mr-1">
               阶段
             </span>
             <button
@@ -232,7 +235,7 @@ export function PinAtomDialog({ open, project, onClose, onUpdated }: Props) {
           )}
           {grouped.map(({ framework, atoms }) => (
             <div key={framework.id}>
-              <div className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 mb-2">
+              <div className="text-[0.6875rem] font-mono uppercase tracking-wider text-neutral-400 mb-2">
                 {framework.name}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -267,12 +270,12 @@ export function PinAtomDialog({ open, project, onClose, onUpdated }: Props) {
                       <div className="min-w-0 flex-1">
                         <div className="font-medium truncate">{a.name}</div>
                         {a.tags.length > 0 && (
-                          <div className="text-[10px] text-neutral-500 mt-0.5 truncate">
+                          <div className="text-[0.625rem] text-neutral-500 mt-0.5 truncate">
                             {a.tags.slice(0, 4).join(' · ')}
                           </div>
                         )}
                         {isPinned && (
-                          <div className="text-[10px] text-stage-discover mt-0.5">已引入</div>
+                          <div className="text-[0.625rem] text-stage-discover mt-0.5">已引入</div>
                         )}
                       </div>
                     </button>

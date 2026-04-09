@@ -236,7 +236,7 @@ export function ExperienceFormDialog({
             >
               {mode === 'edit' ? '编辑经验原子' : '新建经验原子'}
             </h2>
-            <div className="text-[11px] text-neutral-500 mt-0.5">
+            <div className="text-[0.6875rem] text-neutral-500 mt-0.5">
               {mode === 'edit'
                 ? '修改后会同步更新 updatedAt'
                 : '手动沉淀一张经验卡片 · 稍后可编辑'}
@@ -302,7 +302,7 @@ export function ExperienceFormDialog({
               maxLength={300}
               className={cn(inputCls, 'resize-none leading-relaxed')}
             />
-            <div className="text-[10px] text-neutral-400 text-right font-mono mt-0.5">
+            <div className="text-[0.625rem] text-neutral-400 text-right font-mono mt-0.5">
               {form.sourceContext.length} / 300
             </div>
           </Field>
@@ -320,7 +320,7 @@ export function ExperienceFormDialog({
             />
             <div
               className={cn(
-                'text-[10px] text-right font-mono mt-0.5',
+                'text-[0.625rem] text-right font-mono mt-0.5',
                 insightLen < 50 || insightLen > 4000
                   ? 'text-rose-500'
                   : 'text-neutral-400',
@@ -340,7 +340,7 @@ export function ExperienceFormDialog({
               {form.tags.map((t) => (
                 <span
                   key={t}
-                  className="inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-300 border border-violet-500/30"
+                  className="inline-flex items-center gap-1 text-[0.6875rem] font-mono px-2 py-0.5 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-300 border border-violet-500/30"
                 >
                   #{t}
                   <button
@@ -362,7 +362,7 @@ export function ExperienceFormDialog({
                 className="flex-1 min-w-[120px] bg-transparent text-xs outline-none text-neutral-800 dark:text-neutral-200"
               />
             </div>
-            <div className="text-[10px] text-neutral-400 mt-0.5 font-mono">
+            <div className="text-[0.625rem] text-neutral-400 mt-0.5 font-mono">
               {form.tags.length} / 8
             </div>
           </Field>
@@ -372,7 +372,7 @@ export function ExperienceFormDialog({
             <div className="space-y-1.5">
               {form.keySteps.map((s, i) => (
                 <div key={i} className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-neutral-400 font-mono w-4 text-right">
+                  <span className="text-[0.625rem] text-neutral-400 font-mono w-4 text-right">
                     {i + 1}.
                   </span>
                   <input
@@ -394,7 +394,7 @@ export function ExperienceFormDialog({
               <button
                 type="button"
                 onClick={addStep}
-                className="inline-flex items-center gap-1 text-[11px] font-medium text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/40 rounded"
+                className="inline-flex items-center gap-1 text-[0.6875rem] font-medium text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/40 rounded"
               >
                 <Plus className="w-3 h-3" />
                 添加步骤
@@ -410,14 +410,14 @@ export function ExperienceFormDialog({
               placeholder="framework-id,另一个-id"
               className={cn(inputCls, 'font-mono')}
             />
-            <div className="text-[10px] text-neutral-400 mt-0.5">
+            <div className="text-[0.625rem] text-neutral-400 mt-0.5">
               逗号分隔，例如 <code className="font-mono">product-innovation-24</code>
             </div>
           </Field>
         </div>
 
         {submitError && (
-          <div className="mx-5 mb-2 px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-[11px] text-rose-600 dark:text-rose-400">
+          <div className="mx-5 mb-2 px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-[0.6875rem] text-rose-600 dark:text-rose-400">
             {submitError}
           </div>
         )}
@@ -462,12 +462,12 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-[11px] font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+      <label className="block text-[0.6875rem] font-medium text-neutral-600 dark:text-neutral-400 mb-1">
         {label}
         {required && <span className="ml-1 text-rose-500">*</span>}
       </label>
       {children}
-      {error && <div className="mt-1 text-[11px] text-rose-500">{error}</div>}
+      {error && <div className="mt-1 text-[0.6875rem] text-rose-500">{error}</div>}
     </div>
   )
 }

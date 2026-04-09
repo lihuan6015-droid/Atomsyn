@@ -16,7 +16,7 @@ import minimaxLogo from '@/assets/logos/minimax.svg'
 import doubaoLogo from '@/assets/logos/doubao.svg'
 import siliconflowLogo from '@/assets/logos/siliconflow.svg'
 import openaiLogo from '@/assets/logos/openai.svg'
-import anthropicLogo from '@/assets/logos/anthropic.svg'
+import anthropicLogo from '@/assets/logos/anthropic.png'
 import customLogo from '@/assets/logos/custom.svg'
 
 export interface ProviderMeta {

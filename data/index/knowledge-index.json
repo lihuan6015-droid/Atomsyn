@@ -1,14 +1,65 @@
 {
-  "generatedAt": "2026-04-09T01:35:49.521Z",
+  "generatedAt": "2026-04-11T10:42:44.504Z",
   "version": 1,
   "frameworks": [
+    {
+      "id": "cognitive-psychology-basics",
+      "name": "认知心理学基础",
+      "atomCount": 1
+    },
+    {
+      "id": "design-thinking-5",
+      "name": "设计思维5步法",
+      "atomCount": 1
+    },
     {
       "id": "product-innovation-24",
       "name": "产品创新 24 步法",
       "atomCount": 125
+    },
+    {
+      "id": "ui-ux-patterns",
+      "name": "UI/UX 设计模式",
+      "atomCount": 1
     }
   ],
   "atoms": [
+    {
+      "id": "atom_confirmation_bias",
+      "name": "确认偏误",
+      "nameEn": "Confirmation Bias",
+      "frameworkId": "cognitive-psychology-basics",
+      "cellId": "confirmation-bias",
+      "cellName": "",
+      "tags": [
+        "认知偏误",
+        "决策",
+        "批判性思维",
+        "心理学",
+        "用户研究"
+      ],
+      "tagline": "确认偏误（Confirmation Bias）是人类最普遍、最顽固的认知偏误之一：我们倾向于搜索、解读和记住那些与已有信念一致的信息，同时忽视或贬低矛盾的证据。",
+      "whenToUse": "产品决策前的假设检验 · 用户研究访谈设计（避免引导性提问） · 数据分析解读（避免选择性引用） · 团队讨论中引入红队思维 · 个人反思和元认知训练",
+      "path": "atoms/cognitive-psychology-basics/cognitive-biases/confirmation-bias/confirmation-bias.json"
+    },
+    {
+      "id": "atom_empathy_map",
+      "name": "共情地图",
+      "nameEn": "Empathy Map",
+      "frameworkId": "design-thinking-5",
+      "cellId": 1,
+      "cellName": "共情",
+      "tags": [
+        "共情",
+        "用户研究",
+        "Design Thinking",
+        "IDEO",
+        "用户洞察"
+      ],
+      "tagline": "共情地图（Empathy Map）是一种以用户为中心的可视化工具，通过四个象限——Says（说）、Thinks（想）、Does（做）、Feels（感）——系统地",
+      "whenToUse": "项目启动阶段梳理用户画像 · 用户访谈后快速综合发现 · 团队对用户认知不一致需要对齐 · 从功能思维切换到用户思维 · 需要快速建立对陌生用户群体的同理心",
+      "path": "atoms/design-thinking-5/01-empathize/empathy-map.json"
+    },
     {
       "id": "atom_macro_scanning",
       "name": "宏观趋势扫描",
@@ -2135,6 +2186,24 @@
       "tagline": "技术债不是'代码烂'，而是'未来速度的负利率'。规模化前必须把债分类（蓄意/被迫/腐烂/无知），算清利息，决定哪些先还、哪些可继续付息。",
       "whenToUse": "规模化前夕 · 工程团队抱怨速度变慢 · 故障频次上升 · 新功能评估时间越来越长 · 引入新工程师上手周期变长",
       "path": "atoms/product-innovation-24/24-scale-readiness/tech-debt-audit.json"
+    },
+    {
+      "id": "atom_nav_patterns",
+      "name": "导航模式",
+      "nameEn": "Navigation Patterns",
+      "frameworkId": "ui-ux-patterns",
+      "cellId": "information-architecture",
+      "cellName": "",
+      "tags": [
+        "导航",
+        "信息架构",
+        "IA",
+        "用户体验",
+        "可发现性"
+      ],
+      "tagline": "导航模式是信息架构的骨架，决定了用户如何在产品中移动和寻路。核心导航模式包括：层级导航（Hierarchical）——适合内容深度大的应用，如设置页面；扁平导航",
+      "whenToUse": "产品从0到1的信息架构设计 · 功能增多后需要重构导航 · 用户反馈「找不到功能」 · 移动端和桌面端导航适配 · 评审已有产品的可发现性问题",
+      "path": "atoms/ui-ux-patterns/information-architecture/nav-patterns.json"
     }
   ],
   "projects": [
@@ -2217,17 +2286,6 @@
       "updatedAt": "2026-04-08T11:07:10.251Z"
     },
     {
-      "id": "skill_claude_atlas-read",
-      "name": "atlas-read",
-      "toolName": "claude",
-      "rawDescription": "在回答用户问题之前,先到用户本地的 CCL Atlas 知识库里查一下相关的过往经验,把命中的经验作为上下文注入到回答里。当用户说\"我之前学过类似的吗 / 我的知识库里有没有 / CCL 里有没有 / 从 CCL 里找 / 看看我之前记过什么 / 调用我的经验 / 我以前是怎么做的 / 查一下 atlas / CCL 有没有相关的 / check my atlas / check CCL / use my past experiences\"时触发。此外,在一个新会话开始处理实质性的编码/设计任务时,也应该**静默地主动调用一次**(一个会话一次预算),让用户的过往经验自动成为回答的底子,而不是被忽略。对于闲聊或与用户个人经验无关的通用问题,不要触发。",
-      "tags": [
-        "claude"
-      ],
-      "localPath": "/Users/circlelee/.claude/skills/atlas-read/SKILL.md",
-      "updatedAt": "2026-04-08T12:55:13.893Z"
-    },
-    {
       "id": "skill_claude_atlas-write-spike",
       "name": "atlas-write-spike",
       "toolName": "claude",
@@ -2239,15 +2297,26 @@
       "updatedAt": "2026-04-08T11:07:10.251Z"
     },
     {
-      "id": "skill_claude_atlas-write",
-      "name": "atlas-write",
+      "id": "skill_claude_atomsyn-read",
+      "name": "atomsyn-read",
       "toolName": "claude",
-      "rawDescription": "把当前对话里的关键学习沉淀成一张结构化的经验卡片,存进用户本地的 CCL Atlas 知识库,供未来任何 AI 会话调用。当用户说\"帮我记下来 / 这个要记住 / 存到我的 atlas / 存到 CCL / 加到 CCL Atlas / 加到我的知识库 / 以后还会用到 / 把这个经验保存一下 / CCL 记一下 / 这个我要收藏 / 别让我忘了 / save to my atlas / save to CCL / remember this for me / crystallize this\"时触发。只在用户明确要求时调用,不要主动触发。",
+      "rawDescription": "在回答用户问题之前,先到用户本地的 Atomsyn 知识库里查一下相关的过往经验,把命中的经验作为上下文注入到回答里。当用户说\"我之前学过类似的吗 / 我的知识库里有没有 / Atomsyn 里有没有 / 从 Atomsyn 里找 / 看看我之前记过什么 / 调用我的经验 / 我以前是怎么做的 / 查一下 atomsyn / Atomsyn 有没有相关的 / check my atomsyn / check Atomsyn / use my past experiences\"时触发。此外,在一个新会话开始处理实质性的编码/设计任务时,也应该**静默地主动调用一次**(一个会话一次预算),让用户的过往经验自动成为回答的底子,而不是被忽略。对于闲聊或与用户个人经验无关的通用问题,不要触发。",
       "tags": [
         "claude"
       ],
-      "localPath": "/Users/circlelee/.claude/skills/atlas-write/SKILL.md",
-      "updatedAt": "2026-04-08T12:55:13.894Z"
+      "localPath": "/Users/circlelee/.claude/skills/atomsyn-read/SKILL.md",
+      "updatedAt": "2026-04-09T06:01:03.109Z"
+    },
+    {
+      "id": "skill_claude_atomsyn-write",
+      "name": "atomsyn-write",
+      "toolName": "claude",
+      "rawDescription": "把当前对话里的关键学习沉淀进用户本地 Atomsyn 知识库,或者**更新/补充已有经验**。两种模式:(1) 新建 — 当用户说\"帮我记下来 / 这个要记住 / 存到我的 atomsyn / 存到 Atomsyn / 加到 Atomsyn / 加到我的知识库 / Atomsyn 记一下 / 别让我忘了 / save to my atomsyn / save to Atomsyn / remember this for me / crystallize this\"时。(2) 更新 — 当用户说\"更新那条经验 / 补充到之前那条 / 把这个也合进 X 里 / 修正刚才的 / 合并进旧的 / update that atom / merge into the existing one\"时,应先用 atomsyn-cli find 定位已有 id,再用 atomsyn-cli update 合并,**绝对不要**新建一条重复的。只在用户明确要求时调用,不要主动触发。",
+      "tags": [
+        "claude"
+      ],
+      "localPath": "/Users/circlelee/.claude/skills/atomsyn-write/SKILL.md",
+      "updatedAt": "2026-04-09T06:01:03.110Z"
     },
     {
       "id": "skill_claude_brainstorming",
@@ -3064,26 +3133,26 @@
       "updatedAt": "2026-04-08T11:07:10.278Z"
     },
     {
-      "id": "skill_cursor_atlas-read",
-      "name": "atlas-read",
+      "id": "skill_cursor_atomsyn-read",
+      "name": "atomsyn-read",
       "toolName": "cursor",
-      "rawDescription": "在回答用户问题之前,先到用户本地的 CCL Atlas 知识库里查一下相关的过往经验,把命中的经验作为上下文注入到回答里。当用户说\"我之前学过类似的吗 / 我的知识库里有没有 / CCL 里有没有 / 从 CCL 里找 / 看看我之前记过什么 / 调用我的经验 / 我以前是怎么做的 / 查一下 atlas / CCL 有没有相关的 / check my atlas / check CCL / use my past experiences\"时触发。此外,在一个新会话开始处理实质性的编码/设计任务时,也应该**静默地主动调用一次**(一个会话一次预算),让用户的过往经验自动成为回答的底子,而不是被忽略。对于闲聊或与用户个人经验无关的通用问题,不要触发。",
+      "rawDescription": "在回答用户问题之前,先到用户本地的 Atomsyn 知识库里查一下相关的过往经验,把命中的经验作为上下文注入到回答里。当用户说\"我之前学过类似的吗 / 我的知识库里有没有 / Atomsyn 里有没有 / 从 Atomsyn 里找 / 看看我之前记过什么 / 调用我的经验 / 我以前是怎么做的 / 查一下 atomsyn / Atomsyn 有没有相关的 / check my atomsyn / check Atomsyn / use my past experiences\"时触发。此外,在一个新会话开始处理实质性的编码/设计任务时,也应该**静默地主动调用一次**(一个会话一次预算),让用户的过往经验自动成为回答的底子,而不是被忽略。对于闲聊或与用户个人经验无关的通用问题,不要触发。",
       "tags": [
         "cursor"
       ],
-      "localPath": "/Users/circlelee/.cursor/skills/atlas-read/SKILL.md",
-      "updatedAt": "2026-04-08T12:55:13.915Z"
+      "localPath": "/Users/circlelee/.cursor/skills/atomsyn-read/SKILL.md",
+      "updatedAt": "2026-04-09T06:01:03.149Z"
     },
     {
-      "id": "skill_cursor_atlas-write",
-      "name": "atlas-write",
+      "id": "skill_cursor_atomsyn-write",
+      "name": "atomsyn-write",
       "toolName": "cursor",
-      "rawDescription": "把当前对话里的关键学习沉淀成一张结构化的经验卡片,存进用户本地的 CCL Atlas 知识库,供未来任何 AI 会话调用。当用户说\"帮我记下来 / 这个要记住 / 存到我的 atlas / 存到 CCL / 加到 CCL Atlas / 加到我的知识库 / 以后还会用到 / 把这个经验保存一下 / CCL 记一下 / 这个我要收藏 / 别让我忘了 / save to my atlas / save to CCL / remember this for me / crystallize this\"时触发。只在用户明确要求时调用,不要主动触发。",
+      "rawDescription": "把当前对话里的关键学习沉淀进用户本地 Atomsyn 知识库,或者**更新/补充已有经验**。两种模式:(1) 新建 — 当用户说\"帮我记下来 / 这个要记住 / 存到我的 atomsyn / 存到 Atomsyn / 加到 Atomsyn / 加到我的知识库 / Atomsyn 记一下 / 别让我忘了 / save to my atomsyn / save to Atomsyn / remember this for me / crystallize this\"时。(2) 更新 — 当用户说\"更新那条经验 / 补充到之前那条 / 把这个也合进 X 里 / 修正刚才的 / 合并进旧的 / update that atom / merge into the existing one\"时,应先用 atomsyn-cli find 定位已有 id,再用 atomsyn-cli update 合并,**绝对不要**新建一条重复的。只在用户明确要求时调用,不要主动触发。",
       "tags": [
         "cursor"
       ],
-      "localPath": "/Users/circlelee/.cursor/skills/atlas-write/SKILL.md",
-      "updatedAt": "2026-04-08T12:55:13.916Z"
+      "localPath": "/Users/circlelee/.cursor/skills/atomsyn-write/SKILL.md",
+      "updatedAt": "2026-04-09T06:01:03.149Z"
     },
     {
       "id": "skill_cursor_officecli",

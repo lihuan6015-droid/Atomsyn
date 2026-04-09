@@ -22,4 +22,3 @@ yarn-error.log*
 src-tauri/target
 src-tauri/Cargo.lock
 .claude
-docs/*

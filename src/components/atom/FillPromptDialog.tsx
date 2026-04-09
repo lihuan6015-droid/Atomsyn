@@ -45,12 +45,12 @@ export function FillPromptDialog({ open, rawPrompt, onClose, onCopy }: Props) {
               <X className="w-4 h-4" />
             </button>
           </div>
-          <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
+          <p className="text-[0.6875rem] text-neutral-500 dark:text-neutral-400">
             填入场景描述，Prompt 会自动拼装后复制
           </p>
         </div>
         <div className="p-5">
-          <label className="text-[10px] uppercase tracking-wider text-neutral-500 font-semibold">
+          <label className="text-[0.625rem] uppercase tracking-wider text-neutral-500 font-semibold">
             场景 (scenario)
           </label>
           <textarea

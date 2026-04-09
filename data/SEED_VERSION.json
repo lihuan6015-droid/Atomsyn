@@ -1,9 +1,19 @@
 {
-  "$schema": "CCL Atlas seed methodology version manifest · V1.5 baseline",
-  "version": "1.5.0",
-  "releaseDate": "2026-04-08",
-  "description": "V1.5 baseline seed · 产品创新 24 步法骨架 + 125 条方法论原子",
+  "$schema": "Atomsyn seed methodology version manifest",
+  "version": "0.1.0",
+  "releaseDate": "2026-04-11",
+  "description": "V2.1 seed · 产品创新24步法 + 设计思维5步法 + UI/UX设计模式 + 认知心理学基础",
   "changelog": [
+    {
+      "version": "2.1.0",
+      "date": "2026-04-11",
+      "notes": [
+        "新增 设计思维5步法 (matrix 1×5 布局)",
+        "新增 UI/UX 设计模式 (list 布局)",
+        "新增 认知心理学基础 (tree 布局)",
+        "Framework schema 扩展支持 matrix/list/tree 三种布局"
+      ]
+    },
     {
       "version": "1.5.0",
       "date": "2026-04-08",
@@ -16,11 +26,19 @@
     }
   ],
   "contents": {
-    "frameworks": ["product-innovation-24"],
-    "methodologyAtomCount": 125,
+    "frameworks": [
+      "product-innovation-24",
+      "design-thinking-5",
+      "ui-ux-patterns",
+      "cognitive-psychology-basics"
+    ],
+    "methodologyAtomCount": 128,
     "rootPaths": [
       "data/frameworks/",
-      "data/atoms/product-innovation-24/"
+      "data/atoms/product-innovation-24/",
+      "data/atoms/design-thinking-5/",
+      "data/atoms/ui-ux-patterns/",
+      "data/atoms/cognitive-psychology-basics/"
     ]
   }
 }

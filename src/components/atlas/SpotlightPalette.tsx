@@ -71,7 +71,7 @@ export function SpotlightPalette() {
             placeholder="搜索原子、标签、场景..."
             className="flex-1 bg-transparent outline-none text-sm placeholder:text-neutral-400"
           />
-          <kbd className="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-[10px] font-mono text-neutral-500">
+          <kbd className="px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-[0.625rem] font-mono text-neutral-500">
             ESC
           </kbd>
         </div>
@@ -85,13 +85,13 @@ export function SpotlightPalette() {
               value={`${atom.name} ${atom.nameEn ?? ''} ${atom.tags.join(' ')}`}
               onSelect={() => {
                 setOpen(false)
-                navigate(`/atoms/${atom.id}`)
+                navigate(`/atom/atoms/${atom.id}`)
               }}
               className="flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer aria-selected:bg-violet-500/10 aria-selected:text-violet-600 dark:aria-selected:text-violet-400"
             >
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium truncate">{atom.name}</div>
-                <div className="text-[11px] text-neutral-400 truncate">
+                <div className="text-[0.6875rem] text-neutral-400 truncate">
                   {atom.nameEn} · {atom.tags.join(' · ')}
                 </div>
               </div>

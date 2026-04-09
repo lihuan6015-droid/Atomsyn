@@ -42,6 +42,12 @@ export interface ModelConfig {
   enabled: boolean
   /** Whether this is the default for its ModelType */
   isDefault: boolean
+  /**
+   * Maximum context window size in K tokens (e.g. 128 = 128K tokens).
+   * Used by chat module's context harness to decide when to start trimming.
+   * Default: 128 (128K). Common values: 32, 64, 128, 200, 256.
+   */
+  maxContextTokens?: number
   createdAt: string
   updatedAt: string
 }

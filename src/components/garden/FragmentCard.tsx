@@ -55,14 +55,14 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
         <span className="text-sm font-medium truncate flex-1">{f.title}</span>
         <span
           className={cn(
-            'shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium font-mono',
+            'shrink-0 px-2 py-0.5 rounded-full text-[0.625rem] font-medium font-mono',
             ic.bg, ic.text, ic.darkBg, ic.darkText,
           )}
         >
           {f.insight_type}
         </span>
         {f.tags[0] && (
-          <span className="shrink-0 px-1.5 py-0.5 rounded text-[10px] bg-neutral-100 dark:bg-white/5 text-neutral-500 font-mono">
+          <span className="shrink-0 px-1.5 py-0.5 rounded text-[0.625rem] bg-neutral-100 dark:bg-white/5 text-neutral-500 font-mono">
             {f.tags[0]}
           </span>
         )}
@@ -85,7 +85,7 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
             className="overflow-hidden"
           >
             <div className="mt-2 space-y-1.5">
-              <div className="flex items-center gap-1.5 text-[11px] text-neutral-500">
+              <div className="flex items-center gap-1.5 text-[0.6875rem] text-neutral-500">
                 <span>{f.role}</span>
                 <span className="text-neutral-300 dark:text-neutral-600">·</span>
                 <span>{f.situation}</span>
@@ -110,11 +110,11 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
           >
             <div className="mt-2 space-y-2">
               <div className="flex flex-wrap gap-1.5">
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+                <span className="px-2 py-0.5 rounded-full text-[0.625rem] font-medium bg-amber-500/10 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
                   {f.activity}
                 </span>
                 {f.context?.domain_hint && (
-                  <span className="px-2 py-0.5 rounded-full text-[10px] bg-neutral-100 dark:bg-white/5 text-neutral-500 italic">
+                  <span className="px-2 py-0.5 rounded-full text-[0.625rem] bg-neutral-100 dark:bg-white/5 text-neutral-500 italic">
                     {f.context.domain_hint}
                   </span>
                 )}
@@ -123,7 +123,7 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
                 {f.tags.map((t) => (
                   <span
                     key={t}
-                    className="px-1.5 py-0.5 rounded text-[10px] bg-neutral-100 dark:bg-white/5 text-neutral-500 font-mono"
+                    className="px-1.5 py-0.5 rounded text-[0.625rem] bg-neutral-100 dark:bg-white/5 text-neutral-500 font-mono"
                   >
                     {t}
                   </span>
@@ -138,7 +138,7 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
                         e.stopPropagation()
                         onNavigate?.(id)
                       }}
-                      className="px-1.5 py-0.5 rounded text-[10px] bg-violet-500/10 text-violet-600 dark:text-violet-400 font-mono hover:bg-violet-500/20"
+                      className="px-1.5 py-0.5 rounded text-[0.625rem] bg-violet-500/10 text-violet-600 dark:text-violet-400 font-mono hover:bg-violet-500/20"
                     >
                       {id}
                     </button>
@@ -159,13 +159,13 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
             className="overflow-hidden"
           >
             <div className="mt-3 space-y-2 border-t border-neutral-200/50 dark:border-white/5 pt-3">
-              <div className="text-[10px] uppercase tracking-wider text-neutral-400 font-semibold">
+              <div className="text-[0.625rem] uppercase tracking-wider text-neutral-400 font-semibold">
                 原始内容
               </div>
               <div className="text-xs text-neutral-600 dark:text-neutral-300 whitespace-pre-wrap bg-neutral-50 dark:bg-white/[0.02] rounded-lg p-3 max-h-40 overflow-y-auto">
                 {f.rawContent}
               </div>
-              <div className="grid grid-cols-3 gap-2 text-[10px] text-neutral-500">
+              <div className="grid grid-cols-3 gap-2 text-[0.625rem] text-neutral-500">
                 <div className="flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   {f.createdAt.slice(0, 16).replace('T', ' ')}
@@ -179,7 +179,7 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
                 </div>
               </div>
               {/* Calibration indicators */}
-              <div className="flex items-center gap-3 text-[10px] text-neutral-400">
+              <div className="flex items-center gap-3 text-[0.625rem] text-neutral-400">
                 {f.stats.locked && (
                   <span className="flex items-center gap-1 text-amber-500">
                     <Lock className="w-3 h-3" /> 已锁定
