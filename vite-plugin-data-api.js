@@ -625,6 +625,26 @@ export function dataApiPlugin(opts) {
                         }
                         if (method === 'POST' && parts.length === 1) {
                             const body = await readBody(req);
+                            const now = new Date().toISOString();
+                            body.createdAt ||= now;
+                            body.updatedAt = now;
+                            body.bookmarks ||= [];
+                            body.stats ||= { usedInProjects: [], useCount: 0, aiInvokeCount: 0, humanViewCount: 0 };
+                            body.schemaVersion = 1;
+                            // 1) Handle 'experience' / 'fragment' (V2.0)
+                            if (body.kind === 'experience') {
+                                if (!body.id) {
+                                    return send(res, 400, { error: 'id is required for experience atoms' });
+                                }
+                                const slug = body.id.replace(/^atom_(exp|frag)_/, '').replace(/_/g, '-');
+                                const folder = path.join(dataDir, 'atoms', 'experience', slug);
+                                await fs.mkdir(folder, { recursive: true });
+                                const file = path.join(folder, `${body.id}.json`);
+                                await writeJSON(file, body);
+                                await rebuildIndex(dataDir);
+                                return send(res, 201, body);
+                            }
+                            // 2) Handle 'methodology' (Legacy/Default)
                             const fw = body.frameworkId;
                             if (!fw || !body.id) {
                                 return send(res, 400, { error: 'frameworkId and id are required' });
@@ -642,12 +662,6 @@ export function dataApiPlugin(opts) {
                             const folder = path.join(dataDir, 'atoms', cell.atomCategoryPath);
                             const slug = body.id.replace(/^atom_/, '').replace(/_/g, '-');
                             const file = path.join(folder, `${slug}.json`);
-                            const now = new Date().toISOString();
-                            body.createdAt ||= now;
-                            body.updatedAt = now;
-                            body.bookmarks ||= [];
-                            body.stats ||= { usedInProjects: [], useCount: 0, aiInvokeCount: 0, humanViewCount: 0 };
-                            body.schemaVersion = 1;
                             await writeJSON(file, body);
                             await rebuildIndex(dataDir);
                             return send(res, 201, body);
