@@ -283,10 +283,19 @@ export default function AtomDetailPage() {
               </div>
             )}
           </div>
-          <div className="relative">
+          <div className="flex items-center gap-1.5 relative">
+            {atom.kind === 'experience' && (
+              <button
+                onClick={handleDelete}
+                className="w-8 h-8 rounded-lg hover:bg-red-500/10 text-red-500 flex items-center justify-center transition-colors"
+                title="删除该经验 (直接从磁盘移除)"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="w-8 h-8 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 flex items-center justify-center transition-colors text-neutral-500"
               title="更多"
             >
               <MoreHorizontal className="w-4 h-4" />
@@ -305,15 +314,17 @@ export default function AtomDetailPage() {
                 >
                   <Pencil className="w-3.5 h-3.5" /> 编辑
                 </button>
-                <button
-                  onClick={() => {
-                    setMenuOpen(false)
-                    handleDelete()
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left text-red-500"
-                >
-                  <Trash2 className="w-3.5 h-3.5" /> 删除
-                </button>
+                {atom.kind !== 'experience' && (
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false)
+                      handleDelete()
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-left text-red-500"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" /> 删除
+                  </button>
+                )}
               </div>
             )}
           </div>
