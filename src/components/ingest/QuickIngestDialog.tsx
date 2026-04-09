@@ -33,7 +33,8 @@ interface Props {
 
 interface ClassifyResult {
   title: string
-  summary: string
+  insight: string
+  sourceContext: string
   role: string
   situation: string
   activity: string
@@ -55,7 +56,7 @@ async function loadClassifyPrompt(): Promise<string> {
       return cachedPrompt
     }
   } catch { /* fallback */ }
-  return 'Classify the following text into a structured knowledge fragment. Return JSON with: title, summary, role, situation, activity, insight_type (one of: 反直觉/方法验证/方法证伪/情绪复盘/关系观察/时机判断/原则提炼/纯好奇), tags, confidence.'
+  return 'Classify the following text into a structured knowledge fragment. Return JSON with: title, insight, sourceContext, role, situation, activity, insight_type (one of: 反直觉/方法验证/方法证伪/情绪复盘/关系观察/时机判断/原则提炼/纯好奇), tags, confidence.'
 }
 
 async function callLlmClassify(rawText: string): Promise<ClassifyResult> {
@@ -67,7 +68,34 @@ async function callLlmClassify(rawText: string): Promise<ClassifyResult> {
   if (!apiKey) throw new Error('请先在设置中填入 API Key')
 
   const systemPrompt = await loadClassifyPrompt()
-  const userContent = systemPrompt + '\n\n' + rawText
+
+  // Dynamically fetch and append existing taxonomy to the prompt
+  let dynamicTaxonomy = ''
+  try {
+    const allAtoms = await atomsApi.list() as any[]
+    const roles = new Set<string>()
+    const situations = new Set<string>()
+    const activities = new Set<string>()
+    const insightTypes = new Set<string>()
+    
+    for (const a of allAtoms) {
+      if (a.role) roles.add(a.role)
+      if (a.situation) situations.add(a.situation)
+      if (a.activity) activities.add(a.activity)
+      if (a.insight_type) insightTypes.add(a.insight_type)
+    }
+    
+    dynamicTaxonomy = `
+### Existing Dimension Values
+To avoid creating semantically duplicated categories, please prioritize these existing values if they fit the context:
+- roles: ${Array.from(roles).join(', ')}
+- situations: ${Array.from(situations).join(', ')}
+- activities: ${Array.from(activities).join(', ')}
+- insight_types: ${Array.from(insightTypes).join(', ')}
+`
+  } catch (e) { /* ignore if data api fails to list */ }
+
+  const userContent = systemPrompt + '\n' + dynamicTaxonomy + '\n\n' + rawText
 
   let rawJson = ''
 
@@ -159,10 +187,11 @@ export function QuickIngestDialog({ open, onClose, onIngested }: Props) {
         id,
         schemaVersion: 1 as const,
         kind: 'experience' as const,
-        subKind: 'fragment' as const,
+        subKind: 'crystallized' as const,
         title: result.title,
         name: result.title,
-        summary: result.summary,
+        insight: result.insight,
+        sourceContext: result.sourceContext,
         role: result.role,
         situation: result.situation,
         activity: result.activity,
@@ -266,7 +295,8 @@ export function QuickIngestDialog({ open, onClose, onIngested }: Props) {
                       </span>
                     </div>
                     <div className="text-sm font-medium">{result.title}</div>
-                    <div className="text-xs text-neutral-600 dark:text-neutral-300">{result.summary}</div>
+                    <div className="text-xs text-neutral-600 dark:text-neutral-300"><b>背景:</b> {result.sourceContext}</div>
+                    <div className="text-xs text-neutral-600 dark:text-neutral-300"><b>洞察:</b> {result.insight.length > 200 ? result.insight.slice(0, 200) + '...' : result.insight}</div>
                     <div className="flex flex-wrap gap-1.5">
                       <Chip label={result.role} color="sky" />
                       <Chip label={result.situation} color="emerald" />

@@ -9,7 +9,8 @@ Return a single JSON object (no markdown fences, no explanation):
 ```json
 {
   "title": "concise title (max 80 chars, Chinese preferred if input is Chinese)",
-  "summary": "1-3 sentence summary of the core insight (10-500 chars)",
+  "insight": "The core learning. ~100-400 words. Must be self-contained enough that someone can act on it.",
+  "sourceContext": "1-2 sentence description of the situation / task during which the insight emerged.",
   "role": "the role/hat the person was wearing",
   "situation": "the context or scenario",
   "activity": "what cognitive activity was happening",
@@ -46,8 +47,8 @@ Seed values: 分析, 判断, 说服, 倾听, 试错, 验证, 综合, 表达, 拒
 2. Generate 2-5 tags that capture the key concepts.
 3. Set confidence to your actual confidence in the classification (0.0-1.0).
 4. If the content is about emotions, feelings, or personal psychological state, set insight_type to "情绪复盘".
-5. Title and summary should be in the same language as the input.
-6. Be concise. The title is for scanning, the summary is for understanding.
+5. Title and insight should be in the same language as the input.
+6. Be concise. The title is for scanning, the insight is for deep value transfer.
 
 ## Input
 
