@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/lihuan6015-droid/AtomSyn/actions/workflows/ci.yml"><img src="https://github.com/lihuan6015-droid/AtomSyn/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="https://github.com/lihuan6015-droid/Atomsyn/actions/workflows/ci.yml"><img src="https://github.com/lihuan6015-droid/Atomsyn/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License" /></a>
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey" alt="Platform" />
   <img src="https://img.shields.io/badge/tauri-v2-blue" alt="Tauri v2" />
@@ -47,13 +47,20 @@
 
 ## 截图
 
-> 即将添加 — Atom Garden、Skill Map、Growth Analytics 的截图。
+<p align="center">
+  <img src="assets/screenshots/image-1.png" width="48%" />
+  <img src="assets/screenshots/image-2.png" width="48%" />
+</p>
+<p align="center">
+  <img src="assets/screenshots/image-3.png" width="48%" />
+  <img src="assets/screenshots/image-4.png" width="48%" />
+</p>
 
 ## 快速开始
 
 ### 下载安装
 
-在 [Releases](https://github.com/lihuan6015-droid/AtomSyn/releases) 页面下载预构建的安装包：
+在 [Releases](https://github.com/lihuan6015-droid/Atomsyn/releases) 页面下载预构建的安装包：
 
 | 平台 | 格式 |
 |---|---|
@@ -67,7 +74,7 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/lihuan6015-droid/AtomSyn.git
+git clone https://github.com/lihuan6015-droid/Atomsyn.git
 cd AtomSyn
 
 # 安装依赖

@@ -47,7 +47,14 @@ Everything stays 100% on your machine. No cloud, no subscription, no lock-in.
 
 ## Screenshots
 
-> Coming soon — screenshots of Atom Garden, Skill Map, and Growth Analytics.
+<p align="center">
+  <img src="assets/screenshots/image-1.png" width="48%" />
+  <img src="assets/screenshots/image-2.png" width="48%" />
+</p>
+<p align="center">
+  <img src="assets/screenshots/image-3.png" width="48%" />
+  <img src="assets/screenshots/image-4.png" width="48%" />
+</p>
 
 ## Quick Start
 
