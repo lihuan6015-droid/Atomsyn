@@ -18,7 +18,21 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Tauri (future)
+# Tauri build artifacts
 src-tauri/target
 src-tauri/Cargo.lock
+
+# Private data (user-specific, not seed data)
+data/atoms/experience/
+data/atoms/skill-inventory/
+data/projects/
+data/growth/
+
+# Internal docs (strategy, PRDs, plans)
+docs/
+
+# AI collaboration contract (project-specific)
+CLAUDE.md
+
+# Claude Code harness
 .claude

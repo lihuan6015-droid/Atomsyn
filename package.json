@@ -1,9 +1,19 @@
 {
   "name": "atomsyn",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "type": "module",
-  "description": "Personal Meta-Skill Vault — 个人元能力沉淀系统",
+  "description": "A local-first personal knowledge vault with AI agent integration",
+  "author": "circlelee",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lihuan6015-droid/AtomSyn.git"
+  },
+  "homepage": "https://github.com/lihuan6015-droid/AtomSyn",
+  "bugs": {
+    "url": "https://github.com/lihuan6015-droid/AtomSyn/issues"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

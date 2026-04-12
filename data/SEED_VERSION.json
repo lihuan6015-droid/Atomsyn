@@ -1,11 +1,11 @@
 {
   "$schema": "Atomsyn seed methodology version manifest",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "releaseDate": "2026-04-11",
   "description": "V2.1 seed · 产品创新24步法 + 设计思维5步法 + UI/UX设计模式 + 认知心理学基础",
   "changelog": [
     {
-      "version": "2.1.0",
+      "version": "0.1.1",
       "date": "2026-04-11",
       "notes": [
         "新增 设计思维5步法 (matrix 1×5 布局)",
@@ -15,7 +15,7 @@
       ]
     },
     {
-      "version": "1.5.0",
+      "version": "0.1.0",
       "date": "2026-04-08",
       "notes": [
         "初始基线 · 产品创新 24 步法骨架",
