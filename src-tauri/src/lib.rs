@@ -357,6 +357,207 @@ fn init_seed_methodology(app: AppHandle) -> Result<InitStepResult, String> {
     })
 }
 
+// ───────────────────────── Agent skill installation ─────────────────────────
+
+/// Recursively copy `src` into `dst`, **overwriting** existing files.
+/// Used for skill installation where we want the latest version.
+fn copy_dir_recursive_overwrite(src: &Path, dst: &Path) -> Result<usize, String> {
+    if !src.exists() {
+        return Ok(0);
+    }
+    ensure_dir(&dst.to_path_buf())?;
+    let mut copied = 0usize;
+    let entries = fs::read_dir(src)
+        .map_err(|e| format!("read_dir failed for {}: {}", src.display(), e))?;
+    for entry in entries {
+        let entry = entry.map_err(|e| format!("read_dir entry error: {}", e))?;
+        let path = entry.path();
+        let name = entry.file_name();
+        let target = dst.join(&name);
+        if path.is_dir() {
+            copied += copy_dir_recursive_overwrite(&path, &target)?;
+        } else if path.is_file() {
+            if let Some(parent) = target.parent() {
+                ensure_dir(&parent.to_path_buf())?;
+            }
+            fs::copy(&path, &target)
+                .map_err(|e| format!("copy failed {} -> {}: {}", path.display(), target.display(), e))?;
+            copied += 1;
+        }
+    }
+    Ok(copied)
+}
+
+/// Locate a bundled resource subdirectory (skills/ or scripts/).
+fn bundled_resource_subdir(app: &AppHandle, sub: &str) -> Option<PathBuf> {
+    let resource_root = app.path().resource_dir().ok()?;
+    let candidate = resource_root.join(sub);
+    if candidate.exists() {
+        return Some(candidate);
+    }
+    None
+}
+
+#[derive(Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
+struct SkillInstallResult {
+    claude_installed: bool,
+    cursor_installed: bool,
+    cli_installed: bool,
+    files_copied: usize,
+    detail: String,
+}
+
+#[tauri::command]
+fn install_agent_skills(app: AppHandle) -> Result<SkillInstallResult, String> {
+    let home = app
+        .path()
+        .home_dir()
+        .map_err(|e| format!("home_dir unavailable: {}", e))?;
+
+    let skill_names = ["atomsyn-write", "atomsyn-read", "atomsyn-mentor"];
+    let mut total_copied = 0usize;
+    let mut claude_ok = false;
+    let mut cursor_ok = false;
+    let mut details: Vec<String> = Vec::new();
+
+    // 1. Copy skills to Claude and Cursor directories
+    let targets: Vec<(&str, PathBuf)> = vec![
+        ("Claude", home.join(".claude").join("skills")),
+        ("Cursor", home.join(".cursor").join("skills")),
+    ];
+
+    for (name, skills_dir) in &targets {
+        // Only install if the parent tool directory exists (e.g. ~/.claude/)
+        let tool_dir = skills_dir.parent().unwrap_or(skills_dir);
+        if !tool_dir.exists() {
+            details.push(format!("{}: skipped (directory not found)", name));
+            continue;
+        }
+
+        let mut tool_copied = 0usize;
+        for skill_name in &skill_names {
+            if let Some(src) = bundled_resource_subdir(&app, &format!("skills/{}", skill_name)) {
+                let dst = skills_dir.join(skill_name);
+                tool_copied += copy_dir_recursive_overwrite(&src, &dst)?;
+            }
+        }
+        total_copied += tool_copied;
+        if *name == "Claude" { claude_ok = true; }
+        if *name == "Cursor" { cursor_ok = true; }
+        details.push(format!("{}: {} files installed", name, tool_copied));
+    }
+
+    // 2. Install CLI script and shim
+    let cli_ok = install_cli_shim(&app, &home, &mut total_copied, &mut details);
+
+    Ok(SkillInstallResult {
+        claude_installed: claude_ok,
+        cursor_installed: cursor_ok,
+        cli_installed: cli_ok,
+        files_copied: total_copied,
+        detail: details.join("; "),
+    })
+}
+
+/// Install the CLI shim script to ~/.atomsyn/bin/
+fn install_cli_shim(
+    app: &AppHandle,
+    home: &Path,
+    total_copied: &mut usize,
+    details: &mut Vec<String>,
+) -> bool {
+    let bin_dir = home.join(".atomsyn").join("bin");
+    if let Err(e) = ensure_dir(&bin_dir.to_path_buf()) {
+        details.push(format!("CLI: failed to create bin dir: {}", e));
+        return false;
+    }
+
+    // Copy atomsyn-cli.mjs to ~/.atomsyn/bin/
+    let cli_src = bundled_resource_subdir(app, "scripts/atomsyn-cli.mjs")
+        .or_else(|| {
+            // Tauri may flatten paths: try without scripts/ prefix
+            let res = app.path().resource_dir().ok()?;
+            let flat = res.join("atomsyn-cli.mjs");
+            if flat.exists() { Some(flat) } else { None }
+        });
+
+    let cli_dst = bin_dir.join("atomsyn-cli.mjs");
+    if let Some(src) = &cli_src {
+        if let Err(e) = fs::copy(src, &cli_dst) {
+            details.push(format!("CLI: copy failed: {}", e));
+            return false;
+        }
+        *total_copied += 1;
+    }
+
+    // Create platform-specific shim
+    #[cfg(unix)]
+    {
+        let shim_path = bin_dir.join("atomsyn-cli");
+        let shim_content = format!(
+            "#!/bin/sh\n# Atomsyn CLI shim — generated by Atomsyn desktop app\nexec node \"{}\" \"$@\"\n",
+            cli_dst.display()
+        );
+        if let Err(e) = fs::write(&shim_path, &shim_content) {
+            details.push(format!("CLI shim: write failed: {}", e));
+            return false;
+        }
+        // chmod +x
+        use std::os::unix::fs::PermissionsExt;
+        let _ = fs::set_permissions(&shim_path, fs::Permissions::from_mode(0o755));
+        *total_copied += 1;
+
+        // Append to shell rc if not already present
+        append_to_shell_rc(home, &bin_dir);
+    }
+
+    #[cfg(windows)]
+    {
+        let shim_path = bin_dir.join("atomsyn-cli.cmd");
+        let shim_content = format!(
+            "@echo off\r\nREM Atomsyn CLI shim\r\nnode \"{}\" %*\r\n",
+            cli_dst.display()
+        );
+        if let Err(e) = fs::write(&shim_path, &shim_content) {
+            details.push(format!("CLI shim: write failed: {}", e));
+            return false;
+        }
+        *total_copied += 1;
+    }
+
+    details.push("CLI: installed".to_string());
+    true
+}
+
+/// Append PATH export to ~/.zshrc or ~/.bashrc (idempotent).
+#[cfg(unix)]
+fn append_to_shell_rc(home: &Path, bin_dir: &Path) {
+    let marker = "# Atomsyn CLI (atomsyn-cli install-skill)";
+    let export_line = format!("export PATH=\"{}:$PATH\"", bin_dir.display());
+    let block = format!("\n{}\n{}\n", marker, export_line);
+
+    // Try zshrc first, then bashrc
+    let candidates = [home.join(".zshrc"), home.join(".bashrc")];
+    for rc in &candidates {
+        if rc.exists() {
+            if let Ok(content) = fs::read_to_string(rc) {
+                if content.contains(marker) {
+                    return; // Already installed
+                }
+            }
+            let _ = fs::OpenOptions::new()
+                .append(true)
+                .open(rc)
+                .and_then(|mut f| {
+                    use std::io::Write;
+                    f.write_all(block.as_bytes())
+                });
+            return;
+        }
+    }
+}
+
 #[tauri::command]
 fn init_check_skill_installation(app: AppHandle) -> Result<InitStepResult, String> {
     let home = app
@@ -1070,6 +1271,7 @@ pub fn run() {
             init_seed_frameworks,
             init_seed_methodology,
             init_check_skill_installation,
+            install_agent_skills,
             seed_check,
             seed_sync,
             seed_dismiss,

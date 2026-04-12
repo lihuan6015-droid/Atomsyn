@@ -13,12 +13,15 @@ import {
   Loader2,
   Moon,
   Palette,
+  Plug,
   Sun,
   RefreshCw,
   Pen,
   ShieldCheck,
   X,
   Plus,
+  Check,
+  Circle,
 } from 'lucide-react'
 import { appVersionApi, indexApi, seedApi } from '@/lib/dataApi'
 import { getDataDirInfo, describeDataSource, type DataDirInfo } from '@/lib/dataPath'
@@ -34,10 +37,11 @@ import { ModelConfigDialog } from '@/components/settings/ModelConfigDialog'
 import { cn } from '@/lib/cn'
 import { useAppStore } from '@/stores/useAppStore'
 
-type SectionKey = 'ai' | 'appearance' | 'data' | 'updates' | 'about'
+type SectionKey = 'ai' | 'agent' | 'appearance' | 'data' | 'updates' | 'about'
 
 const SECTIONS: { key: SectionKey; label: string; icon: typeof Bot }[] = [
   { key: 'ai', label: '模型', icon: Bot },
+  { key: 'agent', label: 'Agent Skill', icon: Plug },
   { key: 'appearance', label: '外观', icon: Palette },
   { key: 'data', label: '数据', icon: Database },
   { key: 'updates', label: '版本与更新', icon: Download },
@@ -78,6 +82,7 @@ export function SettingsPage() {
       {/* Pane */}
       <main className="flex-1 overflow-y-auto scrollbar-subtle p-8">
         {active === 'ai' && <AISection />}
+        {active === 'agent' && <AgentSection />}
         {active === 'appearance' && <AppearanceSection />}
         {active === 'data' && <DataSection />}
         {active === 'updates' && <UpdatesSection />}
@@ -379,6 +384,123 @@ function AISection() {
         modelType={dialogType}
         editModel={editModel}
       />
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Agent Skill — one-click installation
+// ---------------------------------------------------------------------------
+
+interface SkillStatus {
+  claudeSkillInstalled: boolean
+  cursorSkillInstalled: boolean
+  cliShimInstalled: boolean
+}
+
+interface SkillInstallResult {
+  claudeInstalled: boolean
+  cursorInstalled: boolean
+  cliInstalled: boolean
+  filesCopied: number
+  detail: string
+}
+
+function AgentSection() {
+  const showToast = useAppStore((s) => s.showToast)
+  const [busy, setBusy] = useState(false)
+  const [status, setStatus] = useState<SkillStatus | null>(null)
+  const [lastResult, setLastResult] = useState<string | null>(null)
+
+  useEffect(() => {
+    checkStatus()
+  }, [])
+
+  async function checkStatus() {
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      const res = await invoke<{ counts: SkillStatus }>('init_check_skill_installation')
+      if (res?.counts) setStatus(res.counts)
+    } catch {
+      // Web dev mode — no Tauri backend
+    }
+  }
+
+  async function handleInstall() {
+    setBusy(true)
+    setLastResult(null)
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      const res = await invoke<SkillInstallResult>('install_agent_skills')
+      const msg = res.filesCopied > 0
+        ? `已安装 ${res.filesCopied} 个文件`
+        : '所有 Skill 已是最新版本'
+      setLastResult(msg)
+      showToast(msg)
+      await checkStatus()
+    } catch (e: any) {
+      const msg = '安装失败：' + (e?.message ?? String(e))
+      setLastResult(msg)
+      showToast(msg)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const items = [
+    { label: 'Claude Code Skill', ok: status?.claudeSkillInstalled },
+    { label: 'Cursor Skill', ok: status?.cursorSkillInstalled },
+    { label: 'CLI Shim (atomsyn-cli)', ok: status?.cliShimInstalled },
+  ]
+
+  return (
+    <div className="max-w-xl space-y-6">
+      <header>
+        <h1 className="text-xl font-semibold flex items-center gap-2">
+          <Plug className="w-5 h-5 text-violet-500" /> Agent Skill
+        </h1>
+        <p className="text-sm text-neutral-500 mt-1">
+          将 atomsyn-read / write / mentor 技能安装到你的 AI 编码工具中。
+        </p>
+      </header>
+
+      <div className="rounded-2xl border border-neutral-200/70 dark:border-white/10 p-4 space-y-3">
+        {items.map((item) => (
+          <div key={item.label} className="flex items-center justify-between text-sm">
+            <span className="text-neutral-700 dark:text-neutral-300">{item.label}</span>
+            {status === null ? (
+              <span className="text-neutral-400 text-xs">检测中...</span>
+            ) : item.ok ? (
+              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+                <Check className="w-3.5 h-3.5" /> 已安装
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-neutral-400">
+                <Circle className="w-3.5 h-3.5" /> 未安装
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="flex items-center gap-3">
+        <button
+          onClick={handleInstall}
+          disabled={busy}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-violet-600 text-white text-sm font-medium hover:bg-violet-700 disabled:opacity-50 transition-colors"
+        >
+          {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plug className="w-4 h-4" />}
+          {busy ? '安装中...' : '安装 / 更新 Skill'}
+        </button>
+        {lastResult && (
+          <span className="text-sm text-emerald-600 dark:text-emerald-400">{lastResult}</span>
+        )}
+      </div>
+
+      <p className="text-xs text-neutral-400">
+        将 atomsyn-write、atomsyn-read、atomsyn-mentor 复制到已检测的 AI 工具目录，
+        同时安装 atomsyn-cli 命令行工具并更新 shell PATH。
+      </p>
     </div>
   )
 }

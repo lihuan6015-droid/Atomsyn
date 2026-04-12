@@ -46,7 +46,11 @@
     "resources": [
       "../data/frameworks/**/*",
       "../data/atoms/product-innovation-24/**/*",
-      "../data/SEED_VERSION.json"
+      "../data/SEED_VERSION.json",
+      "../skills/atomsyn-write/**/*",
+      "../skills/atomsyn-read/**/*",
+      "../skills/atomsyn-mentor/**/*",
+      "../scripts/atomsyn-cli.mjs"
     ]
   }
 }
