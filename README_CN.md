@@ -68,6 +68,11 @@
 | macOS (Intel) | `.dmg` |
 | Windows | `.msi` / `.exe` |
 
+> **macOS 用户注意**：应用尚未签署 Apple 开发者证书，macOS 可能会提示"Atomsyn 已损坏，无法打开"。这是 Gatekeeper 安全限制，并非文件损坏。安装后在终端运行以下命令即可：
+> ```bash
+> sudo xattr -cr /Applications/Atomsyn.app
+> ```
+
 ### 从源码构建
 
 **前置条件**：Node.js 22+、Rust 工具链（[rustup](https://rustup.rs/)）

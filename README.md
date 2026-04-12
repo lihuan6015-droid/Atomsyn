@@ -70,6 +70,11 @@ Pre-built binaries are available on the [Releases](https://github.com/lihuan6015
 
 On first launch, Atomsyn seeds your local vault with a starter methodology framework (Product Innovation 24-Step) containing 125+ methodology atoms so you can explore immediately.
 
+> **macOS users**: The app is not signed with an Apple Developer certificate yet. macOS may show "Atomsyn is damaged and can't be opened." This is a Gatekeeper restriction, not actual file corruption. To fix it, run in Terminal after installing:
+> ```bash
+> sudo xattr -cr /Applications/Atomsyn.app
+> ```
+
 ### Build from Source
 
 **Prerequisites**: Node.js 22+, Rust toolchain ([rustup](https://rustup.rs/))
