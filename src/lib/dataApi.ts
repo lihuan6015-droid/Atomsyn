@@ -121,11 +121,16 @@ export const indexApi = {
 
 // ---------- Skill scanner (V1.5 · hot rescan) ----------
 export const skillScanApi = {
-  rescan: () =>
-    http<{ ok: boolean; added: number; unchanged: number; removed: number }>(
-      '/scan-skills',
-      { method: 'POST' },
-    ),
+  rescan: async (): Promise<{ ok: boolean; added: number; unchanged: number; removed: number }> => {
+    // In Tauri desktop mode, use the native Rust command
+    if ((window as any).__TAURI_INTERNALS__) {
+      const { invoke } = await import('@tauri-apps/api/core')
+      const res = await invoke<{ ok: boolean; added: number; unchanged: number }>('scan_skills')
+      return { ...res, removed: 0 }
+    }
+    // In dev mode, use the Vite plugin API
+    return http('/scan-skills', { method: 'POST' })
+  },
 }
 
 // ---------- Usage Log ----------

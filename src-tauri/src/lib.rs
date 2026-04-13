@@ -182,15 +182,17 @@ fn get_config_path(app: AppHandle) -> Result<String, String> {
 /// running `cargo check` outside a packaged app).
 fn bundled_data_subdir(app: &AppHandle, sub: &str) -> Option<PathBuf> {
     let resource_root = app.path().resource_dir().ok()?;
-    let candidate = resource_root.join("data").join(sub);
-    if candidate.exists() {
-        Some(candidate)
-    } else {
-        // Fallback: some Tauri bundle layouts flatten the leading `../`;
-        // try a direct lookup too.
-        let flat = resource_root.join(sub);
-        if flat.exists() { Some(flat) } else { None }
+    // Tauri v2 converts "../" in resource paths to "_up_/" in the bundle.
+    // Try multiple possible layouts:
+    let candidates = [
+        resource_root.join("_up_").join("data").join(sub),  // Tauri v2 bundle: _up_/data/sub
+        resource_root.join("data").join(sub),                // direct: data/sub
+        resource_root.join(sub),                             // flat: sub
+    ];
+    for c in &candidates {
+        if c.exists() { return Some(c.clone()); }
     }
+    None
 }
 
 /// Count .json files recursively under a directory. Returns 0 if missing.
@@ -357,6 +359,275 @@ fn init_seed_methodology(app: AppHandle) -> Result<InitStepResult, String> {
     })
 }
 
+// ───────────────────────── Skill scanner (Tauri native) ─────────────────────────
+
+/// Scan ~/.claude/skills, ~/.cursor/skills, etc. for SKILL.md files,
+/// parse frontmatter, and write JSON inventory items to the data dir.
+/// This is the Tauri-native equivalent of scripts/scan-skills.mjs.
+#[tauri::command]
+fn scan_skills(app: AppHandle) -> Result<serde_json::Value, String> {
+    let home = app.path().home_dir()
+        .map_err(|e| format!("home_dir unavailable: {}", e))?;
+    let (data_root, _) = resolve_data_dir(&app)?;
+    let out_root = data_root.join("atoms").join("skill-inventory");
+
+    // Directories to scan (tool_name, path)
+    let scan_dirs: Vec<(&str, PathBuf)> = vec![
+        ("claude", home.join(".claude").join("skills")),
+        ("cursor", home.join(".cursor").join("skills")),
+        ("codex", home.join(".codex").join("skills")),
+        ("trae", home.join(".trae").join("skills")),
+        ("openclaw", home.join(".openclaw").join("skills")),
+        ("opencode", home.join(".opencode").join("skills")),
+    ];
+
+    // Also check user config for custom paths
+    let extra_paths = read_config(&app)
+        .and_then(|c| c.skill_paths)
+        .unwrap_or_default();
+
+    let mut added = 0usize;
+    let unchanged = 0usize;
+
+    for (tool_name, dir) in &scan_dirs {
+        if !dir.exists() { continue; }
+        added += scan_skill_dir(tool_name, dir, &out_root)?;
+    }
+    for custom in &extra_paths {
+        let p = PathBuf::from(custom);
+        if p.exists() {
+            added += scan_skill_dir("custom", &p, &out_root)?;
+        }
+    }
+
+    Ok(serde_json::json!({
+        "ok": true,
+        "added": added,
+        "unchanged": unchanged,
+    }))
+}
+
+/// Scan a single skill directory for SKILL.md files and emit JSON inventory.
+fn scan_skill_dir(tool_name: &str, dir: &Path, out_root: &Path) -> Result<usize, String> {
+    let mut count = 0usize;
+    let entries = match fs::read_dir(dir) {
+        Ok(e) => e,
+        Err(_) => return Ok(0),
+    };
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+        // Follow symlinks
+        let meta = match fs::metadata(&path) {
+            Ok(m) => m,
+            Err(_) => continue,
+        };
+
+        if meta.is_dir() {
+            let skill_md = path.join("SKILL.md");
+            if skill_md.exists() {
+                if let Ok(true) = process_skill_file(tool_name, &skill_md, &path, out_root) {
+                    count += 1;
+                }
+            }
+            // Also recurse one level for nested skills
+            if let Ok(sub_entries) = fs::read_dir(&path) {
+                for sub in sub_entries.flatten() {
+                    let sub_path = sub.path();
+                    if sub_path.is_dir() {
+                        let sub_skill = sub_path.join("SKILL.md");
+                        if sub_skill.exists() {
+                            if let Ok(true) = process_skill_file(tool_name, &sub_skill, &sub_path, out_root) {
+                                count += 1;
+                            }
+                        }
+                    }
+                }
+            }
+        } else if meta.is_file() && path.file_name().map(|n| n == "SKILL.md").unwrap_or(false) {
+            // SKILL.md directly in the skills directory
+            if let Ok(true) = process_skill_file(tool_name, &path, dir, out_root) {
+                count += 1;
+            }
+        }
+    }
+    Ok(count)
+}
+
+/// Parse a SKILL.md file and write a JSON inventory item.
+/// Returns Ok(true) if a file was written, Ok(false) if unchanged.
+fn process_skill_file(
+    tool_name: &str,
+    skill_md_path: &Path,
+    skill_dir: &Path,
+    out_root: &Path,
+) -> Result<bool, String> {
+    let raw = fs::read_to_string(skill_md_path)
+        .map_err(|e| format!("read failed {}: {}", skill_md_path.display(), e))?;
+
+    let (frontmatter, body) = parse_frontmatter(&raw);
+
+    let dir_name = skill_dir.file_name()
+        .and_then(|n| n.to_str())
+        .unwrap_or("unknown");
+
+    let fm_name = frontmatter.get("name")
+        .and_then(|v| v.as_str())
+        .filter(|s| !s.is_empty());
+
+    let display_name = fm_name.unwrap_or(dir_name);
+    let slug = slugify(display_name);
+    if slug.is_empty() { return Ok(false); }
+
+    let id = format!("skill_{}_{}", tool_name, slug);
+
+    let description = frontmatter.get("description")
+        .and_then(|v| v.as_str())
+        .unwrap_or("");
+    let raw_description = if description.is_empty() {
+        first_paragraph(&body)
+    } else {
+        description.to_string()
+    };
+
+    let out_dir = out_root.join(tool_name);
+    ensure_dir(&out_dir.to_path_buf())?;
+    let out_path = out_dir.join(format!("{}.json", slug));
+
+    // Check if unchanged by comparing file content hash
+    let file_hash = format!("{:x}", md5_simple(raw.as_bytes()));
+    if out_path.exists() {
+        if let Ok(existing_raw) = fs::read_to_string(&out_path) {
+            if existing_raw.contains(&file_hash) {
+                return Ok(false); // unchanged
+            }
+        }
+    }
+
+    let now = chrono_now_iso();
+    let tags: Vec<String> = vec![tool_name.to_string()];
+
+    let item = serde_json::json!({
+        "id": id,
+        "schemaVersion": 1,
+        "kind": "skill-inventory",
+        "name": display_name,
+        "tags": tags,
+        "localPath": skill_md_path.to_string_lossy(),
+        "toolName": tool_name,
+        "frontmatter": frontmatter,
+        "rawDescription": raw_description,
+        "fileHash": file_hash,
+        "stats": {
+            "usedInProjects": [],
+            "useCount": 0,
+            "aiInvokeCount": 0,
+            "humanViewCount": 0,
+        },
+        "createdAt": now,
+        "updatedAt": now,
+    });
+
+    let json_str = serde_json::to_string_pretty(&item)
+        .map_err(|e| format!("json serialize: {}", e))?;
+    fs::write(&out_path, json_str)
+        .map_err(|e| format!("write failed {}: {}", out_path.display(), e))?;
+
+    Ok(true)
+}
+
+/// Minimal YAML frontmatter parser (--- delimited).
+fn parse_frontmatter(text: &str) -> (serde_json::Map<String, serde_json::Value>, String) {
+    let empty = (serde_json::Map::new(), text.to_string());
+    if !text.starts_with("---") { return empty; }
+
+    let lines: Vec<&str> = text.lines().collect();
+    if lines.is_empty() || lines[0].trim() != "---" { return empty; }
+
+    let mut end_idx = None;
+    for (i, line) in lines.iter().enumerate().skip(1) {
+        if line.trim() == "---" {
+            end_idx = Some(i);
+            break;
+        }
+    }
+    let end_idx = match end_idx {
+        Some(i) => i,
+        None => return empty,
+    };
+
+    let mut fm = serde_json::Map::new();
+    for line in &lines[1..end_idx] {
+        let trimmed = line.trim();
+        if trimmed.is_empty() || trimmed.starts_with('#') { continue; }
+        if let Some(colon_pos) = trimmed.find(':') {
+            let key = trimmed[..colon_pos].trim().to_string();
+            let val = trimmed[colon_pos + 1..].trim();
+
+            if val.starts_with('[') && val.ends_with(']') {
+                // Inline array
+                let inner = &val[1..val.len()-1];
+                let items: Vec<serde_json::Value> = inner.split(',')
+                    .map(|s| serde_json::Value::String(
+                        s.trim().trim_matches(|c| c == '"' || c == '\'').to_string()
+                    ))
+                    .filter(|v| !v.as_str().unwrap_or("").is_empty())
+                    .collect();
+                fm.insert(key, serde_json::Value::Array(items));
+            } else {
+                // Strip quotes
+                let cleaned = val.trim_matches(|c| c == '"' || c == '\'');
+                fm.insert(key, serde_json::Value::String(cleaned.to_string()));
+            }
+        }
+    }
+
+    let body = lines[end_idx + 1..].join("\n");
+    (fm, body)
+}
+
+fn slugify(s: &str) -> String {
+    let lower = s.to_lowercase();
+    let slug: String = lower.chars()
+        .map(|c| if c.is_ascii_alphanumeric() { c } else { '-' })
+        .collect();
+    let trimmed = slug.trim_matches('-').to_string();
+    // Collapse consecutive dashes
+    let mut result = String::new();
+    let mut prev_dash = false;
+    for c in trimmed.chars() {
+        if c == '-' {
+            if !prev_dash { result.push(c); }
+            prev_dash = true;
+        } else {
+            result.push(c);
+            prev_dash = false;
+        }
+    }
+    if result.len() > 80 { result.truncate(80); }
+    result
+}
+
+fn first_paragraph(body: &str) -> String {
+    for para in body.split("\n\n") {
+        let t = para.trim();
+        if t.is_empty() || t.starts_with('#') { continue; }
+        let oneline = t.split_whitespace().collect::<Vec<_>>().join(" ");
+        return if oneline.len() > 800 { oneline[..800].to_string() } else { oneline };
+    }
+    String::new()
+}
+
+/// Simple hash for change detection (not crypto).
+fn md5_simple(data: &[u8]) -> u64 {
+    let mut h: u64 = 0xcbf29ce484222325;
+    for &b in data {
+        h ^= b as u64;
+        h = h.wrapping_mul(0x100000001b3);
+    }
+    h
+}
+
 // ───────────────────────── Agent skill installation ─────────────────────────
 
 /// Recursively copy `src` into `dst`, **overwriting** existing files.
@@ -391,9 +662,13 @@ fn copy_dir_recursive_overwrite(src: &Path, dst: &Path) -> Result<usize, String>
 /// Locate a bundled resource subdirectory (skills/ or scripts/).
 fn bundled_resource_subdir(app: &AppHandle, sub: &str) -> Option<PathBuf> {
     let resource_root = app.path().resource_dir().ok()?;
-    let candidate = resource_root.join(sub);
-    if candidate.exists() {
-        return Some(candidate);
+    // Tauri v2 converts "../" in resource paths to "_up_/" in the bundle.
+    let candidates = [
+        resource_root.join("_up_").join(sub),  // Tauri v2 bundle: _up_/skills/...
+        resource_root.join(sub),               // direct: skills/...
+    ];
+    for c in &candidates {
+        if c.exists() { return Some(c.clone()); }
     }
     None
 }
@@ -711,12 +986,16 @@ struct AppVersionResult {
 /// Find the bundled seed root (resource_dir/data, or resource_dir flat).
 fn bundled_seed_root(app: &AppHandle) -> Option<PathBuf> {
     let resource_root = app.path().resource_dir().ok()?;
-    let with_data = resource_root.join("data");
-    if with_data.join("SEED_VERSION.json").exists() {
-        return Some(with_data);
-    }
-    if resource_root.join("SEED_VERSION.json").exists() {
-        return Some(resource_root);
+    // Tauri v2 converts "../" to "_up_/" in the bundle
+    let candidates = [
+        resource_root.join("_up_").join("data"),
+        resource_root.join("data"),
+        resource_root.clone(),
+    ];
+    for c in &candidates {
+        if c.join("SEED_VERSION.json").exists() {
+            return Some(c.clone());
+        }
     }
     None
 }
@@ -1272,6 +1551,7 @@ pub fn run() {
             init_seed_methodology,
             init_check_skill_installation,
             install_agent_skills,
+            scan_skills,
             seed_check,
             seed_sync,
             seed_dismiss,
