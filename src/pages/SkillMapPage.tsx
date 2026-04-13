@@ -119,8 +119,17 @@ function getSkillType(item: SkillInventoryItem): string {
   return typeof raw === 'string' ? raw : ''
 }
 
-function daysAgo(iso: string): string {
-  const ms = Date.now() - new Date(iso).getTime()
+function daysAgo(iso: string | undefined): string {
+  if (!iso) return '未知'
+  let ts: number
+  // Handle legacy @unix_seconds format from old Rust chrono_now_iso()
+  if (iso.startsWith('@')) {
+    ts = parseInt(iso.slice(1), 10) * 1000
+  } else {
+    ts = new Date(iso).getTime()
+  }
+  if (isNaN(ts)) return '未知'
+  const ms = Date.now() - ts
   const days = Math.floor(ms / (1000 * 60 * 60 * 24))
   if (days <= 0) return '今天'
   if (days === 1) return '昨天'
@@ -517,7 +526,7 @@ export default function SkillMapPage() {
                           </span>
                         )
                       })()}
-                      <span className="font-mono text-neutral-400 shrink-0">{daysAgo(it.fileMtime)}</span>
+                      <span className="font-mono text-neutral-400 shrink-0">{daysAgo(it.fileMtime || it.updatedAt || it.createdAt)}</span>
                     </div>
                   </button>
                 </div>
@@ -666,7 +675,7 @@ function SkillDetailOverlay({
                 </>
               )}
               <span>·</span>
-              <span>{daysAgo(item.fileMtime)}</span>
+              <span>{daysAgo(item.fileMtime || item.updatedAt || item.createdAt)}</span>
             </p>
           </div>
           <button

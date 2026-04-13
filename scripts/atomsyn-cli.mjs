@@ -11,7 +11,7 @@
  *   atomsyn-cli write --stdin            Read JSON from stdin, write atom, log, reindex
  *   atomsyn-cli write --input <file>     Same, from a file
  *   atomsyn-cli read  --query "..."      Retrieve top-N atoms matching a query (stub in V1.5)
- *   atomsyn-cli reindex                  Delegate to scripts/rebuild-index.mjs
+ *   atomsyn-cli reindex                  Rebuild index (inline or delegate to rebuild-index.mjs)
  *   atomsyn-cli where                    Print resolved data directory + source
  *
  * Data directory resolution (mirrors src-tauri/src/lib.rs):
@@ -1280,19 +1280,150 @@ async function cmdInstallSkill(args) {
 }
 
 // ---------------------------------------------------------------------------
-// Subcommand: reindex (delegate to existing script)
+// Subcommand: reindex (inline implementation — works when CLI is installed
+// at ~/.atomsyn/bin/ without access to PROJECT_ROOT)
 // ---------------------------------------------------------------------------
 
 async function cmdReindex() {
+  // Try delegate to project's rebuild-index.mjs if available (dev mode)
   const script = join(PROJECT_ROOT, 'scripts', 'rebuild-index.mjs')
-  if (!existsSync(script)) {
-    die(`rebuild-index.mjs not found at ${script}`)
+  if (existsSync(script)) {
+    await new Promise((res, rej) => {
+      const proc = spawn('node', [script], { stdio: 'inherit' })
+      proc.on('exit', (code) => (code === 0 ? res() : rej(new Error(`reindex exited with code ${code}`))))
+      proc.on('error', rej)
+    })
+    return
   }
-  await new Promise((res, rej) => {
-    const proc = spawn('node', [script], { stdio: 'inherit' })
-    proc.on('exit', (code) => (code === 0 ? res() : rej(new Error(`reindex exited with code ${code}`))))
-    proc.on('error', rej)
-  })
+
+  // Inline reindex: resolve data dir and rebuild index from JSON files
+  const { path: dataDir } = resolveDataDir()
+  if (!existsSync(dataDir)) die(`Data directory not found: ${dataDir}`)
+  await inlineRebuildIndex(dataDir)
+}
+
+/** Standalone index rebuild using only resolveDataDir() — no PROJECT_ROOT dependency. */
+async function inlineRebuildIndex(dataDir) {
+  const { readFile, readdir, writeFile } = await import('node:fs/promises')
+
+  async function walkJson(dir) {
+    const out = []
+    if (!existsSync(dir)) return out
+    const entries = await readdir(dir, { withFileTypes: true })
+    for (const e of entries) {
+      const full = join(dir, e.name)
+      if (e.isDirectory()) out.push(...(await walkJson(full)))
+      else if (e.isFile() && e.name.endsWith('.json')) out.push(full)
+    }
+    return out
+  }
+
+  async function readJson(file, fallback) {
+    try { return JSON.parse(await readFile(file, 'utf8')) }
+    catch { return fallback }
+  }
+
+  // Load frameworks
+  const fwDir = join(dataDir, 'frameworks')
+  let frameworks = []
+  if (existsSync(fwDir)) {
+    const fwFiles = (await readdir(fwDir)).filter(f => f.endsWith('.json'))
+    frameworks = (await Promise.all(fwFiles.map(f => readJson(join(fwDir, f), null)))).filter(Boolean)
+  }
+
+  // Load all atoms
+  const atomFiles = await walkJson(join(dataDir, 'atoms'))
+  const allAtoms = []
+  for (const f of atomFiles) {
+    const j = await readJson(f, null)
+    if (j) allAtoms.push({ ...j, _file: f.slice(dataDir.length + 1) })
+  }
+
+  const atoms = allAtoms.filter(a => (a.kind ?? 'methodology') === 'methodology')
+  const experienceAtoms = allAtoms.filter(a => a.kind === 'experience')
+  const skillInventoryAtoms = allAtoms.filter(a => a.kind === 'skill-inventory')
+
+  // Load projects
+  const projDir = join(dataDir, 'projects')
+  const projects = []
+  if (existsSync(projDir)) {
+    const pEntries = await readdir(projDir, { withFileTypes: true })
+    for (const e of pEntries) {
+      if (!e.isDirectory()) continue
+      const meta = await readJson(join(projDir, e.name, 'meta.json'), null)
+      if (meta) projects.push(meta)
+    }
+  }
+
+  // Build counts
+  const fwAtomCount = {}
+  for (const a of atoms) fwAtomCount[a.frameworkId] = (fwAtomCount[a.frameworkId] || 0) + 1
+
+  const cellNameByFwAndCell = {}
+  for (const f of frameworks) {
+    cellNameByFwAndCell[f.id] = {}
+    for (const c of f.matrix?.cells ?? []) cellNameByFwAndCell[f.id][c.stepNumber] = c.name
+  }
+
+  const projectsUsingAtom = {}
+  for (const p of projects) {
+    const practDir = join(dataDir, 'projects', p.id, 'practices')
+    const practices = existsSync(practDir)
+      ? (await Promise.all((await walkJson(practDir)).map(f => readJson(f, null)))).filter(Boolean)
+      : []
+    const atomIds = new Set()
+    for (const pr of practices) atomIds.add(pr.atomId)
+    for (const pin of p.pinnedAtoms ?? []) atomIds.add(pin.atomId)
+    for (const aid of atomIds) (projectsUsingAtom[aid] ??= []).push(p.id)
+  }
+
+  const index = {
+    generatedAt: new Date().toISOString(),
+    version: 1,
+    frameworks: frameworks.map(f => ({ id: f.id, name: f.name, atomCount: fwAtomCount[f.id] || 0 })),
+    atoms: atoms.map(a => ({
+      id: a.id, name: a.name, nameEn: a.nameEn, frameworkId: a.frameworkId,
+      cellId: a.cellId, cellName: cellNameByFwAndCell[a.frameworkId]?.[a.cellId] ?? '',
+      tags: a.tags ?? [], tagline: (a.coreIdea ?? '').slice(0, 80),
+      whenToUse: a.whenToUse ?? '', path: a._file,
+    })),
+    projects: projects.map(p => ({
+      id: p.id, name: p.name, innovationStage: p.innovationStage,
+      atomsUsed: Array.from(new Set([...(p.pinnedAtoms?.map(x => x.atomId) ?? [])])),
+    })),
+    experiences: experienceAtoms.map(e => ({
+      id: e.id, name: e.name, tags: e.tags ?? [], sourceAgent: e.sourceAgent ?? 'user',
+      sourceContext: e.sourceContext ?? '', insightExcerpt: (e.insight ?? '').slice(0, 200),
+      createdAt: e.createdAt, updatedAt: e.updatedAt, path: e._file,
+    })),
+    skillInventory: skillInventoryAtoms.map(s => ({
+      id: s.id, name: s.name, toolName: s.toolName ?? 'custom',
+      rawDescription: s.rawDescription ?? '', aiGeneratedSummary: s.aiGeneratedSummary,
+      tags: s.tags ?? [], localPath: s.localPath ?? '', updatedAt: s.updatedAt,
+    })),
+  }
+
+  const outDir = join(dataDir, 'index')
+  await mkdir(outDir, { recursive: true })
+  await writeFile(join(outDir, 'knowledge-index.json'), JSON.stringify(index, null, 2) + '\n', 'utf8')
+
+  // Sync atom.stats.usedInProjects
+  for (const a of atoms) {
+    const used = projectsUsingAtom[a.id] ?? []
+    if (JSON.stringify(a.stats?.usedInProjects ?? []) !== JSON.stringify(used)) {
+      const file = join(dataDir, a._file)
+      const fresh = await readJson(file, null)
+      if (!fresh) continue
+      fresh.stats = fresh.stats || { usedInProjects: [], useCount: 0, aiInvokeCount: 0, humanViewCount: 0 }
+      fresh.stats.usedInProjects = used
+      fresh.updatedAt = new Date().toISOString()
+      await writeFile(file, JSON.stringify(fresh, null, 2) + '\n', 'utf8')
+    }
+  }
+
+  console.log(
+    `✅ Index rebuilt: ${index.frameworks.length} frameworks · ${index.atoms.length} atoms · ${index.experiences.length} experiences · ${index.skillInventory.length} skills · ${index.projects.length} projects`
+  )
 }
 
 // ---------------------------------------------------------------------------
@@ -1434,7 +1565,7 @@ async function cmdIngest(args) {
     })
   } catch { /* non-fatal */ }
 
-  // Reindex
+  // Reindex (try project script first, fall back to inline)
   try {
     const script = join(PROJECT_ROOT, 'scripts', 'rebuild-index.mjs')
     if (existsSync(script)) {
@@ -1443,6 +1574,8 @@ async function cmdIngest(args) {
         proc.on('exit', (code) => (code === 0 ? res() : rej(new Error(`reindex code ${code}`))))
         proc.on('error', rej)
       })
+    } else {
+      await inlineRebuildIndex(resolveDataDir().path)
     }
   } catch { /* non-fatal */ }
 

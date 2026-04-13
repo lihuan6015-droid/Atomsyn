@@ -27,7 +27,17 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "assetProtocol": {
+        "enable": true,
+        "scope": {
+          "allow": [
+            "$APPDATA/atomsyn/**",
+            "$HOME/Library/Application Support/atomsyn/**",
+            "$HOME/.local/share/atomsyn/**"
+          ]
+        }
+      }
     }
   },
   "bundle": {

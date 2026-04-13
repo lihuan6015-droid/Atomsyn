@@ -54,7 +54,7 @@
  *   GET    /api/notes/:id                         → one note (meta + content)
  *   POST   /api/notes                             → create note
  *   PUT    /api/notes/:id                         → update note
- *   DELETE /api/notes/:id                         → soft delete (→ .trash)
+ *   DELETE /api/notes/:id                         → soft delete (→ _trash)
  *   POST   /api/notes/:id/move                    → move to group
  *   POST   /api/notes/:id/restore                 → restore from trash
  *   DELETE /api/notes/trash/:id                   → permanent delete

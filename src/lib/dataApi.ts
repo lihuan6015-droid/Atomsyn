@@ -1,10 +1,14 @@
 /**
  * Frontend data access layer.
  *
- * v1: talks to the Vite dev plugin at /api/* (file system on disk).
- * Future: when wrapped in Tauri, swap implementations to call
- *         @tauri-apps/api/fs directly. The exported surface stays the same.
+ * Dual-channel architecture:
+ *   - Dev mode (Vite): fetch('/api/*') → vite-plugin-data-api.ts middleware
+ *   - Tauri packaged mode: dispatch to src/lib/tauri-api/router.ts → @tauri-apps/plugin-fs
+ *
+ * The `http()` helper auto-detects the runtime and routes accordingly.
  */
+
+import { isTauri } from '@/lib/dataPath'
 
 import type {
   AnalysisReport,
@@ -34,6 +38,22 @@ import type {
 const BASE = '/api'
 
 async function http<T>(url: string, init?: RequestInit): Promise<T> {
+  // Tauri packaged mode: route through local TypeScript API router.
+  // In tauri:dev, the Vite dev server handles /api/* — only use the
+  // router in production builds where there's no HTTP server.
+  if (isTauri() && import.meta.env.PROD) {
+    const { dispatch } = await import('./tauri-api/router')
+    const method = init?.method?.toUpperCase() || 'GET'
+    const body = init?.body ? JSON.parse(init.body as string) : undefined
+    try {
+      return await dispatch(method, url, body) as T
+    } catch (err) {
+      console.error(`[dataApi] Tauri dispatch failed: ${method} ${url}`, err)
+      throw err
+    }
+  }
+
+  // Dev mode: fetch from Vite dev plugin
   const res = await fetch(`${BASE}${url}`, {
     headers: { 'Content-Type': 'application/json' },
     ...init,

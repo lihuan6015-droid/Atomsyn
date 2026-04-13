@@ -157,7 +157,15 @@ export function NoteEditor() {
       const filename = `img-${Date.now()}.${file.type.split('/')[1] || 'png'}`
       try {
         const result = await notesApi.uploadAttachment(noteId, filename, base64)
-        editor?.chain().focus().setImage({ src: `/api/fs/${result.path}` }).run()
+        let imgSrc = `/api/fs/${result.path}`
+        // In Tauri packaged mode, convert to asset protocol URL
+        if ('__TAURI_INTERNALS__' in window) {
+          const { getDataDirInfo } = await import('@/lib/dataPath')
+          const { convertFileSrc } = await import('@tauri-apps/api/core')
+          const info = await getDataDirInfo()
+          imgSrc = convertFileSrc(`${info.path}/${result.path}`)
+        }
+        editor?.chain().focus().setImage({ src: imgSrc }).run()
       } catch (err) {
         console.error('Image upload failed:', err)
       }

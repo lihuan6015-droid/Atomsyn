@@ -128,22 +128,30 @@ export const useNotesStore = create<NotesState>((set, get) => ({
   sidebarCollapsed: false,
 
   loadAll: async () => {
-    const [notes, trashNotes, meta] = await Promise.all([
-      notesApi.list(),
-      notesApi.listTrash(),
-      notesApi.meta(),
-    ])
+    // Load each resource independently so a single failure (e.g. trash dir
+    // permission) doesn't prevent the rest from loading.
+    let notes: Note[] = []
+    let trashNotes: Note[] = []
+    let meta: NotesMeta = { version: 1, groups: [], defaultGroup: '', sortOrder: 'updatedAt' }
+    try { notes = await notesApi.list() } catch (e) { console.error('[notes] list failed:', e) }
+    try { trashNotes = await notesApi.listTrash() } catch (e) { console.error('[notes] listTrash failed:', e) }
+    try { meta = await notesApi.meta() } catch (e) { console.error('[notes] meta failed:', e) }
     set({ notes, trashNotes, globalMeta: meta, loaded: true })
   },
 
   createNote: async (groupId: string) => {
-    const note = await notesApi.create({ title: '', groupId })
-    set((s) => ({
-      notes: [note, ...s.notes],
-      activeNoteId: note.id,
-      showTrash: false,
-    }))
-    return note
+    try {
+      const note = await notesApi.create({ title: '', groupId })
+      set((s) => ({
+        notes: [note, ...s.notes],
+        activeNoteId: note.id,
+        showTrash: false,
+      }))
+      return note
+    } catch (err) {
+      console.error('[notes] createNote failed:', err)
+      throw err
+    }
   },
 
   updateNote: async (id: string, data: Partial<Note>) => {

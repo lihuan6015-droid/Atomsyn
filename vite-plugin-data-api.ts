@@ -54,7 +54,7 @@
  *   GET    /api/notes/:id                         → one note (meta + content)
  *   POST   /api/notes                             → create note
  *   PUT    /api/notes/:id                         → update note
- *   DELETE /api/notes/:id                         → soft delete (→ .trash)
+ *   DELETE /api/notes/:id                         → soft delete (→ _trash)
  *   POST   /api/notes/:id/move                    → move to group
  *   POST   /api/notes/:id/restore                 → restore from trash
  *   DELETE /api/notes/trash/:id                   → permanent delete
@@ -1403,9 +1403,9 @@ export function dataApiPlugin(opts: Options): Plugin {
           // ==========================================================
           if (parts[0] === 'notes') {
             const notesDir = path.join(dataDir, 'notes')
-            const trashDir = path.join(notesDir, '.trash')
+            const trashDir = path.join(notesDir, '_trash')
 
-            // Ensure notes/ and .trash/ exist
+            // Ensure notes/ and _trash/ exist
             await fs.mkdir(notesDir, { recursive: true })
             await fs.mkdir(trashDir, { recursive: true })
 
@@ -1630,7 +1630,7 @@ export function dataApiPlugin(opts: Options): Plugin {
                 })
               }
 
-              // --- DELETE /api/notes/:noteId (soft delete → .trash) ---
+              // --- DELETE /api/notes/:noteId (soft delete → _trash) ---
               if (parts.length === 2 && method === 'DELETE') {
                 const noteDir = await findNoteDirById(notesDir, noteId)
                 if (!noteDir) return send(res, 404, { error: 'note not found' })
@@ -1639,7 +1639,7 @@ export function dataApiPlugin(opts: Options): Plugin {
                 meta.deletedAt = new Date().toISOString()
                 await writeJSON(path.join(noteDir, 'meta.json'), meta)
 
-                // Move to .trash/
+                // Move to _trash/
                 const trashTarget = path.join(trashDir, path.basename(noteDir))
                 await fs.rename(noteDir, trashTarget)
 

@@ -102,7 +102,13 @@ export function NotesSidebar() {
   const [confirmClearTrash, setConfirmClearTrash] = useState(false)
 
   async function handleCreate() {
-    await createNote(activeGroupId || '')
+    try {
+      await createNote(activeGroupId || '')
+    } catch (err) {
+      // Show error visibly in packaged mode where DevTools may not be open
+      console.error('[NotesSidebar] create failed:', err)
+      alert(`笔记创建失败: ${err instanceof Error ? err.message : String(err)}`)
+    }
   }
 
   // ─── Root right-click: new folder ──────────────────────────────
