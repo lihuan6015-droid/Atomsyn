@@ -706,8 +706,22 @@ struct SkillInstallResult {
     claude_installed: bool,
     cursor_installed: bool,
     cli_installed: bool,
+    node_available: bool,
+    node_version: Option<String>,
     files_copied: usize,
     detail: String,
+}
+
+/// Check if Node.js is available on the system PATH.
+fn detect_node() -> (bool, Option<String>) {
+    use std::process::Command;
+    match Command::new("node").arg("--version").output() {
+        Ok(output) if output.status.success() => {
+            let ver = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            (true, Some(ver))
+        }
+        _ => (false, None),
+    }
 }
 
 #[tauri::command]
@@ -753,10 +767,20 @@ fn install_agent_skills(app: AppHandle) -> Result<SkillInstallResult, String> {
     // 2. Install CLI script and shim
     let cli_ok = install_cli_shim(&app, &home, &mut total_copied, &mut details);
 
+    // 3. Check Node.js availability
+    let (node_available, node_version) = detect_node();
+    if !node_available {
+        details.push("Node.js: NOT FOUND — atomsyn-cli requires Node.js to run".to_string());
+    } else if let Some(ref v) = node_version {
+        details.push(format!("Node.js: {} ✓", v));
+    }
+
     Ok(SkillInstallResult {
         claude_installed: claude_ok,
         cursor_installed: cursor_ok,
         cli_installed: cli_ok,
+        node_available,
+        node_version,
         files_copied: total_copied,
         detail: details.join("; "),
     })

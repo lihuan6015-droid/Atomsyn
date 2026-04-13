@@ -402,6 +402,8 @@ interface SkillInstallResult {
   claudeInstalled: boolean
   cursorInstalled: boolean
   cliInstalled: boolean
+  nodeAvailable: boolean
+  nodeVersion: string | null
   filesCopied: number
   detail: string
 }
@@ -411,6 +413,7 @@ function AgentSection() {
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState<SkillStatus | null>(null)
   const [lastResult, setLastResult] = useState<string | null>(null)
+  const [nodeInfo, setNodeInfo] = useState<{ available: boolean; version: string | null } | null>(null)
 
   useEffect(() => {
     checkStatus()
@@ -432,10 +435,11 @@ function AgentSection() {
     try {
       const { invoke } = await import('@tauri-apps/api/core')
       const res = await invoke<SkillInstallResult>('install_agent_skills')
+      setNodeInfo({ available: res.nodeAvailable, version: res.nodeVersion })
       const msg = res.filesCopied > 0
         ? `已安装 ${res.filesCopied} 个文件`
         : '所有 Skill 已是最新版本'
-      setLastResult(msg)
+      setLastResult(res.nodeAvailable ? msg : msg + '（⚠️ 未检测到 Node.js）')
       showToast(msg)
       await checkStatus()
     } catch (e: any) {
@@ -444,6 +448,15 @@ function AgentSection() {
       showToast(msg)
     } finally {
       setBusy(false)
+    }
+  }
+
+  async function openNodeSite() {
+    try {
+      const { invoke } = await import('@tauri-apps/api/core')
+      await invoke('open_path', { path: 'https://nodejs.org/' })
+    } catch {
+      window.open('https://nodejs.org/', '_blank')
     }
   }
 
@@ -496,6 +509,30 @@ function AgentSection() {
           <span className="text-sm text-emerald-600 dark:text-emerald-400">{lastResult}</span>
         )}
       </div>
+
+      {/* Node.js detection warning */}
+      {nodeInfo && !nodeInfo.available && (
+        <div className="rounded-xl border border-amber-300/50 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-900/10 p-4 space-y-2">
+          <p className="text-sm font-medium text-amber-800 dark:text-amber-300 flex items-center gap-2">
+            <span className="text-base">⚠️</span> 未检测到 Node.js
+          </p>
+          <p className="text-xs text-amber-700 dark:text-amber-400/80">
+            atomsyn-cli 需要 Node.js 运行环境。Skill 文件已安装成功，但 CLI 命令（供 Claude Code / Cursor 调用）在安装 Node.js 后才能正常工作。
+          </p>
+          <button
+            onClick={openNodeSite}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-amber-600 text-white hover:bg-amber-700 transition-colors"
+          >
+            前往 nodejs.org 安装
+          </button>
+        </div>
+      )}
+
+      {nodeInfo?.available && (
+        <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+          <Check className="w-3 h-3" /> Node.js {nodeInfo.version} 已就绪
+        </p>
+      )}
 
       <p className="text-xs text-neutral-400">
         将 atomsyn-write、atomsyn-read、atomsyn-mentor 复制到已检测的 AI 工具目录，
