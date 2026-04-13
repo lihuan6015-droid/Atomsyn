@@ -813,6 +813,38 @@ fn install_cli_shim(
         }
     }
 
+    // Copy lib/ dependencies (analysis.mjs, findRelatedFragments.mjs)
+    let lib_dir = bin_dir.join("lib");
+    let _ = ensure_dir(&lib_dir);
+    let lib_files = ["analysis.mjs", "findRelatedFragments.mjs"];
+    for lib_file in &lib_files {
+        let lib_src_path = format!("scripts/lib/{}", lib_file);
+        let src = bundled_resource_subdir(app, &lib_src_path)
+            .or_else(|| {
+                let res = app.path().resource_dir().ok()?;
+                // Try multiple candidate paths for bundled lib files
+                for candidate in &[
+                    res.join("_up_").join("scripts").join("lib").join(lib_file),
+                    res.join("scripts").join("lib").join(lib_file),
+                    res.join("_up_").join("lib").join(lib_file),
+                    res.join("lib").join(lib_file),
+                    res.join(lib_file),
+                ] {
+                    if candidate.exists() { return Some(candidate.clone()); }
+                }
+                None
+            });
+        if let Some(s) = src {
+            if let Err(e) = fs::copy(&s, lib_dir.join(lib_file)) {
+                details.push(format!("CLI lib: copy {} failed: {}", lib_file, e));
+            } else {
+                *total_copied += 1;
+            }
+        } else {
+            details.push(format!("CLI lib: {} not found in bundle", lib_file));
+        }
+    }
+
     // Create platform-specific shim with Node.js detection
     #[cfg(unix)]
     {

@@ -60,7 +60,9 @@
       "../skills/atomsyn-write/**/*",
       "../skills/atomsyn-read/**/*",
       "../skills/atomsyn-mentor/**/*",
-      "../scripts/atomsyn-cli.mjs"
+      "../scripts/atomsyn-cli.mjs",
+      "../scripts/lib/analysis.mjs",
+      "../scripts/lib/findRelatedFragments.mjs"
     ]
   }
 }
