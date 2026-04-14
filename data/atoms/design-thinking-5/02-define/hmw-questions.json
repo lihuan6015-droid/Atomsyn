@@ -1,0 +1,41 @@
+{
+  "id": "atom_hmw_questions",
+  "schemaVersion": 1,
+  "kind": "methodology",
+  "name": "How Might We 提问法",
+  "nameEn": "How Might We Questions",
+  "frameworkId": "design-thinking-5",
+  "cellId": 2,
+  "tags": [
+    "设计思维",
+    "问题重构",
+    "HMW",
+    "创意激发",
+    "IDEO"
+  ],
+  "coreIdea": "最早由 Procter & Gamble 的 Min Basadur 在 1970 年代提出，后被 IDEO 和 Google Ventures 广泛推广。HMW 是连接「问题定义」和「创意发散」的桥梁句式：How Might We...（我们如何可能...）。三个词各有深意：How（暗示存在解决方案）、Might（允许探索而非承诺）、We（强调团队协作）。核心哲学：问题的框定方式决定了你能想到的解决方案空间。HMW 太宽则无法聚焦（如何改善世界），太窄则限制创意（如何加一个按钮）。好的 HMW 处于「恰好能激发多元创意」的甜蜜点。",
+  "whenToUse": "POV 陈述完成后需要转化为可创意的问题 · 团队陷入「只能想到一种解决方案」的困境 · 需要将用户痛点转化为设计机会",
+  "keySteps": [
+    "1. 从 POV 陈述或用户洞察出发，识别核心矛盾或痛点",
+    "2. 用「How Might We...」句式重新框定问题",
+    "3. 检查粒度：太宽→拆分为子问题，太窄→退后一步重新框定",
+    "4. 每个痛点生成 3-5 个不同角度的 HMW（放大积极面、消除负面、反转假设、质疑现状、类比其他领域）",
+    "5. 团队投票选出 3 个最有激发力的 HMW",
+    "6. 对选定的 HMW 快速头脑风暴验证其创意激发力",
+    "7. 确定进入 Ideate 阶段的 1-2 个核心 HMW"
+  ],
+  "aiSkillPrompt": "你是一位精通 IDEO 和 Google Ventures 设计冲刺方法的创意引导教练。请按以下流程帮助我：\n\n## 输入\n{请提供：POV 陈述或用户洞察描述、产品/服务背景}\n\n## 任务\n1. 从输入的 POV/洞察中识别 3-5 个核心痛点或机会\n2. 对每个痛点，用 5 种 HMW 变体技巧生成问题：\n   - 放大积极面：HMW 让现有的好体验更好？\n   - 消除负面：HMW 去除这个痛点？\n   - 反转假设：HMW 把这个问题变成优势？\n   - 探索类比：HMW 像 [其他行业] 一样解决这个问题？\n   - 挑战现状：HMW 完全不做 [当前做法] 而达到目标？\n3. 评估每个 HMW 的质量：\n   - 粒度适中度（1-5）\n   - 创意激发力（1-5）\n   - 与用户需求的关联度（1-5）\n4. 推荐 Top 3 HMW 并说明理由\n\n## 输出格式\n章节 1：痛点提取。章节 2：HMW 矩阵（表格：痛点×5种变体）。章节 3：质量评估。章节 4：Top 3 推荐。\n\n## 约束\n- HMW 不能暗示具体解决方案\n- 每个 HMW 必须是一个完整的问句\n- 必须覆盖至少 3 种不同的 HMW 变体技巧",
+  "example": {
+    "title": "案例：Google Ventures 为 Slack 重构问题空间",
+    "content": "Google Ventures 设计冲刺团队在帮助一家企业通讯工具优化体验时，将「用户抱怨消息太多」这个痛点转化为多个 HMW：「HMW 让重要消息自动浮现？」「HMW 让不回消息也不产生社交压力？」「HMW 让忙碌的人用 5 秒完成本需 5 分钟的沟通？」最终第三个 HMW 激发出「智能回复建议」功能原型，测试中用户回复效率提升 60%，且未增加消息泛滥感。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0,
+    "aiInvokeCount": 0,
+    "humanViewCount": 0
+  },
+  "createdAt": "2026-04-14T00:00:00Z",
+  "updatedAt": "2026-04-14T00:00:00Z"
+}

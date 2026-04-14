@@ -1,0 +1,41 @@
+{
+  "id": "atom_feedback_capture_grid",
+  "schemaVersion": 1,
+  "kind": "methodology",
+  "name": "反馈捕捉网格",
+  "nameEn": "Feedback Capture Grid",
+  "frameworkId": "design-thinking-5",
+  "cellId": 5,
+  "tags": [
+    "设计思维",
+    "反馈分析",
+    "测试工具",
+    "d.school",
+    "结构化反馈"
+  ],
+  "coreIdea": "Stanford d.school 设计思维 Test 阶段的标准反馈整理工具。反馈捕捉网格将用户反馈结构化为四个象限：Likes（喜欢的）、Criticisms（批评的）、Questions（产生的疑问）、Ideas（激发的新想法）。核心哲学：原始的用户反馈是混乱的——一句话里可能同时包含表扬、抱怨和建议。四象限网格迫使团队将每条反馈拆分到正确的类别中，避免了「只听到好话」或「只看到问题」的认知偏差。之所以有效，是因为 Questions 和 Ideas 象限让团队不止于「修 bug」，而是从反馈中发现新的设计机会。",
+  "whenToUse": "可用性测试后需要系统化整理用户反馈 · 产品演示后收集利益相关者反馈 · 团队内部设计评审中需要结构化讨论",
+  "keySteps": [
+    "1. 画一个 2×2 网格：左上 Likes、右上 Criticisms、左下 Questions、右下 Ideas",
+    "2. 回放测试录像或阅读笔记，逐条将反馈归类到四象限",
+    "3. 每条反馈写在独立便签上，附上用户编号（便于追溯）",
+    "4. 对每个象限内的便签进行聚类，找出高频主题",
+    "5. 优先处理 Criticisms 中的高频问题（Quick Wins）",
+    "6. 将 Questions 转化为新的研究假设",
+    "7. 将 Ideas 纳入下一轮原型迭代的备选方案"
+  ],
+  "aiSkillPrompt": "你是一位精通 Stanford d.school 反馈分析方法论的设计测试教练。请按以下流程帮助我：\n\n## 输入\n{请提供：用户测试的原始反馈数据（可以是笔记、引述、观察记录等混合形式）}\n\n## 任务\n1. 将原始反馈逐条拆分并归类到四象限：\n   - Likes（+）：用户喜欢、称赞、表示满意的点\n   - Criticisms（-）：用户批评、困惑、不满的点\n   - Questions（?）：用户或团队产生的疑问（需要进一步研究）\n   - Ideas（!）：反馈激发的新设计想法\n2. 对每个象限进行主题聚类分析：\n   - 识别高频主题（3+ 条反馈指向同一问题）\n   - 标注紧急程度（Critical/Major/Minor）\n3. 输出行动建议：\n   - 立即修复清单（Criticisms 中的 Critical/Major）\n   - 进一步研究清单（Questions 转化为研究假设）\n   - 迭代探索清单（Ideas 中有潜力的方向）\n4. 为下一轮测试提供改进建议\n\n## 输出格式\n章节 1：四象限网格（Markdown 表格）。章节 2：主题聚类分析。章节 3：优先级排序的行动清单。章节 4：下一轮测试建议。\n\n## 约束\n- 一条反馈可能包含多个象限的内容，必须拆分\n- 用户原话必须保留，不能改写\n- Ideas 必须标注「来源于哪条 Criticism 或 Question」",
+  "example": {
+    "title": "案例：Spotify 用反馈网格优化 Discover Weekly 功能",
+    "content": "Spotify 在 2015 年测试 Discover Weekly（每周推荐歌单）时，用反馈捕捉网格整理了 50 位测试用户的反馈。Likes 象限最密集的主题是「惊喜感」——用户爱上了自己从未听过的歌。Criticisms 最突出的是「推荐了我已经听过的歌」。Questions 象限出现了意外发现：「我能不能把好听的歌保存下来？」。这个 Question 直接催生了「保存到你的曲库」按钮的优先开发。上线后 Discover Weekly 在 10 周内获得了 4000 万用户，成为 Spotify 最受欢迎的功能之一。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0,
+    "aiInvokeCount": 0,
+    "humanViewCount": 0
+  },
+  "createdAt": "2026-04-14T00:00:00Z",
+  "updatedAt": "2026-04-14T00:00:00Z"
+}

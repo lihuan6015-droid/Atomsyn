@@ -1,0 +1,41 @@
+{
+  "id": "atom_microinteractions",
+  "schemaVersion": 1,
+  "kind": "methodology",
+  "name": "微交互设计",
+  "nameEn": "Microinteractions (Dan Saffer)",
+  "frameworkId": "ui-ux-patterns",
+  "cellId": "interaction-patterns",
+  "tags": [
+    "UX",
+    "微交互",
+    "动效设计",
+    "Dan Saffer",
+    "体验细节"
+  ],
+  "coreIdea": "微交互理论由 Dan Saffer 在《Microinteractions: Designing with Details》中系统提出。微交互是产品中围绕单一任务的最小交互单元（如点赞、切换开关、下拉刷新）。四要素模型：触发器（Trigger，启动条件）→规则（Rules，运行逻辑）→反馈（Feedback，状态传达）→循环与模式（Loops & Modes，重复和变化）。有效原因：微交互是用户“感受”产品品质的核心载体——同样的功能，有无精心设计的微交互，用户满意度可差30%以上。好的微交互遵循三个标准：即时响应（<100ms）、语义清晰（反馈与操作一致）、个性化（记住用户偏好）。",
+  "whenToUse": "产品交互细节打磨和品质提升 · 新功能的触发-反馈机制设计 · 竞品体验差异化设计",
+  "keySteps": [
+    "微交互盘点：列出产品中所有单一任务交互点",
+    "触发器设计：确定用户触发方式（手势、点击、语音）和系统触发条件",
+    "规则定义：明确交互逻辑和状态机（初始→执行→完成→异常）",
+    "反馈设计：为每个状态设计视觉/听觉/触觉反馈",
+    "循环设计：处理重复操作的变化（如连续点赞的递进动效）",
+    "性能约束：确保动效在60fps内完成，触觉反馈延迟<50ms",
+    "品牌一致性：建立微交互设计语言（缓动曲线、时长、色彩变化规范）"
+  ],
+  "aiSkillPrompt": "你是一位精通 Dan Saffer 微交互四要素模型的交互设计顾问。请按以下流程帮助我：\n\n## 输入\n{用户提供的交互场景描述、产品类型、品牌调性、目标平台（iOS/Android/Web）}\n\n## 任务\n1. **微交互审计**：识别场景中的关键微交互点和当前体验缺陷\n2. **四要素分解**：为每个微交互设计 Trigger→Rules→Feedback→Loops\n3. **动效方案**：指定具体的动效参数（缓动函数、时长、延迟）\n4. **实现建议**：提供前端实现方案（CSS/Framer Motion/Lottie）\n\n## 输出格式\n使用 Markdown 结构化输出：\n- 微交互清单表（场景 | 触发器 | 反馈类型 | 优先级）\n- 每个微交互的四要素规格卡\n- 动效参数表（属性 | 起始值 | 终值 | 时长 | 缓动 | 延迟）\n- 代码片段示例\n\n## 约束\n- 动效时长控制在150-500ms之间（Material Design规范）\n- 优先使用transform和opacity实现（GPU加速）\n- 必须考虑减弱动效偏好(prefers-reduced-motion)\n- 同屏同时播放的动效不超过3个",
+  "example": {
+    "title": "案例：Twitter/X 点赞心形动效",
+    "content": "Twitter 的点赞微交互是经典设计案例。触发器：点击心形图标。规则：未赞→已赞切换，附带气泡粒子扩散。反馈：心形从灰色经由缩放弹跳变为红色，同时6个彩色粒子从中心向外扩散后消失（总时长约500ms）。循环：取消赞使用简单的颜色渐变回灰色（200ms），不对称设计让“赞”的仪式感强于“取消赞”。这个微交互上线后，点赞操作量提升了6%。动效使用CSS animation + SVG实现，性能开销极低。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0,
+    "aiInvokeCount": 0,
+    "humanViewCount": 0
+  },
+  "createdAt": "2026-04-14T00:00:00Z",
+  "updatedAt": "2026-04-14T00:00:00Z"
+}

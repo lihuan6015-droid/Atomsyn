@@ -1,0 +1,41 @@
+{
+  "id": "atom_aria-patterns",
+  "schemaVersion": 1,
+  "kind": "methodology",
+  "name": "ARIA模式与屏幕阅读器",
+  "nameEn": "ARIA Patterns & Screen Reader",
+  "frameworkId": "ui-ux-patterns",
+  "cellId": "accessibility",
+  "tags": [
+    "UX",
+    "无障碍",
+    "ARIA",
+    "屏幕阅读器",
+    "语义化"
+  ],
+  "coreIdea": "WAI-ARIA（Web Accessibility Initiative - Accessible Rich Internet Applications）是 W3C 制定的为动态Web内容和复杂UI组件增加无障碍语义的规范。核心概念：角色（Role，元素是什么）、属性（Property，元素有什么特征）、状态（State，元素当前处于什么状态）。第一原则：“不要使用ARIA，除非你必须”——优先使用原生HTML语义元素（<button>而非<div role=‘button’>）。五大ARIA模式：Landmark角色（导航区域标识）、Live Region（动态内容通知）、Widget角色（自定义交互组件）、关系属性（aria-labelledby/describedby/controls）和状态属性（aria-expanded/selected/disabled）。有效原因：ARIA是自定义组件（Tab面板、树形控件、拖拽列表等）唯一能让屏幕阅读器理解的方式。",
+  "whenToUse": "自定义UI组件的屏幕阅读器兼容实现 · SPA应用的动态内容无障碍通知 · 复杂交互模式(拖拽/虚拟列表/实时更新)的ARIA标注",
+  "keySteps": [
+    "语义审计：检查是否可用原生HTML元素替代自定义组件",
+    "角色分配：为不可替代的自定义组件分配正确的ARIA角色",
+    "标签关联：确保所有交互元素有可访问名称（aria-label/labelledby）",
+    "状态管理：实现aria-expanded/selected/pressed等状态同步",
+    "Live Region设置：为动态内容（toast/搜索结果/聊天消息）设置aria-live",
+    "Landmark结构：用role=banner/navigation/main/contentinfo标注页面区域",
+    "屏幕阅读器测试：用VoiceOver/NVDA实际测试完整用户流程"
+  ],
+  "aiSkillPrompt": "你是一位精通 WAI-ARIA 规范和屏幕阅读器兼容性的前端无障碍专家。请按以下流程帮助我：\n\n## 输入\n{用户提供的组件描述/代码、当前ARIA实现、屏幕阅读器测试问题}\n\n## 任务\n1. **语义审计**：检查是否过度使用ARIA（可用原生元素替代的场景）\n2. **ARIA标注**：为每个自定义组件设计完整的role/属性/状态方案\n3. **Live Region策略**：为动态内容设计适当的通知级别\n4. **测试方案**：提供VoiceOver/NVDA的测试脚本和预期输出\n\n## 输出格式\n使用 Markdown 结构化输出：\n- 组件ARIA规格表（组件 | role | aria属性 | 状态变化 | 键盘交互）\n- HTML代码示例（含完整ARIA标注）\n- Live Region配置表（区域 | aria-live | aria-atomic | 内容）\n- 屏幕阅读器测试脚本（操作 | 预期朗读内容）\n\n## 约束\n- 第一原则：能用原生HTML就不用ARIA\n- role不得覆盖原生元素的隐含角色\n- 所有aria-controls引用的ID必须存在于DOM中\n- aria-live=‘assertive’仅用于紧急通知",
+  "example": {
+    "title": "案例：Slack 消息列表的ARIA实现",
+    "content": "Slack 的消息列表是复杂ARIA实现的典范。消息区域使用role=‘log’（aria-live=‘polite’），新消息到达时屏幕阅读器自动朗读发送者和内容，但不打断用户当前操作。每条消息使用role=‘article’并带aria-label=‘用户名 at 时间’。线程回复使用aria-expanded控制展开/折叠状态。表情反应按钮使用aria-label描述具体含义（如“thumbs up, reacted by 3 people”而非仅“reaction”）。Slack 与 NVDA 和 VoiceOver 团队长期合作优化，使其在屏幕阅读器用户满意度调查中得分最高（4.2/5），远超Teams（3.1/5）和Discord（2.8/5）。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0,
+    "aiInvokeCount": 0,
+    "humanViewCount": 0
+  },
+  "createdAt": "2026-04-14T00:00:00Z",
+  "updatedAt": "2026-04-14T00:00:00Z"
+}

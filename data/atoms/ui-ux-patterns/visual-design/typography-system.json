@@ -1,0 +1,41 @@
+{
+  "id": "atom_typography-system",
+  "schemaVersion": 1,
+  "kind": "methodology",
+  "name": "字体排版系统",
+  "nameEn": "Typography System",
+  "frameworkId": "ui-ux-patterns",
+  "cellId": "visual-design",
+  "tags": [
+    "UX",
+    "字体排版",
+    "设计系统",
+    "可读性",
+    "字体选择"
+  ],
+  "coreIdea": "字体排版系统综合了 Robert Bringhurst《字体排版要素》的经典理论和现代 UI 字体实践（Material Design Type Scale、Apple SF字体系统）。核心：排版不只是选字体，而是建立一套控制信息层次和阅读节奏的系统。四大要素：字体选择（Typeface）、大小缩放比（Type Scale，推荐 Major Third 1.25x 或 Perfect Fourth 1.333x）、行高与间距（line-height 1.4-1.6 为正文最优）、字重分级（Regular/Medium/Semibold/Bold四级足够）。有效原因：一致的排版系统减少设计决策、提升阅读效率——研究表明优化行长（45-75字符/行）可提升阅读速度20%。",
+  "whenToUse": "设计系统排版规范制定 · 产品可读性与信息密度优化 · 中英文混排界面的字体策略",
+  "keySteps": [
+    "字体选择：根据品牌调性和多语言需求选择正文和标题字体",
+    "缩放比确定：选择缩放比例（1.2/1.25/1.333/1.5），生成完整字号阶梯",
+    "行高与行长：为每个字号级别设置最优行高（正文1.5x，标题1.2x）",
+    "字重策略：确定使用的字重级别及其语义（正文/强调/标题/数据）",
+    "响应式策略：制定不同断点下的字号缩放规则",
+    "中文适配：处理中英文混排的字号、行高和字间距差异",
+    "Token化与文档：输出Design Token和使用指南"
+  ],
+  "aiSkillPrompt": "你是一位精通 Robert Bringhurst 排版理论和现代 UI 字体系统的设计顾问。请按以下流程帮助我：\n\n## 输入\n{用户提供的产品类型、品牌调性、目标平台、是否多语言、内容密度需求}\n\n## 任务\n1. **排版审计**：评估当前排版系统的一致性、可读性和层次感\n2. **字体推荐**：基于需求推荐字体组合（正文+标题+等宽）\n3. **系统设计**：生成完整的Type Scale和排版规范\n4. **响应式方案**：设计不同屏幕尺寸下的排版适配策略\n\n## 输出格式\n使用 Markdown 结构化输出：\n- 字体推荐及理由\n- Type Scale 表（Token名 | 字号 | 行高 | 字重 | 用途）\n- 响应式断点排版表\n- CSS/Tailwind配置代码\n\n## 约束\n- 正文最小字号16px（移动端）/14px（桌面端）\n- 行长控制在45-75个字符\n- 字号阶梯不超过8-10级\n- 中文正文行高不低于1.6x",
+  "example": {
+    "title": "案例：Vercel 设计系统排版规范",
+    "content": "Vercel 的 Geist 设计系统使用自研 Geist Sans 和 Geist Mono 字体对。Type Scale 采用 1.25x（Major Third）缩放比：12/14/16/20/24/32/40/48px 共8级。正文使用16px/1.6行高，代码使用14px Geist Mono/1.5行高。只使用 Regular(400) 和 Medium(500) 两种字重——通过字号差异而非字重差异建立层次，界面更干净。响应式策略：移动端标题缩放0.85x，正文保持16px不缩放。该排版系统使文档页的平均阅读时长提升了18%，Lighthouse 可访问性评分稳定在98分。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0,
+    "aiInvokeCount": 0,
+    "humanViewCount": 0
+  },
+  "createdAt": "2026-04-14T00:00:00Z",
+  "updatedAt": "2026-04-14T00:00:00Z"
+}

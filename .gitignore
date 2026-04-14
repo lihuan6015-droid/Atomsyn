@@ -27,7 +27,7 @@ data/atoms/experience/
 data/atoms/skill-inventory/
 data/projects/
 data/growth/
-
+data/index/
 # Internal docs (strategy, PRDs, plans)
 docs/
 

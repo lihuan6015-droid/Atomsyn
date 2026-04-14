@@ -1,0 +1,41 @@
+{
+  "id": "atom_keyboard-navigation",
+  "schemaVersion": 1,
+  "kind": "methodology",
+  "name": "键盘导航模式",
+  "nameEn": "Keyboard Navigation Patterns",
+  "frameworkId": "ui-ux-patterns",
+  "cellId": "accessibility",
+  "tags": [
+    "UX",
+    "无障碍",
+    "键盘导航",
+    "Focus管理",
+    "快捷键"
+  ],
+  "coreIdea": "键盘导航是无障碍设计的基石——如果一个界面不能纯键盘操作，它对运动障碍用户和屏幕阅读器用户就是不可用的。WCAG 2.1.1（A级）要求所有功能可通过键盘访问。核心模式：Tab顺序（tabindex逻辑顺序）、Focus可见性（:focus-visible样式）、Focus陷阱管理（模态框内循环焦点）、跳过导航链接（Skip to content）和组合键盘交互（WAI-ARIA APG定义的widget键盘模式）。W3C WAI-ARIA Authoring Practices Guide 定义了20+组件的标准键盘交互模式（如Tab选项卡用方向键切换、树形控件用方向键+Enter导航）。有效原因：键盘导航不仅服务残障用户，也是高效用户的首选交互方式——研究显示熟练的键盘用户操作速度比鼠标用户快30%。",
+  "whenToUse": "Web应用的键盘可访问性实现 · 复杂交互组件(表格/树/菜单)的键盘模式设计 · 高效率工具型产品的快捷键系统设计",
+  "keySteps": [
+    "Tab顺序审计：检查所有交互元素的Tab顺序是否符合逻辑阅读顺序",
+    "Focus样式设计：为所有可聚焦元素设计清晰可见的focus indicator",
+    "Skip导航实现：添加‘跳到主内容’链接和landmark导航",
+    "组件键盘模式：按WAI-ARIA APG为每个自定义组件实现标准键盘交互",
+    "Focus陷阱管理：模态框/抽屉打开时焦点锁定，关闭时焦点恢复",
+    "快捷键系统：设计不与浏览器/辅助技术冲突的应用快捷键",
+    "键盘测试：纯键盘走查所有核心任务流程"
+  ],
+  "aiSkillPrompt": "你是一位精通 WAI-ARIA Authoring Practices 和键盘可访问性的前端无障碍专家。请按以下流程帮助我：\n\n## 输入\n{用户提供的组件类型/页面结构、当前键盘问题、技术栈（React/Vue等）}\n\n## 任务\n1. **键盘审计**：检查Tab顺序、Focus管理和组件键盘交互\n2. **模式匹配**：为每个自定义组件匹配WAI-ARIA APG标准键盘模式\n3. **实现方案**：提供具体的HTML/JS/ARIA代码实现\n4. **测试清单**：输出纯键盘操作的测试用例\n\n## 输出格式\n使用 Markdown 结构化输出：\n- 组件键盘模式表（组件 | APG模式 | 按键映射 | 当前状态）\n- Focus管理规格（场景 | 触发条件 | Focus目标 | 恢复目标）\n- 代码实现片段（含ARIA属性和事件处理）\n- 键盘测试用例（操作序列 | 预期行为 | 实际行为）\n\n## 约束\n- 必须遵循WAI-ARIA APG定义的标准键盘模式\n- Focus indicator对比度至少3:1\n- 不得使用tabindex>0（只用0和-1）\n- 快捷键必须可自定义且不与辅助技术冲突",
+  "example": {
+    "title": "案例：VS Code 的键盘导航体系",
+    "content": "VS Code 是键盘导航设计的标杆产品。核心设计：Command Palette（Cmd+Shift+P）作为万能键盘入口，覆盖100%功能；编辑区域/侧边栏/终端之间用Cmd+1/2/3快速切换焦点区域；树形文件浏览器完全遵循APG Tree View模式（上下键导航、左右键展开/折叠、Home/End跳转首尾）。Focus陷阱管理：弹出的设置/搜索面板自动捕获焦点，Escape键恢复焦点到触发元素。VS Code 的无障碍满意度评分4.5/5，是开发者工具类产品中最高的。微软内部统计约12%的VS Code用户主要依赖键盘导航（包括Vim用户和无障碍用户）。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0,
+    "aiInvokeCount": 0,
+    "humanViewCount": 0
+  },
+  "createdAt": "2026-04-14T00:00:00Z",
+  "updatedAt": "2026-04-14T00:00:00Z"
+}

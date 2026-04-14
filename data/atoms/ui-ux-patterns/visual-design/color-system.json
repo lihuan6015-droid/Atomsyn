@@ -1,0 +1,41 @@
+{
+  "id": "atom_color-system",
+  "schemaVersion": 1,
+  "kind": "methodology",
+  "name": "色彩系统设计",
+  "nameEn": "Color System Design",
+  "frameworkId": "ui-ux-patterns",
+  "cellId": "visual-design",
+  "tags": [
+    "UX",
+    "色彩设计",
+    "设计系统",
+    "主题",
+    "可访问性"
+  ],
+  "coreIdea": "色彩系统设计融合了 Josef Albers 的色彩交互理论、Material Design 和 Apple HIG 的实践规范。核心：好的色彩系统不是挑几个好看的颜色，而是建立一套语义化、可扩展、可访问的色彩架构。三层模型：原始色板（Primitives，品牌色+中性色各10级明度）→语义Token（semantic，如 color-success, color-danger）→组件Token（component，如 button-primary-bg）。有效原因：语义化命名确保一致性，Token化支持多主题（暗色模式、高对比模式），明度梯度提供灵活的层级表达。Stripe 的 Nathan Curtis 提出“色彩即沟通”——每种颜色必须有明确的语义角色。",
+  "whenToUse": "设计系统色彩体系建设 · 产品暗色模式适配 · 品牌色向产品UI色彩映射",
+  "keySteps": [
+    "品牌色分析：从品牌VI中提取主色并生成10级明度梯度",
+    "功能色定义：确定成功/警告/错误/信息四组语义色",
+    "中性色系统：建立灰色梯度（至少10级），适配暗色模式",
+    "语义Token映射：将原始色映射为语义名称（bg-primary, text-secondary等）",
+    "暗色模式策略：制定明暗模式的色彩转换规则（非简单反转）",
+    "对比度验证：确保所有文本/背景组合满足WCAG AA（4.5:1）",
+    "文档与工具化：在Figma/代码中同步色彩Token"
+  ],
+  "aiSkillPrompt": "你是一位精通 Material Design 色彩系统和 Design Token 架构的设计系统顾问。请按以下流程帮助我：\n\n## 输入\n{用户提供的品牌色值、产品类型、是否需要暗色模式、目标平台}\n\n## 任务\n1. **色彩审计**：评估当前用色的一致性、语义清晰度和可访问性\n2. **色板生成**：基于品牌色生成完整的色彩系统（原始色板+语义Token）\n3. **暗色模式方案**：设计暗色模式转换策略和色彩映射\n4. **对比度验证**：检查所有关键组合的WCAG对比度合规性\n\n## 输出格式\n使用 Markdown 结构化输出：\n- 原始色板表（色名 | HEX | HSL | 用途说明）\n- 语义Token映射表（Token名 | 亮色值 | 暗色值）\n- 对比度检测报告（前景色 | 背景色 | 比率 | AA/AAA）\n- CSS Custom Properties 代码\n\n## 约束\n- 原始色板每色系10级明度（50-900）\n- 文本对比度必须满足 WCAG AA（4.5:1正文，3:1大字）\n- 暗色模式不是简单反转，需要独立的层级策略\n- Token命名遵循 {category}-{type}-{variant} 格式",
+  "example": {
+    "title": "案例：Radix UI 色彩系统",
+    "content": "Radix UI 的色彩系统是开源设计系统中的标杆。每个色系（如Blue, Red, Green）提供12级明度梯度，明确定义每级的语义用途：1-2级用于背景微着色，3-5级用于组件背景和边框，6-8级用于交互态（hover/active），9-10级用于纯色背景，11-12级用于文本。暗色模式不是简单反转——背景使用更深的灰（而非纯黑），色彩饱和度适当降低10-15%以减少视觉疲劳。这套系统被超过50万个项目采用，GitHub上获得12k+ stars。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0,
+    "aiInvokeCount": 0,
+    "humanViewCount": 0
+  },
+  "createdAt": "2026-04-14T00:00:00Z",
+  "updatedAt": "2026-04-14T00:00:00Z"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "atom_design_sprint_sketch",
+  "schemaVersion": 1,
+  "kind": "methodology",
+  "name": "设计冲刺草图法",
+  "nameEn": "Design Sprint Sketch (Jake Knapp Crazy 8s)",
+  "frameworkId": "design-thinking-5",
+  "cellId": 3,
+  "tags": [
+    "设计思维",
+    "设计冲刺",
+    "Crazy 8s",
+    "Jake Knapp",
+    "Google Ventures"
+  ],
+  "coreIdea": "由 Google Ventures 的 Jake Knapp 在《Sprint》一书中系统化的快速创意方法。核心流程分三步：Lightning Demos（灵感采集）→ Crazy 8s（8 分钟画 8 个方案）→ Solution Sketch（3 面板详细草图）。核心哲学：画出来比说出来更有效——当你被迫在纸上具象化一个创意时，你会发现「听起来好」和「画出来也好」之间有巨大的鸿沟。Crazy 8s 的时间压力（每个方案只有 1 分钟）迫使你跳过内心审查，释放潜意识的创意。之所以有效，是因为它结合了数量压力和视觉思维，在极短时间内产生高质量的、可讨论的具体方案。",
+  "whenToUse": "需要从抽象创意快速转化为具体方案 · 团队成员只在「说」创意但没有人「画」出来 · 需要在 1 小时内产生多个可比较的解决方案草图",
+  "keySteps": [
+    "1. Lightning Demos（20 分钟）：每人分享 1-2 个其他产品的好设计案例",
+    "2. 个人笔记（10 分钟）：记录灵感和初步想法",
+    "3. Crazy 8s（8 分钟）：将 A4 纸折成 8 格，每格 1 分钟画一个方案变体",
+    "4. Solution Sketch（30 分钟）：选择 Crazy 8s 中最好的方向，画 3 面板故事板",
+    "5. 匿名展示：所有草图贴在墙上，不标注作者",
+    "6. 静默投票（Heat Map）：每人用贴纸标注最吸引你的细节",
+    "7. Speed Critique（每张 3 分钟）：主持人引导讨论亮点和疑问"
+  ],
+  "aiSkillPrompt": "你是一位精通 Jake Knapp Design Sprint 方法论和快速原型思维的设计冲刺教练。请按以下流程帮助我：\n\n## 输入\n{请提供：设计挑战描述、目标用户、当前方案（如有）、已有的创意方向（如有）}\n\n## 任务\n1. Lightning Demos 准备：\n   - 推荐 5-8 个相关领域的优秀设计参考（产品名+具体功能+为什么值得学习）\n   - 提炼每个参考中可借鉴的设计原则\n2. Crazy 8s 引导：\n   - 为 8 个方案变体提供不同的切入角度\n   - 每个角度用一句话描述核心差异\n3. Solution Sketch 深化：\n   - 将最有潜力的 2-3 个方案展开为详细的 3 面板故事板描述\n   - 每个面板包含：场景、用户动作、界面关键元素、情感状态\n4. 设计决策矩阵帮助选择最终方向\n\n## 输出格式\n章节 1：Lightning Demos 参考清单。章节 2：Crazy 8s 八角度清单。章节 3：Top 3 方案的故事板描述。章节 4：决策矩阵。\n\n## 约束\n- Lightning Demos 必须来自真实产品，不能编造\n- 8 个角度必须有实质性差异，不能是同一方案的微调\n- 故事板必须从用户视角描述，不能是功能列表",
+  "example": {
+    "title": "案例：Google Ventures 用 Crazy 8s 帮助 Blue Bottle Coffee 设计在线订购",
+    "content": "Blue Bottle Coffee 希望设计在线咖啡订购体验。在 Crazy 8s 环节，6 位团队成员在 8 分钟内共产生了 48 个方案变体。其中一个「最不像电商」的方案引起了团队注意——用咖啡风味测试引导选择而非传统商品列表。这个方案在 Solution Sketch 中被深化为「3 个问题找到你的咖啡」的交互流程。原型测试中，这个方案的转化率比传统商品列表高出 35%，平均客单价提升 20%，因为用户选择了更多他们「不知道自己会喜欢」的豆子。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0,
+    "aiInvokeCount": 0,
+    "humanViewCount": 0
+  },
+  "createdAt": "2026-04-14T00:00:00Z",
+  "updatedAt": "2026-04-14T00:00:00Z"
+}

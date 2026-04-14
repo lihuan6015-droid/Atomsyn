@@ -1,0 +1,41 @@
+{
+  "id": "atom_contextual_inquiry",
+  "schemaVersion": 1,
+  "kind": "methodology",
+  "name": "情境访谈法",
+  "nameEn": "Contextual Inquiry (Beyer & Holtzblatt)",
+  "frameworkId": "design-thinking-5",
+  "cellId": 1,
+  "tags": [
+    "设计思维",
+    "用户研究",
+    "情境访谈",
+    "现场观察",
+    "Beyer & Holtzblatt"
+  ],
+  "coreIdea": "由 Karen Holtzblatt 和 Hugh Beyer 于 1990 年代提出的现场研究方法。核心哲学：用户的真实行为只能在其自然工作环境中被观察到，而非实验室或会议室。研究者以「学徒」身份进入用户的工作场景，边观察边提问，遵循四原则：Context（在现场）、Partnership（师徒关系）、Interpretation（即时解读）、Focus（聚焦研究问题）。之所以有效，是因为它打破了用户「说的」和「做的」之间的鸿沟——人们往往无法准确描述自己的行为，但在真实环境中会自然暴露习惯、变通方案和未被满足的需求。",
+  "whenToUse": "产品早期需要深度理解用户工作流 · 用户调研问卷和访谈结果与实际行为不符 · 需要发现用户自己都意识不到的隐性需求",
+  "keySteps": [
+    "1. 确定研究聚焦点（Focus Model）：明确想了解用户工作的哪些方面",
+    "2. 招募 6-8 位代表性用户，预约在其真实工作场所进行 1-2 小时访谈",
+    "3. 以「学徒」角色进入现场，请用户像平常一样工作",
+    "4. 边观察边提问：「你刚才为什么那样做？」「这个步骤通常怎么处理？」",
+    "5. 即时记录关键观察：工件（Artifact）、流程断点、变通方案（Workaround）",
+    "6. 每次访谈后立即进行解读会议（Interpretation Session），提取洞察",
+    "7. 将多次访谈的洞察汇总为 Affinity Diagram 或 Work Model"
+  ],
+  "aiSkillPrompt": "你是一位精通 Beyer & Holtzblatt 情境设计（Contextual Design）学派的用户研究教练。请按以下流程帮助我：\n\n## 输入\n{请提供：产品/服务名称、目标用户角色、你希望了解的工作流或场景描述}\n\n## 任务\n1. 根据输入信息，制定 Contextual Inquiry 研究计划：\n   - 定义 Focus Model（3-5 个研究聚焦点）\n   - 设计开场脚本（如何向用户解释「学徒」角色）\n   - 准备 10-15 个半结构化引导问题（遵循 AEIOU 框架：Activities, Environments, Interactions, Objects, Users）\n2. 为每个聚焦点设计观察检查清单：\n   - 需要记录的工件（Artifact）类型\n   - 需要关注的流程断点信号\n   - 变通方案（Workaround）的识别标志\n3. 设计 Interpretation Session 模板：\n   - 关键发现记录格式\n   - Work Model 分类（Flow Model / Sequence Model / Cultural Model）\n   - 洞察优先级评判标准\n\n## 输出格式\n分为四个章节：研究计划概览、引导问题清单、观察检查清单、解读会议模板。每个章节使用 Markdown 表格或列表。\n\n## 约束\n- 引导问题必须是开放式的，禁止引导性提问\n- 必须包含「沉默观察」环节的时间建议\n- 不允许在实验室环境中执行，必须强调现场观察的重要性",
+  "example": {
+    "title": "案例：Intuit 用 Contextual Inquiry 重新设计 QuickBooks",
+    "content": "Intuit 团队在 2000 年代初对 30 位小企业主进行情境访谈，深入其办公室观察他们如何管理账目。团队发现用户并非按「功能菜单」操作，而是围绕「付账单」「发票」等任务流工作，且 60% 的用户在 QuickBooks 旁边放着纸质便签做辅助记录。这个洞察直接催生了 QuickBooks 的任务导向导航重设计，上线后客户支持电话减少了 30%，新用户完成首次记账的时间缩短了 40%。"
+  },
+  "bookmarks": [],
+  "stats": {
+    "usedInProjects": [],
+    "useCount": 0,
+    "aiInvokeCount": 0,
+    "humanViewCount": 0
+  },
+  "createdAt": "2026-04-14T00:00:00Z",
+  "updatedAt": "2026-04-14T00:00:00Z"
+}
