@@ -1,9 +1,22 @@
 {
   "$schema": "Atomsyn seed methodology version manifest",
-  "version": "0.1.1",
-  "releaseDate": "2026-04-11",
-  "description": "V0.1.1 seed · 产品创新24步法 + 设计思维5步法 + UI/UX设计模式 + 认知心理学基础",
+  "version": "0.2.0",
+  "releaseDate": "2026-04-14",
+  "description": "V0.2.0 seed · 四大方法库完整充实：产品创新24步法(125) + 设计思维5步法(19) + UI/UX设计模式(20) + 认知心理学基础(18)",
   "changelog": [
+    {
+      "version": "0.2.0",
+      "date": "2026-04-14",
+      "notes": [
+        "设计思维5步法 从1个原子扩充至19个，覆盖全部5个阶段（共情/定义/构思/原型/测试）",
+        "UI/UX设计模式 从1个原子扩充至20个，覆盖全部5个分类（信息架构/交互模式/视觉设计/可用性/无障碍）",
+        "认知心理学基础 从1个原子扩充至18个，覆盖全部4个分支（认知偏误/决策心理/学习理论/情绪管理）",
+        "所有新增原子均包含完整的 aiSkillPrompt（1000-1500字结构化提示）、真实案例、关键步骤",
+        "现有3个原子（共情地图/确认偏误/导航模式）的 aiSkillPrompt 从~300字升级至~1300字金标准",
+        "产品创新24步法125个原子确认全部已达金标准质量，无需修改",
+        "knowledge-index.json 从 git 追踪中移除（纯派生数据，运行时自动生成）"
+      ]
+    },
     {
       "version": "0.1.1",
       "date": "2026-04-11",
@@ -32,7 +45,7 @@
       "ui-ux-patterns",
       "cognitive-psychology-basics"
     ],
-    "methodologyAtomCount": 128,
+    "methodologyAtomCount": 182,
     "rootPaths": [
       "data/frameworks/",
       "data/atoms/product-innovation-24/",
