@@ -373,6 +373,32 @@ async function cmdWrite(args) {
   const { path: dataDir, source } = resolveDataDir()
   await ensureDataLayout(dataDir)
 
+  // V2.x cognitive-evolution · collision check (D-007, B3)
+  // Default on; disable via --no-check-collision or ATOMSYN_DISABLE_COLLISION_CHECK=1.
+  // Skipped in supersede flow (caller passes ATOMSYN_SKIP_COLLISION=1 internally).
+  const collisionCheckEnabled =
+    !hasFlag(args, '--no-check-collision') &&
+    process.env.ATOMSYN_DISABLE_COLLISION_CHECK !== '1' &&
+    process.env.ATOMSYN_SKIP_COLLISION !== '1'
+  let collisionCandidates = []
+  if (collisionCheckEnabled) {
+    try {
+      const expDir = join(dataDir, 'atoms', 'experience')
+      const corpusFiles = await walkJson(expDir)
+      const corpus = []
+      for (const f of corpusFiles) {
+        try {
+          const a = JSON.parse(await readFile(f, 'utf8'))
+          corpus.push(a)
+        } catch { /* skip */ }
+      }
+      collisionCandidates = detectCollision(atom, corpus)
+    } catch (err) {
+      // Collision check failure is non-fatal (design §3.2 fallback)
+      process.stderr.write(`atomsyn-cli: warning · collision check skipped (${err.message})\n`)
+    }
+  }
+
   const slug = deriveSlug(atom.name || atom.id.replace(/^atom_exp_/, '').split('_')[0])
   const outDir = join(dataDir, 'atoms', 'experience', slug)
   await mkdir(outDir, { recursive: true })
@@ -415,26 +441,39 @@ async function cmdWrite(args) {
       kind: 'experience',
       dataSource: source,
     })
+    if (collisionCandidates.length > 0) {
+      await appendUsageLog(dataDir, {
+        ts: new Date().toISOString(),
+        action: 'write.collision_detected',
+        atomId: atom.id,
+        candidates: collisionCandidates.map(c => c.id),
+      })
+    }
   } catch (err) {
     console.error(`${color.yellow}Warning: usage log append failed: ${err.message}${color.reset}`)
   }
 
+  // V2.x cognitive-evolution · stderr warning when collision detected (B3)
+  if (collisionCandidates.length > 0) {
+    const names = collisionCandidates.map(c => `${c.name || '(unnamed)'} <${c.id}>`).join(', ')
+    process.stderr.write(`${color.yellow}atomsyn-cli: ⚠️  ${collisionCandidates.length} collision candidate(s) detected: ${names}. See stdout collision_candidates field; consider 'atomsyn-cli supersede --id <old> --input <file>' if intent is to replace.${color.reset}\n`)
+  }
+
   // Return success payload to the calling skill
-  console.log(
-    JSON.stringify(
-      {
-        ok: true,
-        atomId: atom.id,
-        name: atom.name,
-        path: outFile,
-        dataDir,
-        dataSource: source,
-        hint: `Next time you search for tags [${atom.tags.join(', ')}] or topic "${atom.name}", atomsyn-read will surface this atom.`,
-      },
-      null,
-      2
-    )
-  )
+  const payload = {
+    ok: true,
+    atomId: atom.id,
+    name: atom.name,
+    path: outFile,
+    dataDir,
+    dataSource: source,
+    hint: `Next time you search for tags [${atom.tags.join(', ')}] or topic "${atom.name}", atomsyn-read will surface this atom.`,
+  }
+  if (collisionCandidates.length > 0) {
+    payload.collision_candidates = collisionCandidates
+    payload.hint = `本次写入已完成。如需取代旧 atom, 用 atomsyn-cli supersede --id <old> --input <这个文件>`
+  }
+  console.log(JSON.stringify(payload, null, 2))
 }
 
 // ---------------------------------------------------------------------------
@@ -1085,7 +1124,39 @@ async function cmdUpdate(args) {
     )
   }
 
+  // V2.x cognitive-evolution · supersede protocol guard (B3)
+  // Once an atom is superseded or archived it is read-only; reject update.
+  if (hit.atom?.archivedAt) {
+    die(`Atom ${id} is archived (archivedAt=${hit.atom.archivedAt}). Use 'atomsyn-cli archive --id ${id} --restore' first if you want to edit it again.`, 3)
+  }
+  if (hit.atom?.supersededBy) {
+    die(`Atom ${id} has been superseded by ${hit.atom.supersededBy}. Update the successor atom instead, or use 'atomsyn-cli archive --id ${id} --restore' to revive (rare).`, 3)
+  }
+
   const merged = mergeAtomFields(hit.atom, incoming)
+
+  // V2.x cognitive-evolution · collision check (B3)
+  const collisionCheckEnabled =
+    !hasFlag(args, '--no-check-collision') &&
+    process.env.ATOMSYN_DISABLE_COLLISION_CHECK !== '1' &&
+    process.env.ATOMSYN_SKIP_COLLISION !== '1'
+  let collisionCandidates = []
+  if (collisionCheckEnabled) {
+    try {
+      const expDir = join(dataDir, 'atoms', 'experience')
+      const corpusFiles = await walkJson(expDir)
+      const corpus = []
+      for (const f of corpusFiles) {
+        try {
+          const a = JSON.parse(await readFile(f, 'utf8'))
+          corpus.push(a)
+        } catch { /* skip */ }
+      }
+      collisionCandidates = detectCollision(merged, corpus)
+    } catch (err) {
+      process.stderr.write(`atomsyn-cli: warning · collision check skipped (${err.message})\n`)
+    }
+  }
 
   // Decide target path: if the merged name produces a different slug than
   // where the file currently lives, we MOVE the file to the new slug folder
@@ -1129,29 +1200,38 @@ async function cmdUpdate(args) {
       moved,
       dataSource: source,
     })
+    if (collisionCandidates.length > 0) {
+      await appendUsageLog(dataDir, {
+        ts: new Date().toISOString(),
+        action: 'write.collision_detected',
+        atomId: merged.id,
+        candidates: collisionCandidates.map(c => c.id),
+      })
+    }
   } catch (err) {
     console.error(`${color.yellow}Warning: usage log append failed: ${err.message}${color.reset}`)
   }
 
-  console.log(
-    JSON.stringify(
-      {
-        ok: true,
-        action: moved ? 'updated-and-moved' : 'updated-in-place',
-        atomId: merged.id,
-        name: merged.name,
-        path: newFile,
-        previousPath: moved ? oldFile : undefined,
-        dataDir,
-        dataSource: source,
-        hint: moved
-          ? `Atom renamed — moved from ${oldFile} to ${newFile}`
-          : `Atom updated in place at ${newFile}`,
-      },
-      null,
-      2,
-    ),
-  )
+  if (collisionCandidates.length > 0) {
+    const names = collisionCandidates.map(c => `${c.name || '(unnamed)'} <${c.id}>`).join(', ')
+    process.stderr.write(`${color.yellow}atomsyn-cli: ⚠️  ${collisionCandidates.length} collision candidate(s) detected: ${names}. See stdout collision_candidates field.${color.reset}\n`)
+  }
+
+  const payload = {
+    ok: true,
+    action: moved ? 'updated-and-moved' : 'updated-in-place',
+    atomId: merged.id,
+    name: merged.name,
+    path: newFile,
+    previousPath: moved ? oldFile : undefined,
+    dataDir,
+    dataSource: source,
+    hint: moved
+      ? `Atom renamed — moved from ${oldFile} to ${newFile}`
+      : `Atom updated in place at ${newFile}`,
+  }
+  if (collisionCandidates.length > 0) payload.collision_candidates = collisionCandidates
+  console.log(JSON.stringify(payload, null, 2))
 }
 
 // ---------------------------------------------------------------------------
