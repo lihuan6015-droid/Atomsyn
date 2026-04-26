@@ -62,6 +62,31 @@
       }
     },
     "role": { "type": "string", "description": "V2.0 · role dimension for unified skeleton grouping" },
+    "lastAccessedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "V2.x cognitive-evolution · ISO 8601 timestamp passively updated by atomsyn-cli when read/find hits this atom (throttled, only persisted to disk if last update was > 1h ago). Feeds confidence_decay calculation. Optional; absent fallbacks to createdAt."
+    },
+    "supersededBy": {
+      "type": "string",
+      "pattern": "^atom_[a-z0-9_-]+$",
+      "description": "V2.x cognitive-evolution · Single atom id that supersedes this one. When set, atom is read-only and read/find default-hides it (filter out in index)."
+    },
+    "supersedes": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^atom_[a-z0-9_-]+$" },
+      "description": "V2.x cognitive-evolution · Atom ids this atom supersedes (single-direction linked list, multiple ids supported when merging multiple atoms into one)."
+    },
+    "archivedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "V2.x cognitive-evolution · ISO 8601 soft-delete timestamp. read/find default does not return; can be unset via atomsyn-cli archive --restore."
+    },
+    "archivedReason": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "V2.x cognitive-evolution · Optional user-provided rationale captured when archiving."
+    },
     "stats": {
       "type": "object",
       "required": ["usedInProjects", "useCount"],
