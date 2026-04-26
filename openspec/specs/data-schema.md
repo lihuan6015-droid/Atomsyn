@@ -1,0 +1,149 @@
+# Data Schema · 顶层数据形态总览
+
+> **一句话**: 本文档是 Atomsyn 数据形态的**高层结构总览**和**变更历史索引**。详细的 JSON Schema 是真理之源, 在 `skills/schemas/` 下; 本文是地图, 不是真理。
+>
+> **修改规则**: 严禁直接编辑本文件正文部分。任何 schema 变更必须:
+> 1. 通过一次 openspec change
+> 2. 在该 change 内更新 `skills/schemas/*.schema.json` (真理源)
+> 3. 在该 change 归档时, 在本文件 §Schema Changelog 区追加一行变更摘要
+>
+> **真理源位置**: `skills/schemas/`
+
+---
+
+## 1 · 顶层数据形态
+
+```
+data/
+├── frameworks/                    方法论骨架定义
+│   └── <framework-id>.json
+│
+├── atoms/                         认知原子 (核心实体)
+│   ├── <framework>/<cell>/        methodology kind 原子
+│   ├── experience/<slug>/         experience kind 原子 (atomsyn-write 创建)
+│   ├── fragment/<slug>/           fragment kind 原子 (碎片提炼)
+│   └── skill-inventory/<tool>/    skill-inventory kind 原子 (扫描本地 skills)
+│
+├── projects/                      项目实体
+│   └── <project-id>/
+│       ├── meta.json
+│       └── practices/
+│           └── <practice-id>.json
+│
+├── analysis/                      分析报告
+│   └── reports/<report-id>.json
+│
+├── notes/                         笔记模块数据
+│   └── <note-slug>/
+│       ├── content.md
+│       └── images/
+│
+├── chat/                          聊天会话
+│   └── sessions/<session-id>.json
+│
+├── growth/
+│   └── usage-log.jsonl            事件流 (append-only)
+│
+├── psych/
+│   └── log.jsonl                  心理自查事件 (append-only)
+│
+├── index/
+│   └── knowledge-index.json       自动生成的轻量级索引
+│
+└── .seed-state.json               seed version + sha256 manifest
+```
+
+---
+
+## 2 · 核心实体一览
+
+| 实体 | Schema 文件 | 主要字段 (摘要) | 创建路径 |
+|---|---|---|---|
+| Framework | `skills/schemas/framework.schema.json` | id, name, cells[], parentFrameworkId | 用户手建 / seed |
+| Atom (methodology) | `skills/schemas/atom.schema.json` | id, kind:"methodology", frameworkId, cellId, parentAtomId | seed / 用户手建 |
+| Atom (experience) | 同上, kind 不同 | id, kind:"experience", linkedMethodologies[] | atomsyn-cli ingest/write |
+| Atom (fragment) | 同上 | id, kind:"fragment", sourceNoteId | 碎片提炼流程 |
+| Atom (skill-inventory) | 同上 | id, kind:"skill-inventory", tool, path | scan-skills |
+| Project | `skills/schemas/project.schema.json` | id, name, pinnedAtoms[], status | 用户手建 |
+| Practice | `skills/schemas/practice.schema.json` | id, atomId, projectId, outcome | atomsyn-cli + GUI |
+| Analysis Report | `skills/schemas/analysis-report.schema.json` (TODO 确认) | id, range, blindSpots[], trends[] | atomsyn-mentor |
+
+> [TODO] 与实际 `skills/schemas/` 文件对照核实并填齐字段, 后续 change 完成。
+
+---
+
+## 3 · 关键不变量 (Data Invariants)
+
+> 来源: `CLAUDE.md` § "Key data invariants"
+
+- **唯一归属**: 一个 atom 属于**且仅属于**一个 framework + cell。`cellId` 必须在 `data/frameworks/<frameworkId>.json` 的 cells 列表内
+- **方法论族谱**: 一个 atom 可有 `parentAtomId` (e.g. JTBD's parent is `atom_voc_overview`), 表达"方法论伞"关系
+- **跨骨架项目**: project 的 `pinnedAtoms` 可引用任意 framework 的 atoms (跨骨架是一等公民)
+- **实践引用真实**: practice 必须引用真实存在的 `atomId` + `projectId`
+- **派生字段不手填**: `atom.stats.usedInProjects` 由 reindex 从 practice 数据反向同步, 永远不要手动设置
+- **ID 命名**:
+  - atom: `atom_<slug>` 或 `atom_exp_<slug>_<timestamp>` (experience kind)
+  - project: `project-NNN-<slug>`
+  - practice: `practice_<slug>_<timestamp>`
+- **时间戳**: 任何变更必须更新 `updatedAt`
+
+---
+
+## 4 · Discriminated Union 设计
+
+Atom 是 discriminated union, 由 `kind` 字段判别:
+
+```ts
+type Atom =
+  | MethodologyAtom    // kind: "methodology"
+  | ExperienceAtom     // kind: "experience"
+  | FragmentAtom       // kind: "fragment"
+  | SkillInventoryAtom // kind: "skill-inventory"
+```
+
+> 真理源: `src/types/index.ts`
+>
+> 本文不复制类型定义, 避免双源不一致。
+
+---
+
+## 5 · 派生数据 (Derived Data)
+
+下列文件**不是真理源**, 是从核心实体派生出来的, 任何修改都应通过重建而非直接编辑:
+
+| 文件 | 派生自 | 重建命令 |
+|---|---|---|
+| `data/index/knowledge-index.json` | `atoms/`, `projects/`, `practices/` | `npm run reindex` 或 `atomsyn-cli reindex` |
+| `atom.stats.usedInProjects` | `practices/` | reindex 自动同步 |
+| 分析报告聚合 | atoms + practices + usage-log | atomsyn-cli mentor (按需) |
+
+---
+
+## 6 · 双通道架构与 schema 一致性
+
+Atomsyn 有两条数据 API 路径 (Vite dev / Tauri prod), 必须使用**同一份 schema**:
+
+- Dev: `vite-plugin-data-api.ts` 中的写入路径
+- Prod: `src/lib/tauri-api/routes/*.ts` 中的写入路径
+- CLI: `scripts/atomsyn-cli.mjs` 中的写入路径
+
+任何 schema 变更必须三处同步, 否则会出现"开发模式正常、打包模式崩溃" (或反之) 的 silent bug。
+
+---
+
+## 7 · 实现引用
+
+- Schema 真理源: `skills/schemas/*.schema.json`
+- TS 类型源: `src/types/index.ts`
+- Reindex 实现: `scripts/rebuild-index.mjs` + `src/lib/tauri-api/rebuildIndex.ts`
+- 写入入口: `scripts/atomsyn-cli.mjs` (CLI) · `vite-plugin-data-api.ts` (dev) · `src/lib/tauri-api/routes/` (prod)
+
+---
+
+## 8 · Schema Changelog
+
+> 每次 change 归档时, 如改动了任何 schema, 必须在此追加。
+>
+> 格式: `YYYY-MM-DD · <change-id> · <schema-file> · <breaking|additive|fix> · <一句话摘要>`
+
+- 2026-04-26 · openspec-bootstrap · n/a · n/a · 建立本契约文档骨架, 字段对照与 [TODO] 由后续 change 填补

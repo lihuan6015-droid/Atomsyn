@@ -734,7 +734,7 @@ function AboutSection() {
         </div>
         <div>
           <span className="text-neutral-500">PRD：</span>{' '}
-          <code className="text-xs">docs/PRD.md</code>
+          <code className="text-xs">docs/prd/PRD-v2.0.md</code>
         </div>
         <div>
           <span className="text-neutral-500">Mockups：</span>{' '}
