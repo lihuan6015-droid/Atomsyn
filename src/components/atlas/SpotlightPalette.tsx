@@ -4,17 +4,20 @@ import Fuse from 'fuse.js'
 import { useNavigate } from 'react-router-dom'
 import { Search } from 'lucide-react'
 import { atomsApi, trackUsage } from '@/lib/dataApi'
+import { filterAtomsForDefaultView } from '@/lib/atomEvolution'
+import { useAppStore } from '@/stores/useAppStore'
 import type { Atom } from '@/types'
 
 export function SpotlightPalette() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [atoms, setAtoms] = useState<Atom[]>([])
+  const showArchived = useAppStore((s) => s.showArchivedAtoms)
   const navigate = useNavigate()
 
   useEffect(() => {
-    atomsApi.list().then(setAtoms).catch(() => undefined)
-  }, [])
+    atomsApi.list().then((list) => setAtoms(filterAtomsForDefaultView(list, { showArchived }) as Atom[])).catch(() => undefined)
+  }, [showArchived])
 
   useEffect(() => {
     const onOpen = () => setOpen(true)

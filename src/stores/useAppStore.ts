@@ -43,6 +43,8 @@ interface AppState {
   activeSectionFocus: SectionFocus
   /** V2.x: UI scale percentage (90/100/110/120) */
   uiScale: UIScale
+  /** V2.x cognitive-evolution: when true, atom lists/Spotlight include archived atoms (default false). */
+  showArchivedAtoms: boolean
 
   setTheme: (t: Theme) => void
   toggleTheme: () => void
@@ -71,6 +73,7 @@ interface AppState {
   setSidebarGardenExpanded: (v: boolean) => void
   toggleSidebarGarden: () => void
   setActiveSectionFocus: (focus: SectionFocus) => void
+  setShowArchivedAtoms: (v: boolean) => void
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | null = null
@@ -96,8 +99,10 @@ export const useAppStore = create<AppState>()(
       sidebarGardenExpanded: true,
       activeSectionFocus: null,
       uiScale: 100,
+      showArchivedAtoms: false,
 
       setActiveMode: (mode) => set({ activeMode: mode }),
+      setShowArchivedAtoms: (v) => set({ showArchivedAtoms: v }),
       setUIScale: (scale) => {
         set({ uiScale: scale })
         // Apply scale by setting font-size on html root element
@@ -189,6 +194,7 @@ export const useAppStore = create<AppState>()(
         activeFrameworkId: s.activeFrameworkId,
         customSkeletons: s.customSkeletons,
         uiScale: s.uiScale,
+        showArchivedAtoms: s.showArchivedAtoms,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {

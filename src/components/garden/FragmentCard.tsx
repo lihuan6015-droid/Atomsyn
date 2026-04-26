@@ -9,9 +9,10 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, Clock, Eye, Lock, ThumbsDown } from 'lucide-react'
+import { ChevronDown, Clock, Eye, Lock, ThumbsDown, Thermometer, Archive, ArrowRight } from 'lucide-react'
 import type { ExperienceFragment } from '@/types'
 import { getInsightColor } from '@/lib/insightColors'
+import { computeStaleness } from '@/lib/atomEvolution'
 import { cn } from '@/lib/cn'
 
 interface Props {
@@ -36,6 +37,14 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
     return iso.slice(0, 10)
   }
 
+  // V2.x cognitive-evolution · staleness signal + archived/supersededBy state
+  const stale = computeStaleness(f)
+  const archivedAt = (f as { archivedAt?: string }).archivedAt
+  const supersededBy = (f as { supersededBy?: string }).supersededBy
+  const isArchived = Boolean(archivedAt)
+  const isSuperseded = Boolean(supersededBy)
+  const isStale = stale.is_stale && !isArchived
+
   return (
     <motion.div
       layout
@@ -46,12 +55,34 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
         'hover:border-neutral-300 dark:hover:border-white/15',
         'bg-white/80 dark:bg-white/[0.02]',
         f.private && 'border-l-2 border-l-pink-400/60',
+        isArchived && 'opacity-60 grayscale-[0.4] border-l-2 border-l-neutral-400/40',
       )}
       whileHover={{ scale: 1.005 }}
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      title={
+        isArchived
+          ? `已归档于 ${new Date(archivedAt!).toLocaleDateString()}`
+          : isStale
+            ? `本条经验沉淀已 ${stale.age_days} 天, confidence 衰减 ${(stale.confidence_decay * 100).toFixed(0)}%。建议在当前情境再校准一次。`
+            : undefined
+      }
     >
-      {/* L1: title + insight_type + 1 tag */}
+      {/* V2.x · archived banner */}
+      {isArchived && (
+        <div className="flex items-center gap-1.5 mb-1.5 text-[0.625rem] text-neutral-500 dark:text-neutral-400">
+          <Archive className="w-3 h-3" />
+          <span>已归档于 {new Date(archivedAt!).toLocaleDateString()}</span>
+        </div>
+      )}
+
+      {/* L1: 🌡 + title + insight_type + 1 tag + supersededBy chip */}
       <div className="flex items-center gap-2">
+        {isStale && (
+          <Thermometer
+            className="w-3.5 h-3.5 shrink-0 text-amber-500"
+            aria-label="staleness signal"
+          />
+        )}
         <span className="text-sm font-medium truncate flex-1">{f.title}</span>
         <span
           className={cn(
@@ -64,6 +95,11 @@ export function FragmentCard({ fragment: f, onNavigate }: Props) {
         {f.tags[0] && (
           <span className="shrink-0 px-1.5 py-0.5 rounded text-[0.625rem] bg-neutral-100 dark:bg-white/5 text-neutral-500 font-mono">
             {f.tags[0]}
+          </span>
+        )}
+        {isSuperseded && (
+          <span className="shrink-0 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[0.625rem] bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-500/20">
+            <ArrowRight className="w-2.5 h-2.5" />已被取代
           </span>
         )}
         <ChevronDown

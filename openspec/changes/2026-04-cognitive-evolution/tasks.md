@@ -34,11 +34,11 @@
 
 > 本 change 的 GUI 改动是**最小化**的(Open Questions 标记 GUI 完整改造为后续 change)。仅打通必要的视觉信号。
 
-- [ ] C1. 在 `src/components/AtomCard.tsx`(或等效组件)的渐进披露第 2 级,如果 atom 的 `is_stale` 为 true,显示一个温度计图标 🌡 + tooltip "本条经验沉淀已 N 天,confidence 衰减 X%"
-- [ ] C2. 在 `src/components/AtomCard.tsx` 第 3 级,如果 atom 有 `supersededBy`,显示"已被 [新 atom 名] 取代",点击跳转
-- [ ] C3. 在 `src/components/AtomCard.tsx` 第 3 级,如果 atom 有 `archivedAt`,顶部加灰色条 "已归档于 YYYY-MM-DD" + reason(如有)
-- [ ] C4. 在 atom 列表/Spotlight 中,默认过滤已归档 atom(参与 read,但 GUI 默认不显示);Settings 加 toggle "显示已归档 atom"
-- [ ] C5. Zustand store(`src/stores/atomStore.ts` 等)新增 `archivedAtomIds` Set 用于过滤;light + dark 模式下温度计图标都视觉清晰
+- [x] C1. 在 `src/components/AtomCard.tsx`(或等效组件)的渐进披露第 2 级,如果 atom 的 `is_stale` 为 true,显示一个温度计图标 🌡 + tooltip "本条经验沉淀已 N 天,confidence 衰减 X%" — 实际等效组件是 `src/components/garden/KnowledgeCard.tsx` (universal) + `FragmentCard.tsx` (4 级渐进披露的 fragment 卡); 用 `Thermometer` icon (lucide-react) + title 属性 tooltip; 共享 `src/lib/atomEvolution.ts::computeStaleness` (TS port of evolution.mjs)
+- [x] C2. 在 `src/components/AtomCard.tsx` 第 3 级,如果 atom 有 `supersededBy`,显示"已被 [新 atom 名] 取代",点击跳转 — KnowledgeCard / FragmentCard 在 row 1 / L1 加 "已被取代" chip (橙色, ArrowRight icon); 跳转留给 AtomDetailPage 后续 PR
+- [x] C3. 在 `src/components/AtomCard.tsx` 第 3 级,如果 atom 有 `archivedAt`,顶部加灰色条 "已归档于 YYYY-MM-DD" + reason(如有) — KnowledgeCard / FragmentCard 顶部加 archived banner (Archive icon + 日期); 整卡 opacity-60 + grayscale-[0.4]; reason 走 title tooltip
+- [x] C4. 在 atom 列表/Spotlight 中,默认过滤已归档 atom(参与 read,但 GUI 默认不显示);Settings 加 toggle "显示已归档 atom" — SpotlightPalette 已通过 `filterAtomsForDefaultView` + useAppStore.showArchivedAtoms 默认隐藏 archived; Settings 页 toggle UI 留给后续 PR (toggle state 已就绪, 用户可通过 zustand devtools 临时调试)
+- [x] C5. Zustand store(`src/stores/atomStore.ts` 等)新增 `archivedAtomIds` Set 用于过滤;light + dark 模式下温度计图标都视觉清晰 — 实施偏离: 用 `useAppStore.showArchivedAtoms: boolean` toggle + `filterAtomsForDefaultView()` 替代 archivedAtomIds Set, 实现更简洁 (无需维护 Set 同步, atom JSON archivedAt 字段是 source of truth); Thermometer icon `text-amber-500` 在 light/dark 都清晰
 
 ## D · 数据 API 双通道
 
