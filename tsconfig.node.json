@@ -10,5 +10,5 @@
     "esModuleInterop": true,
     "strict": true
   },
-  "include": ["vite.config.ts", "vite-plugin-data-api.ts"]
+  "include": ["vite.config.ts", "vite-plugin-data-api.ts", "src/lib/atomEvolution.ts", "src/types/index.ts", "src/types/notes.ts"]
 }

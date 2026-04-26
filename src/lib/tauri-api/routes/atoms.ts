@@ -12,9 +12,14 @@ import {
   removeFile,
   ensureDir,
   relativePath,
+  appendJSONL,
 } from '../fsHelpers'
 import { readTextFile } from '@tauri-apps/plugin-fs'
 import { loadAllAtoms, findAtomFile, rebuildIndex } from '../rebuildIndex'
+import {
+  computeStaleness,
+  detectPruneCandidates,
+} from '@/lib/atomEvolution'
 
 function ok(body: any, status = 200): RouteResult {
   return { status, body }
@@ -36,6 +41,26 @@ export async function handleAtoms(
     return ok(await loadAllAtoms(dataDir))
   }
 
+  // V2.x cognitive-evolution · GET /atoms/prune-candidates
+  if (method === 'GET' && parts.length === 2 && parts[1] === 'prune-candidates') {
+    const limitParam = _sp.get('limit')
+    const limit = limitParam ? Math.max(1, parseInt(limitParam, 10) || 10) : 10
+    const all = await loadAllAtoms(dataDir)
+    const corpus = all.filter((a: any) => a && a.kind !== 'profile' && a.kind !== 'skill-inventory')
+    const result = detectPruneCandidates(corpus, { limit })
+    try {
+      const logFile = joinPathSync(dataDir, 'growth', 'usage-log.jsonl')
+      await ensureDir(joinPathSync(dataDir, 'growth'))
+      await appendJSONL(logFile, {
+        ts: new Date().toISOString(),
+        action: 'prune.scanned',
+        candidates_count: result.summary.candidates_count,
+        summary: result.summary,
+      })
+    } catch { /* non-fatal */ }
+    return ok({ ok: true, ...result })
+  }
+
   // GET /atoms/:id
   if (method === 'GET' && parts.length === 2) {
     const file = await findAtomFile(dataDir, parts[1])
@@ -44,6 +69,14 @@ export async function handleAtoms(
     atomData._file = relativePath(dataDir, file)
     atomData._absPath = file
     return ok(atomData)
+  }
+
+  // V2.x cognitive-evolution · GET /atoms/:id/staleness
+  if (method === 'GET' && parts.length === 3 && parts[2] === 'staleness') {
+    const file = await findAtomFile(dataDir, parts[1])
+    if (!file) return err('not found')
+    const atom = JSON.parse(await readTextFile(file))
+    return ok(computeStaleness(atom))
   }
 
   // POST /atoms — create
@@ -166,6 +199,114 @@ export async function handleAtoms(
     atom.updatedAt = new Date().toISOString()
     await writeJSON(file, atom)
     return ok({ ok: true, locked: atom.stats.locked, confidence: atom.confidence })
+  }
+
+  // V2.x cognitive-evolution · POST /atoms/:id/supersede
+  if (method === 'POST' && parts.length === 3 && parts[2] === 'supersede') {
+    const oldId = parts[1]
+    const { newAtom, archiveOld = true } = body || {}
+    if (!newAtom || typeof newAtom !== 'object') return err('newAtom is required', 400)
+
+    const oldFile = await findAtomFile(dataDir, oldId)
+    if (!oldFile) return err('old atom not found', 404)
+    const oldAtom = JSON.parse(await readTextFile(oldFile))
+    if (oldAtom.stats?.locked) return err('old atom is locked', 423)
+    if (oldAtom.archivedAt) return err('old atom is already archived', 409)
+
+    const now = new Date().toISOString()
+
+    // Generate new atom id if missing
+    if (!newAtom.id) {
+      const slug = String(newAtom.name || 'atom').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) || 'atom'
+      const ts = Math.floor(Date.now() / 1000)
+      newAtom.id = `atom_exp_${slug}_${ts}`
+    }
+    newAtom.kind = newAtom.kind || 'experience'
+    newAtom.subKind = newAtom.subKind || 'crystallized'
+    newAtom.schemaVersion = 1
+    newAtom.createdAt = newAtom.createdAt || now
+    newAtom.updatedAt = now
+    newAtom.stats = newAtom.stats || { usedInProjects: [], useCount: 0, aiInvokeCount: 0, humanViewCount: 0 }
+    newAtom.supersedes = Array.from(new Set([oldId, ...(oldAtom.supersedes || []), ...(newAtom.supersedes || [])]))
+
+    const slug = String(newAtom.id).replace(/^atom_(exp|frag)_/, '').replace(/_\d+$/, '').replace(/_/g, '-') || 'atom'
+    const newFolder = joinPathSync(dataDir, 'atoms', 'experience', slug)
+    await ensureDir(newFolder)
+    const newFile = joinPathSync(newFolder, `${newAtom.id}.json`)
+    await writeJSON(newFile, newAtom)
+
+    oldAtom.supersededBy = newAtom.id
+    oldAtom.updatedAt = now
+    if (archiveOld) oldAtom.archivedAt = now
+    await writeJSON(oldFile, oldAtom)
+
+    await rebuildIndex(dataDir)
+    try {
+      const logFile = joinPathSync(dataDir, 'growth', 'usage-log.jsonl')
+      await ensureDir(joinPathSync(dataDir, 'growth'))
+      await appendJSONL(logFile, {
+        ts: now,
+        action: 'supersede.applied',
+        oldId,
+        newId: newAtom.id,
+        archivedOld: archiveOld,
+      })
+    } catch { /* non-fatal */ }
+
+    return ok({ ok: true, oldId, newId: newAtom.id, oldPath: oldFile, newPath: newFile, archivedOld: archiveOld })
+  }
+
+  // V2.x cognitive-evolution · POST /atoms/:id/archive
+  if (method === 'POST' && parts.length === 3 && parts[2] === 'archive') {
+    const id = parts[1]
+    const reason = body?.reason
+    if (reason && typeof reason === 'string' && reason.length > 500) return err('reason exceeds 500 chars', 400)
+    const file = await findAtomFile(dataDir, id)
+    if (!file) return err('atom not found', 404)
+    const atom = JSON.parse(await readTextFile(file))
+    if (atom.stats?.locked) return err('atom is locked', 423)
+    const now = new Date().toISOString()
+    atom.archivedAt = now
+    if (reason) atom.archivedReason = String(reason).slice(0, 500)
+    atom.updatedAt = now
+    await writeJSON(file, atom)
+    await rebuildIndex(dataDir)
+    try {
+      const logFile = joinPathSync(dataDir, 'growth', 'usage-log.jsonl')
+      await ensureDir(joinPathSync(dataDir, 'growth'))
+      await appendJSONL(logFile, {
+        ts: now,
+        action: 'archive.applied',
+        atomId: id,
+        ...(reason ? { reason } : {}),
+      })
+    } catch { /* non-fatal */ }
+    return ok({ ok: true, atomId: id, archivedAt: now, ...(reason ? { reason } : {}) })
+  }
+
+  // V2.x cognitive-evolution · POST /atoms/:id/restore
+  if (method === 'POST' && parts.length === 3 && parts[2] === 'restore') {
+    const id = parts[1]
+    const file = await findAtomFile(dataDir, id)
+    if (!file) return err('atom not found', 404)
+    const atom = JSON.parse(await readTextFile(file))
+    if (!atom.archivedAt) return err('atom is not archived', 400)
+    delete atom.archivedAt
+    delete atom.archivedReason
+    const now = new Date().toISOString()
+    atom.updatedAt = now
+    await writeJSON(file, atom)
+    await rebuildIndex(dataDir)
+    try {
+      const logFile = joinPathSync(dataDir, 'growth', 'usage-log.jsonl')
+      await ensureDir(joinPathSync(dataDir, 'growth'))
+      await appendJSONL(logFile, {
+        ts: now,
+        action: 'archive.restored',
+        atomId: id,
+      })
+    } catch { /* non-fatal */ }
+    return ok({ ok: true, atomId: id, restored: true })
   }
 
   // DELETE /atoms/:id

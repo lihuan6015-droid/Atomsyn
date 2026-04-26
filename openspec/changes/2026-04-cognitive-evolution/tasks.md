@@ -42,11 +42,11 @@
 
 ## D · 数据 API 双通道
 
-- [ ] D1. Dev 模式:`vite-plugin-data-api.ts` 增加 5 个路由(`POST /atoms/:id/supersede` / `POST /atoms/:id/archive` / `POST /atoms/:id/restore` / `GET /atoms/prune-candidates` / `GET /atoms/:id/staleness`)
-- [ ] D2. Tauri 模式:`src/lib/tauri-api/routes/atoms.ts` 增加对应 5 个 handler,复用 `evolution.mjs` 的逻辑(注意:Tauri 路由用 TS,需要把 evolution 逻辑做成纯函数 module 共享,或在 `src/lib/tauri-api/evolutionAdapter.ts` 包一层)
-- [ ] D3. 在 `src/lib/tauri-api/router.ts` 的 handlers 数组注册新路由
-- [ ] D4. 写操作后调用 `rebuildIndex()`(supersede / archive / restore 都会改 atom)
-- [ ] D5. `npm run build` + `cargo check` 通过(参考 CLAUDE.md 的检查清单)
+- [x] D1. Dev 模式:`vite-plugin-data-api.ts` 增加 5 个路由(`POST /atoms/:id/supersede` / `POST /atoms/:id/archive` / `POST /atoms/:id/restore` / `GET /atoms/prune-candidates` / `GET /atoms/:id/staleness`) — 全部 5 端点已加; staleness/prune-candidates 两个 GET 路由顺序: prune-candidates 在 :id 之前匹配 (避免被 :id 抢走); 写端点同步 rebuildIndex; usage-log 追加 supersede.applied / archive.applied / archive.restored / prune.scanned
+- [x] D2. Tauri 模式:`src/lib/tauri-api/routes/atoms.ts` 增加对应 5 个 handler,复用 `evolution.mjs` 的逻辑(注意:Tauri 路由用 TS,需要把 evolution 逻辑做成纯函数 module 共享,或在 `src/lib/tauri-api/evolutionAdapter.ts` 包一层) — 新建 `src/lib/atomEvolution.ts` 作为 TS 共享模块 (含 computeStaleness / detectCollision / detectPruneCandidates 纯函数), 由 vite-plugin-data-api.ts (Node) 和 tauri-api/routes/atoms.ts (TS) 共同 import; tauri-api/routes/atoms.ts 5 个 handler 与 vite middleware 行为一致 (走 fsHelpers); 同步 evolution.mjs 公式 (双重维护)
+- [x] D3. 在 `src/lib/tauri-api/router.ts` 的 handlers 数组注册新路由 — `prefix: 'atoms'` 已存在, 新路由通过 handleAtoms 内部 parts.length / parts[2] 分发, 无需新 prefix 注册
+- [x] D4. 写操作后调用 `rebuildIndex()`(supersede / archive / restore 都会改 atom) — supersede / archive / restore handler 全部在写完后调 rebuildIndex(dataDir)
+- [x] D5. `npm run build` + `cargo check` 通过(参考 CLAUDE.md 的检查清单) — V1 (npm run build) ✅ V2 (npm run lint) ✅ V3 (cargo check) ✅; 端到端 curl 测试 4 端点 (staleness / prune-candidates / archive / restore) 行为正确
 
 ## E · Skill 契约
 
