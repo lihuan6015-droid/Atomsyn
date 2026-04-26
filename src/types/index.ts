@@ -218,6 +218,29 @@ export interface AtomStats {
 
 export type AtomRelationType = 'child' | 'sibling' | 'parent'
 
+/**
+ * V2.x cognitive-evolution · Shared evolution fields across atom kinds.
+ * All optional. Mirrors the additive fields in atom/experience-atom/experience-fragment schemas.
+ *
+ * Semantics (enforced by atomsyn-cli, not TS):
+ * - `supersededBy` + `archivedAt` are set together by the supersede command.
+ * - Once `supersededBy` or `archivedAt` is set, the atom is read-only (update rejected by CLI).
+ * - `archive --restore` clears `archivedAt` + `archivedReason`.
+ * - `lastAccessedAt` is throttled (only persisted if last update > 1h ago).
+ */
+export interface AtomEvolutionFields {
+  /** ISO 8601 timestamp of last read/find hit. Falls back to createdAt when absent. */
+  lastAccessedAt?: string
+  /** Single atom id that supersedes this one. */
+  supersededBy?: string
+  /** Atom ids this atom supersedes (single-direction linked list). */
+  supersedes?: string[]
+  /** ISO 8601 soft-delete timestamp. */
+  archivedAt?: string
+  /** Optional rationale captured when archiving. */
+  archivedReason?: string
+}
+
 // ----- V1.5 atom variants --------------------------------------------------
 
 /**
@@ -225,7 +248,7 @@ export type AtomRelationType = 'child' | 'sibling' | 'parent'
  * Structured around framework + cell positioning. Used in the 24-Step matrix,
  * UI/UX patterns, Agent development, and any future curated skeleton.
  */
-export interface MethodologyAtom {
+export interface MethodologyAtom extends AtomEvolutionFields {
   id: string
   schemaVersion: 1
   kind: 'methodology'
@@ -270,7 +293,7 @@ export interface ExperienceAtomCodeArtifact {
   description?: string
 }
 
-export interface ExperienceAtom {
+export interface ExperienceAtom extends AtomEvolutionFields {
   id: string
   schemaVersion: 1
   kind: 'experience'
@@ -357,7 +380,7 @@ export type InsightType =
   | '纯好奇'
   | string // open for future extension
 
-export interface ExperienceFragment {
+export interface ExperienceFragment extends AtomEvolutionFields {
   id: string
   schemaVersion: 1
   kind: 'experience'
