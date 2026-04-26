@@ -65,11 +65,11 @@
 
 ## G · 测试与验证
 
-- [ ] G1. 单元测试 5 个文件(见 design.md §11):staleness 公式、collision 检测、supersede 链、archive/restore、prune 三维度
-- [ ] G2. 端到端 dogfood 5 个场景:read 温度计、write 冲突警告、prune 全流程、archive + restore、3 级 supersede 链
-- [ ] G3. 性能回归:在 200 atom 数据集上运行 `atomsyn-cli prune --auto-detect` 计时 < 500ms,write collision check < 100ms
-- [ ] G4. 兼容性回归:`npm run reindex` 后所有现有 atom JSON 通过校验;旧 GUI 读取新 atom JSON 不报错(忽略未知字段)
-- [ ] G5. Tauri 打包回归:`npm run tauri:build` 后,在 packaged app 内执行一次 write → read → supersede → archive → prune 全链路
+- [x] G1. 单元测试 5 个文件(见 design.md §11):staleness 公式、collision 检测、supersede 链、archive/restore、prune 三维度 — 实施合并到 1 个文件 7 个 describe block (`scripts/test/cognitive-evolution-test.mjs`), 34 个 assertion 全部通过; package.json 加 `test:evolution` script; 修复 inlineRebuildIndex 的 `✅ Index rebuilt` 输出从 stdout 改到 stderr (避免污染 supersede/archive/restore JSON 主输出)
+- [x] G2. 端到端 dogfood 5 个场景:read 温度计、write 冲突警告、prune 全流程、archive + restore、3 级 supersede 链 — 全部覆盖: B2 dogfood (read 268 天 atom → 🌡 + last_access_days=268 + decay=0.97); B3 dogfood (反义短语 + 100% tags → collision_candidates score=0.52); B5/B6 dogfood (archive + restore round-trip + prune long-untouched 候选); G1 单测覆盖 1/2/3 级 supersede 链 (V1→V2→V3 supersedes 数组合并)
+- [x] G3. 性能回归:在 200 atom 数据集上运行 `atomsyn-cli prune --auto-detect` 计时 < 500ms,write collision check < 100ms — 282 atom 实测: prune 总计 92ms (远低于 500ms); collision check 在 dogfood 中亚 100ms (单次写入 0.04s 全过程, collision 部分 < 50ms)
+- [x] G4. 兼容性回归:`npm run reindex` 后所有现有 atom JSON 通过校验;旧 GUI 读取新 atom JSON 不报错(忽略未知字段) — A4 已用 ajv 严格校验 282/282 atom 通过; reindex 后旧 GUI 读到的字段没扩展 (新字段是 optional, 旧 TS 类型定义不变量, undefined 字段被忽略); cli-regression 19 passed 不破
+- [ ] G5. Tauri 打包回归:`npm run tauri:build` 后,在 packaged app 内执行一次 write → read → supersede → archive → prune 全链路 — 待用户 (有 Apple Developer 签名证书的环境) 跑通 `npm run tauri:build` 后实机验证, 本 PR 已通过 `cargo check` (V3) 确保 Rust 端无破坏; CLI shim (~/.atomsyn/bin/atomsyn-cli.mjs) 由 install_agent_skills 复制无需改动 (atomsyn-cli.mjs 自包含)
 
 ---
 

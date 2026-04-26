@@ -23,7 +23,8 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
-    "test:cli": "node scripts/test/cli-regression.mjs"
+    "test:cli": "node scripts/test/cli-regression.mjs",
+    "test:evolution": "node scripts/test/cognitive-evolution-test.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.1",

@@ -1780,8 +1780,12 @@ async function inlineRebuildIndex(dataDir) {
     }
   }
 
-  console.log(
-    `✅ Index rebuilt: ${index.frameworks.length} frameworks · ${index.atoms.length} atoms · ${index.experiences.length} experiences · ${index.skillInventory.length} skills · ${index.projects.length} projects`
+  // V2.x: write status to stderr instead of stdout to avoid polluting
+  // JSON output of supersede / archive / restore / write / update commands
+  // that call rebuildIndex internally. cmdReindex (the standalone command)
+  // still surfaces this line because terminals show stderr by default.
+  process.stderr.write(
+    `✅ Index rebuilt: ${index.frameworks.length} frameworks · ${index.atoms.length} atoms · ${index.experiences.length} experiences · ${index.skillInventory.length} skills · ${index.projects.length} projects\n`
   )
 }
 
