@@ -2,11 +2,57 @@
 
 > **目的**: 让任意 Agent (主 Claude / 子 agent / 新会话压缩后的延续) 在**不需要回看历史对话**的情况下, 准确理解本批两个 change 的实施意图、顺序、耦合关系和验证标准, 端到端推进开发到合并归档。
 >
-> **状态**: handoff (实施前已对齐, 等待开工信号)
+> **状态**: **in-progress · Phase β (bootstrap-skill 待开工)**
 > **创建**: 2026-04-26
+> **最后更新**: 2026-04-26 · cognitive-evolution Phase α 已合并
 > **关联 changes**:
-> - `openspec/changes/2026-04-cognitive-evolution/` (P0, 先实施)
-> - `openspec/changes/2026-04-bootstrap-skill/` (P1, 依赖前者)
+> - ✅ `openspec/changes/2026-04-cognitive-evolution/` (Phase α 已合并到 main, 13 commit `dbd428b..2ffd483`)
+> - 🔲 `openspec/changes/2026-04-bootstrap-skill/` (Phase β 待开工, **依赖前者已就位**)
+
+---
+
+## 0.5 · Phase α 完结状态 (2026-04-26)
+
+cognitive-evolution change 已端到端实施完成, 所有自动化验证通过 (V1-V5/V7/V8), 留 4 项需用户实机验证 (B11 Tauri shim / E4 真实 LLM 沙箱 / G5 packaged dogfood / V6 视觉)。
+
+**bootstrap-skill 可以直接调用的接口** (cognitive-evolution 已就位):
+
+| 接口 | 位置 | 何时用 |
+|---|---|---|
+| `applyProfileEvolution(deps, {newSnapshot, trigger, evidenceDelta?})` | `scripts/lib/evolution.mjs` | bootstrap **B13 commit 阶段** 写入 profile (trigger: `bootstrap_initial` / `bootstrap_rerun`); GUI **校准模块** 提交时 (trigger: `user_calibration`); restore 历史时 (trigger: `restore_previous`) |
+| `computeStaleness(atom, now)` 含 profile_factor | 同上 | profile 90 天未校准 → factor=1.5x, GUI staleness 提示自动生效 (B12) |
+| imported atom fallback | 同上 (computeStaleness 内) | bootstrap 写入的 atom 默认 `confidence=0.5` + `lastAccessedAt=null` 时, staleness 用 createdAt 兜底, 不会"刚 import 立即被标 stale" (B13) |
+| atom schema 5 字段 | `skills/schemas/{atom,experience-atom,experience-fragment}.schema.json` | profile schema (bootstrap A2 任务) 同样可以加这些字段; supersededBy/supersedes 在 profile 上**不使用** (D-008), 但 lastAccessedAt/archivedAt/archivedReason 共享 |
+| `AtomEvolutionFields` TS mixin | `src/types/index.ts` | profile-atom TS 类型可 `extends AtomEvolutionFields` 复用 |
+| 5 个 cognitive-evolution API 端点 | `vite-plugin-data-api.ts` + `src/lib/tauri-api/routes/atoms.ts` | bootstrap 不直接消费这些, 但**新增** `/atoms/:id/calibrate-profile` 端点应当模仿这套双通道模式 |
+| `src/lib/atomEvolution.ts` (TS port) | 同名文件 | bootstrap GUI 端 (BootstrapWizard / ProfilePage) 需要计算 profile staleness 时直接 import |
+
+**bootstrap-skill 实施时必须沿用的模式** (cognitive-evolution 已建立先例):
+
+- 双通道 API 实现: 任何新端点必须同时在 `vite-plugin-data-api.ts` (Node) + `src/lib/tauri-api/routes/atoms.ts` (TS) 实现, 共享 `src/lib/atomEvolution.ts` 纯函数模块
+- 退出码统一: 0 / 2 (not found) / 3 (locked / 状态冲突) / 4 (校验失败) / 1 (其他)
+- usage-log 事件命名: 动作 + 名词 (如 `bootstrap.session_started`, `profile.evolution_applied`)
+- inlineRebuildIndex 输出走 stderr (避免污染 JSON 主输出, 见 1c75786 commit message)
+- TS port 与 evolution.mjs **故意双重维护** (注释提醒, 因为 .mjs 不能被 vite/TS 直接 import)
+
+**Phase α 完整 commit 列表** (按时序, 用于 git log 追溯):
+
+```
+dbd428b feat(...): atom schemas 增加 5 个演化字段 [A1 A2]
+c5d9faf feat(...): TS 类型同步演化字段 [A3]
+bbc5021 chore(...): A 组完成 [A1-A5]
+e7da21a feat(...): scripts/lib/evolution.mjs 演化层模块 [B1]
+8587b55 feat(...): read/find 输出 staleness + lastAccessedAt 被动更新 [B2]
+a28b019 feat(...): write/update 触发 collision check [B3]
+465477d feat(...): supersede / archive / prune 三个新命令 [B4-B6 + B7-B10]
+d0a5cef chore(...): B 组完成 [B11-B13]
+9327c52 feat(...): GUI 视觉信号 + Spotlight 默认过滤 archived [C1-C5]
+ebab639 feat(...): 数据 API 双通道 5 个新端点 [D1-D5]
+24d7ca3 feat(...): 三个 skill 契约同步演化协议 [E1-E3]
+cd897d5 docs(...): 同步契约文档 + V2.x 北极星叙事 [F1-F5]
+1c75786 test(...): G 组单元测试 + dogfood 验证 [G1-G4]
+2ffd483 chore(...): V1-V7 验证勾选 + 收尾 [V1-V8]
+```
 
 ---
 
