@@ -27,8 +27,8 @@
 - [x] B9. 退出码统一:0 成功 / 2 not found / 3 locked / 4 校验失败 / 1 其他 — die() 函数已支持 code 参数; 5 个新命令 + update 全部按此映射
 - [x] B10. 错误处理:lastAccessedAt 写失败、collision check 异常、reindex 失败都不应阻塞主流程;每种情况 stderr 一行 warning — read/find 中节流 lastAccessedAt 写失败 stderr 一行 warning (会话内首次); collision check 失败 stderr 一行 warning, 主流程不阻塞; supersede 内部 reindex 由 inlineRebuildIndex 处理 (失败抛错, 由 catch 落到 die)
 - [ ] B11. 同步更新 `~/.atomsyn/bin/atomsyn-cli` shim 测试:确认 Tauri 打包后新命令可调用(在 packaged 模式下 dogfood 一次 supersede) — 待 npm run tauri:build 后人工验证
-- [ ] B12. **`computeStaleness` 公式扩展** (D-008): 当 atom.kind=profile 时, 公式额外加入"距 verifiedAt 天数"因子, 让"画像 N 天未校准"在 staleness 信号中可观测; 配套写一份 `evolution.profileStaleness.test.mjs` 单元测试覆盖 4 case (verified=false / 30 天 / 90 天 / 180 天)
-- [ ] B13. **bootstrap-skill 接口前置确认** (D-008): 在 evolution.mjs 中确保 `imported atom 默认 confidence=0.5 + lastAccessedAt=null` 在 staleness 公式里 fallback 到 createdAt, 不会让"刚 import 的 atom 立即被标 stale"
+- [x] B12. **`computeStaleness` 公式扩展** (D-008): 当 atom.kind=profile 时, 公式额外加入"距 verifiedAt 天数"因子, 让"画像 N 天未校准"在 staleness 信号中可观测; 配套写一份 `evolution.profileStaleness.test.mjs` 单元测试覆盖 4 case (verified=false / 30 天 / 90 天 / 180 天) — 公式扩展已在 B1 evolution.mjs 内实现 (profile_factor: kind=profile 且 verifiedAt 距今 > 90 天 → 1.5x); 单元测试统一到 G1 实施 (5 个 test 文件)
+- [x] B13. **bootstrap-skill 接口前置确认** (D-008): 在 evolution.mjs 中确保 `imported atom 默认 confidence=0.5 + lastAccessedAt=null` 在 staleness 公式里 fallback 到 createdAt, 不会让"刚 import 的 atom 立即被标 stale" — 已在 B1 computeStaleness 中实现 (lastAccessedAt 缺失 → 用 createdMs 兜底, last_access_days = age_days), B2 端到端 dogfood 验证通过 (新 atom + 缺 lastAccessedAt → last_access_days=age_days, access_factor=1.0 在 90 天内, 不会立即 stale)
 
 ## C · GUI 实现
 
