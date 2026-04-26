@@ -145,6 +145,25 @@ atomsyn-cli find --query "竞品 分析" --top 3
 
 **Token 预算**: 一次 read (~500 token) + 1-3 次 get/find (~3000 token each) = 总计不超过 10000 token
 
+### Step 2c · 检查 staleness 信号 (V2.x cognitive-evolution)
+
+CLI 输出的 markdown 中, atom 名前如果有 🌡 emoji, 表示该 atom **可能过时** (V2.x 的"温度计信号", confidence 衰减 ≥ 50%)。也可以通过 `--json` mode 查看 `is_stale` 字段确认。
+
+遇到 🌡 标记时:
+
+1. **追加一句温度计句** (自然语气, ≤ 30 tokens), 在回答里**自然融入**, 不要单独成段, 例如:
+   - "你 N 个月前认为 X (`<atom_id>`), 现在还成立吗?"
+   - "这条经验距今已 N 天没被用过, 值得在当前情境里再校准一次"
+2. **不要打断主回答**: 先按 atom 内容回答, 然后用一句话提示衰减, 让用户决定要不要校准
+3. **顺势接下一步**: 用户后续如果说...
+   - "对, 改一下" → 调 `atomsyn-cli supersede --id <old> --input <new.json>` (创建新 atom 取代旧的) 或 `atomsyn-cli update --id <old> --stdin` (覆盖更新)
+   - "还是对的" → 提示用户在 Atomsyn GUI 里 lock 这条 atom 抗未来衰减
+
+**关键约束**:
+- 温度计句**只在第一次提到该 atom 时**输出一次, 不要重复
+- 不要把"过时"当作"错的" —— 衰减只是信号, 用户需要自己判断
+- 同一 atom 在 read 命中后 lastAccessedAt 已被自动更新, 下一次相同 query 不会再标 🌡 (访问加成消失)
+
 ### Step 3 · 把内容注入你的回答
 
 **核心原则: 像一个懂你的朋友递给你一句话,不要粘贴 JSON 或原始数据结构。**

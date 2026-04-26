@@ -219,6 +219,39 @@ CLI 成功时会在 stdout 返回一份 JSON:
 
 失败时 CLI 非零退出 + stderr 打印错误(例如 `insight must be 50-4000 characters` 或 `Atom is locked`)。你**读这份 stderr 告诉用户发生了什么**,不要 retry 同样的 payload —— 要么修正输入(比如 insight 太短补充内容)要么放弃。
 
+### Step 3.4 · 处理 collision_candidates (V2.x cognitive-evolution)
+
+CLI write/update 默认开启 collision check。如果新 atom 与库内已有 atom 强相似 (`tags` 70%+ 重叠 + insight 关键词 50%+ 或反义短语命中), stdout 会含 `collision_candidates` 字段, stderr 会有黄色 ⚠️ 提示:
+
+```json
+{
+  "ok": true,
+  "atomId": "atom_exp_xxx_<unix>",
+  "...": "...",
+  "collision_candidates": [
+    { "id": "atom_exp_old_id", "name": "旧 atom 名", "score": 0.78, "reason": "tags 70% 重叠 + 含反义短语 '推翻'" }
+  ],
+  "hint": "本次写入已完成。如需取代旧 atom, 用 atomsyn-cli supersede --id <old> --input <这个文件>"
+}
+```
+
+**写入已经成功** (exit 0), `collision_candidates` 仅是**警告**。下面三选一让用户裁决:
+
+1. **不要重新调用 write/update** — 写入已完成
+2. 用 AskUserQuestion 三选一展示给用户:
+   - 选项 A · "保留新建, 旧的也留着" → 默认, 无后续操作
+   - 选项 B · "用新的取代旧的" → 调 `atomsyn-cli supersede --id <旧 id> --input <刚才的临时 JSON 文件>` (但这会创建第二条新 atom! 推荐改走流程 C)
+   - 选项 C · "并存 (fork)" → V2.x 不实现, 告诉用户"fork 暂未支持, 保持新建"
+3. **流程 D · 干净 supersede (推荐)**:
+   - 如果用户在 write 之前**已经怀疑会冲突**, 应该先 `atomsyn-cli find --query` 找到旧 id, 再**直接调** `atomsyn-cli supersede --id <旧 id> --input <新 atom JSON 文件>` —— **不调 write**, 避免双写
+   - supersede 内部走"创建新 atom + 旧 atom archived + supersededBy 链接"的原子操作, 自动 rebuildIndex
+
+**关键约束**:
+- collision_candidates 是启发式信号, 不是真冲突 —— 让用户决定
+- 用户说"算了不取代了" → 不再操作, 已写入的新 atom 保留
+- 用户说"取代它" → 走流程 D (推荐) 或 supersede + archive 已写入的新 atom (避免多余的双 atom)
+- **不要默默 supersede**: D-005 决策严禁 LLM 自动 mutate 知识库, 必须用户裁决
+
 ### Step 3.5 · 迁移配图 (如果有)
 
 如果你在 Step 1 的 `screenshots` 或 `insight` 里引用了配图文件（纯文件名）：

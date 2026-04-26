@@ -101,6 +101,45 @@ atomsyn-cli mentor --range all --format data
 - 如果数据量太少（<5 条碎片），诚实说明"数据还不够，建议先积累更多经验再复盘"
 - 报告末尾**必须给出可操作的下一步引导**，引导用户进入深入对话
 
+### Phase 2.5 — 主动 prune 建议 (V2.x cognitive-evolution)
+
+生成复盘报告主体后, 在末尾**额外**调用一次 prune 扫描:
+
+```bash
+atomsyn-cli prune --limit 5
+```
+
+CLI 返回 `{ candidates: [...], summary: { candidates_count, by_reason } }`。如果 `candidates.length >= 1`, 在报告末尾追加一段 "🧹 认知整理建议":
+
+```markdown
+---
+
+### 🧹 认知整理建议
+
+你的库里有 N 条候选认知**可能需要清理**(三维度并集: 同 tags 矛盾 / 长期未访问 + 高 confidence_decay / 引用文件丢失):
+
+1. **<atom name>** (`<atom_id>`) · 已 N 天未访问, decay X% — 建议 `<archive | supersede>`
+2. ...
+
+要现在一条条裁决吗? 我会逐条用 AskUserQuestion 帮你选 **保留 / 取代 / 归档**。
+```
+
+**用户裁决流程** (用户说"好" / "扫一下"):
+
+1. 对每条 candidate 调一次 AskUserQuestion 三选一:
+   - **保留 (keep)** → 不动
+   - **取代 (supersede)** → 引导用户写新 atom JSON, 调 `atomsyn-cli supersede --id <id> --input <new.json>`
+   - **归档 (archive)** → 调 `atomsyn-cli archive --id <id> --reason "<用户提供>"`
+2. 全部裁决完后, 总结: "已 supersede X 条, archive Y 条, keep Z 条。"
+
+**关键约束 (D-005)**:
+- prune 永远 dry-run, **绝不**自动 mutate 知识库
+- 每条裁决必须用 AskUserQuestion 等用户确认
+- 用户说"先不清理" → 立即停止, 不留中间状态
+- 已经 archived 的 candidate 不会再次出现 (CLI 已过滤)
+
+**Token 预算**: 单次复盘报告含 prune 建议时 ≤ 5000 tokens (原 ~3000 + prune 段 ~2000)。
+
 ### Phase 3 — 深入对话模式（核心差异化）
 
 用户看完报告后进入深入对话。**这是导师模式区别于普通数据报表的关键**——你不是仪表盘，你是教练。

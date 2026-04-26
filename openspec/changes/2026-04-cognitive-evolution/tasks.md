@@ -50,10 +50,10 @@
 
 ## E · Skill 契约
 
-- [ ] E1. 更新 `skills/atomsyn-read/SKILL.md`:新增 Step 2c "检查 staleness 信号",定义"温度计句"约定 + Token 预算 30/句
-- [ ] E2. 更新 `skills/atomsyn-write/SKILL.md`:新增 Step 3.5 "处理 collision_candidates",定义三选一(保留 / supersede / fork-暂未支持)流程 + AskUserQuestion 用法
-- [ ] E3. 更新 `skills/atomsyn-mentor/SKILL.md`:新增 Phase 3 "主动 prune 建议",在复盘报告末尾追加 🧹 段;Token 预算从 3000 升到 5000
-- [ ] E4. 在 Claude Code / Cursor 沙箱里真实跑通三个 skill 的新触发场景:read 命中旧 atom → 温度计句、write 触发冲突 → AskUserQuestion、mentor 调用 prune → 候选裁决
+- [x] E1. 更新 `skills/atomsyn-read/SKILL.md`:新增 Step 2c "检查 staleness 信号",定义"温度计句"约定 + Token 预算 30/句 — 加入 Step 2c (在 Step 2b 之后, Step 3 之前): 🌡 标记触发 → 自然语气温度计句 ≤ 30 tokens → 用户回复改 / 不改 → 顺势调 supersede / update / lock; 关键约束: 同 atom 一次会话只提示一次, 不要把"过时"当"错的"
+- [x] E2. 更新 `skills/atomsyn-write/SKILL.md`:新增 Step 3.5 "处理 collision_candidates",定义三选一(保留 / supersede / fork-暂未支持)流程 + AskUserQuestion 用法 — 加入 Step 3.4 (在 Step 3 / Step 3.5 之间, 命名 Step 3.4 避免与现有 Step 3.5 配图迁移冲突): 三选一 + 流程 D 干净 supersede 推荐路径 + 强调 D-005 严禁自动 mutate
+- [x] E3. 更新 `skills/atomsyn-mentor/SKILL.md`:新增 Phase 3 "主动 prune 建议",在复盘报告末尾追加 🧹 段;Token 预算从 3000 升到 5000 — 加入 Phase 2.5 (在 Phase 2 报告生成 / Phase 3 深入对话之间, 因为 prune 段是报告的一部分): 调 `atomsyn-cli prune --limit 5` → 候选 ≥ 1 时追加 🧹 段 → 用户说"扫一下" → 逐条 AskUserQuestion (keep/supersede/archive) → 总结裁决结果; Token 预算 ≤ 5000
+- [ ] E4. 在 Claude Code / Cursor 沙箱里真实跑通三个 skill 的新触发场景:read 命中旧 atom → 温度计句、write 触发冲突 → AskUserQuestion、mentor 调用 prune → 候选裁决 — 待用户在 Claude Code / Cursor 实机验证 (本 PR 内 CLI 端到端 dogfood 已覆盖底层 CLI 行为, Skill 触发条件需 LLM 实际调用)
 
 ## F · 文档
 
