@@ -36,3 +36,10 @@ CLAUDE.md
 
 # Claude Code harness
 .claude
+
+# V2.x cognitive-evolution: tsc -b composite project artifacts
+# (tsconfig.node.json includes src/lib/atomEvolution.ts which causes tsc to
+#  emit .js/.d.ts siblings under src/. These should never be committed.)
+src/**/*.js
+src/**/*.d.ts
+src/**/*.js.map

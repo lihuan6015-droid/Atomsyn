@@ -82,6 +82,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
+import { computeStaleness, detectPruneCandidates } from './src/lib/atomEvolution';
 /**
  * Non-destructively copy bundled seed data into a user's data directory.
  * Mirrors the semantics of src-tauri/src/lib.rs `init_seed_*` commands.
@@ -856,6 +857,26 @@ export function dataApiPlugin(opts) {
                         if (method === 'GET' && parts.length === 1) {
                             return send(res, 200, await loadAllAtoms(dataDir));
                         }
+                        // V2.x cognitive-evolution · GET /api/atoms/prune-candidates
+                        if (method === 'GET' && parts.length === 2 && parts[1] === 'prune-candidates') {
+                            const limitParam = url.searchParams.get('limit');
+                            const limit = limitParam ? Math.max(1, parseInt(limitParam, 10) || 10) : 10;
+                            const all = await loadAllAtoms(dataDir);
+                            const corpus = all.filter((a) => a && a.kind !== 'profile' && a.kind !== 'skill-inventory');
+                            const result = detectPruneCandidates(corpus, { limit });
+                            try {
+                                const logFile = path.join(dataDir, 'growth', 'usage-log.jsonl');
+                                await fs.mkdir(path.dirname(logFile), { recursive: true });
+                                await fs.appendFile(logFile, JSON.stringify({
+                                    ts: new Date().toISOString(),
+                                    action: 'prune.scanned',
+                                    candidates_count: result.summary.candidates_count,
+                                    summary: result.summary,
+                                }) + '\n', 'utf-8');
+                            }
+                            catch { /* non-fatal */ }
+                            return send(res, 200, { ok: true, ...result });
+                        }
                         if (method === 'GET' && parts.length === 2) {
                             const file = await findAtomFile(dataDir, parts[1]);
                             if (!file)
@@ -864,6 +885,14 @@ export function dataApiPlugin(opts) {
                             atomData._file = path.relative(dataDir, file);
                             atomData._absPath = path.resolve(file);
                             return send(res, 200, atomData);
+                        }
+                        // V2.x cognitive-evolution · GET /api/atoms/:id/staleness
+                        if (method === 'GET' && parts.length === 3 && parts[2] === 'staleness') {
+                            const file = await findAtomFile(dataDir, parts[1]);
+                            if (!file)
+                                return send(res, 404, { error: 'not found' });
+                            const atom = JSON.parse(await fs.readFile(file, 'utf-8'));
+                            return send(res, 200, computeStaleness(atom));
                         }
                         if (method === 'POST' && parts.length === 1) {
                             const body = await readBody(req);
@@ -1015,6 +1044,122 @@ export function dataApiPlugin(opts) {
                             atom.updatedAt = new Date().toISOString();
                             await writeJSON(file, atom);
                             return send(res, 200, { ok: true, locked: atom.stats.locked, confidence: atom.confidence });
+                        }
+                        // V2.x cognitive-evolution · POST /api/atoms/:id/supersede
+                        if (method === 'POST' && parts.length === 3 && parts[2] === 'supersede') {
+                            const oldId = parts[1];
+                            const supBody = await readBody(req);
+                            const newAtom = supBody?.newAtom;
+                            const archiveOld = supBody?.archiveOld !== false;
+                            if (!newAtom || typeof newAtom !== 'object') {
+                                return send(res, 400, { error: 'newAtom is required' });
+                            }
+                            const oldFile = await findAtomFile(dataDir, oldId);
+                            if (!oldFile)
+                                return send(res, 404, { error: 'old atom not found' });
+                            const oldAtom = JSON.parse(await fs.readFile(oldFile, 'utf-8'));
+                            if (oldAtom.stats?.locked)
+                                return send(res, 423, { error: 'old atom is locked' });
+                            if (oldAtom.archivedAt)
+                                return send(res, 409, { error: 'old atom is already archived' });
+                            const now = new Date().toISOString();
+                            if (!newAtom.id) {
+                                const slug = String(newAtom.name || 'atom').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40) || 'atom';
+                                const ts = Math.floor(Date.now() / 1000);
+                                newAtom.id = `atom_exp_${slug}_${ts}`;
+                            }
+                            newAtom.kind = newAtom.kind || 'experience';
+                            newAtom.subKind = newAtom.subKind || 'crystallized';
+                            newAtom.schemaVersion = 1;
+                            newAtom.createdAt = newAtom.createdAt || now;
+                            newAtom.updatedAt = now;
+                            newAtom.stats = newAtom.stats || { usedInProjects: [], useCount: 0, aiInvokeCount: 0, humanViewCount: 0 };
+                            newAtom.supersedes = Array.from(new Set([oldId, ...(oldAtom.supersedes || []), ...(newAtom.supersedes || [])]));
+                            const slug = String(newAtom.id).replace(/^atom_(exp|frag)_/, '').replace(/_\d+$/, '').replace(/_/g, '-') || 'atom';
+                            const newFolder = path.join(dataDir, 'atoms', 'experience', slug);
+                            await fs.mkdir(newFolder, { recursive: true });
+                            const newFile = path.join(newFolder, `${newAtom.id}.json`);
+                            await writeJSON(newFile, newAtom);
+                            oldAtom.supersededBy = newAtom.id;
+                            oldAtom.updatedAt = now;
+                            if (archiveOld)
+                                oldAtom.archivedAt = now;
+                            await writeJSON(oldFile, oldAtom);
+                            await rebuildIndex(dataDir);
+                            try {
+                                const logFile = path.join(dataDir, 'growth', 'usage-log.jsonl');
+                                await fs.mkdir(path.dirname(logFile), { recursive: true });
+                                await fs.appendFile(logFile, JSON.stringify({
+                                    ts: now,
+                                    action: 'supersede.applied',
+                                    oldId,
+                                    newId: newAtom.id,
+                                    archivedOld: archiveOld,
+                                }) + '\n', 'utf-8');
+                            }
+                            catch { /* non-fatal */ }
+                            return send(res, 200, { ok: true, oldId, newId: newAtom.id, oldPath: oldFile, newPath: newFile, archivedOld: archiveOld });
+                        }
+                        // V2.x cognitive-evolution · POST /api/atoms/:id/archive
+                        if (method === 'POST' && parts.length === 3 && parts[2] === 'archive') {
+                            const id = parts[1];
+                            const archBody = await readBody(req);
+                            const reason = archBody?.reason;
+                            if (reason && typeof reason === 'string' && reason.length > 500) {
+                                return send(res, 400, { error: 'reason exceeds 500 chars' });
+                            }
+                            const file = await findAtomFile(dataDir, id);
+                            if (!file)
+                                return send(res, 404, { error: 'atom not found' });
+                            const atom = JSON.parse(await fs.readFile(file, 'utf-8'));
+                            if (atom.stats?.locked)
+                                return send(res, 423, { error: 'atom is locked' });
+                            const now = new Date().toISOString();
+                            atom.archivedAt = now;
+                            if (reason)
+                                atom.archivedReason = String(reason).slice(0, 500);
+                            atom.updatedAt = now;
+                            await writeJSON(file, atom);
+                            await rebuildIndex(dataDir);
+                            try {
+                                const logFile = path.join(dataDir, 'growth', 'usage-log.jsonl');
+                                await fs.mkdir(path.dirname(logFile), { recursive: true });
+                                await fs.appendFile(logFile, JSON.stringify({
+                                    ts: now,
+                                    action: 'archive.applied',
+                                    atomId: id,
+                                    ...(reason ? { reason } : {}),
+                                }) + '\n', 'utf-8');
+                            }
+                            catch { /* non-fatal */ }
+                            return send(res, 200, { ok: true, atomId: id, archivedAt: now, ...(reason ? { reason } : {}) });
+                        }
+                        // V2.x cognitive-evolution · POST /api/atoms/:id/restore
+                        if (method === 'POST' && parts.length === 3 && parts[2] === 'restore') {
+                            const id = parts[1];
+                            const file = await findAtomFile(dataDir, id);
+                            if (!file)
+                                return send(res, 404, { error: 'atom not found' });
+                            const atom = JSON.parse(await fs.readFile(file, 'utf-8'));
+                            if (!atom.archivedAt)
+                                return send(res, 400, { error: 'atom is not archived' });
+                            delete atom.archivedAt;
+                            delete atom.archivedReason;
+                            const now = new Date().toISOString();
+                            atom.updatedAt = now;
+                            await writeJSON(file, atom);
+                            await rebuildIndex(dataDir);
+                            try {
+                                const logFile = path.join(dataDir, 'growth', 'usage-log.jsonl');
+                                await fs.mkdir(path.dirname(logFile), { recursive: true });
+                                await fs.appendFile(logFile, JSON.stringify({
+                                    ts: now,
+                                    action: 'archive.restored',
+                                    atomId: id,
+                                }) + '\n', 'utf-8');
+                            }
+                            catch { /* non-fatal */ }
+                            return send(res, 200, { ok: true, atomId: id, restored: true });
                         }
                         if (method === 'DELETE' && parts.length === 2) {
                             const file = await findAtomFile(dataDir, parts[1]);
