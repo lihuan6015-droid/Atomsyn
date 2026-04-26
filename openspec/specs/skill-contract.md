@@ -33,6 +33,8 @@
 - W-I2. **写前先 find**: 写入前必须调用 `atomsyn-cli find` 检查是否已存在相似 atom, 优先 update 而非新建
 - W-I3. **不替用户决定**: 不主动写入, 只在自然停顿时**问一句**, 用户拒绝则沉默
 - W-I4. **schema 严格**: 任何写入必须通过 schema 校验, 失败时**不重试**, 让 CLI 报错给用户
+- W-I5. **collision 不阻塞** (V2.x): write/update 默认开启 collision check; 检测到候选时, write 已成功, 通过 stdout `collision_candidates` + stderr 警告告知 Agent, **必须用 AskUserQuestion 让用户裁决** (保留 / supersede / fork-暂未支持), 严禁默默 supersede
+- W-I6. **archived/superseded 只读** (V2.x): update 拒绝改 archived 或 superseded 的 atom (exit 3), 用户必须先 archive --restore 才能继续编辑
 
 ### 2.3 Token 预算
 [TODO]
@@ -51,9 +53,11 @@
 [TODO] 预占位:
 
 - R-I1. **空结果沉默**: 找不到相关 atom 时不输出任何东西, 不假装有内容
-- R-I2. **只读不写**: read Skill 永远不写入数据
+- R-I2. **只读不写**: read Skill 永远不写入数据 (但 read CLI 内部会被动更新 lastAccessedAt, 这是 CLI 行为, 与 Skill 无关)
 - R-I3. **优先级高于训练知识**: 用户验证过的本地经验比通用知识更可信
 - R-I4. **轻调用**: 默认 `--top` 不超过 5, 避免 context 爆炸
+- R-I5. **温度计句不打断** (V2.x): 命中 atom 含 🌡 标记时, 追加一句温度计句 ≤ 30 tokens 自然融入回答, 不单独成段; 同 atom 一会话只提示一次; 不把"过时"当"错的"
+- R-I6. **profile 不消费** (V2.x, D-007 v1): read 默认不返 kind=profile 的 atom; 仅 `--include-profile` debug flag 启用 (不暴露给 Skill); profile 校准入口在 GUI, Skill v1 仅观察
 
 ### 3.3 Token 预算
 [TODO]
@@ -75,9 +79,12 @@
 - M-I2. **数据有源**: 任何洞察必须能追溯到具体 atom / practice / 时间窗
 - M-I3. **行动可执行**: 每条建议必须给 1 个 ≤ 30 分钟的下一步动作, 不给空洞鼓励
 - M-I4. **不重复唤醒**: 同一盲区/趋势不在短期内重复推送 (具体阈值 [TODO])
+- M-I5. **prune 永远 dry-run** (V2.x, D-005): 复盘报告末尾追加 🧹 prune 建议时, 必须**逐条 AskUserQuestion** 让用户裁决 keep/supersede/archive; LLM 严禁自动 mutate 知识库
 
 ### 4.3 Token 预算
-[TODO]
+
+- 复盘主报告 ≤ 3000 tokens
+- **V2.x 含 prune 建议时 ≤ 5000 tokens** (主报告 3000 + prune 段 2000)
 
 ### 4.4 输入/输出格式
 [TODO]
@@ -118,3 +125,4 @@
 > 格式: `YYYY-MM-DD · <change-id> · <skill-name> · <一句话摘要>`
 
 - 2026-04-26 · openspec-bootstrap · all · 建立本契约文档骨架, 内容标记 [TODO] 待后续 change 填充
+- 2026-04-26 · 2026-04-cognitive-evolution · all · atomsyn-read 加 W2.x 温度计句 + profile 不消费; atomsyn-write 加 collision 三选一 + archived/superseded 只读; atomsyn-mentor 加 Phase 2.5 prune 主动建议 (Token 预算 ≤ 5000), prune 严禁自动 mutate (D-005)

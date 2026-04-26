@@ -147,3 +147,7 @@ Atomsyn 有两条数据 API 路径 (Vite dev / Tauri prod), 必须使用**同一
 > 格式: `YYYY-MM-DD · <change-id> · <schema-file> · <breaking|additive|fix> · <一句话摘要>`
 
 - 2026-04-26 · openspec-bootstrap · n/a · n/a · 建立本契约文档骨架, 字段对照与 [TODO] 由后续 change 填补
+- 2026-04-26 · 2026-04-cognitive-evolution · atom.schema.json · additive · 新增 5 个可选字段: `lastAccessedAt` (ISO 8601, read 命中节流写入) · `supersededBy` (单值 atom id) · `supersedes` (atom id 数组, 单向链表) · `archivedAt` (ISO 8601 软删除时间戳) · `archivedReason` (≤ 500 字符)
+- 2026-04-26 · 2026-04-cognitive-evolution · experience-atom.schema.json · additive · 同上 5 字段
+- 2026-04-26 · 2026-04-cognitive-evolution · experience-fragment.schema.json · additive · 同上 5 字段
+- 2026-04-26 · 2026-04-cognitive-evolution · src/types/index.ts · additive · 新增 `AtomEvolutionFields` mixin interface, MethodologyAtom / ExperienceAtom / ExperienceFragment 三个 interface 分别 extends, skill-inventory 不参与 (演化语义不同)

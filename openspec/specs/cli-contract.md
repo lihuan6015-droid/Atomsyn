@@ -26,6 +26,9 @@
 | `atomsyn-cli reindex` | 重建 `data/index/knowledge-index.json` | GUI / 自动化脚本 |
 | `atomsyn-cli where` | 打印当前数据目录绝对路径 | 调试 / 跨工具协同 |
 | `atomsyn-cli install-skill --target claude,cursor` | 把 atomsyn-* skill 安装到 Claude Code / Cursor | 用户 / Tauri 安装器 |
+| `atomsyn-cli supersede --id <old> --input <file> [--no-archive-old]` | 用新 atom 取代旧 atom, 默认同时 archive 旧的 (V2.x cognitive-evolution) | atomsyn-write Skill / atomsyn-mentor Skill |
+| `atomsyn-cli archive --id <id> [--reason "..."] [--restore]` | 软删除 atom (read/find 默认不返); --restore 反归档 (V2.x cognitive-evolution) | atomsyn-mentor Skill / 用户 |
+| `atomsyn-cli prune [--limit N]` | 永远 dry-run 扫描 prune 候选, 输出 JSON 让用户裁决 (V2.x cognitive-evolution) | atomsyn-mentor Skill |
 
 ---
 
@@ -37,10 +40,11 @@
 
 | 退出码 | 含义 |
 |---|---|
-| `0` | 成功 |
-| `1` | 通用失败 (参数错误 / IO 错误 / schema 校验失败) |
-| `2` | 找不到目标 (atom not found 等) |
-| `3` | [TODO] 锁冲突? 待定 |
+| `0` | 成功 (含 collision_candidates 警告 — 不阻塞) |
+| `1` | 通用失败 (参数错误 / IO 错误 / 内部异常) |
+| `2` | 找不到目标 (atom not found / query 为空) |
+| `3` | 锁冲突 / archive 状态冲突 (atom locked / already archived / superseded / not archived 等不变量违反) |
+| `4` | schema 校验失败 / 输入不可读 |
 
 ### 2.2 输入约定
 
@@ -111,6 +115,48 @@
 
 [TODO]
 
+### 3.11 `atomsyn-cli supersede` (V2.x cognitive-evolution)
+
+```
+atomsyn-cli supersede --id <old-id> --input <new-atom-file> [--no-archive-old]
+```
+
+- 输入: 新 atom 的 loose JSON (走 normalizeExperienceAtom 规整为合法 experience atom)
+- 行为:
+  1. 校验旧 atom 存在、未 locked、未 archived
+  2. 写入新 atom (跳过 collision check, 设 ATOMSYN_SKIP_COLLISION 内部标志)
+  3. 设 `newAtom.supersedes = [oldId, ...合并旧链]`
+  4. 设 `oldAtom.supersededBy = newId`; 默认 `oldAtom.archivedAt = now` (除非 --no-archive-old)
+  5. reindex
+- 输出 (stdout, JSON): `{ok, oldId, newId, oldPath, newPath, archivedOld, hint}`
+- 退出码: 0 / 2 (OLD_NOT_FOUND) / 3 (OLD_LOCKED, OLD_ALREADY_ARCHIVED) / 4 (输入校验失败)
+- 副作用: 新 atom 写入 + 旧 atom 修改 + reindex + usage-log 追加 `supersede.applied`
+
+### 3.12 `atomsyn-cli archive` (V2.x cognitive-evolution)
+
+```
+atomsyn-cli archive --id <id> [--reason "..."] [--restore]
+```
+
+- `--reason`: 用户提供的归档理由, ≤ 500 字符
+- `--restore`: 反向操作, 清空 archivedAt + archivedReason
+- 行为: archive 时设 `archivedAt = now` + 可选 archivedReason; restore 时清空两字段
+- 输出: `{ok, atomId, archivedAt, restored?, hint}`
+- 退出码: 0 / 2 (NOT_FOUND) / 3 (LOCKED, NOT_ARCHIVED for restore) / 4 (reason 超长)
+- 副作用: atom JSON 修改 + reindex + usage-log 追加 `archive.applied` 或 `archive.restored`
+
+### 3.13 `atomsyn-cli prune` (V2.x cognitive-evolution)
+
+```
+atomsyn-cli prune [--limit N]
+```
+
+- **永远 dry-run** (D-005), 不接受 --apply 或类似 flag
+- 行为: 扫描 corpus, 三维度并集 (contradiction / long-untouched / broken-ref), 输出候选 JSON
+- 输出: `{ok, candidates: [...], summary: {total_atoms, candidates_count, by_reason}, hint}`
+- 退出码: 0 (无候选也是 0) / 4 (--limit < 1)
+- 副作用: 仅读, usage-log 追加 `prune.scanned` 用于观察使用频次
+
 ---
 
 ## 4 · 不可变契约 (Invariants)
@@ -142,3 +188,4 @@
 > 格式: `YYYY-MM-DD · <change-id> · <一句话摘要>`
 
 - 2026-04-26 · openspec-bootstrap · 建立本契约文档骨架, 全部内容标记 [TODO] 待后续 change 填充
+- 2026-04-26 · 2026-04-cognitive-evolution · 新增 supersede / archive / prune 三个命令; read/find 输出新增 staleness + supersededBy + history 字段 (`--show-history`/`--include-profile`/`--json` 可选 flag); write/update 默认开启 collision check (`--check-collision`/`--no-check-collision` 可控); update 拒绝改 archived/superseded atom; 退出码 1/2/3/4 五档统一

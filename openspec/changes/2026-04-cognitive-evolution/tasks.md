@@ -57,11 +57,11 @@
 
 ## F · 文档
 
-- [ ] F1. 更新 `openspec/specs/cli-contract.md`:新增 supersede / archive / prune 命令面;修改 read/find/write/update 的输出契约部分(staleness 字段、collision_candidates 字段)
-- [ ] F2. 更新 `openspec/specs/skill-contract.md`:三个 skill 的不可变契约 + 新增 Token 预算
-- [ ] F3. 更新 `openspec/specs/data-schema.md` 的 changelog 区:atom schema 新增 4 字段,additive,版本号 → 1.5.1(或 v2.x 的对应小版本)
-- [ ] F4. 更新 `CLAUDE.md` § L2 atomsyn-cli command surface 表:加 supersede / archive / prune 三行
-- [ ] F5. 在 `docs/plans/v2.x-vision-handoff.md`(或当前 milestone 计划)追加叙事段落:本 change 在仓库层补足"演化能力",喂养结构层和教练层
+- [x] F1. 更新 `openspec/specs/cli-contract.md`:新增 supersede / archive / prune 命令面;修改 read/find/write/update 的输出契约部分(staleness 字段、collision_candidates 字段) — 命令面 §1 加 3 行; §2.1 退出码补 `4` (校验失败); §3.11-3.13 写完整契约 (输入/行为/输出/退出码/副作用); changelog 追加
+- [x] F2. 更新 `openspec/specs/skill-contract.md`:三个 skill 的不可变契约 + 新增 Token 预算 — atomsyn-write 加 W-I5 (collision 不阻塞 + AskUserQuestion) / W-I6 (archived/superseded 只读); atomsyn-read 加 R-I5 (温度计句) / R-I6 (profile 不消费); atomsyn-mentor 加 M-I5 (prune 永远 dry-run) + Token 预算 ≤ 5000; changelog 追加
+- [x] F3. 更新 `openspec/specs/data-schema.md` 的 changelog 区:atom schema 新增 4 字段,additive,版本号 → 1.5.1(或 v2.x 的对应小版本) — changelog 追加 4 行 (atom + experience-atom + experience-fragment + src/types/index.ts), 全部 additive; 不动 version 号 (字段 const schemaVersion 仍为 1, 保持向后兼容)
+- [x] F4. 更新 `CLAUDE.md` § L2 atomsyn-cli command surface 表:加 supersede / archive / prune 三行 — 表头从 V1.5 contract 升级到 V2.x contract, atlas-cli → atomsyn-cli 命名同步; 加 3 行新命令 + V2.x 共享标志说明 (--show-history / --include-profile / --json) + collision check 默认开启说明
+- [x] F5. 在 `docs/plans/v2.x-vision-handoff.md`(或当前 milestone 计划)追加叙事段落:本 change 在仓库层补足"演化能力",喂养结构层和教练层 — 在 §10 回归验证之前插入 §9.5 "认知演化协议 (P0 V2.x)", 含 P1/P2/P3 三层交付 + 价值描述 + 不变量 + 后续与 bootstrap-skill 联动接力点
 
 ## G · 测试与验证
 
