@@ -8,11 +8,11 @@
 
 ## A · Schema / 数据迁移
 
-- [ ] A1. 在 `skills/schemas/atom.schema.json` 增加 4 个可选字段(`lastAccessedAt` / `supersededBy` / `supersedes` / `archivedAt` / `archivedReason`),全部 additive
-- [ ] A2. 同步更新 `skills/schemas/experience-atom.schema.json` 和 `skills/schemas/methodology-atom.schema.json`(如果它们是独立 schema 文件)
-- [ ] A3. 在 `src/types/index.ts` 同步 TS 类型定义(`Atom` 类型加 4 个 optional 属性)
-- [ ] A4. 跑一次 `npm run reindex` 验证现有 ~200 atom 全部通过新 schema 校验,记录任何拒绝并修正
-- [ ] A5. lazy 兼容代码:`scripts/lib/atom-io.mjs` 等 IO 路径在读 atom 时若缺新字段不报错,只在写时才补全(零 migration 脚本)
+- [x] A1. 在 `skills/schemas/atom.schema.json` 增加 4 个可选字段(`lastAccessedAt` / `supersededBy` / `supersedes` / `archivedAt` / `archivedReason`),全部 additive
+- [x] A2. 同步更新 `skills/schemas/experience-atom.schema.json` 和 `skills/schemas/methodology-atom.schema.json`(如果它们是独立 schema 文件) — 实际只有 atom.schema.json (即 methodology atom),A1 已处理;此处同步 experience-atom + experience-fragment;skill-inventory 演化语义不同 (依赖 fileMtime),design.md §4.1 未列,不动
+- [x] A3. 在 `src/types/index.ts` 同步 TS 类型定义(`Atom` 类型加 4 个 optional 属性) — 抽出共享 mixin `AtomEvolutionFields`,Methodology/Experience/Fragment 三个 interface 分别 extends
+- [x] A4. 跑一次 `npm run reindex` 验证现有 ~200 atom 全部通过新 schema 校验,记录任何拒绝并修正 — 282/282 atom 通过 ajv 严格校验 (methodology 182 + experienceCrystallized 2 + skillInventory 98)
+- [x] A5. lazy 兼容代码:`scripts/lib/atom-io.mjs` 等 IO 路径在读 atom 时若缺新字段不报错,只在写时才补全(零 migration 脚本) — 现有代码 0 处引用新字段,5 字段全 optional,无需写代码
 
 ## B · CLI 实现
 
