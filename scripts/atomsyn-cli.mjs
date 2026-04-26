@@ -32,6 +32,15 @@ import { homedir, platform } from 'node:os'
 import { fileURLToPath } from 'node:url'
 import { spawn } from 'node:child_process'
 
+import {
+  computeStaleness,
+  updateAccessTime,
+  detectCollision,
+  applySupersede,
+  applyArchive,
+  detectPruneCandidates,
+} from './lib/evolution.mjs'
+
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const PROJECT_ROOT = resolve(__dirname, '..')
 
@@ -435,13 +444,18 @@ async function cmdWrite(args) {
 async function cmdRead(args) {
   const query = getFlag(args, '--query')
   const top = parseInt(getFlag(args, '--top', '5'), 10)
-  if (!query) die(`read requires --query "search terms"`)
+  const showHistory = hasFlag(args, '--show-history')
+  const includeProfile = hasFlag(args, '--include-profile')
+  const jsonMode = hasFlag(args, '--json')
+  if (!query) die(`read requires --query "search terms"`, 2)
 
   const { path: dataDir } = resolveDataDir()
   const atomsDir = join(dataDir, 'atoms')
   const experienceDir = join(atomsDir, 'experience')
 
   const qTerms = tokenizeQuery(query)
+  const nowMs = Date.now()
+  let accessUpdateWarned = false
 
   // --- Phase 1: Score methodology atoms across all framework dirs ---
   const methodologyResults = []
@@ -466,6 +480,9 @@ async function cmdRead(args) {
       try {
         const atom = JSON.parse(await readFile(f, 'utf8'))
         if (atom.kind === 'skill-inventory') { totalMethodologyCount--; continue }
+        if (atom.archivedAt) { totalMethodologyCount--; continue }
+        if (atom.supersededBy && !showHistory) { totalMethodologyCount--; continue }
+        if (atom.kind === 'profile' && !includeProfile) { totalMethodologyCount--; continue }
         const haystack = (
           (atom.name || '') + ' ' + (atom.nameEn || '') + ' ' +
           (atom.coreIdea || '') + ' ' + (atom.whenToUse || '') + ' ' +
@@ -480,6 +497,19 @@ async function cmdRead(args) {
   methodologyResults.sort((a, b) => b.score - a.score)
   const topMethodologies = methodologyResults.slice(0, top)
 
+  // V2.x cognitive-evolution · staleness signal + lastAccessedAt update for top-N hits
+  for (const hit of topMethodologies) {
+    hit.staleness = computeStaleness(hit.atom, nowMs)
+    try {
+      await updateAccessTime(hit.path, nowMs)
+    } catch (e) {
+      if (!accessUpdateWarned) {
+        accessUpdateWarned = true
+        process.stderr.write(`atomsyn-cli: warning · failed to update lastAccessedAt (${e.message})\n`)
+      }
+    }
+  }
+
   // --- Phase 2: Score experience atoms ---
   const experienceFiles = await walkJson(experienceDir)
   const experienceResults = []
@@ -493,6 +523,9 @@ async function cmdRead(args) {
     try {
       const atom = JSON.parse(await readFile(f, 'utf8'))
       totalExperienceCount++
+      if (atom.archivedAt) continue
+      if (atom.supersededBy && !showHistory) continue
+      if (atom.kind === 'profile' && !includeProfile) continue
       if (atom.private) { privateCount++; continue }
       if (atom.stats?.userDemoted) continue
       // Track role → situation distribution
@@ -520,6 +553,19 @@ async function cmdRead(args) {
   experienceResults.sort((a, b) => b.score - a.score)
   const topExperiences = experienceResults.slice(0, top)
 
+  // V2.x cognitive-evolution · staleness + lastAccessedAt update for top experience hits
+  for (const hit of topExperiences) {
+    hit.staleness = computeStaleness(hit.atom, nowMs)
+    try {
+      await updateAccessTime(hit.path, nowMs)
+    } catch (e) {
+      if (!accessUpdateWarned) {
+        accessUpdateWarned = true
+        process.stderr.write(`atomsyn-cli: warning · failed to update lastAccessedAt (${e.message})\n`)
+      }
+    }
+  }
+
   // --- Phase 3: Count related fragments for each methodology hit ---
   const { findRelatedFragmentsBatch } = await import('./lib/findRelatedFragments.mjs')
   const methodologyIds = topMethodologies.map(r => r.atom.id)
@@ -538,7 +584,43 @@ async function cmdRead(args) {
       experienceHits: topExperiences.length,
       agentName,
     })
+    // V2.x cognitive-evolution · per-hit access events + staleness emission
+    for (const hit of [...topMethodologies, ...topExperiences]) {
+      await appendUsageLog(dataDir, { ts: now, action: 'read.access', atomId: hit.atom.id })
+      if (hit.staleness?.is_stale) {
+        await appendUsageLog(dataDir, {
+          ts: now,
+          action: 'read.staleness_emitted',
+          atomId: hit.atom.id,
+          decay: Number(hit.staleness.confidence_decay.toFixed(2)),
+          is_stale: true,
+        })
+      }
+    }
   } catch { /* non-fatal */ }
+
+  // --- Phase 5a: JSON mode output (V2.x cognitive-evolution) ---
+  if (jsonMode) {
+    const toJsonHit = ({ atom, score, staleness }) => ({
+      id: atom.id,
+      name: atom.name || atom.title,
+      kind: atom.kind,
+      score,
+      age_days: staleness.age_days,
+      last_access_days: staleness.last_access_days,
+      confidence_decay: Number(staleness.confidence_decay.toFixed(2)),
+      is_stale: staleness.is_stale,
+      supersededBy: atom.supersededBy || null,
+      history: showHistory ? (atom.supersedes || []).map(id => ({ id })) : [],
+    })
+    console.log(JSON.stringify({
+      ok: true,
+      query,
+      methodologies: topMethodologies.map(toJsonHit),
+      experiences: topExperiences.map(toJsonHit),
+    }, null, 2))
+    return
+  }
 
   // --- Phase 5: Render compact cognitive map ---
   if (topMethodologies.length === 0 && topExperiences.length === 0) {
@@ -558,12 +640,13 @@ async function cmdRead(args) {
     lines.push('| # | 名称 | 框架 | Step | 标签 | 📎 | ID |')
     lines.push('|---|---|---|---|---|---|---|')
     for (let i = 0; i < topMethodologies.length; i++) {
-      const { atom, score } = topMethodologies[i]
+      const { atom, staleness } = topMethodologies[i]
       const fw = atom.frameworkId || '-'
       const step = atom.cellId ? String(atom.cellId).padStart(2, '0') : '-'
       const tags = (atom.tags || []).slice(0, 3).join(', ')
       const relatedCount = (relatedMap.get(atom.id) || []).length
-      lines.push(`| ${i + 1} | ${atom.name} | ${fw} | ${step} | ${tags} | ${relatedCount} | \`${atom.id}\` |`)
+      const stalePrefix = staleness?.is_stale ? '🌡 ' : ''
+      lines.push(`| ${i + 1} | ${stalePrefix}${atom.name} | ${fw} | ${step} | ${tags} | ${relatedCount} | \`${atom.id}\` |`)
     }
     lines.push('')
   }
@@ -576,12 +659,13 @@ async function cmdRead(args) {
     lines.push('| # | 标题 | 类型 | 角色·场景 | 摘要 | ID |')
     lines.push('|---|---|---|---|---|---|')
     for (let i = 0; i < topExperiences.length; i++) {
-      const { atom } = topExperiences[i]
+      const { atom, staleness } = topExperiences[i]
       const title = (atom.title || atom.name || '').slice(0, 30)
       const itype = atom.insight_type || '-'
       const dims = `${atom.role || '-'}·${atom.situation || '-'}`
       const summary = (atom.summary || atom.insight || '').slice(0, 80).replace(/\n/g, ' ')
-      lines.push(`| ${i + 1} | ${title} | ${itype} | ${dims} | ${summary} | \`${atom.id}\` |`)
+      const stalePrefix = staleness?.is_stale ? '🌡 ' : ''
+      lines.push(`| ${i + 1} | ${stalePrefix}${title} | ${itype} | ${dims} | ${summary} | \`${atom.id}\` |`)
     }
     lines.push('')
   }
@@ -803,10 +887,14 @@ async function cmdFind(args) {
   const query = getFlag(args, '--query') || ''
   const top = parseInt(getFlag(args, '--top', '10'), 10)
   const withTaxonomy = args.includes('--with-taxonomy')
+  const showHistory = hasFlag(args, '--show-history')
+  const includeProfile = hasFlag(args, '--include-profile')
   const { path: dataDir } = resolveDataDir()
   const root = join(dataDir, 'atoms', 'experience')
   const files = await walkJson(root)
   const qTerms = query.trim() ? tokenizeQuery(query) : []
+  const nowMs = Date.now()
+  let accessUpdateWarned = false
 
   // V2.0 M2: collect dimension values for taxonomy
   const dimSets = { roles: new Set(), situations: new Set(), activities: new Set(), insight_types: new Set() }
@@ -815,6 +903,10 @@ async function cmdFind(args) {
   for (const f of files) {
     try {
       const atom = JSON.parse(await readFile(f, 'utf8'))
+      // V2.x cognitive-evolution · skip archived / superseded / profile by default
+      if (atom.archivedAt) continue
+      if (atom.supersededBy && !showHistory) continue
+      if (atom.kind === 'profile' && !includeProfile) continue
       // Collect dimensions from all atoms (for taxonomy)
       if (atom.role) dimSets.roles.add(atom.role)
       if (atom.situation) dimSets.situations.add(atom.situation)
@@ -828,6 +920,7 @@ async function cmdFind(args) {
         tags: atom.tags,
         path: f,
         score: 0,
+        atom, // keep ref for staleness enrichment after slice
         // Include four-dimension fields if present (fragments have them)
         ...(atom.role ? { role: atom.role } : {}),
         ...(atom.situation ? { situation: atom.situation } : {}),
@@ -862,6 +955,26 @@ async function cmdFind(args) {
   }
   matches.sort((a, b) => b.score - a.score)
   const sliced = matches.slice(0, top)
+
+  // V2.x cognitive-evolution · enrich top-N with staleness + throttled lastAccessedAt update
+  for (const r of sliced) {
+    const stale = computeStaleness(r.atom, nowMs)
+    r.age_days = stale.age_days
+    r.last_access_days = stale.last_access_days
+    r.confidence_decay = Number(stale.confidence_decay.toFixed(2))
+    r.is_stale = stale.is_stale
+    r.supersededBy = r.atom.supersededBy || null
+    r.history = showHistory ? (r.atom.supersedes || []).map(id => ({ id })) : []
+    try {
+      await updateAccessTime(r.path, nowMs)
+    } catch (e) {
+      if (!accessUpdateWarned) {
+        accessUpdateWarned = true
+        process.stderr.write(`atomsyn-cli: warning · failed to update lastAccessedAt (${e.message})\n`)
+      }
+    }
+    delete r.atom // strip from JSON output
+  }
 
   // Build taxonomy: merge seed.json + actual dimension values from existing atoms
   let taxonomy = undefined
