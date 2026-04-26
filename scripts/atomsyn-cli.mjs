@@ -1235,6 +1235,172 @@ async function cmdUpdate(args) {
 }
 
 // ---------------------------------------------------------------------------
+// V2.x cognitive-evolution · supersede / archive / prune subcommands (B4-B6)
+// ---------------------------------------------------------------------------
+
+async function cmdSupersede(args) {
+  const oldId = getFlag(args, '--id')
+  const inputFile = getFlag(args, '--input')
+  const archiveOld = !hasFlag(args, '--no-archive-old')
+
+  if (!oldId) die(`supersede requires --id <old-id>`, 2)
+  if (!inputFile) die(`supersede requires --input <new-atom-file>`, 2)
+
+  let input
+  try {
+    input = await readFile(inputFile, 'utf8')
+  } catch (err) {
+    die(`Cannot read input file: ${inputFile} (${err.message})`, 4)
+  }
+
+  let newAtom
+  try {
+    newAtom = parseJsonRobust(input)
+  } catch (err) {
+    die(`Input is not valid JSON: ${err.message}`, 4)
+  }
+
+  try {
+    normalizeExperienceAtom(newAtom)
+  } catch (err) {
+    die(`Schema validation failed: ${err.message}`, 4)
+  }
+
+  const { path: dataDir } = resolveDataDir()
+  await ensureDataLayout(dataDir)
+
+  const writeAtom = async (atom) => {
+    const slug = deriveSlug(atom.name || atom.id.replace(/^atom_exp_/, '').split('_')[0])
+    const outDir = join(dataDir, 'atoms', 'experience', slug)
+    await mkdir(outDir, { recursive: true })
+    const outFile = join(outDir, `${atom.id}.json`)
+    atom.updatedAt = new Date().toISOString()
+    await writeFile(outFile, JSON.stringify(atom, null, 2) + '\n', 'utf8')
+    return { atom, path: outFile }
+  }
+
+  let result
+  try {
+    result = await applySupersede(
+      { dataDir, findAtomFileById, writeAtom, rebuildIndex: inlineRebuildIndex },
+      { oldId, newAtom, archiveOld },
+    )
+  } catch (err) {
+    if (err.code === 'OLD_NOT_FOUND') die(err.message, 2)
+    if (err.code === 'OLD_LOCKED' || err.code === 'OLD_ALREADY_ARCHIVED') die(err.message, 3)
+    die(err.message, 1)
+  }
+
+  try {
+    await appendUsageLog(dataDir, {
+      ts: new Date().toISOString(),
+      action: 'supersede.applied',
+      oldId: result.oldId,
+      newId: result.newId,
+      archivedOld: archiveOld,
+    })
+  } catch { /* non-fatal */ }
+
+  console.log(JSON.stringify({
+    ok: true,
+    oldId: result.oldId,
+    newId: result.newId,
+    oldPath: result.oldFile,
+    newPath: result.newFile,
+    archivedOld: archiveOld,
+    hint: archiveOld
+      ? `已用 ${result.newId} 取代 ${result.oldId} 并自动归档旧 atom。read 默认不再返回旧 atom。`
+      : `已用 ${result.newId} 取代 ${result.oldId} (使用了 --no-archive-old, 旧 atom 仍可被 read 命中)。`,
+  }, null, 2))
+}
+
+async function cmdArchive(args) {
+  const id = getFlag(args, '--id')
+  const reason = getFlag(args, '--reason')
+  const restore = hasFlag(args, '--restore')
+
+  if (!id) die(`archive requires --id <atomId>`, 2)
+  if (reason && reason.length > 500) die(`--reason exceeds 500 chars (got ${reason.length})`, 4)
+
+  const { path: dataDir } = resolveDataDir()
+
+  let result
+  try {
+    result = await applyArchive(
+      { dataDir, findAtomFileById, rebuildIndex: inlineRebuildIndex },
+      { id, reason, restore },
+    )
+  } catch (err) {
+    if (err.code === 'NOT_FOUND') die(err.message, 2)
+    if (err.code === 'LOCKED' || err.code === 'NOT_ARCHIVED') die(err.message, 3)
+    die(err.message, 1)
+  }
+
+  try {
+    await appendUsageLog(dataDir, {
+      ts: new Date().toISOString(),
+      action: restore ? 'archive.restored' : 'archive.applied',
+      atomId: id,
+      ...(reason ? { reason } : {}),
+    })
+  } catch { /* non-fatal */ }
+
+  if (restore) {
+    console.log(JSON.stringify({
+      ok: true,
+      atomId: id,
+      restored: true,
+      hint: `已反归档 ${id}, atom 重新出现在 read/find 默认结果中。`,
+    }, null, 2))
+  } else {
+    console.log(JSON.stringify({
+      ok: true,
+      atomId: id,
+      archivedAt: result.archivedAt,
+      ...(reason ? { reason } : {}),
+      hint: `已软删除 ${id}, read 默认不再返。如需反归档请用 'atomsyn-cli archive --id ${id} --restore'。注: archived atom 仍在磁盘和索引上 (仅默认隐藏), 物理删除请在 GUI 中解锁后用 OS 工具。`,
+    }, null, 2))
+  }
+}
+
+async function cmdPrune(args) {
+  // design §5.1.5: 永远 dry-run, 不接受非 dry-run 模式 (D-005)
+  const limit = parseInt(getFlag(args, '--limit', '10'), 10)
+  if (!Number.isFinite(limit) || limit < 1) die(`--limit must be a positive integer (got ${limit})`, 4)
+
+  const { path: dataDir } = resolveDataDir()
+  const atomsRoot = join(dataDir, 'atoms')
+  const allFiles = await walkJson(atomsRoot)
+  const corpus = []
+  for (const f of allFiles) {
+    try {
+      const a = JSON.parse(await readFile(f, 'utf8'))
+      if (a.kind === 'profile') continue          // D-008: profile 不参与 prune
+      if (a.kind === 'skill-inventory') continue  // skill-inventory 演化语义不同
+      corpus.push(a)
+    } catch { /* skip */ }
+  }
+
+  const result = detectPruneCandidates(corpus, { limit })
+
+  try {
+    await appendUsageLog(dataDir, {
+      ts: new Date().toISOString(),
+      action: 'prune.scanned',
+      candidates_count: result.summary.candidates_count,
+      summary: result.summary,
+    })
+  } catch { /* non-fatal */ }
+
+  console.log(JSON.stringify({
+    ok: true,
+    candidates: result.candidates,
+    summary: result.summary,
+    hint: 'Use atomsyn-cli supersede / archive on each candidate after user review. This command never auto-mutates (D-005).',
+  }, null, 2))
+}
+
+// ---------------------------------------------------------------------------
 // Subcommand: install-skill
 // Installs atomsyn-write/atomsyn-read skills into target agent directories and
 // sets up a stable `atomsyn-cli` shim on PATH so the skill contract is portable.
@@ -1902,6 +2068,12 @@ Usage:
                                          CLI shim at ~/.atomsyn/bin/atomsyn-cli
   atomsyn-cli mentor [--range week|month|all] [--format data|report]
                                          Cognitive review: analyze knowledge gaps
+  atomsyn-cli supersede --id <old-id> --input <new-atom-file> [--no-archive-old]
+                                         V2.x · 用新 atom 取代旧 atom (默认同时 archive 旧 atom)
+  atomsyn-cli archive --id <id> [--reason "..."] [--restore]
+                                         V2.x · 软删除 atom (read/find 默认不返); --restore 反归档
+  atomsyn-cli prune [--limit N]
+                                         V2.x · 扫描候选 (永远 dry-run, D-005), 输出 JSON 让用户/Agent 裁决
   atomsyn-cli --help                       Show this help
 
 Write input (loose — CLI owns all bookkeeping):
@@ -1960,6 +2132,15 @@ async function main() {
         break
       case 'mentor':
         await cmdMentor(rest)
+        break
+      case 'supersede':
+        await cmdSupersede(rest)
+        break
+      case 'archive':
+        await cmdArchive(rest)
+        break
+      case 'prune':
+        await cmdPrune(rest)
         break
       default:
         die(`Unknown command: ${cmd}. Run atomsyn-cli --help for usage.`)

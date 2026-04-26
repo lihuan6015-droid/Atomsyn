@@ -19,14 +19,14 @@
 - [x] B1. 新增 `scripts/lib/evolution.mjs` 模块,封装 `computeStaleness` / `updateAccessTime` / `detectCollision` / `applySupersede` / `applyArchive` / `detectPruneCandidates` / **`applyProfileEvolution`** (D-008, profile 单例覆写 + previous_versions 入栈) 7 个函数。`applyProfileEvolution(newSnapshot, trigger)` 签名在 design §4.2.1 定义, 由 bootstrap-skill change 在其实施 PR 中调用 — 实现要点: 副作用类函数 (apply* / updateAccessTime) 通过 deps 注入 (`findAtomFileById` / `writeAtom` / `rebuildIndex` / `readProfile` / `writeProfile`), 与 CLI 内部解耦; 纯函数 (computeStaleness / detectCollision / detectPruneCandidates) 不做 IO; profile_factor 已合并到 computeStaleness 中 (B12 公式扩展, smoke 验证通过)
 - [x] B2. 在 `scripts/atomsyn-cli.mjs` 修改 `read` / `find` 命令:命中后调用 `computeStaleness` + `updateAccessTime`(节流),输出 JSON / markdown 中追加 staleness 字段;实现 `--show-history` flag; **profile 特殊处理** (D-008): read 默认不返回 profile, 仅更新 lastAccessedAt; 仅 `--include-profile` 时返回 (debug 用, 不暴露给 Skill) — 实现要点: cmdRead 加 `--json` / `--show-history` / `--include-profile` flags; archived/superseded/profile 默认过滤; markdown 中 atom 名前加 🌡 (is_stale); usage-log 追加 read.access (每条命中) 和 read.staleness_emitted (is_stale 时); cmdFind 同样改造, JSON 结果含 age_days/last_access_days/confidence_decay/is_stale/supersededBy/history 字段
 - [x] B3. 在 `scripts/atomsyn-cli.mjs` 修改 `write` / `update` 命令:加 `--check-collision` / `--no-check-collision` 参数,默认开,触发 `detectCollision`,在 stdout 加 `collision_candidates`,stderr 警告 — write 默认开启, 检测到 collision 时 stderr 黄色 warning + stdout 加 collision_candidates 字段 + hint 提示用 supersede; usage-log 追加 write.collision_detected 事件; update 同样改造, 同时新增"archived/superseded atom 拒绝 update" 守卫 (exit 3, design §4.2 不变量); 通过环境变量 ATOMSYN_DISABLE_COLLISION_CHECK=1 / ATOMSYN_SKIP_COLLISION=1 (内部 supersede 路径用) 关闭
-- [ ] B4. 新增 `supersede` 子命令处理(参数 `--id` / `--input` / `--no-archive-old`),实现 design.md §5.1.3 步骤
-- [ ] B5. 新增 `archive` 子命令处理(参数 `--id` / `--reason` / `--restore`)
-- [ ] B6. 新增 `prune` 子命令处理(参数 `--auto-detect` / `--limit` / `--dry-run`),只 dry-run,输出候选 JSON
-- [ ] B7. 输入解析 + 参数校验:每个命令的 `--id` 必须存在于索引,`--input` 必须可读,`--reason` 长度 ≤ 500 字符
-- [ ] B8. 输出格式定义:read/find 命中 JSON/Markdown 双格式都加 staleness 字段;新命令统一输出 `{ok, ...}` JSON
-- [ ] B9. 退出码统一:0 成功 / 2 not found / 3 locked / 4 校验失败 / 1 其他
-- [ ] B10. 错误处理:lastAccessedAt 写失败、collision check 异常、reindex 失败都不应阻塞主流程;每种情况 stderr 一行 warning
-- [ ] B11. 同步更新 `~/.atomsyn/bin/atomsyn-cli` shim 测试:确认 Tauri 打包后新命令可调用(在 packaged 模式下 dogfood 一次 supersede)
+- [x] B4. 新增 `supersede` 子命令处理(参数 `--id` / `--input` / `--no-archive-old`),实现 design.md §5.1.3 步骤 — 调 evolution.applySupersede; deps 注入 inlineRebuildIndex / findAtomFileById / writeAtom (inline closure); 错误码映射 (NOT_FOUND→2 / LOCKED→3 / ALREADY_ARCHIVED→3 / 其他→1); usage-log 追加 supersede.applied
+- [x] B5. 新增 `archive` 子命令处理(参数 `--id` / `--reason` / `--restore`) — `--reason` 长度 ≤ 500 校验; usage-log 追加 archive.applied / archive.restored; restore 时清空 archivedAt + archivedReason
+- [x] B6. 新增 `prune` 子命令处理(参数 `--auto-detect` / `--limit` / `--dry-run`),只 dry-run,输出候选 JSON — 永远 dry-run (D-005), profile / skill-inventory 不参与扫描; usage-log 追加 prune.scanned (含 summary)
+- [x] B7. 输入解析 + 参数校验:每个命令的 `--id` 必须存在于索引,`--input` 必须可读,`--reason` 长度 ≤ 500 字符 — supersede 校验 oldId 存在 (走 findAtomFileById, 不存在 → exit 2); inputFile 不可读 → exit 4; reason 长度 → exit 4; prune --limit 必须 ≥ 1
+- [x] B8. 输出格式定义:read/find 命中 JSON/Markdown 双格式都加 staleness 字段;新命令统一输出 `{ok, ...}` JSON — read 加 --json mode; find/supersede/archive/prune 都返 `{ok: true, ...}` JSON
+- [x] B9. 退出码统一:0 成功 / 2 not found / 3 locked / 4 校验失败 / 1 其他 — die() 函数已支持 code 参数; 5 个新命令 + update 全部按此映射
+- [x] B10. 错误处理:lastAccessedAt 写失败、collision check 异常、reindex 失败都不应阻塞主流程;每种情况 stderr 一行 warning — read/find 中节流 lastAccessedAt 写失败 stderr 一行 warning (会话内首次); collision check 失败 stderr 一行 warning, 主流程不阻塞; supersede 内部 reindex 由 inlineRebuildIndex 处理 (失败抛错, 由 catch 落到 die)
+- [ ] B11. 同步更新 `~/.atomsyn/bin/atomsyn-cli` shim 测试:确认 Tauri 打包后新命令可调用(在 packaged 模式下 dogfood 一次 supersede) — 待 npm run tauri:build 后人工验证
 - [ ] B12. **`computeStaleness` 公式扩展** (D-008): 当 atom.kind=profile 时, 公式额外加入"距 verifiedAt 天数"因子, 让"画像 N 天未校准"在 staleness 信号中可观测; 配套写一份 `evolution.profileStaleness.test.mjs` 单元测试覆盖 4 case (verified=false / 30 天 / 90 天 / 180 天)
 - [ ] B13. **bootstrap-skill 接口前置确认** (D-008): 在 evolution.mjs 中确保 `imported atom 默认 confidence=0.5 + lastAccessedAt=null` 在 staleness 公式里 fallback 到 createdAt, 不会让"刚 import 的 atom 立即被标 stale"
 
