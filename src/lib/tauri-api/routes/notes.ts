@@ -86,6 +86,13 @@ async function loadFullNote(noteDir: string, notesDir: string): Promise<any> {
   return { ...meta, content, _dirPath: relDir }
 }
 
+// `_trash` is the soft-delete bucket and must never appear in regular note
+// scans. Without this exclusion, refreshing the page after a soft delete
+// would surface the trashed note in both the regular list AND the trash list.
+function isReservedNotesEntry(name: string): boolean {
+  return name.startsWith('.') || name === '_trash'
+}
+
 async function findNoteDirById(
   searchDir: string,
   noteId: string
@@ -98,7 +105,7 @@ async function findNoteDirById(
     return null
   }
   for (const e of entries) {
-    if (!e.isDirectory || e.name.startsWith('.')) continue
+    if (!e.isDirectory || isReservedNotesEntry(e.name)) continue
     const candidate = joinPathSync(searchDir, e.name)
     const metaFile = joinPathSync(candidate, 'meta.json')
     if (await fileExists(metaFile)) {
@@ -122,7 +129,7 @@ async function collectAllNotes(dir: string, notesDir: string): Promise<any[]> {
     return notes
   }
   for (const e of entries) {
-    if (!e.isDirectory || e.name.startsWith('.')) continue
+    if (!e.isDirectory || isReservedNotesEntry(e.name)) continue
     const full = joinPathSync(dir, e.name)
     const metaFile = joinPathSync(full, 'meta.json')
     if (await fileExists(metaFile)) {

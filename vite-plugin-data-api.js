@@ -1384,12 +1384,17 @@ export function dataApiPlugin(opts) {
                             }
                             return { ...meta, content, _dirPath: relDir };
                         }
+                        // `_trash` is the soft-delete bucket and must never appear in
+                        // regular note scans. Without this exclusion, refreshing the page
+                        // after a soft delete would surface the trashed note in both the
+                        // regular list AND the trash list.
+                        const isReservedNotesEntry = (name) => name.startsWith('.') || name === '_trash';
                         async function findNoteDirById(searchDir, noteId) {
                             if (!existsSync(searchDir))
                                 return null;
                             const entries = await fs.readdir(searchDir, { withFileTypes: true });
                             for (const e of entries) {
-                                if (!e.isDirectory() || e.name.startsWith('.'))
+                                if (!e.isDirectory() || isReservedNotesEntry(e.name))
                                     continue;
                                 const candidate = path.join(searchDir, e.name);
                                 // Check if this dir is a note dir (has meta.json)
@@ -1414,7 +1419,7 @@ export function dataApiPlugin(opts) {
                                 return notes;
                             const entries = await fs.readdir(dir, { withFileTypes: true });
                             for (const e of entries) {
-                                if (!e.isDirectory() || e.name.startsWith('.'))
+                                if (!e.isDirectory() || isReservedNotesEntry(e.name))
                                     continue;
                                 const full = path.join(dir, e.name);
                                 const metaFile = path.join(full, 'meta.json');

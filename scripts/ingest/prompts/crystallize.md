@@ -22,6 +22,13 @@ Do NOT extract:
 
 ## Output Format
 
+**CRITICAL OUTPUT RULES — read carefully:**
+- Output ONLY the JSON array. Nothing else.
+- Do NOT include any preamble, greeting, or explanation before the JSON (e.g. "你的笔记主要…" / "Here is the extracted content:").
+- Do NOT include any commentary or trailing notes after the JSON.
+- Do NOT wrap the JSON in markdown code fences (no ```json ... ``` ).
+- The very first character of your response MUST be `[` and the last MUST be `]`.
+
 Return a JSON array of fragments. Each fragment is a standalone knowledge unit. Return `[]` if the note contains nothing worth extracting.
 
 ```json

@@ -21,7 +21,9 @@ import { useModelConfigStore, getModelApiKey } from '@/stores/useModelConfigStor
 import { getStoredApiKey } from '@/lib/llmClient'
 import { atomsApi } from '@/lib/dataApi'
 import { getInsightColor } from '@/lib/insightColors'
+import { parseLlmJson } from '@/lib/parseLlmJson'
 import { cn } from '@/lib/cn'
+import classifyPromptText from '../../../scripts/ingest/prompts/classify.md?raw'
 import type { InsightType } from '@/types'
 import Anthropic from '@anthropic-ai/sdk'
 
@@ -43,21 +45,9 @@ interface ClassifyResult {
   confidence: number
 }
 
-// Load classify prompt from the project
-const CLASSIFY_PROMPT_URL = '/scripts/ingest/prompts/classify.md'
-let cachedPrompt: string | null = null
-
-async function loadClassifyPrompt(): Promise<string> {
-  if (cachedPrompt) return cachedPrompt
-  try {
-    const res = await fetch(CLASSIFY_PROMPT_URL)
-    if (res.ok) {
-      cachedPrompt = await res.text()
-      return cachedPrompt
-    }
-  } catch { /* fallback */ }
-  return 'Classify the following text into a structured knowledge fragment. Return JSON with: title, insight, sourceContext, role, situation, activity, insight_type (one of: 反直觉/方法验证/方法证伪/情绪复盘/关系观察/时机判断/原则提炼/纯好奇), tags, confidence.'
-}
+// Bundled at build time via Vite's `?raw` import so the prompt survives
+// the Tauri packaged runtime (where `fetch('/scripts/...')` would 404).
+const CLASSIFY_PROMPT = classifyPromptText
 
 async function callLlmClassify(rawText: string): Promise<ClassifyResult> {
   const store = useModelConfigStore.getState()
@@ -67,7 +57,7 @@ async function callLlmClassify(rawText: string): Promise<ClassifyResult> {
   const apiKey = getModelApiKey(defaultLlm.id) || getStoredApiKey()
   if (!apiKey) throw new Error('请先在设置中填入 API Key')
 
-  const systemPrompt = await loadClassifyPrompt()
+  const systemPrompt = CLASSIFY_PROMPT
 
   // Dynamically fetch and append existing taxonomy to the prompt
   let dynamicTaxonomy = ''
@@ -135,12 +125,9 @@ To avoid creating semantically duplicated categories, please prioritize these ex
     rawJson = data?.choices?.[0]?.message?.content ?? ''
   }
 
-  // Strip markdown fences if present
-  let cleaned = rawJson.trim()
-  const fenceMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/)
-  if (fenceMatch) cleaned = fenceMatch[1].trim()
-
-  return JSON.parse(cleaned) as ClassifyResult
+  // Robust JSON extraction — strips markdown fences and prose preambles
+  // that some models add despite explicit instructions.
+  return parseLlmJson<ClassifyResult>(rawJson, { expect: 'object' })
 }
 
 export function QuickIngestDialog({ open, onClose, onIngested }: Props) {

@@ -10,6 +10,8 @@ import Anthropic from '@anthropic-ai/sdk'
 import { useModelConfigStore, getModelApiKey } from '@/stores/useModelConfigStore'
 import { getStoredApiKey } from '@/lib/llmClient'
 import { atomsApi } from '@/lib/dataApi'
+import { parseLlmJson } from '@/lib/parseLlmJson'
+import crystallizePromptText from '../../scripts/ingest/prompts/crystallize.md?raw'
 import type { InsightType } from '@/types'
 import type { ModelType } from '@/types/modelConfig'
 
@@ -32,22 +34,12 @@ export interface CrystallizeOptions {
   modelType?: ModelType
 }
 
-// ─── Prompt loader ───────────────────────────────────────────────────
-
-const CRYSTALLIZE_PROMPT_URL = '/scripts/ingest/prompts/crystallize.md'
-let cachedPrompt: string | null = null
-
-async function loadCrystallizePrompt(): Promise<string> {
-  if (cachedPrompt) return cachedPrompt
-  try {
-    const res = await fetch(CRYSTALLIZE_PROMPT_URL)
-    if (res.ok) {
-      cachedPrompt = await res.text()
-      return cachedPrompt
-    }
-  } catch { /* fallback */ }
-  return 'Extract knowledge fragments from the following note. Return a JSON array where each element has: title, insight, sourceContext, role, situation, activity, insight_type (one of: 反直觉/方法验证/方法证伪/情绪复盘/关系观察/时机判断/原则提炼/纯好奇), tags, confidence. Return [] if nothing worth extracting.'
-}
+// ─── Prompt ──────────────────────────────────────────────────────────
+// Bundled at build time via Vite's `?raw` import so the prompt is
+// available in both dev and packaged Tauri (where the previous
+// `fetch('/scripts/...')` call would 404 because the dist folder doesn't
+// include the project-root scripts/ directory).
+const CRYSTALLIZE_PROMPT = crystallizePromptText
 
 // ─── Dynamic taxonomy ────────────────────────────────────────────────
 
@@ -115,10 +107,9 @@ export async function crystallizeNote(
   const apiKey = getModelApiKey(model.id) || getStoredApiKey()
   if (!apiKey) throw new Error('请先在设置中填入 API Key')
 
-  const systemPrompt = await loadCrystallizePrompt()
   const dynamicTaxonomy = await buildDynamicTaxonomy()
 
-  const userContent = systemPrompt + '\n' + dynamicTaxonomy + '\n\n' + content
+  const userContent = CRYSTALLIZE_PROMPT + '\n' + dynamicTaxonomy + '\n\n' + content
 
   // Dynamic max_tokens: input estimate + 8192, clamped to [4096, 16384]
   const inputTokens = estimateTokens(userContent)
@@ -162,15 +153,12 @@ export async function crystallizeNote(
     rawJson = data?.choices?.[0]?.message?.content ?? ''
   }
 
-  // Strip markdown fences if present
-  let cleaned = rawJson.trim()
-  const fenceMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)```/)
-  if (fenceMatch) cleaned = fenceMatch[1].trim()
-
-  const parsed = JSON.parse(cleaned)
+  // Robust JSON extraction — strips markdown fences and prose preambles
+  // that some models add despite explicit instructions.
+  const parsed = parseLlmJson<unknown>(rawJson, { expect: 'either' })
 
   // Ensure we always return an array
-  if (Array.isArray(parsed)) return parsed
-  if (typeof parsed === 'object' && parsed !== null) return [parsed]
+  if (Array.isArray(parsed)) return parsed as CrystallizeFragment[]
+  if (typeof parsed === 'object' && parsed !== null) return [parsed as CrystallizeFragment]
   return []
 }

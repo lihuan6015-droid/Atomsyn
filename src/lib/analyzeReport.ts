@@ -10,48 +10,15 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { useModelConfigStore, getModelApiKey } from '@/stores/useModelConfigStore'
 import { getStoredApiKey } from '@/lib/llmClient'
+import analysisPromptText from '../../scripts/ingest/prompts/analysis-report.md?raw'
 import type { AnalysisReportResult, AnalysisSnapshot } from '@/types'
 import type { ModelType } from '@/types/modelConfig'
 
 // ─── Prompt ─────────────────────────────────────────────────────────
-
-const ANALYSIS_PROMPT_URL = '/scripts/ingest/prompts/analysis-report.md'
-// Note: cache is per page load — browser refresh clears it
-let cachedPrompt: string | null = null
-
-async function loadAnalysisPrompt(): Promise<string> {
-  if (cachedPrompt) return cachedPrompt
-  try {
-    const res = await fetch(ANALYSIS_PROMPT_URL)
-    if (res.ok) {
-      cachedPrompt = await res.text()
-      return cachedPrompt
-    }
-  } catch { /* fallback */ }
-  return FALLBACK_PROMPT
-}
-
-const FALLBACK_PROMPT = `你是一个认知教练，基于用户的知识库数据给出诚实、有洞察的分析。
-
-请基于以下用户数据快照生成分析报告。直接输出 JSON（不要包裹在 markdown 代码块中）：
-
-{
-  "summary": "总体评估（80-150字）",
-  "strengths": ["优势1（30-60字）", "优势2"],
-  "blindSpots": ["盲区1（30-60字）", "盲区2"],
-  "suggestions": ["具体可执行建议1（40-80字）", "建议2"],
-  "narrative": "完整分析叙述（400-800字，Markdown）",
-  "radar": [
-    {"axis": "认知深度", "score": 0, "description": "一句话"},
-    {"axis": "认知广度", "score": 0, "description": "一句话"},
-    {"axis": "实践转化", "score": 0, "description": "一句话"},
-    {"axis": "反思频率", "score": 0, "description": "一句话"},
-    {"axis": "学习活跃", "score": 0, "description": "一句话"},
-    {"axis": "理论储备", "score": 0, "description": "一句话"}
-  ]
-}
-
-radar 固定 6 维度，score 0-100。语言：中文`
+// Bundled at build time via Vite's `?raw` import so the prompt is
+// available in both dev and packaged Tauri (the previous `fetch` call
+// 404'd in packaged builds because dist/ doesn't ship scripts/).
+const ANALYSIS_PROMPT = analysisPromptText
 
 // ─── Main service ────────────────────────────────────────────────────
 
@@ -66,7 +33,7 @@ export async function generateAnalysisReport(
   const apiKey = getModelApiKey(model.id) || getStoredApiKey()
   if (!apiKey) throw new Error('请先在设置中填入 API Key')
 
-  const prompt = await loadAnalysisPrompt()
+  const prompt = ANALYSIS_PROMPT
 
   // Compact snapshot to reduce token usage — trim verbose arrays
   const compactSnapshot = {
