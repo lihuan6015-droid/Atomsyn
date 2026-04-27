@@ -17,7 +17,7 @@
 | `atomsyn-write` | **沉淀即投资** —— 自带主动建议哲学, 在自然停顿时短问一句 "要不要记一下" | 对话中产生了"如果不记下来未来不会知道"的认知 |
 | `atomsyn-read` | **默认主动 + 空结果沉默** —— 任何非闲聊的实质性工作开始前都先调一次 | 用户提出实质性问题, 先看本地资产 |
 | `atomsyn-mentor` | **数据驱动 + 教练闭环** —— 主动分析盲区和趋势, 推用户行动 | 用户说 "复盘" / "导师模式" / "回顾一下" / "我最近学了什么" / "我的盲区" |
-| `atomsyn-bootstrap` | **引导式批量冷启动 + 用户主权** —— 把硬盘上散落的过程文档按 5 层架构提炼成 1 profile + N experience/fragment, 三阶段 funnel + dry-run/commit 两阶段, 让用户全程在场 (V2.x bootstrap-skill) | 用户说 "初始化 atomsyn / bootstrap atomsyn / 把 ~/X 倒进来 / 从我之前的笔记导入 / 第一次用 atomsyn" |
+| `atomsyn-bootstrap` | **引导式批量冷启动 + 用户主权** —— 把硬盘上散落的过程文档按 5 层架构提炼成 1 profile + N experience/fragment, 默认走 agentic 模式 (LLM tool-use 探索, bootstrap-tools D-001), funnel 兜底; 支持 `.md/.markdown/.txt/.docx/.pdf/.json/.yaml`; dry-run/commit 两阶段让用户全程在场 (V2.x bootstrap-skill + bootstrap-tools) | 用户说 "初始化 atomsyn / bootstrap atomsyn / 把 ~/X 倒进来 / 从我之前的笔记导入 / 第一次用 atomsyn" 或在 GUI 聊天发送 `/bootstrap` / `/bootstrap <path>` |
 
 ---
 
@@ -98,7 +98,7 @@
 ```yaml
 ---
 name: atomsyn-bootstrap
-description: "把用户硬盘上散落的过程文档 (markdown / 笔记 / 历史聊天导出 / 源代码注释) 引导式地导入 Atomsyn 知识库, 产出 1 条 profile atom + N 条 experience/fragment atom。3 阶段 funnel: TRIAGE 扫描概览 → SAMPLING 采样画像 → DEEP DIVE 5 层归类。隐私优先: 默认敏感关键字扫描 + .atomsynignore。用户说 '初始化我的 atomsyn / 把这个目录倒进来 / bootstrap atomsyn / 从我之前的笔记导入' 时触发。"
+description: "把用户硬盘上散落的过程文档 (markdown / docx / pdf / 文本笔记 / 历史聊天导出 / 源代码注释) 引导式地导入 Atomsyn 知识库, 产出 1 条 profile atom + N 条 experience/fragment atom。bootstrap-tools v2 默认 agentic 模式: LLM 用 ls/stat/glob/grep/read 5 个工具探索目录树自主决定读什么; funnel 模式 (`--mode funnel`) 是 v1 硬编码 5 层串行, 作为兜底。隐私优先: 14 条敏感关键字 + .atomsynignore。用户说 '初始化我的 atomsyn / 把这个目录倒进来 / bootstrap atomsyn / 从我之前的笔记导入' 或在 GUI 聊天用 `/bootstrap` 命令时触发。"
 allowed-tools: Bash, Read
 ---
 ```
@@ -106,6 +106,7 @@ allowed-tools: Bash, Read
 ### 5.2 触发条件
 
 - **显式**: 用户说"初始化 atomsyn / bootstrap atomsyn / 把 ~/X 倒进来 / 从我之前的笔记导入 / 第一次用 atomsyn"
+- **GUI 入口** (bootstrap-tools B1/B2/B3): 用户在聊天输入框打 `/bootstrap` (打开向导) 或 `/bootstrap <path>` (向导预填路径); 粘贴绝对路径触发 PathDetectionBanner (D-002)
 - **静默规则**: 检测到用户 `atomsyn-cli where` 返回的数据目录里 atom 数 < 5 且用户在做实质性 AI 任务时, **不自动触发**, 但**可以问一句**"你的 atomsyn 看起来很空, 要不要先 bootstrap 一下?"
 
 ### 5.3 不可变承诺 (Invariants)
@@ -117,7 +118,9 @@ allowed-tools: Bash, Read
 - **B-I5 · session 可恢复**: 任何 phase 失败必须保留 session 状态, 用户可 `atomsyn-cli bootstrap --resume <session-id>`
 - **B-I6 · dry-run 是默认推荐路径** (D-011): Skill 的标准工作流是先 `--dry-run` 输出 markdown, 用户校对后才调 `--commit` 写入。Skill 在引导用户时必须明确这两步, 不要让用户感觉 bootstrap 是"一键不可逆"
 - **B-I7 · profile 单例** (D-010): 跨多次 bootstrap, profile id 始终是 `atom_profile_main`, Skill 调用演化协议时不创建新 id; 历史快照通过 `previous_versions[]` 追溯, 不进 supersede 关系网 (与 cognitive-evolution D-008 联动)
-- **B-I8 · prompt 模板锁定** (D-012): bootstrap 内部使用的 LLM prompt 模板从 `scripts/bootstrap/prompts/*.md` 加载, 用户配置文件不可覆盖 (v1); v2 视用户反馈再开放 override
+- **B-I8 · prompt 模板锁定** (D-012): bootstrap 内部使用的 LLM prompt 模板从 `scripts/bootstrap/prompts/*.md` 加载 (v2 起含 `agentic-deepdive.md`), 用户配置文件不可覆盖 (v1); v2 视用户反馈再开放 override
+- **B-I9 · agentic 沙箱** (bootstrap-tools D-006): agentic 模式下 LLM 通过 `ls/stat/glob/grep/read` 工具集探索时, 所有路径必须 startsWith 用户在 `--path` 中明确给的根; 越界抛 `SANDBOX_VIOLATION`. `read` 走 extractor 链 + privacy 链, 不绕过敏感扫描
+- **B-I10 · agentic loop 双重上限** (bootstrap-tools D-009): tool-use loop 同时受 `maxLoops=30` 和 `maxTokens=100_000` 约束, 任一触发即终止. agentic 失败时自动 fallback funnel 一次 + WARN (D-008)
 
 ### 5.4 Token 预算 (单次 bootstrap)
 
@@ -125,8 +128,9 @@ allowed-tools: Bash, Read
 |---|---|---|---|
 | TRIAGE | 0 | 纯文件元信息 (`stat()`), 无 LLM 调用 | < 30s @ 10000 文件 |
 | SAMPLING | 1 | ≤ 30k input + 4k output | < 5 min |
-| DEEP DIVE 串行 (默认) | N (= 文件数) | 每次 ≤ 8k input + 2k output | 1000 文件预算 = ~10M tokens, 用户 LLM 配置成本约 $5-30 |
-| DEEP DIVE 并行 (`--parallel`) | 4N | 4x token cost | < 8 min @ 1000 文件 |
+| **DEEP DIVE agentic** (default, bootstrap-tools D-001) | 5-30 (loop rounds) | ≤ 100k 累计 input+output (硬上限 D-009) | LLM 主动 ls/glob/read; 1000 文件预算 ~$0.30; ≤ 20 min |
+| DEEP DIVE funnel 串行 (`--mode funnel`) | N (= 文件数) | 每次 ≤ 8k input + 2k output | 1000 文件预算 = ~10M tokens, 成本约 $5-30 |
+| DEEP DIVE funnel 并行 (`--mode funnel --parallel`) | 4N | 4x token cost | < 8 min @ 1000 文件 |
 
 文档明确告诉用户预算量级, GUI BootstrapWizard 的 token/cost 估算预览组件必须在启动前展示估算 (见 cli-contract §3.14.6)。
 
@@ -143,8 +147,9 @@ allowed-tools: Bash, Read
 - 关卡: 输出画像假设 markdown (identity + preferences 5 维 + knowledge_domains) → AskUserQuestion("画像确认? 1. 准确, 继续 / 2. 我补充: <文本框> / 3. 重新采样")
 
 **Phase 3 · DEEP DIVE (深读 + dry-run + commit)**:
-- 默认走 dry-run 路径 (B-I6): Skill 调 `bootstrap --resume <id> --phase deep-dive --dry-run` → 输出人类友好 markdown 候选列表 + 持久化到 session `.md` 文件
-- 关卡: AskUserQuestion("dry-run 报告已就绪 (50 条候选 + 1 profile 草案), 是否打开 GUI 校对? 或直接 --commit?")
+- **agentic mode (default, bootstrap-tools D-001)**: Skill 调 `bootstrap --resume <id> --phase deep-dive --dry-run` (mode=agentic 是 default, 无需显式) → LLM 用 ls/stat/glob/grep/read 工具集探索目录树, 主动决定读什么/跳什么 → 输出人类友好 markdown 候选列表 + agent_trace[] 落 session.json + 持久化 markdown 到 session `.md` 文件
+- **funnel fallback (`--mode funnel`)**: 显式 opt-in 老 v1 硬编码 5 层 funnel; agentic 失败时也会自动走这条 + WARN (D-008)
+- 关卡: AskUserQuestion("dry-run 报告已就绪 (50 条候选 + 1 profile 草案 + Agent 探索 timeline), 是否打开 GUI 校对? 或直接 --commit?")
 - commit 阶段: Skill 调 `bootstrap --commit <session-id>` (可选 `--markdown-corrected-file`) → LLM 把保留的 markdown 候选生成完整 atom JSON → 通过 `atomsyn-cli ingest --stdin` 落盘 → profile 通过 `applyProfileEvolution` 单例语义入库
 
 ### 5.6 与其他 Skill 的关系
@@ -191,3 +196,4 @@ allowed-tools: Bash, Read
 - 2026-04-26 · openspec-bootstrap · all · 建立本契约文档骨架, 内容标记 [TODO] 待后续 change 填充
 - 2026-04-26 · 2026-04-cognitive-evolution · all · atomsyn-read 加 W2.x 温度计句 + profile 不消费; atomsyn-write 加 collision 三选一 + archived/superseded 只读; atomsyn-mentor 加 Phase 2.5 prune 主动建议 (Token 预算 ≤ 5000), prune 严禁自动 mutate (D-005)
 - 2026-04-26 · 2026-04-bootstrap-skill · atomsyn-bootstrap (new) · 新增第 4 个 skill atomsyn-bootstrap (8 条不可变承诺含 B-I6 dry-run/commit + B-I7 profile 单例 + B-I8 prompt 锁定); 新增 §5 完整契约 (frontmatter + 触发条件 + 8 条不可变承诺 + Token 预算 + 3 阶段 funnel 关卡); 现有 §5/§6/§7 重编号为 §6/§7/§8
+- 2026-04-27 · 2026-04-bootstrap-tools · atomsyn-bootstrap · description 加 docx/pdf + agentic 模式; 新增 GUI `/bootstrap` 命令触发条件 (B1/B2/B3) + 粘贴路径 banner (D-002); 新增 B-I9 沙箱不变量 (D-006) + B-I10 loop 双重上限 (D-009); §5.4 Token 预算表新增 agentic 行 (5-30 rounds / ≤100k); §5.5 Phase 3 改为 agentic-default + funnel-fallback 二选一

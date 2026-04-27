@@ -98,7 +98,7 @@ skills/
 | "重建一下索引" | `npm run reindex` (or hit `POST /api/index/rebuild` if dev server is up) |
 | "新建一个骨架" | Create `data/frameworks/<id>.json` matching the framework schema, then ask if user wants seed atoms |
 | "把 X 原子和 Y 原子建立父子关系" | Set `parentAtomId` + `relationType` on the child, save, rebuild index |
-| "初始化 atomsyn / bootstrap / 把 ~/X 倒进来" | 引导用户走 dry-run + commit 两步 (D-011 of 2026-04-bootstrap-skill), 别一步到位; profile 单例语义保留 (D-010); GUI 入口在聊天页"初始化向导"按钮 |
+| "初始化 atomsyn / bootstrap / 把 ~/X 倒进来" | 引导用户走 dry-run + commit 两步 (D-011 of 2026-04-bootstrap-skill), 别一步到位; profile 单例语义保留 (D-010); GUI 入口三选一: 聊天页"初始化向导"按钮 / 聊天输入框 `/bootstrap [path]` (bootstrap-tools B1-B3) / 粘贴本地路径触发 banner (D-002); 默认走 agentic 模式, 不动就别加 `--mode funnel` |
 
 ---
 
@@ -130,13 +130,18 @@ atomsyn-cli supersede --id <old-id> --input <new-atom-file> [--no-archive-old]  
 atomsyn-cli archive --id <id> [--reason "..."] [--restore]                       # 软删除 atom; --restore 反归档
 atomsyn-cli prune [--limit N]                                                    # dry-run 扫描候选 (永远不自动 mutate)
 
-# V2.x bootstrap-skill (2026-04 change) · 引导式批量冷启动
-atomsyn-cli bootstrap --path <dir> [--path <dir2> ...]
+# V2.x bootstrap-skill + bootstrap-tools (2026-04 changes) · 引导式批量冷启动
+atomsyn-cli bootstrap --path <dir-or-file> [--path <X> ...]
+                      [--mode agentic|funnel]                       # bootstrap-tools D-001: agentic 默认
                       [--phase triage|sampling|deep-dive|all]
                       [--dry-run | --commit <session-id> | --resume <session-id>]
                       [--include-pattern <csv>] [--exclude-pattern <csv>]
                       [--user-correction "..."] [--markdown-corrected-file <path>]
-                      # 3 阶段 funnel + dry-run/commit 两步 (D-011)
+                      # bootstrap-tools v2: agentic 模式 LLM 用 ls/stat/glob/grep/read 工具集探索
+                      # 支持 .md/.markdown/.txt/.docx/.pdf/.json/.yaml (extractors/ 链)
+                      # agentic 失败自动 fallback funnel 一次 + WARN (D-008)
+                      # dry-run/commit 两步协议 (bootstrap-skill D-011)
+                      # session.agent_trace[] additive 字段 (D-003)
                       # session 持久化到 ~/.atomsyn/bootstrap-sessions/
 
 atomsyn-cli reindex
@@ -254,3 +259,15 @@ bootstrap session 端点 + profile 4 端点已实现双通道 (`vite-plugin-data
 - `GET /bootstrap/sessions` · `GET /bootstrap/sessions/:id` · `POST /bootstrap/sessions/:id/commit` · `DELETE /bootstrap/sessions/:id`
 
 **packaged Tauri commit caveat**: `POST /bootstrap/sessions/:id/commit` 在 packaged 模式当前返回 501 (Tauri 无 shell 插件 + 无中心化 LLM 客户端, 不能 spawn `atomsyn-cli ingest` 子进程)。tauri:dev 模式 GUI 走 Vite 中间件正常。打包模式 fallback: `~/.atomsyn/bin/atomsyn-cli bootstrap --commit <id>` 直跑, 待后续 Rust shell command 包装。
+
+### V2.x bootstrap-tools (2026-04 change · v2 增量)
+
+- 文档解析: 新增 `scripts/lib/bootstrap/extractors/` 目录 — markdown / code / text / **docx (mammoth)** / **pdf (pdfjs-dist legacy)**, 统一 `{text, meta, skipped?, reason?}` 输出 (D-004)
+- Agent 工具集: `scripts/lib/bootstrap/agentTools.mjs` 5 原子 (`ls / stat / glob / grep / read`), path-prefix 沙箱 (D-006), 中文路径 NFC normalize, 上限 ls=200 / glob=500 / grep=50 hits / read=16KB
+- agentic loop: `scripts/lib/bootstrap/agentic.mjs::runAgenticDeepDive` — LLM tool-use 替代硬编码 funnel (D-001), 双重上限 maxLoops=30 + maxTokens=100k (D-009); `scripts/lib/bootstrap/llmClient.mjs::chatWithTools` 双分支 Anthropic + OpenAI (D-005)
+- session schema 加 `options.mode` + `agent_trace[]` (additive, D-003); v1 session 加载零异常
+- ChatInput `/bootstrap` 命令 + 路径粘贴 banner (D-002): 派发 `atomsyn:open-bootstrap` CustomEvent → ChatPage 监听打开向导
+- BootstrapWizard PathsScreen 多选目录 + 多选具体文件 (filter md/markdown/txt/docx/pdf/json/yaml); DryrunScreen 加 agent_trace timeline 折叠面板
+- Tauri capabilities/default.json fs:scope 加 `$HOME/Documents/{,**}` + `Downloads/{,**}` + `Desktop/{,**}` (D-007), **不加** `~/**`
+
+**铁律新增**: agentic 失败时 cmdBootstrap 自动 fallback funnel 一次 + WARN (D-008); v1 funnel 实现 (`deepDive.mjs`) 保留作 fallback, 不删, 待 6 个月观察后再决
