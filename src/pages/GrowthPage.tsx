@@ -5,10 +5,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Activity, BarChart3, Flame, Radar, Sparkles, Sprout } from 'lucide-react'
+import { Activity, BarChart3, Flame, Radar, Sparkles, Sprout, User } from 'lucide-react'
 import { analysisApi, atomsApi, projectsApi, psychApi, usageApi } from '@/lib/dataApi'
 import { AnalysisView } from '@/components/growth/AnalysisView'
 import { RadarChart } from '@/components/growth/RadarChart'
+import { ProfileCalibration } from '@/components/growth/ProfileCalibration'
 import type { AnalysisReport } from '@/types'
 import type {
   Atom,
@@ -50,7 +51,7 @@ export function GrowthPage() {
 
   const [month, setMonth] = useState<string>(ymKey(new Date()))
   const [psychOpen, setPsychOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState<'overview' | 'analysis'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'analysis' | 'profile'>('overview')
 
   useEffect(() => {
     Promise.all([
@@ -196,6 +197,7 @@ export function GrowthPage() {
             {([
               { id: 'overview' as const, label: '概览', icon: <BarChart3 className="w-3.5 h-3.5" /> },
               { id: 'analysis' as const, label: '认知洞察', icon: <Sparkles className="w-3.5 h-3.5" /> },
+              { id: 'profile' as const, label: '画像', icon: <User className="w-3.5 h-3.5" /> },
             ]).map((tab) => (
               <button
                 key={tab.id}
@@ -222,6 +224,8 @@ export function GrowthPage() {
       {/* Tab content */}
       {activeTab === 'analysis' ? (
         <AnalysisView />
+      ) : activeTab === 'profile' ? (
+        <ProfileCalibration />
       ) : (
       <>
       {/* Stats grid */}
