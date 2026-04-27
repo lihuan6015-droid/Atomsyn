@@ -2178,23 +2178,31 @@ async function cmdBootstrap(args) {
       ...session.atoms_created,
       experience: (session.atoms_created?.experience || 0) + result.atomsCreated.experience,
       fragment: (session.atoms_created?.fragment || 0) + result.atomsCreated.fragment,
+      profile: (session.atoms_created?.profile || 0) + (result.atomsCreated.profile || 0),
     }
     session.commit_skipped = result.skipped
+    session.commit_duplicates = result.duplicates
     session.commit_parse_errors = result.parseErrors
-    // profile_snapshot is stashed for B13 to consume via applyProfileEvolution
     session.commit_profile_snapshot = result.profile_snapshot
+    session.commit_profile_trigger = result.profile_trigger
+    session.commit_atom_ids = result.atomIds
     session.status = sessionLib.SESSION_STATUS.COMMIT_COMPLETED
     session.endedAt = new Date().toISOString()
     await sessionLib.writeSession(session)
 
     process.stderr.write(`✓ commit complete: ${result.atomsCreated.experience} experiences + ${result.atomsCreated.fragment} fragments ingested.\n`)
+    if (result.atomsCreated.profile) {
+      process.stderr.write(`  Profile updated via applyProfileEvolution (trigger: ${result.profile_trigger})\n`)
+    }
+    if (result.duplicates.length > 0) {
+      process.stderr.write(`  ${result.duplicates.length} candidates skipped as duplicates (B14 dedup, threshold 0.8)\n`)
+    }
     if (result.skipped.length > 0) {
       process.stderr.write(`  ${result.skipped.length} atoms could not be ingested (see session.commit_skipped[])\n`)
     }
     if (result.parseErrors.length > 0) {
       process.stderr.write(`  ${result.parseErrors.length} markdown parse warnings (see session.commit_parse_errors[])\n`)
     }
-    process.stderr.write(`  Profile snapshot stashed (B13 will write it via applyProfileEvolution).\n`)
     process.stderr.write(`  Session: ${session.id}\n`)
     return
   }

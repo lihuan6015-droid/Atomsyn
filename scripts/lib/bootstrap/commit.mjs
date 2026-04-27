@@ -17,13 +17,14 @@
  * scripts/lib/evolution.mjs::applyProfileEvolution.
  */
 
-import { readFile } from 'node:fs/promises'
+import { readFile, readdir, writeFile, mkdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { spawn } from 'node:child_process'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadPrompt } from './extract.mjs'
 import { chatComplete } from './llmClient.mjs'
+import { detectCollision, applyProfileEvolution } from '../evolution.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const CLI_PATH = resolve(__dirname, '..', '..', 'atomsyn-cli.mjs')
@@ -201,26 +202,109 @@ export function spawnAtomsynWrite(atomJson, subcommand, dataDir) {
 }
 
 /**
+ * Walk the data dir's atoms/ tree and load every atom JSON. Used for B14
+ * dedup: we feed the corpus into detectCollision before each ingest so we
+ * can skip near-duplicates cheaply (in-memory, no per-atom subprocess spawn).
+ */
+async function loadAtomCorpus(dataDir) {
+  const root = join(dataDir, 'atoms')
+  if (!existsSync(root)) return []
+  const out = []
+  async function walk(dir) {
+    let entries
+    try { entries = await readdir(dir, { withFileTypes: true }) }
+    catch { return }
+    for (const e of entries) {
+      const full = join(dir, e.name)
+      if (e.isDirectory()) await walk(full)
+      else if (e.isFile() && e.name.endsWith('.json')) {
+        try { out.push(JSON.parse(await readFile(full, 'utf8'))) }
+        catch { /* skip bad json */ }
+      }
+    }
+  }
+  await walk(root)
+  return out
+}
+
+/**
+ * Profile singleton I/O for applyProfileEvolution deps. The function lives at
+ * <dataDir>/atoms/profile/main/atom_profile_main.json (D-010).
+ */
+const PROFILE_REL_PATH = ['atoms', 'profile', 'main', 'atom_profile_main.json']
+
+async function readProfileImpl(dataDir) {
+  const file = join(dataDir, ...PROFILE_REL_PATH)
+  if (!existsSync(file)) return null
+  try { return JSON.parse(await readFile(file, 'utf8')) }
+  catch { return null }
+}
+
+async function writeProfileImpl(dataDir, profile) {
+  const file = join(dataDir, ...PROFILE_REL_PATH)
+  await mkdir(dirname(file), { recursive: true })
+  await writeFile(file, JSON.stringify(profile, null, 2) + '\n', 'utf8')
+}
+
+/**
+ * Reindex via the bundled CLI (subprocess). Same dataDir env override pattern
+ * as spawnAtomsynWrite. Used as the rebuildIndex dep for applyProfileEvolution.
+ */
+function reindexViaCli(dataDir) {
+  return new Promise((resolveProm, rejectProm) => {
+    const env = { ...process.env }
+    if (dataDir) env.ATOMSYN_DEV_DATA_DIR = dataDir
+    const child = spawn(NODE, [CLI_PATH, 'reindex'], { env, stdio: ['ignore', 'ignore', 'pipe'] })
+    let err = ''
+    child.stderr.on('data', (d) => { err += d.toString() })
+    child.on('close', (code) => {
+      if (code === 0) resolveProm()
+      else rejectProm(new Error(`reindex exited with ${code}: ${err.trim()}`))
+    })
+    child.on('error', rejectProm)
+  })
+}
+
+/**
+ * Build a minimal atom-shape object suitable for detectCollision (B14). The
+ * collision detector reads tags / role / situation / insight / summary —
+ * the experience+fragment atom builders already populate these.
+ */
+function shapeForCollision(atom) {
+  return {
+    id: atom.id || `__pending_${Math.random().toString(36).slice(2, 8)}`,
+    tags: atom.tags || [],
+    role: atom.role || '',
+    situation: atom.situation || '',
+    insight: atom.insight || '',
+    summary: atom.summary || '',
+  }
+}
+
+/**
  * Run the full commit stage. Returns the counts + the profile_snapshot for
- * the caller to feed into applyProfileEvolution (B13).
+ * the caller to feed into applyProfileEvolution (B13 — also wired here).
  *
  * @param {object} opts
  * @param {object} opts.session
- * @param {string} opts.markdownText                 — the (possibly user-edited) report
- * @param {object} opts.llmConfig
- * @param {function} opts.fetchImpl
+ * @param {string} opts.markdownText
+ * @param {object} [opts.llmConfig]
+ * @param {function} [opts.fetchImpl]
  * @param {string} opts.dataDir
+ * @param {number} [opts.dedupThreshold=0.8]   B14 — collision score above which we skip
  *
  * @returns {Promise<{
- *   atomsCreated: { experience: number, fragment: number },
+ *   atomsCreated: { experience: number, fragment: number, profile: 0|1 },
  *   atomIds: string[],
  *   skipped: Array<{ candidate: object, error: string }>,
+ *   duplicates: Array<{ candidate: object, matchedId: string, score: number, reason: string }>,
  *   profile_snapshot: object|null,
+ *   profile_trigger: string|null,
  *   parseErrors: string[]
  * }>}
  */
 export async function runCommit(opts) {
-  const { session, markdownText, llmConfig, fetchImpl, dataDir } = opts
+  const { session, markdownText, llmConfig, fetchImpl, dataDir, dedupThreshold = 0.8 } = opts
 
   const { candidates, profile_block, parseErrors } = parseDryRunMarkdown(markdownText)
   if (candidates.length === 0 && !profile_block) {
@@ -240,9 +324,14 @@ export async function runCommit(opts) {
     llmConfig, fetchImpl,
   })
 
-  const counts = { experience: 0, fragment: 0 }
+  // B14 · load corpus once for in-memory dedup. Filter out archived /
+  // superseded atoms to avoid spurious overlap with already-retired material.
+  const corpus = (await loadAtomCorpus(dataDir)).filter((a) => !a.archivedAt && !a.supersededBy)
+
+  const counts = { experience: 0, fragment: 0, profile: 0 }
   const atomIds = []
   const skipped = []
+  const duplicates = []
 
   for (const atom of atoms) {
     // Detect kind from shape: fragment has summary + insight_type; experience has insight + sourceContext
@@ -253,6 +342,20 @@ export async function runCommit(opts) {
       skipped.push({ candidate: atom, error: 'cannot infer subcommand from atom shape (missing summary+insight_type or insight+sourceContext)' })
       continue
     }
+
+    // B14 dedup
+    const collisions = detectCollision(shapeForCollision(atom), corpus, { maxCandidates: 3 })
+    const dup = collisions.find((c) => c.score >= dedupThreshold)
+    if (dup) {
+      duplicates.push({
+        candidate: { name: atom.name || atom.title, kind: subcommand },
+        matchedId: dup.id,
+        score: dup.score,
+        reason: dup.reason,
+      })
+      continue
+    }
+
     // Ensure imported flag + session id pass through
     atom.stats = atom.stats || {}
     atom.stats.imported = true
@@ -261,14 +364,48 @@ export async function runCommit(opts) {
     const res = await spawnAtomsynWrite(atom, subcommand, dataDir)
     if (res.ok) {
       counts[subcommand === 'ingest' ? 'fragment' : 'experience']++
-      // Try to extract atom id from CLI output JSON
       try {
         const parsed = JSON.parse(res.output)
         if (parsed.id) atomIds.push(parsed.id)
         else if (parsed.atom?.id) atomIds.push(parsed.atom.id)
-      } catch { /* CLI may have printed plaintext; skip id capture */ }
+      } catch { /* CLI may print plaintext; skip id capture */ }
     } else {
       skipped.push({ candidate: atom, error: res.error })
+    }
+  }
+
+  // B13 · profile singleton via applyProfileEvolution
+  let profile_trigger = null
+  if (profile_snapshot) {
+    const existingProfile = await readProfileImpl(dataDir)
+    profile_trigger = existingProfile ? 'bootstrap_rerun' : 'bootstrap_initial'
+    try {
+      // Patch evidence_atom_ids with the ids we just minted (best-effort).
+      const enrichedSnapshot = {
+        ...profile_snapshot,
+        evidence_atom_ids: Array.from(new Set([
+          ...(profile_snapshot.evidence_atom_ids || []),
+          ...atomIds,
+        ])),
+      }
+      await applyProfileEvolution(
+        {
+          dataDir,
+          readProfile: readProfileImpl,
+          writeProfile: writeProfileImpl,
+          rebuildIndex: reindexViaCli,
+        },
+        {
+          newSnapshot: enrichedSnapshot,
+          trigger: profile_trigger,
+          evidenceDelta: atomIds,
+        },
+      )
+      counts.profile = 1
+    } catch (err) {
+      // Profile write failure should not retroactively fail the atom ingests.
+      // Surface as a skipped entry so the user sees it.
+      skipped.push({ candidate: { kind: 'profile' }, error: `applyProfileEvolution failed: ${err.message}` })
     }
   }
 
@@ -276,7 +413,9 @@ export async function runCommit(opts) {
     atomsCreated: counts,
     atomIds,
     skipped,
+    duplicates,
     profile_snapshot,
+    profile_trigger,
     parseErrors,
   }
 }
