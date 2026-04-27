@@ -13,7 +13,9 @@
 import type { CSSProperties } from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, Sparkles } from 'lucide-react'
+import { BootstrapWizard } from '@/pages/Chat/BootstrapWizard'
+import { useBootstrapStore } from '@/stores/useBootstrapStore'
 import { useAppStore } from '@/stores/useAppStore'
 import { useChatStore } from '@/stores/useChatStore'
 import { useModelConfigStore, getModelApiKey } from '@/stores/useModelConfigStore'
@@ -52,6 +54,8 @@ export function ChatPage() {
   const [soulContent, setSoulContent] = useState('')
   const [agentsContent, setAgentsContent] = useState('')
   const [hasApiKey, setHasApiKey] = useState<boolean>(() => !!getStoredApiKey())
+  const [wizardOpen, setWizardOpen] = useState(false)
+  const openWizard = useBootstrapStore((s) => s.open)
   const abortRef = useRef<AbortController | null>(null)
   const inputRef = useRef<{ focus: () => void }>(null)
 
@@ -356,6 +360,18 @@ export function ChatPage() {
             ))}
           </motion.div>
 
+          {/* V2.x bootstrap-skill (D-009) · 初始化向导入口 */}
+          <motion.button
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 1.05, ease: [0.16, 1, 0.3, 1] }}
+            onClick={() => { openWizard(); setWizardOpen(true) }}
+            className="group inline-flex items-center gap-1.5 px-4 py-2 mb-6 rounded-full border border-violet-300/50 dark:border-violet-500/30 bg-violet-500/[0.04] dark:bg-violet-500/10 hover:border-violet-500/70 dark:hover:border-violet-400/50 hover:bg-violet-500/10 dark:hover:bg-violet-500/20 transition-all text-[0.75rem] text-violet-700 dark:text-violet-300 font-medium"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-violet-500" />
+            初始化向导 · 把硬盘上的笔记导入 Atomsyn
+          </motion.button>
+
           {/* Tagline */}
           <motion.p
             initial={{ opacity: 0 }}
@@ -411,6 +427,9 @@ export function ChatPage() {
           placeholder="描述你遇到的问题，Enter 发送 · Shift+Enter 换行"
         />
       </div>
+
+      {/* V2.x bootstrap-skill (D-009) · 初始化向导 modal */}
+      <BootstrapWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
     </div>
   )
 }
