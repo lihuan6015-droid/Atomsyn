@@ -102,13 +102,13 @@
 
 ## E · Skill 契约
 
-- [ ] E1. 新建 `skills/atomsyn-bootstrap/SKILL.md` (frontmatter + 触发条件 + 不可变承诺 B-I1~B-I5 + Token 预算 + 3 阶段 funnel 详细执行步骤 + 错误处理)
-- [ ] E2. 在 `scripts/atomsyn-cli.mjs install-skill` 命令中加入第 4 个 skill 的安装路径; Tauri `install_agent_skills` Rust command 同步加入
-- [ ] E3. 安装第 4 个 skill 到 `~/.claude/skills/atomsyn-bootstrap/` (Claude Code) + Cursor 同样位置, 验证 frontmatter 被正确识别
-- [ ] E4. 在 Claude Code 中真实跑通触发场景: 用户说"初始化我的 atomsyn", 验证 Skill 被触发并按 design §3 的 3 阶段 funnel 执行
-- [ ] E5. 在 Cursor 中真实跑通同样场景, 验证跨工具一致性
-- [ ] E6. 更新 `skills/atomsyn-read/SKILL.md` 加一行注释 "v2 计划: 用户校准 profile 后, 新会话首次注入 profile 作为 system prompt" (本 change 不实施 v2 注入)
-- [ ] E7. 更新 `skills/atomsyn-mentor/SKILL.md` 加一行注释 "v2 计划: 报告里加入 profile.preferences (declared) vs 行为推断 (inferred) 的 gap 分析" (本 change 不实施 v2 gap 分析)
+- [x] E1. 新建 `skills/atomsyn-bootstrap/SKILL.md` (frontmatter + 触发条件 + 不可变承诺 B-I1~B-I5 + Token 预算 + 3 阶段 funnel 详细执行步骤 + 错误处理)
+- [x] E2. 在 `scripts/atomsyn-cli.mjs install-skill` 命令中加入第 4 个 skill 的安装路径; Tauri `install_agent_skills` Rust command 同步加入
+- [x] E3. 安装第 4 个 skill 到 `~/.claude/skills/atomsyn-bootstrap/` (Claude Code) + Cursor 同样位置, 验证 frontmatter 被正确识别
+- [ ] E4. 在 Claude Code 中真实跑通触发场景: 用户说"初始化我的 atomsyn", 验证 Skill 被触发并按 design §3 的 3 阶段 funnel 执行 (**手动验证项, 待主 agent / 用户实机验证**)
+- [ ] E5. 在 Cursor 中真实跑通同样场景, 验证跨工具一致性 (**手动验证项, 待主 agent / 用户实机验证**)
+- [x] E6. 更新 `skills/atomsyn-read/SKILL.md` 加一行注释 "v2 计划: 用户校准 profile 后, 新会话首次注入 profile 作为 system prompt" (本 change 不实施 v2 注入)
+- [x] E7. 更新 `skills/atomsyn-mentor/SKILL.md` 加一行注释 "v2 计划: 报告里加入 profile.preferences (declared) vs 行为推断 (inferred) 的 gap 分析" (本 change 不实施 v2 gap 分析)
 
 ## F · 文档
 
