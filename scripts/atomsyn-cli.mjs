@@ -2133,13 +2133,70 @@ async function cmdBootstrap(args) {
   const { runDeepDiveDryRun, writeDryRunMarkdown } = await import('./lib/bootstrap/deepDive.mjs')
   const sessionLib = await import('./lib/bootstrap/session.mjs')
 
-  // ----- B10 stub: --commit branch (lands in next commit) -----------------
+  // ----- --commit branch (B10 / B11 / B12) ---------------------------------
   if (opts.commit) {
-    process.stderr.write(
-      '⚠ --commit handler is under construction (B10 pending). ' +
-      `Session ${opts.commit} loaded but not yet materialized.\n`
-    )
-    process.exit(1)
+    const { runCommit } = await import('./lib/bootstrap/commit.mjs')
+    const session = await sessionLib.loadSession(opts.commit)
+    if (!session) {
+      process.stderr.write(`✗ Session ${opts.commit} not found in ${sessionLib.sessionsDir()}\n`)
+      process.exit(2)
+    }
+    const { path: dataDir } = resolveDataDir()
+    try { sessionLib.assertSessionDataDir(session, dataDir) }
+    catch (err) {
+      process.stderr.write(`✗ ${err.message}\n`)
+      process.exit(2)
+    }
+
+    // Resolve markdown source: --markdown-corrected-file > session.dry_run_markdown_path
+    const mdPath = opts.markdownCorrectedFile || session.dry_run_markdown_path
+    if (!mdPath) {
+      process.stderr.write(`✗ Session ${session.id} has no dry-run markdown to commit. Run --dry-run first.\n`)
+      process.exit(2)
+    }
+    if (!existsSync(mdPath)) {
+      process.stderr.write(`✗ Markdown file not found: ${mdPath}\n`)
+      process.exit(2)
+    }
+    const markdownText = await (await import('node:fs/promises')).readFile(mdPath, 'utf8')
+
+    session.status = sessionLib.SESSION_STATUS.COMMIT_IN_PROGRESS
+    await sessionLib.writeSession(session)
+
+    process.stderr.write(`▶ COMMIT — re-parsing ${mdPath} + calling LLM to assemble atoms…\n`)
+    let result
+    try {
+      result = await runCommit({ session, markdownText, dataDir })
+    } catch (err) {
+      await sessionLib.failSession(session, 'commit', err.message)
+      process.stderr.write(`✗ Commit failed: ${err.message}\n`)
+      // session is preserved (B12)
+      process.exit(err.code === 'COMMIT_EMPTY' ? 4 : 1)
+    }
+
+    session.atoms_created = {
+      ...session.atoms_created,
+      experience: (session.atoms_created?.experience || 0) + result.atomsCreated.experience,
+      fragment: (session.atoms_created?.fragment || 0) + result.atomsCreated.fragment,
+    }
+    session.commit_skipped = result.skipped
+    session.commit_parse_errors = result.parseErrors
+    // profile_snapshot is stashed for B13 to consume via applyProfileEvolution
+    session.commit_profile_snapshot = result.profile_snapshot
+    session.status = sessionLib.SESSION_STATUS.COMMIT_COMPLETED
+    session.endedAt = new Date().toISOString()
+    await sessionLib.writeSession(session)
+
+    process.stderr.write(`✓ commit complete: ${result.atomsCreated.experience} experiences + ${result.atomsCreated.fragment} fragments ingested.\n`)
+    if (result.skipped.length > 0) {
+      process.stderr.write(`  ${result.skipped.length} atoms could not be ingested (see session.commit_skipped[])\n`)
+    }
+    if (result.parseErrors.length > 0) {
+      process.stderr.write(`  ${result.parseErrors.length} markdown parse warnings (see session.commit_parse_errors[])\n`)
+    }
+    process.stderr.write(`  Profile snapshot stashed (B13 will write it via applyProfileEvolution).\n`)
+    process.stderr.write(`  Session: ${session.id}\n`)
+    return
   }
 
   // ----- B18 stub: --resume branch (lands in B18 commit) ------------------
