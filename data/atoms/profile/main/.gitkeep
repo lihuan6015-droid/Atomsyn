@@ -1,0 +1,15 @@
+# V2.x bootstrap-skill · profile atom singleton dir
+#
+# At runtime this directory holds exactly one file:
+#   atom_profile_main.json  (singleton, D-010)
+#
+# The file is created by:
+#   - atomsyn-cli bootstrap --commit (trigger=bootstrap_initial)
+#   - GUI calibration POST /atoms/atom_profile_main/calibrate-profile
+#     (trigger=user_calibration)
+#
+# Both routes go through scripts/lib/evolution.mjs::applyProfileEvolution
+# which enforces the singleton + previous_versions[] invariants.
+#
+# This .gitkeep keeps the directory present in fresh clones / new installs
+# so seeding the data dir does not have to mkdir on first profile write.
