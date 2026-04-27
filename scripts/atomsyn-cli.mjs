@@ -1701,6 +1701,8 @@ async function inlineRebuildIndex(dataDir) {
   const atoms = allAtoms.filter(a => (a.kind ?? 'methodology') === 'methodology')
   const experienceAtoms = allAtoms.filter(a => a.kind === 'experience')
   const skillInventoryAtoms = allAtoms.filter(a => a.kind === 'skill-inventory')
+  // V2.x bootstrap-skill · profile singleton bucket (≤ 1 entry)
+  const profileAtoms = allAtoms.filter(a => a.kind === 'profile')
 
   // Load projects
   const projDir = join(dataDir, 'projects')
@@ -1760,6 +1762,14 @@ async function inlineRebuildIndex(dataDir) {
       rawDescription: s.rawDescription ?? '', aiGeneratedSummary: s.aiGeneratedSummary,
       tags: s.tags ?? [], localPath: s.localPath ?? '', updatedAt: s.updatedAt,
     })),
+    profiles: profileAtoms.map(p => ({
+      id: p.id, name: p.name,
+      verified: p.verified === true,
+      verifiedAt: p.verifiedAt ?? null,
+      previousVersionsCount: Array.isArray(p.previous_versions) ? p.previous_versions.length : 0,
+      evidenceCount: Array.isArray(p.evidence_atom_ids) ? p.evidence_atom_ids.length : 0,
+      updatedAt: p.updatedAt, path: p._file,
+    })),
   }
 
   const outDir = join(dataDir, 'index')
@@ -1785,7 +1795,7 @@ async function inlineRebuildIndex(dataDir) {
   // that call rebuildIndex internally. cmdReindex (the standalone command)
   // still surfaces this line because terminals show stderr by default.
   process.stderr.write(
-    `✅ Index rebuilt: ${index.frameworks.length} frameworks · ${index.atoms.length} atoms · ${index.experiences.length} experiences · ${index.skillInventory.length} skills · ${index.projects.length} projects\n`
+    `✅ Index rebuilt: ${index.frameworks.length} frameworks · ${index.atoms.length} atoms · ${index.experiences.length} experiences · ${index.skillInventory.length} skills · ${index.projects.length} projects · ${index.profiles.length} profiles\n`
   )
 }
 

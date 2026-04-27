@@ -683,6 +683,25 @@ export interface IndexedSkill {
   updatedAt: string
 }
 
+/**
+ * V2.x bootstrap-skill · Lightweight projection of the singleton ProfileAtom
+ * for the knowledge index. Singleton invariant: `profiles` array length ≤ 1
+ * in normal operation; tolerated as array for forward compat / multi-tenant
+ * fixtures. GUI / CLI default consumers should pick `profiles[0]`.
+ */
+export interface IndexedProfile {
+  id: string
+  name: string
+  verified: boolean
+  verifiedAt: string | null
+  /** Number of historic snapshots in previous_versions[]. Lets GUI badge "v3 / 3 versions". */
+  previousVersionsCount: number
+  /** Number of evidence atoms backing this profile. Lets cards say "based on N atoms". */
+  evidenceCount: number
+  updatedAt: string
+  path: string
+}
+
 export interface KnowledgeIndex {
   generatedAt: string
   version: 1
@@ -693,6 +712,8 @@ export interface KnowledgeIndex {
   experiences: IndexedExperience[]
   /** V1.5 · progressive disclosure: local skill catalog. */
   skillInventory: IndexedSkill[]
+  /** V2.x bootstrap-skill · profile singleton bucket (≤ 1 entry). Optional for older indexes. */
+  profiles?: IndexedProfile[]
 }
 
 // =============================================================================

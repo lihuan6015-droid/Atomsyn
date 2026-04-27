@@ -384,6 +384,8 @@ async function rebuildIndex(dataDir) {
     const atoms = allAtoms.filter((a) => (a.kind ?? 'methodology') === 'methodology');
     const experienceAtoms = allAtoms.filter((a) => a.kind === 'experience');
     const skillInventoryAtoms = allAtoms.filter((a) => a.kind === 'skill-inventory');
+    // V2.x bootstrap-skill · profile singleton bucket (≤ 1 entry)
+    const profileAtoms = allAtoms.filter((a) => a.kind === 'profile');
     const projects = await loadAllProjects(dataDir);
     // count atoms per framework
     const fwAtomCount = {};
@@ -453,6 +455,16 @@ async function rebuildIndex(dataDir) {
         localPath: s.localPath ?? '',
         updatedAt: s.updatedAt,
     }));
+    const indexedProfiles = profileAtoms.map((p) => ({
+        id: p.id,
+        name: p.name,
+        verified: p.verified === true,
+        verifiedAt: p.verifiedAt ?? null,
+        previousVersionsCount: Array.isArray(p.previous_versions) ? p.previous_versions.length : 0,
+        evidenceCount: Array.isArray(p.evidence_atom_ids) ? p.evidence_atom_ids.length : 0,
+        updatedAt: p.updatedAt,
+        path: p._file,
+    }));
     const index = {
         generatedAt: new Date().toISOString(),
         version: 1,
@@ -465,6 +477,7 @@ async function rebuildIndex(dataDir) {
         projects: indexedProjects,
         experiences: indexedExperiences,
         skillInventory: indexedSkillInventory,
+        profiles: indexedProfiles,
     };
     await writeJSON(path.join(dataDir, 'index', 'knowledge-index.json'), index);
     // also reverse-sync atom.stats.usedInProjects from practice data

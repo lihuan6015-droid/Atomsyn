@@ -12,7 +12,12 @@ import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const dataDir = path.resolve(__dirname, '..', 'data')
+// V2.x bootstrap-skill · respect ATOMSYN_DEV_DATA_DIR override so test scripts
+// can point reindex at a tmp dir without modifying global state. Falls back to
+// the project's data/ dir for `npm run reindex` in dev.
+const dataDir = process.env.ATOMSYN_DEV_DATA_DIR
+  ? path.resolve(process.env.ATOMSYN_DEV_DATA_DIR)
+  : path.resolve(__dirname, '..', 'data')
 
 async function walk(dir, exts = ['.json']) {
   const out = []
@@ -81,6 +86,8 @@ async function rebuild() {
   const atoms = allAtoms.filter((a) => (a.kind ?? 'methodology') === 'methodology')
   const experienceAtoms = allAtoms.filter((a) => a.kind === 'experience')
   const skillInventoryAtoms = allAtoms.filter((a) => a.kind === 'skill-inventory')
+  // V2.x bootstrap-skill · profile singleton (≤ 1 entry under data/atoms/profile/)
+  const profileAtoms = allAtoms.filter((a) => a.kind === 'profile')
   const projects = await loadProjects()
 
   const fwAtomCount = {}
@@ -154,6 +161,16 @@ async function rebuild() {
       localPath: s.localPath ?? '',
       updatedAt: s.updatedAt,
     })),
+    profiles: profileAtoms.map((p) => ({
+      id: p.id,
+      name: p.name,
+      verified: p.verified === true,
+      verifiedAt: p.verifiedAt ?? null,
+      previousVersionsCount: Array.isArray(p.previous_versions) ? p.previous_versions.length : 0,
+      evidenceCount: Array.isArray(p.evidence_atom_ids) ? p.evidence_atom_ids.length : 0,
+      updatedAt: p.updatedAt,
+      path: p._file,
+    })),
   }
 
   const outFile = path.join(dataDir, 'index', 'knowledge-index.json')
@@ -175,7 +192,7 @@ async function rebuild() {
   }
 
   console.log(
-    `✅ Index rebuilt: ${indexed.frameworks.length} frameworks · ${indexed.atoms.length} atoms · ${indexed.experiences.length} experiences · ${indexed.skillInventory.length} skills · ${indexed.projects.length} projects`
+    `✅ Index rebuilt: ${indexed.frameworks.length} frameworks · ${indexed.atoms.length} atoms · ${indexed.experiences.length} experiences · ${indexed.skillInventory.length} skills · ${indexed.projects.length} projects · ${indexed.profiles.length} profiles`
   )
 }
 
