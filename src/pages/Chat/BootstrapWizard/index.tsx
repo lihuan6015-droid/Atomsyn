@@ -36,8 +36,9 @@ import {
 } from 'lucide-react'
 import { useBootstrapStore } from '@/stores/useBootstrapStore'
 import { bootstrapApi } from '@/lib/dataApi'
-import type { BootstrapSessionSummary } from '@/lib/dataApi'
+import type { BootstrapAgentTraceEntry, BootstrapSessionSummary } from '@/lib/dataApi'
 import { isTauri } from '@/lib/dataPath'
+import { cn } from '@/lib/cn'
 
 interface WizardProps {
   open: boolean
@@ -490,8 +491,9 @@ function SamplingScreen() {
 // ---------------------------------------------------------------------------
 
 function DryrunScreen() {
-  const { markdownOriginal, markdownDraft, setMarkdownDraft, resetMarkdownDraft } =
+  const { markdownOriginal, markdownDraft, setMarkdownDraft, resetMarkdownDraft, session } =
     useBootstrapStore()
+  const [showTrace, setShowTrace] = useState(false)
 
   if (!markdownOriginal) {
     return (
@@ -502,6 +504,8 @@ function DryrunScreen() {
   }
 
   const dirty = markdownDraft !== markdownOriginal
+  const trace = session?.agent_trace ?? []
+  const mode = session?.options?.mode || 'funnel'
 
   return (
     <div className="space-y-3">
@@ -522,13 +526,105 @@ function DryrunScreen() {
         value={markdownDraft ?? ''}
         onChange={(e) => setMarkdownDraft(e.target.value)}
         spellCheck={false}
-        className="w-full h-[55vh] rounded-xl bg-neutral-50 dark:bg-black/40 border border-neutral-200 dark:border-white/10 p-3 text-xs font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-violet-500/40 resize-none"
+        className="w-full h-[50vh] rounded-xl bg-neutral-50 dark:bg-black/40 border border-neutral-200 dark:border-white/10 p-3 text-xs font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-violet-500/40 resize-none"
       />
       <div className="text-[0.6875rem] text-neutral-500">
         提示: 删除 #### candidate 块 → 该 atom 不入库. 顶部 "Profile snapshot" 决定 profile 字段.
       </div>
+
+      {/* bootstrap-tools E3 — agent_trace timeline (only meaningful in agentic mode) */}
+      {mode === 'agentic' && trace.length > 0 && (
+        <AgentTraceTimeline
+          trace={trace}
+          expanded={showTrace}
+          onToggle={() => setShowTrace((v) => !v)}
+        />
+      )}
     </div>
   )
+}
+
+function AgentTraceTimeline({
+  trace,
+  expanded,
+  onToggle,
+}: {
+  trace: BootstrapAgentTraceEntry[]
+  expanded: boolean
+  onToggle: () => void
+}) {
+  const totals = useMemo(() => {
+    const byTool: Record<string, number> = {}
+    let errors = 0
+    for (const e of trace) {
+      byTool[e.tool] = (byTool[e.tool] ?? 0) + 1
+      if (e.error) errors++
+    }
+    return { byTool, errors }
+  }, [trace])
+
+  return (
+    <div className="rounded-xl border border-violet-200/60 dark:border-violet-500/20 bg-violet-50/40 dark:bg-violet-500/[0.04]">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-violet-700 dark:text-violet-300 hover:bg-violet-500/5 transition-colors rounded-xl"
+      >
+        <span className="flex items-center gap-2">
+          <Sparkles className="w-3.5 h-3.5" />
+          Agent 探索轨迹 · {trace.length} 次工具调用
+          {totals.errors > 0 && (
+            <span className="text-rose-500 dark:text-rose-300">· {totals.errors} 错误</span>
+          )}
+        </span>
+        <span className="text-[0.625rem] font-mono">
+          {Object.entries(totals.byTool).map(([t, n]) => `${t}=${n}`).join(' · ')}
+        </span>
+      </button>
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden border-t border-violet-200/50 dark:border-violet-500/15"
+          >
+            <ul className="px-3 py-2 max-h-64 overflow-y-auto space-y-1 text-[0.6875rem] font-mono">
+              {trace.slice(0, 200).map((e, i) => (
+                <li
+                  key={`${e.ts}-${i}`}
+                  className={cn(
+                    'flex items-start gap-2',
+                    e.error ? 'text-rose-600 dark:text-rose-300' : 'text-neutral-600 dark:text-neutral-300',
+                  )}
+                >
+                  <span className="shrink-0 text-violet-600 dark:text-violet-400">{e.tool}</span>
+                  <span className="flex-1 truncate" title={JSON.stringify(e.args)}>
+                    {compactArgs(e.args)} → {e.result_summary}
+                  </span>
+                  <span className="shrink-0 text-neutral-400">{e.duration_ms}ms</span>
+                </li>
+              ))}
+              {trace.length > 200 && (
+                <li className="text-neutral-400 italic">… 还有 {trace.length - 200} 条未显示</li>
+              )}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function compactArgs(args: Record<string, unknown> | undefined): string {
+  if (!args) return ''
+  const parts: string[] = []
+  for (const [k, v] of Object.entries(args)) {
+    const s = typeof v === 'string' ? v : JSON.stringify(v)
+    parts.push(`${k}=${s.length > 60 ? s.slice(0, 60) + '…' : s}`)
+  }
+  return parts.join(', ')
 }
 
 // ---------------------------------------------------------------------------

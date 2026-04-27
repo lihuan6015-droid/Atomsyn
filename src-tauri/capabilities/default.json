@@ -42,7 +42,13 @@
         { "path": "$HOME/.claude/skills/**" },
         { "path": "$HOME/.cursor/skills/**" },
         { "path": "$HOME/.atomsyn/**" },
-        { "path": "$HOME/.atomsyn-config.json" }
+        { "path": "$HOME/.atomsyn-config.json" },
+        { "path": "$HOME/Documents" },
+        { "path": "$HOME/Documents/**" },
+        { "path": "$HOME/Downloads" },
+        { "path": "$HOME/Downloads/**" },
+        { "path": "$HOME/Desktop" },
+        { "path": "$HOME/Desktop/**" }
       ]
     }
   ]

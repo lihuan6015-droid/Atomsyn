@@ -145,14 +145,25 @@ export interface BootstrapSessionSummary {
   atoms_created: { profile: number; experience: number; fragment: number }
 }
 
+export interface BootstrapAgentTraceEntry {
+  ts: string
+  tool: 'ls' | 'stat' | 'glob' | 'grep' | 'read'
+  args: Record<string, unknown>
+  result_summary: string
+  duration_ms: number
+  error?: boolean
+}
+
 export interface BootstrapSession extends BootstrapSessionSummary {
-  options?: Record<string, unknown>
+  options?: Record<string, unknown> & { mode?: 'agentic' | 'funnel' }
   dataDirHash?: string | null
   phase1_overview?: any
   phase2_hypothesis?: any
-  phase3_progress?: { processed: number; total: number } | null
+  phase3_progress?: { processed: number; total: number; mode?: string } | null
   phase3_skipped?: Array<{ file: string; reason: string }>
   dry_run_markdown_path?: string | null
+  /** bootstrap-tools v2 (D-003): one entry per LLM tool call in agentic mode */
+  agent_trace?: BootstrapAgentTraceEntry[]
   errors?: Array<{ phase: string; message: string; ts: string }>
 }
 
