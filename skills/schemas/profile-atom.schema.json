@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ProfileAtom",
+  "description": "User meta-cognitive profile atom (kind='profile'). V2.x bootstrap-skill (2026-04). SINGLETON: exactly one active profile per data dir, id=atom_profile_main, file path <dataDir>/atoms/profile/main/atom_profile_main.json (D-010). Historic snapshots are kept inline in `previous_versions[]` (new→old) instead of supersede chains (D-008): profile MUST NOT use supersededBy / supersedes — use applyProfileEvolution() in scripts/lib/evolution.mjs to evolve. Wrote by atomsyn-cli bootstrap commit, atomsyn-cli profile-calibrate, or GUI calibration page. v1: read/mentor do NOT consume this atom until user explicitly calibrates verified=true (D-007).",
+  "type": "object",
+  "required": [
+    "id",
+    "schemaVersion",
+    "kind",
+    "name",
+    "stats",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^atom_profile_[a-z0-9_-]+$",
+      "description": "Singleton convention: id MUST be `atom_profile_main`. Pattern accepts other slugs for fixtures / multi-tenant testing only."
+    },
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "kind": { "type": "string", "const": "profile" },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "Human-readable label (e.g. '用户元认知画像 - 2026-04-26'). Updated when user re-calibrates."
+    },
+    "nameEn": { "type": "string" },
+    "verified": {
+      "type": "boolean",
+      "default": false,
+      "description": "D-007: v1 仅观察 — true means user has gone through the GUI calibration flow at least once (POST /atoms/:id/calibrate-profile). v2 will gate read/mentor profile injection on this flag."
+    },
+    "verifiedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when user last set verified=true. Feeds the 90-day staleness reminder (cognitive-evolution computeStaleness profile_factor 1.5x when > 90 days)."
+    },
+    "inferred_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current top-level snapshot was first inferred by bootstrap / calibration. Independent of createdAt (which never moves)."
+    },
+    "source_summary": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Short human summary of what was scanned to build this profile. e.g. 'Scanned ~/Documents, 240 markdowns, 18-month range.' Does NOT contain raw user content (privacy)."
+    },
+    "identity": {
+      "type": "object",
+      "description": "Who the user is. Free-form text fields for human storytelling, not enums.",
+      "properties": {
+        "role": { "type": "string", "description": "e.g. '前端工程师 + 独立产品开发者'" },
+        "working_style": { "type": "string", "description": "e.g. '小步迭代 + 重视架构'" },
+        "primary_languages": { "type": "array", "items": { "type": "string" } },
+        "primary_tools": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "preferences": {
+      "type": "object",
+      "description": "5 numeric dimensions, 0-1, plan-tune compatible (D-008 of bootstrap-skill). Same names + same semantics as gstack plan-tune `~/.gstack/developer-profile.json` for future bidirectional ingest.",
+      "properties": {
+        "scope_appetite": { "type": "number", "minimum": 0, "maximum": 1, "description": "小步 (0) ↔ 完整 (1)" },
+        "risk_tolerance": { "type": "number", "minimum": 0, "maximum": 1, "description": "谨慎 (0) ↔ 激进 (1)" },
+        "detail_preference": { "type": "number", "minimum": 0, "maximum": 1, "description": "简洁 (0) ↔ 详尽 (1)" },
+        "autonomy": { "type": "number", "minimum": 0, "maximum": 1, "description": "咨询 (0) ↔ 委托 (1)" },
+        "architecture_care": { "type": "number", "minimum": 0, "maximum": 1, "description": "速度 (0) ↔ 设计 (1)" }
+      },
+      "additionalProperties": false
+    },
+    "knowledge_domains": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Free-form domains the user has accumulated knowledge in. e.g. ['前端工程', 'Rust/Tauri 桌面应用']."
+    },
+    "recurring_patterns": {
+      "type": "array",
+      "items": { "type": "string", "maxLength": 200 },
+      "description": "One-line behavioral patterns the inference layer noticed. Each item is a self-contained sentence for the user to confirm/edit during calibration."
+    },
+    "evidence_atom_ids": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(atom|skill)_[a-z0-9_-]+$" },
+      "description": "Atom ids that contributed evidence to the current snapshot. Used by GUI calibration page to show 'based on N atoms' link, letting the user audit each claim."
+    },
+    "previous_versions": {
+      "type": "array",
+      "description": "Stack of historical profile snapshots, NEW→OLD. Pushed by applyProfileEvolution() (D-008 + D-010) when bootstrap rerun / user calibration / agent evolution / restore happens. Replaces the supersede chain that other atom kinds use; profile MUST NOT use supersededBy/supersedes.",
+      "items": {
+        "type": "object",
+        "required": ["version", "supersededAt", "snapshot", "trigger"],
+        "properties": {
+          "version": { "type": "integer", "minimum": 1, "description": "Monotonic ordinal of THIS historic snapshot (older entries have lower numbers)." },
+          "supersededAt": { "type": "string", "format": "date-time", "description": "When this snapshot was displaced by the new top-level version." },
+          "snapshot": {
+            "type": "object",
+            "description": "Frozen copy of the previous top-level fields (preferences / identity / knowledge_domains / recurring_patterns / evidence_atom_ids).",
+            "additionalProperties": true
+          },
+          "trigger": {
+            "type": "string",
+            "enum": ["bootstrap_initial", "bootstrap_rerun", "user_calibration", "agent_evolution", "restore_previous"],
+            "description": "What action displaced this snapshot. Mirrors VALID_PROFILE_TRIGGERS in scripts/lib/evolution.mjs."
+          },
+          "evidence_delta": {
+            "description": "Optional metadata about what evidence changed (atom ids added / removed / re-weighted). Free shape; mentor v2 may consume.",
+            "anyOf": [
+              { "type": "null" },
+              { "type": "array", "items": { "type": "string" } },
+              { "type": "object" }
+            ]
+          }
+        }
+      }
+    },
+    "lastAccessedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "V2.x cognitive-evolution · ISO 8601 timestamp passively updated by atomsyn-cli when read/find hits this atom (throttled). Feeds confidence_decay calculation. For profile, also bumped by applyProfileEvolution() on every evolution."
+    },
+    "archivedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "V2.x cognitive-evolution · soft-delete timestamp. Singleton profile is rarely archived (invariant: 1 active profile), but field is shared for consistency."
+    },
+    "archivedReason": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "V2.x cognitive-evolution · optional rationale captured when archiving."
+    },
+    "stats": {
+      "type": "object",
+      "required": ["usedInProjects", "useCount"],
+      "description": "Standard stats block. For profile, viewedCount/aiInvokeCount stay near zero (read v1 doesn't inject). imported/bootstrap_session_id mark provenance.",
+      "properties": {
+        "usedInProjects": { "type": "array", "items": { "type": "string" } },
+        "lastUsedAt": { "type": "string" },
+        "useCount": { "type": "integer", "minimum": 0 },
+        "aiInvokeCount": { "type": "integer", "minimum": 0 },
+        "humanViewCount": { "type": "integer", "minimum": 0 },
+        "invokedByAgent": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        },
+        "userDemoted": { "type": "boolean" },
+        "locked": { "type": "boolean" },
+        "imported": {
+          "type": "boolean",
+          "description": "V2.x bootstrap-skill · True if this atom was created by atomsyn-cli bootstrap during a batch import. Profile created via bootstrap_initial → true; created purely by user GUI calibration → false."
+        },
+        "bootstrap_session_id": {
+          "type": ["string", "null"],
+          "description": "V2.x bootstrap-skill · Session id of the bootstrap run that created this atom (null when imported=false)."
+        }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}
