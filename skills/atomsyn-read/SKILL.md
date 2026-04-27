@@ -55,6 +55,8 @@ V2.0 升级: CLI `read` 现在同时搜索 methodology atoms 和 experience atom
 - 用户让你做设计 / 架构 / 方法论决策 —— 他的过往决策很可能相关
 - 用户提到某个工具、框架或项目名,很可能已经有沉淀过的经验挂在上面
 
+> **v2 计划** (来自 2026-04-bootstrap-skill change): 用户在 GUI 校准 profile (verified=true) 后, 新会话首次注入 profile 作为 system prompt。本 change v1 不实施 v2 注入 (D-007), profile atom 由 atomsyn-bootstrap skill 写入但仍处于"仅观察"状态, atomsyn-read 此处行为不变。
+
 ### ❌ 不应该调用
 - 纯闲聊、打招呼、或问你本身能力的元问题
 - 有标准答案且跟用户个人无关的问题(比如"什么是哈希表")

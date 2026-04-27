@@ -101,6 +101,8 @@ atomsyn-cli mentor --range all --format data
 - 如果数据量太少（<5 条碎片），诚实说明"数据还不够，建议先积累更多经验再复盘"
 - 报告末尾**必须给出可操作的下一步引导**，引导用户进入深入对话
 
+> **v2 计划** (来自 2026-04-bootstrap-skill change): 报告里加入 profile.preferences (declared) vs 行为推断 (inferred) 的 gap 分析, 主动建议"你声明 X 但行为是 Y, 要不要更新一下画像?" + 一键跳转 GUI 校准页。本 change v1 不实施 (D-007 联动), profile atom 由 atomsyn-bootstrap 写入但 mentor 不消费, 等 v2 + 用户校准 verified=true 后再启用 gap 分析。
+
 ### Phase 2.5 — 主动 prune 建议 (V2.x cognitive-evolution)
 
 生成复盘报告主体后, 在末尾**额外**调用一次 prune 扫描:
