@@ -60,9 +60,13 @@
       "../skills/atomsyn-write/**/*",
       "../skills/atomsyn-read/**/*",
       "../skills/atomsyn-mentor/**/*",
+      "../skills/atomsyn-bootstrap/**/*",
       "../scripts/atomsyn-cli.mjs",
       "../scripts/lib/analysis.mjs",
-      "../scripts/lib/findRelatedFragments.mjs"
+      "../scripts/lib/findRelatedFragments.mjs",
+      "../scripts/lib/evolution.mjs",
+      "../scripts/lib/bootstrap/**/*",
+      "../scripts/bootstrap/prompts/**/*"
     ]
   }
 }

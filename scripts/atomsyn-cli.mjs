@@ -1543,6 +1543,7 @@ async function cmdInstallSkill(args) {
   const atomsynWriteSrc = join(skillsSrc, 'atomsyn-write')
   const atomsynReadSrc = join(skillsSrc, 'atomsyn-read')
   const atomsynMentorSrc = join(skillsSrc, 'atomsyn-mentor')
+  const atomsynBootstrapSrc = join(skillsSrc, 'atomsyn-bootstrap')
 
   if (!existsSync(atomsynWriteSrc) || !existsSync(atomsynReadSrc)) {
     die(
@@ -1576,9 +1577,10 @@ async function cmdInstallSkill(args) {
     const writeDst = join(dir, 'atomsyn-write')
     const readDst = join(dir, 'atomsyn-read')
     const mentorDst = join(dir, 'atomsyn-mentor')
+    const bootstrapDst = join(dir, 'atomsyn-bootstrap')
 
     if (dryRun) {
-      results.push({ step: 'skill-copy', target: t, writeDst, readDst, mentorDst, dryRun: true })
+      results.push({ step: 'skill-copy', target: t, writeDst, readDst, mentorDst, bootstrapDst, dryRun: true })
       continue
     }
 
@@ -1588,7 +1590,10 @@ async function cmdInstallSkill(args) {
     if (existsSync(atomsynMentorSrc)) {
       await copyDirRecursive(atomsynMentorSrc, mentorDst)
     }
-    results.push({ step: 'skill-copy', target: t, writeDst, readDst, mentorDst, ok: true })
+    if (existsSync(atomsynBootstrapSrc)) {
+      await copyDirRecursive(atomsynBootstrapSrc, bootstrapDst)
+    }
+    results.push({ step: 'skill-copy', target: t, writeDst, readDst, mentorDst, bootstrapDst, ok: true })
   }
 
   // Auto-append PATH export to shell rc unless --no-path was passed

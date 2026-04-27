@@ -731,7 +731,7 @@ fn install_agent_skills(app: AppHandle) -> Result<SkillInstallResult, String> {
         .home_dir()
         .map_err(|e| format!("home_dir unavailable: {}", e))?;
 
-    let skill_names = ["atomsyn-write", "atomsyn-read", "atomsyn-mentor"];
+    let skill_names = ["atomsyn-write", "atomsyn-read", "atomsyn-mentor", "atomsyn-bootstrap"];
     let mut total_copied = 0usize;
     let mut claude_ok = false;
     let mut cursor_ok = false;
@@ -837,10 +837,12 @@ fn install_cli_shim(
         }
     }
 
-    // Copy lib/ dependencies (analysis.mjs, findRelatedFragments.mjs)
+    // Copy lib/ dependencies — flat .mjs files used by atomsyn-cli at startup.
+    // evolution.mjs is a top-level import in atomsyn-cli.mjs (cognitive-evolution),
+    // so missing it would break the CLI before any subcommand runs.
     let lib_dir = bin_dir.join("lib");
     let _ = ensure_dir(&lib_dir);
-    let lib_files = ["analysis.mjs", "findRelatedFragments.mjs"];
+    let lib_files = ["analysis.mjs", "findRelatedFragments.mjs", "evolution.mjs"];
     for lib_file in &lib_files {
         let lib_src_path = format!("scripts/lib/{}", lib_file);
         let src = bundled_resource_subdir(app, &lib_src_path)
@@ -866,6 +868,89 @@ fn install_cli_shim(
             }
         } else {
             details.push(format!("CLI lib: {} not found in bundle", lib_file));
+        }
+    }
+
+    // Copy lib/bootstrap/ subtree — required for `atomsyn-cli bootstrap`
+    // (V2.x bootstrap-skill change). All .mjs files under this directory
+    // are lazy-imported by the bootstrap subcommand dispatcher.
+    let bootstrap_lib_dir = bin_dir.join("lib").join("bootstrap");
+    let _ = ensure_dir(&bootstrap_lib_dir);
+    let bootstrap_lib_files = [
+        "triage.mjs",
+        "sampling.mjs",
+        "deepDive.mjs",
+        "parallelDeepDive.mjs",
+        "session.mjs",
+        "privacy.mjs",
+        "ignore.mjs",
+        "extract.mjs",
+        "commit.mjs",
+        "llmClient.mjs",
+    ];
+    for lib_file in &bootstrap_lib_files {
+        let lib_src_path = format!("scripts/lib/bootstrap/{}", lib_file);
+        let src = bundled_resource_subdir(app, &lib_src_path)
+            .or_else(|| {
+                let res = app.path().resource_dir().ok()?;
+                for candidate in &[
+                    res.join("_up_").join("scripts").join("lib").join("bootstrap").join(lib_file),
+                    res.join("scripts").join("lib").join("bootstrap").join(lib_file),
+                    res.join("_up_").join("lib").join("bootstrap").join(lib_file),
+                    res.join("lib").join("bootstrap").join(lib_file),
+                ] {
+                    if candidate.exists() { return Some(candidate.clone()); }
+                }
+                None
+            });
+        if let Some(s) = src {
+            if let Err(e) = fs::copy(&s, bootstrap_lib_dir.join(lib_file)) {
+                details.push(format!("CLI bootstrap lib: copy {} failed: {}", lib_file, e));
+            } else {
+                *total_copied += 1;
+            }
+        } else {
+            details.push(format!("CLI bootstrap lib: {} not found in bundle", lib_file));
+        }
+    }
+
+    // Copy bootstrap/prompts/ — hard-coded LLM prompt templates (D-012).
+    // extract.mjs locates them via __dirname/../../bootstrap/prompts/, so on
+    // packaged installs they live at ~/.atomsyn/bin/bootstrap/prompts/.
+    let prompts_dir = bin_dir.join("bootstrap").join("prompts");
+    let _ = ensure_dir(&prompts_dir);
+    let prompt_files = [
+        "triage.md",
+        "sampling.md",
+        "deep-dive-l1-l2.md",
+        "deep-dive-l3.md",
+        "deep-dive-l4.md",
+        "deep-dive-l5.md",
+        "commit.md",
+    ];
+    for prompt_file in &prompt_files {
+        let prompt_src_path = format!("scripts/bootstrap/prompts/{}", prompt_file);
+        let src = bundled_resource_subdir(app, &prompt_src_path)
+            .or_else(|| {
+                let res = app.path().resource_dir().ok()?;
+                for candidate in &[
+                    res.join("_up_").join("scripts").join("bootstrap").join("prompts").join(prompt_file),
+                    res.join("scripts").join("bootstrap").join("prompts").join(prompt_file),
+                    res.join("_up_").join("bootstrap").join("prompts").join(prompt_file),
+                    res.join("bootstrap").join("prompts").join(prompt_file),
+                ] {
+                    if candidate.exists() { return Some(candidate.clone()); }
+                }
+                None
+            });
+        if let Some(s) = src {
+            if let Err(e) = fs::copy(&s, prompts_dir.join(prompt_file)) {
+                details.push(format!("CLI bootstrap prompt: copy {} failed: {}", prompt_file, e));
+            } else {
+                *total_copied += 1;
+            }
+        } else {
+            details.push(format!("CLI bootstrap prompt: {} not found in bundle", prompt_file));
         }
     }
 
