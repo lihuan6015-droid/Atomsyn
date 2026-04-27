@@ -2169,6 +2169,16 @@ async function cmdBootstrap(args) {
       result = await runCommit({ session, markdownText, dataDir })
     } catch (err) {
       await sessionLib.failSession(session, 'commit', err.message)
+      try {
+        await appendUsageLog(dataDir, {
+          ts: new Date().toISOString(),
+          type: 'bootstrap.failed',
+          action: 'bootstrap.failed',
+          session_id: session.id,
+          phase: 'commit',
+          error: err.message?.slice(0, 200),
+        })
+      } catch { /* ignore */ }
       process.stderr.write(`✗ Commit failed: ${err.message}\n`)
       // session is preserved (B12)
       process.exit(err.code === 'COMMIT_EMPTY' ? 4 : 1)
@@ -2189,6 +2199,34 @@ async function cmdBootstrap(args) {
     session.status = sessionLib.SESSION_STATUS.COMMIT_COMPLETED
     session.endedAt = new Date().toISOString()
     await sessionLib.writeSession(session)
+    try {
+      await appendUsageLog(dataDir, {
+        ts: new Date().toISOString(),
+        type: 'bootstrap.commit_completed',
+        action: 'bootstrap.commit_completed',
+        session_id: session.id,
+        atoms_created: result.atomsCreated,
+        skipped: result.skipped.length,
+        duplicates: result.duplicates.length,
+        profile_trigger: result.profile_trigger,
+      })
+    } catch { /* ignore */ }
+
+    // B16 · Markdown commit summary on stdout (mirrors dry-run report style)
+    const summaryLines = []
+    summaryLines.push(`## Commit complete · session ${session.id}`)
+    summaryLines.push('')
+    summaryLines.push(`**Atoms created**: ${result.atomsCreated.experience} experience(s) + ${result.atomsCreated.fragment} fragment(s)${result.atomsCreated.profile ? ` + 1 profile (${result.profile_trigger})` : ''}`)
+    if (result.duplicates.length > 0) summaryLines.push(`**Duplicates skipped**: ${result.duplicates.length} (B14, threshold 0.8)`)
+    if (result.skipped.length > 0) summaryLines.push(`**Ingest failures**: ${result.skipped.length}`)
+    if (result.parseErrors.length > 0) summaryLines.push(`**Markdown parse warnings**: ${result.parseErrors.length}`)
+    if (result.atomIds.length > 0) {
+      summaryLines.push('')
+      summaryLines.push(`### Atom ids`)
+      summaryLines.push('')
+      for (const id of result.atomIds) summaryLines.push(`- \`${id}\``)
+    }
+    process.stdout.write(summaryLines.join('\n') + '\n')
 
     process.stderr.write(`✓ commit complete: ${result.atomsCreated.experience} experiences + ${result.atomsCreated.fragment} fragments ingested.\n`)
     if (result.atomsCreated.profile) {
@@ -2231,6 +2269,19 @@ async function cmdBootstrap(args) {
     dataDir,
   })
 
+  // B17 · usage-log: bootstrap_started
+  try {
+    await appendUsageLog(dataDir, {
+      ts: new Date().toISOString(),
+      type: 'bootstrap.started',
+      action: 'bootstrap.started',
+      session_id: session.id,
+      paths: opts.paths,
+      phase: opts.phase,
+      parallel: opts.parallel,
+    })
+  } catch { /* growth dir may not exist on first run; ignore */ }
+
   process.stderr.write(`▶ bootstrap session ${session.id} created (data dir: ${dataDir})\n`)
   process.stderr.write(`▶ Phase 1 · TRIAGE — scanning ${opts.paths.length} root(s)…\n`)
 
@@ -2244,6 +2295,16 @@ async function cmdBootstrap(args) {
     })
   } catch (err) {
     await sessionLib.failSession(session, 'triage', err.message)
+    try {
+      await appendUsageLog(dataDir, {
+        ts: new Date().toISOString(),
+        type: 'bootstrap.failed',
+        action: 'bootstrap.failed',
+        session_id: session.id,
+        phase: 'triage',
+        error: err.message?.slice(0, 200),
+      })
+    } catch { /* ignore */ }
     process.stderr.write(`✗ TRIAGE failed: ${err.message}\n`)
     process.exit(1)
   }
@@ -2257,6 +2318,17 @@ async function cmdBootstrap(args) {
   }
   session.status = sessionLib.SESSION_STATUS.TRIAGE_COMPLETED
   await sessionLib.writeSession(session)
+  try {
+    await appendUsageLog(dataDir, {
+      ts: new Date().toISOString(),
+      type: 'bootstrap.phase_completed',
+      action: 'bootstrap.phase_completed',
+      session_id: session.id,
+      phase: 'triage',
+      files_kept: triageResult.fileList.length,
+      sensitive_skipped: triageResult.sensitiveSkipped.length,
+    })
+  } catch { /* ignore */ }
 
   if (triageResult.fileList.length === 0) {
     process.stderr.write(`✗ No files surfaced after privacy + ignore filters. Aborting.\n`)
@@ -2291,6 +2363,16 @@ async function cmdBootstrap(args) {
   session.phase2_hypothesis = samplingResult.hypothesis
   session.status = sessionLib.SESSION_STATUS.SAMPLING_COMPLETED
   await sessionLib.writeSession(session)
+  try {
+    await appendUsageLog(dataDir, {
+      ts: new Date().toISOString(),
+      type: 'bootstrap.phase_completed',
+      action: 'bootstrap.phase_completed',
+      session_id: session.id,
+      phase: 'sampling',
+      sample_files: samplingResult.sampleFiles?.length || 0,
+    })
+  } catch { /* ignore */ }
 
   process.stdout.write(samplingResult.markdown + '\n')
 
@@ -2331,6 +2413,17 @@ async function cmdBootstrap(args) {
   session.status = sessionLib.SESSION_STATUS.DRY_RUN_COMPLETED
   session.endedAt = new Date().toISOString()
   await sessionLib.writeSession(session)
+  try {
+    await appendUsageLog(dataDir, {
+      ts: new Date().toISOString(),
+      type: 'bootstrap.dry_run_completed',
+      action: 'bootstrap.dry_run_completed',
+      session_id: session.id,
+      candidates: dryRunResult.stats.candidates,
+      skipped: dryRunResult.stats.skipped,
+      processed: dryRunResult.stats.processed,
+    })
+  } catch { /* ignore */ }
 
   process.stdout.write(dryRunResult.markdown + '\n')
   process.stderr.write(`\n✓ dry-run complete. ${dryRunResult.stats.candidates} candidates surfaced.\n`)
