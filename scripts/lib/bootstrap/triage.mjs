@@ -24,6 +24,11 @@ import { join, extname, relative } from 'node:path'
 import { loadIgnoreForRoot, relPathFor } from './ignore.mjs'
 import { scanFile, isStrongSensitive } from './privacy.mjs'
 
+// Files in TEXT_EXTS get a byte-level privacy peek before going to fileList.
+// `.docx` / `.pdf` are intentionally NOT here: their containers are zip/binary,
+// so a raw byte scan would hit a NUL byte and skip privacy detection anyway —
+// strong-sensitive enforcement for those formats runs inside
+// `extractors/index.mjs::extract()` after mammoth / pdfjs decodes the file.
 const TEXT_EXTS = new Set([
   '.md', '.markdown', '.txt', '.json', '.jsonl', '.yaml', '.yml',
   '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs',
@@ -125,7 +130,10 @@ export async function runTriage(opts) {
     }
     for await (const entry of walkFiles(rootPath, filterFn)) {
       // Light privacy peek (8 KB). Only on text-ish files; binaries get
-      // sniffed-out by scanFile's NUL byte heuristic.
+      // sniffed-out by scanFile's NUL byte heuristic. `.docx` / `.pdf` are
+      // extractor-only: their containers are binary, so the byte peek would
+      // never hit a strong pattern — privacy enforcement happens inside
+      // `extractors/extract()` when the file is actually opened.
       if (TEXT_EXTS.has(entry.ext) || entry.ext === '') {
         const scan = await scanFile(entry.absPath, { maxBytes: privacyByteCap })
         if (isStrongSensitive(scan)) {
