@@ -108,6 +108,14 @@
         "locked": {
           "type": "boolean",
           "description": "V1.5 · T-6.2 calibration action. True means agent write operations cannot mutate this atom."
+        },
+        "imported": {
+          "type": "boolean",
+          "description": "V2.x bootstrap-skill · True if this atom was created by atomsyn-cli bootstrap during a batch import session. Lets mentor reports filter or down-weight imported atoms vs hand-crystallized ones."
+        },
+        "bootstrap_session_id": {
+          "type": ["string", "null"],
+          "description": "V2.x bootstrap-skill · Source bootstrap session id when imported=true. Null otherwise. Lets the user trace any imported atom back to its origin run."
         }
       }
     },

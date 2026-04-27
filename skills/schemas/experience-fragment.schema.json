@@ -99,7 +99,15 @@
           "additionalProperties": { "type": "integer", "minimum": 0 }
         },
         "userDemoted": { "type": "boolean" },
-        "locked": { "type": "boolean" }
+        "locked": { "type": "boolean" },
+        "imported": {
+          "type": "boolean",
+          "description": "V2.x bootstrap-skill · True if this fragment was created by atomsyn-cli bootstrap during a batch import session."
+        },
+        "bootstrap_session_id": {
+          "type": ["string", "null"],
+          "description": "V2.x bootstrap-skill · Source bootstrap session id when imported=true. Null otherwise."
+        }
       }
     },
     "createdAt": { "type": "string" },
