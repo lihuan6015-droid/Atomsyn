@@ -25,7 +25,8 @@
     "tauri:build": "tauri build",
     "test:cli": "node scripts/test/cli-regression.mjs",
     "test:evolution": "node scripts/test/cognitive-evolution-test.mjs",
-    "test:bootstrap-skill": "node scripts/test/bootstrap-skill-test.mjs"
+    "test:bootstrap-skill": "node scripts/test/bootstrap-skill-test.mjs",
+    "test:bootstrap-tools": "node scripts/test/bootstrap-tools-test.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.1",
