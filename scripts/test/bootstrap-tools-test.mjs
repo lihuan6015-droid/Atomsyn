@@ -23,6 +23,8 @@ import { extractMarkdown } from '../lib/bootstrap/extractors/markdown.mjs'
 import { extractCode } from '../lib/bootstrap/extractors/code.mjs'
 import { extractText } from '../lib/bootstrap/extractors/text.mjs'
 import { createAgentTools, compileGlob, resolveInSandbox } from '../lib/bootstrap/agentTools.mjs'
+import { runAgenticDeepDive, AGENT_TOOL_SCHEMAS } from '../lib/bootstrap/agentic.mjs'
+import { chatWithTools } from '../lib/bootstrap/llmClient.mjs'
 
 let passed = 0
 let failed = 0
@@ -182,6 +184,177 @@ await describe('G2 · agentTools', async () => {
     assert(re1.test('foo.md') && !re1.test('sub/foo.md'), 'glob *.md does not cross dirs')
     const re2 = compileGlob('**/*.md')
     assert(re2.test('a/b/c.md') && re2.test('c.md'), 'glob **/*.md crosses dirs')
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
+// ─── G3 · agentic loop with mock LLM tool-use ────────────────────────────────
+
+function makeMockResponse(json) {
+  return {
+    ok: true,
+    status: 200,
+    statusText: 'OK',
+    json: async () => json,
+    text: async () => JSON.stringify(json),
+  }
+}
+
+function makeAnthropicCfg() {
+  return { provider: 'anthropic', apiKey: 'test', baseUrl: 'https://api.anthropic.test/v1', model: 'claude-mock' }
+}
+function makeOpenAICfg() {
+  return { provider: 'openai', apiKey: 'test', baseUrl: 'https://api.openai.test/v1', model: 'gpt-mock' }
+}
+
+await describe('G3 · agentic loop (mock LLM)', async () => {
+  const root = setupSandbox()
+  try {
+    writeFileSync(join(root, 'a.md'), '# A\n\nbody A\n', 'utf8')
+    writeFileSync(join(root, 'b.md'), '# B\n\nbody B\n', 'utf8')
+
+    // ── Anthropic mock: ls → read → final text
+    let anthropicCalls = 0
+    const anthropicMock = async () => {
+      anthropicCalls++
+      if (anthropicCalls === 1) {
+        return makeMockResponse({
+          stop_reason: 'tool_use',
+          content: [{ type: 'tool_use', id: 'tu_1', name: 'ls', input: { path: root } }],
+          usage: { input_tokens: 100, output_tokens: 50 },
+        })
+      }
+      if (anthropicCalls === 2) {
+        return makeMockResponse({
+          stop_reason: 'tool_use',
+          content: [{ type: 'tool_use', id: 'tu_2', name: 'read', input: { file: join(root, 'a.md') } }],
+          usage: { input_tokens: 200, output_tokens: 60 },
+        })
+      }
+      return makeMockResponse({
+        stop_reason: 'end_turn',
+        content: [{ type: 'text', text: '## Phase 3 · DEEP DIVE — dry-run report (D-011)\n\nProcessed **1** file. **1** candidate.\n\n#### Test atom\n\n- **layer**: L3\n- **document**: `a.md`\n' }],
+        usage: { input_tokens: 300, output_tokens: 80 },
+      })
+    }
+    const sessA = { agent_trace: [] }
+    const resA = await runAgenticDeepDive({
+      paths: [root],
+      hypothesis: { identity: { role: 'tester' } },
+      session: sessA,
+      llmConfig: makeAnthropicCfg(),
+      fetchImpl: anthropicMock,
+    })
+    assert(resA.markdown.includes('Test atom'), 'agentic anthropic produces final markdown with candidate')
+    assert(resA.markdown.includes('Agent 探索轨迹'), 'agentic markdown includes trace section')
+    assert(resA.stats.loops === 3, `agentic loop runs 3 rounds (got ${resA.stats.loops})`)
+    assert(resA.stats.finalReason === 'completed', 'agentic anthropic terminates with completed')
+    assert(sessA.agent_trace.length >= 2, `session.agent_trace populated (${sessA.agent_trace.length} entries)`)
+    assert(sessA.agent_trace.some((t) => t.tool === 'ls'), 'session.agent_trace contains ls call')
+    assert(sessA.agent_trace.some((t) => t.tool === 'read'), 'session.agent_trace contains read call')
+
+    // ── OpenAI mock: single tool_call → final
+    let openaiCalls = 0
+    const openaiMock = async () => {
+      openaiCalls++
+      if (openaiCalls === 1) {
+        return makeMockResponse({
+          choices: [{
+            message: {
+              role: 'assistant', content: null,
+              tool_calls: [{ id: 'call_1', type: 'function', function: { name: 'ls', arguments: JSON.stringify({ path: root }) } }],
+            },
+            finish_reason: 'tool_calls',
+          }],
+          usage: { prompt_tokens: 80, completion_tokens: 20, total_tokens: 100 },
+        })
+      }
+      return makeMockResponse({
+        choices: [{
+          message: { role: 'assistant', content: '## Phase 3 · DEEP DIVE — dry-run report (D-011)\n\nFinal openai output' },
+          finish_reason: 'stop',
+        }],
+        usage: { prompt_tokens: 150, completion_tokens: 30, total_tokens: 180 },
+      })
+    }
+    const resO = await runAgenticDeepDive({
+      paths: [root],
+      hypothesis: {},
+      llmConfig: makeOpenAICfg(),
+      fetchImpl: openaiMock,
+    })
+    assert(resO.markdown.includes('Final openai output'), 'agentic openai produces final markdown')
+    assert(resO.stats.loops === 2, `openai branch runs 2 rounds (got ${resO.stats.loops})`)
+
+    // ── Loop limit: LLM never stops → cap at maxLoops=3
+    let infiniteCalls = 0
+    const infiniteMock = async () => {
+      infiniteCalls++
+      return makeMockResponse({
+        stop_reason: 'tool_use',
+        content: [{ type: 'tool_use', id: `tu_${infiniteCalls}`, name: 'ls', input: { path: root } }],
+        usage: { input_tokens: 50, output_tokens: 20 },
+      })
+    }
+    const resLoop = await runAgenticDeepDive({
+      paths: [root],
+      hypothesis: {},
+      llmConfig: makeAnthropicCfg(),
+      fetchImpl: infiniteMock,
+      maxLoops: 3,
+    })
+    assert(resLoop.stats.loops === 3, `loop_limit caps at maxLoops=3 (got ${resLoop.stats.loops})`)
+    assert(resLoop.stats.finalReason === 'loop_limit', `finalReason=loop_limit (got ${resLoop.stats.finalReason})`)
+
+    // ── Token limit
+    let tokCalls = 0
+    const heavyMock = async () => {
+      tokCalls++
+      return makeMockResponse({
+        stop_reason: 'tool_use',
+        content: [{ type: 'tool_use', id: `tu_t${tokCalls}`, name: 'ls', input: { path: root } }],
+        usage: { input_tokens: 60_000, output_tokens: 0 },  // each round consumes 60k
+      })
+    }
+    const resTok = await runAgenticDeepDive({
+      paths: [root],
+      hypothesis: {},
+      llmConfig: makeAnthropicCfg(),
+      fetchImpl: heavyMock,
+      maxTokens: 100_000,
+      maxLoops: 30,
+    })
+    assert(resTok.stats.finalReason === 'token_limit', `finalReason=token_limit (got ${resTok.stats.finalReason})`)
+    assert(resTok.stats.tokens >= 100_000, `tokens hit ${resTok.stats.tokens}`)
+
+    // ── Tool dispatch via AGENT_TOOL_SCHEMAS sanity
+    assert(AGENT_TOOL_SCHEMAS.length === 5, `5 agent tool schemas (got ${AGENT_TOOL_SCHEMAS.length})`)
+    assert(AGENT_TOOL_SCHEMAS.every((t) => t.name && t.description && t.input_schema), 'each schema has name+description+input_schema')
+
+    // ── chatWithTools direct sanity (Anthropic shape)
+    let directCalls = 0
+    const directMock = async () => {
+      directCalls++
+      return makeMockResponse({
+        stop_reason: 'tool_use',
+        content: [
+          { type: 'text', text: 'I will list directory.' },
+          { type: 'tool_use', id: 'd1', name: 'ls', input: { path: root } },
+        ],
+        usage: { input_tokens: 50, output_tokens: 30 },
+      })
+    }
+    const direct = await chatWithTools({
+      system: 'sys',
+      messages: [{ role: 'user', text: 'go' }],
+      tools: AGENT_TOOL_SCHEMAS,
+      config: makeAnthropicCfg(),
+      fetchImpl: directMock,
+    })
+    assert(direct.stop_reason === 'tool_use', 'chatWithTools normalizes anthropic stop_reason')
+    assert(direct.toolCalls.length === 1 && direct.toolCalls[0].name === 'ls', 'chatWithTools returns parsed toolCalls')
+    assert(direct.text.includes('list directory'), 'chatWithTools captures text content')
   } finally {
     rmSync(root, { recursive: true, force: true })
   }

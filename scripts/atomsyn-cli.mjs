@@ -2007,6 +2007,8 @@ function parseBootstrapArgs(args) {
     userCorrection: '',
     showHelp: false,
     markdownCorrectedFile: null, // GUI / scripted commit can pass an inline file
+    // bootstrap-tools v2 (D-001): agentic mode is default, funnel is fallback.
+    mode: 'agentic',
   }
 
   for (let i = 0; i < args.length; i++) {
@@ -2054,6 +2056,13 @@ function parseBootstrapArgs(args) {
       case '--markdown-corrected-file':
         if (!args[i + 1]) return { error: '--markdown-corrected-file requires a path', code: 4 }
         opts.markdownCorrectedFile = next()
+        break
+      case '--mode':
+        if (!args[i + 1]) return { error: '--mode requires a value (agentic|funnel)', code: 4 }
+        opts.mode = next()
+        if (opts.mode !== 'agentic' && opts.mode !== 'funnel') {
+          return { error: `--mode must be 'agentic' or 'funnel' (got ${opts.mode})`, code: 4 }
+        }
         break
       default:
         return { error: `Unknown bootstrap flag: ${a}`, code: 4 }
@@ -2110,6 +2119,9 @@ Flags:
   --markdown-corrected-file <path>
                            Override the session markdown with edits from a file
                            (used by the GUI commit endpoint)
+  --mode agentic|funnel    Phase 3 strategy. Default: agentic (D-001) — LLM uses
+                           ls/glob/grep/read tools to explore. funnel = v1
+                           hard-coded 5-layer pass-per-file (kept as fallback)
 
 Exit codes:
   0  success
@@ -2119,6 +2131,42 @@ Exit codes:
   4  validation failure / sensitive scan filtered everything
 
 See openspec/changes/2026-04-bootstrap-skill/ for the full contract.`
+
+/**
+ * Phase 3 dispatcher (bootstrap-tools D-001 / D-008): pick `agentic` or
+ * `funnel` based on mode. Returns the same shape so callers don't branch.
+ *
+ * - agentic: LLM tool-use loop over agentTools (ls/glob/grep/read/stat).
+ *   Single LLM "session" with up to 30 rounds + 100k token budget.
+ * - funnel: v1 hard-coded per-file 5-layer pass (kept as fallback).
+ *
+ * Returns `{ markdown, stats, skipped, profileAccum, trace? }`.
+ */
+async function runDeepDiveByMode(mode, { paths, fileList, hypothesis, session }) {
+  if (mode === 'agentic') {
+    const { runAgenticDeepDive } = await import('./lib/bootstrap/agentic.mjs')
+    const result = await runAgenticDeepDive({
+      paths,
+      hypothesis,
+      session,
+      onProgress: ({ loop, tokens, lastTool }) => {
+        if (loop % 5 === 0) process.stderr.write(`  agentic loop ${loop} · ${tokens} tokens · last=${lastTool || '-'}\n`)
+      },
+    })
+    return result
+  }
+  // mode === 'funnel'
+  const { runDeepDiveDryRun } = await import('./lib/bootstrap/deepDive.mjs')
+  return runDeepDiveDryRun({
+    fileList,
+    hypothesis,
+    onProgress: ({ processed, total }) => {
+      if (processed % 10 === 0 || processed === total) {
+        process.stderr.write(`  ${processed}/${total} files processed\n`)
+      }
+    },
+  })
+}
 
 async function cmdBootstrap(args) {
   const parsed = parseBootstrapArgs(args)
@@ -2348,15 +2396,15 @@ async function cmdBootstrap(args) {
       samplingResult = { hypothesis: session.phase2_hypothesis, sampleFiles: [], markdown: '', rawLlmText: '' }
     }
 
-    process.stderr.write(`▶ (resume) Phase 3 · DEEP DIVE — re-running dry-run from scratch (per-file resume not yet supported)\n`)
+    const resumeMode = session.options?.mode || 'funnel'  // legacy v1 sessions default to funnel
+    process.stderr.write(`▶ (resume) Phase 3 · DEEP DIVE — re-running dry-run from scratch · mode=${resumeMode}\n`)
     let dryRunResult
     try {
-      dryRunResult = await runDeepDiveDryRun({
+      dryRunResult = await runDeepDiveByMode(resumeMode, {
+        paths: session.paths,
         fileList: triageResult.fileList,
         hypothesis: samplingResult.hypothesis,
-        onProgress: ({ processed, total }) => {
-          if (processed % 10 === 0 || processed === total) process.stderr.write(`  ${processed}/${total} files processed\n`)
-        },
+        session,
       })
     } catch (err) {
       await sessionLib.failSession(session, 'deep-dive', err.message)
@@ -2390,6 +2438,7 @@ async function cmdBootstrap(args) {
       excludePattern: opts.excludePattern,
       dryRun: opts.dryRun,
       userCorrection: opts.userCorrection,
+      mode: opts.mode,
     },
     dataDir,
   })
@@ -2404,6 +2453,7 @@ async function cmdBootstrap(args) {
       paths: opts.paths,
       phase: opts.phase,
       parallel: opts.parallel,
+      mode: opts.mode,
     })
   } catch { /* growth dir may not exist on first run; ignore */ }
 
@@ -2508,29 +2558,48 @@ async function cmdBootstrap(args) {
   process.stdout.write('\n---\n\n')
 
   // ----- Phase 3: DEEP DIVE (dry-run path B9) -------------------------------
-  process.stderr.write(`▶ Phase 3 · DEEP DIVE — ${triageResult.fileList.length} files (dry-run: ${opts.dryRun || opts.phase === 'deep-dive'})…\n`)
+  process.stderr.write(`▶ Phase 3 · DEEP DIVE — ${triageResult.fileList.length} files · mode=${opts.mode} (dry-run: ${opts.dryRun || opts.phase === 'deep-dive'})…\n`)
   session.status = sessionLib.SESSION_STATUS.DEEP_DIVE_IN_PROGRESS
   await sessionLib.writeSession(session)
 
-  // For now, all paths through Phase 3 use dry-run output. Commit path
-  // (`--commit <id>` after a dry-run) lands in B10.
   let dryRunResult
+  let usedMode = opts.mode
   try {
-    dryRunResult = await runDeepDiveDryRun({
+    dryRunResult = await runDeepDiveByMode(opts.mode, {
+      paths: opts.paths,
       fileList: triageResult.fileList,
       hypothesis: samplingResult.hypothesis,
-      onProgress: ({ processed, total }) => {
-        if (processed % 10 === 0 || processed === total) {
-          process.stderr.write(`  ${processed}/${total} files processed\n`)
-        }
-      },
+      session,
     })
   } catch (err) {
-    await sessionLib.failSession(session, 'deep-dive', err.message)
-    process.stderr.write(`✗ DEEP DIVE failed: ${err.message}\n`)
-    process.exit(1)
+    if (opts.mode === 'agentic') {
+      // D-005: agentic mode failed → auto-fallback to funnel ONCE with WARN.
+      process.stderr.write(`⚠ Agentic deep-dive failed (${err.message?.slice(0, 120)}). Falling back to v1 funnel mode.\n`)
+      try {
+        dryRunResult = await runDeepDiveByMode('funnel', {
+          paths: opts.paths,
+          fileList: triageResult.fileList,
+          hypothesis: samplingResult.hypothesis,
+          session,
+        })
+        usedMode = 'funnel'
+        session.options = { ...(session.options || {}), mode: 'funnel', mode_fallback_from: 'agentic' }
+      } catch (fallbackErr) {
+        await sessionLib.failSession(session, 'deep-dive', `agentic+funnel both failed: ${fallbackErr.message}`)
+        process.stderr.write(`✗ DEEP DIVE failed (both modes): ${fallbackErr.message}\n`)
+        process.exit(1)
+      }
+    } else {
+      await sessionLib.failSession(session, 'deep-dive', err.message)
+      process.stderr.write(`✗ DEEP DIVE failed: ${err.message}\n`)
+      process.exit(1)
+    }
   }
-  session.phase3_progress = { processed: dryRunResult.stats.processed, total: dryRunResult.stats.total }
+  session.phase3_progress = {
+    processed: dryRunResult.stats.processed ?? dryRunResult.stats.loops ?? null,
+    total: dryRunResult.stats.total ?? triageResult.fileList.length,
+    mode: usedMode,
+  }
   session.phase3_skipped = dryRunResult.skipped
   const mdFile = sessionLib.sessionMarkdownFile(session.id)
   await writeDryRunMarkdown(mdFile, dryRunResult.markdown)

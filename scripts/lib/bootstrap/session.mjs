@@ -111,6 +111,11 @@ export async function createSession(init) {
     phase3_skipped: [],
     dry_run_markdown_path: null,
     atoms_created: { profile: 0, experience: 0, fragment: 0 },
+    // bootstrap-tools v2 (D-003): agent_trace[] is populated by the agentic
+    // loop with one entry per tool call. v1 / funnel sessions leave it empty.
+    // Stays inside the session file so GUI can render the timeline without
+    // polluting the user-level usage-log.
+    agent_trace: [],
     errors: [],
   }
   // Sessions start as "in flight" — TRIAGE_COMPLETED is set after triage runs.

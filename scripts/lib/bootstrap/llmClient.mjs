@@ -167,3 +167,208 @@ export async function chatComplete({
   const text = json?.choices?.[0]?.message?.content || ''
   return { text, usage: json.usage || null, raw: json }
 }
+
+/**
+ * Send a chat completion that supports tool-use (D-005). Both Anthropic and
+ * OpenAI-compatible providers are supported behind a single normalized return
+ * shape so `agentic.mjs` doesn't have to special-case providers.
+ *
+ * Normalized message shape (input):
+ *   [{role: 'user', text: '...'},
+ *    {role: 'assistant', text?: '...', toolCalls?: [{id, name, input}]},
+ *    {role: 'tool', toolResults: [{tool_call_id, content}]}]
+ *
+ * Tool descriptors (input):
+ *   [{name, description, input_schema: <JSON Schema object>}]
+ *
+ * Normalized response (output):
+ *   {
+ *     stop_reason: 'tool_use' | 'end',
+ *     text: '<concatenated assistant text>',
+ *     toolCalls: [{id, name, input}],
+ *     usage: { input_tokens, output_tokens, total_tokens },
+ *     raw: <provider-native response>,
+ *   }
+ *
+ * @param {object} args
+ * @param {string} args.system
+ * @param {Array}  args.messages
+ * @param {Array}  args.tools
+ * @param {object} [args.config]
+ * @param {function} [args.fetchImpl]
+ * @param {number} [args.maxTokens=4096]
+ * @param {number} [args.temperature=0.2]
+ */
+export async function chatWithTools({
+  system,
+  messages,
+  tools,
+  config,
+  fetchImpl,
+  maxTokens = 4096,
+  temperature = 0.2,
+}) {
+  const cfg = config || (await resolveLlmConfig({}))
+  const fetchFn = fetchImpl || globalThis.fetch
+  if (!fetchFn) throw new Error('No fetch implementation available (Node 18+ required, or pass fetchImpl).')
+
+  const provider = cfg.provider || 'anthropic'
+
+  if (provider === 'anthropic') {
+    return chatWithToolsAnthropic({ system, messages, tools, cfg, fetchFn, maxTokens, temperature })
+  }
+  return chatWithToolsOpenAI({ system, messages, tools, cfg, fetchFn, maxTokens, temperature })
+}
+
+async function chatWithToolsAnthropic({ system, messages, tools, cfg, fetchFn, maxTokens, temperature }) {
+  // Convert normalized messages → Anthropic content blocks.
+  const anthropicMessages = []
+  for (const m of messages) {
+    if (m.role === 'user') {
+      anthropicMessages.push({ role: 'user', content: m.text != null ? m.text : (m.content || '') })
+    } else if (m.role === 'assistant') {
+      const blocks = []
+      if (m.text) blocks.push({ type: 'text', text: m.text })
+      if (Array.isArray(m.toolCalls)) {
+        for (const tc of m.toolCalls) {
+          blocks.push({ type: 'tool_use', id: tc.id, name: tc.name, input: tc.input || {} })
+        }
+      }
+      anthropicMessages.push({ role: 'assistant', content: blocks.length > 0 ? blocks : [{ type: 'text', text: '' }] })
+    } else if (m.role === 'tool') {
+      // Anthropic models tool_results inside a user message.
+      const blocks = (m.toolResults || []).map((r) => ({
+        type: 'tool_result',
+        tool_use_id: r.tool_call_id,
+        content: typeof r.content === 'string' ? r.content : JSON.stringify(r.content),
+        is_error: !!r.is_error,
+      }))
+      anthropicMessages.push({ role: 'user', content: blocks })
+    }
+  }
+
+  const body = {
+    model: cfg.model,
+    max_tokens: maxTokens,
+    temperature,
+    system,
+    tools: tools.map((t) => ({
+      name: t.name,
+      description: t.description,
+      input_schema: t.input_schema,
+    })),
+    messages: anthropicMessages,
+  }
+  const res = await fetchFn(cfg.baseUrl.replace(/\/+$/, '') + '/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': cfg.apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '<no body>')
+    const e = new Error(`LLM tools request failed: ${res.status} ${res.statusText} — ${txt.slice(0, 400)}`)
+    e.code = 'LLM_HTTP_ERROR'
+    e.status = res.status
+    throw e
+  }
+  const json = await res.json()
+  const blocks = Array.isArray(json.content) ? json.content : []
+  const text = blocks.filter((b) => b.type === 'text').map((b) => b.text || '').join('')
+  const toolCalls = blocks.filter((b) => b.type === 'tool_use').map((b) => ({
+    id: b.id, name: b.name, input: b.input || {},
+  }))
+  const stop_reason = json.stop_reason === 'tool_use' ? 'tool_use' : 'end'
+  const usage = json.usage || {}
+  return {
+    stop_reason,
+    text,
+    toolCalls,
+    usage: {
+      input_tokens: usage.input_tokens || 0,
+      output_tokens: usage.output_tokens || 0,
+      total_tokens: (usage.input_tokens || 0) + (usage.output_tokens || 0),
+    },
+    raw: json,
+  }
+}
+
+async function chatWithToolsOpenAI({ system, messages, tools, cfg, fetchFn, maxTokens, temperature }) {
+  const openaiMessages = [{ role: 'system', content: system }]
+  for (const m of messages) {
+    if (m.role === 'user') {
+      openaiMessages.push({ role: 'user', content: m.text != null ? m.text : (m.content || '') })
+    } else if (m.role === 'assistant') {
+      const out = { role: 'assistant', content: m.text || null }
+      if (Array.isArray(m.toolCalls) && m.toolCalls.length > 0) {
+        out.tool_calls = m.toolCalls.map((tc) => ({
+          id: tc.id,
+          type: 'function',
+          function: { name: tc.name, arguments: JSON.stringify(tc.input || {}) },
+        }))
+      }
+      openaiMessages.push(out)
+    } else if (m.role === 'tool') {
+      for (const r of m.toolResults || []) {
+        openaiMessages.push({
+          role: 'tool',
+          tool_call_id: r.tool_call_id,
+          content: typeof r.content === 'string' ? r.content : JSON.stringify(r.content),
+        })
+      }
+    }
+  }
+
+  const body = {
+    model: cfg.model,
+    max_tokens: maxTokens,
+    temperature,
+    messages: openaiMessages,
+    tools: tools.map((t) => ({
+      type: 'function',
+      function: { name: t.name, description: t.description, parameters: t.input_schema },
+    })),
+    tool_choice: 'auto',
+  }
+  const res = await fetchFn(cfg.baseUrl.replace(/\/+$/, '') + '/chat/completions', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      authorization: `Bearer ${cfg.apiKey}`,
+    },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '<no body>')
+    const e = new Error(`LLM tools request failed: ${res.status} ${res.statusText} — ${txt.slice(0, 400)}`)
+    e.code = 'LLM_HTTP_ERROR'
+    e.status = res.status
+    throw e
+  }
+  const json = await res.json()
+  const choice = json?.choices?.[0]
+  const msg = choice?.message || {}
+  const text = msg.content || ''
+  const tc = Array.isArray(msg.tool_calls) ? msg.tool_calls : []
+  const toolCalls = tc.map((c) => {
+    let input = {}
+    try { input = JSON.parse(c.function?.arguments || '{}') } catch { /* leave empty */ }
+    return { id: c.id, name: c.function?.name, input }
+  })
+  const stop_reason = (choice?.finish_reason === 'tool_calls' || toolCalls.length > 0) ? 'tool_use' : 'end'
+  const usage = json.usage || {}
+  return {
+    stop_reason,
+    text,
+    toolCalls,
+    usage: {
+      input_tokens: usage.prompt_tokens || 0,
+      output_tokens: usage.completion_tokens || 0,
+      total_tokens: usage.total_tokens || (usage.prompt_tokens || 0) + (usage.completion_tokens || 0),
+    },
+    raw: json,
+  }
+}

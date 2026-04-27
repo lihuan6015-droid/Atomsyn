@@ -42,6 +42,10 @@ const PROMPT_FILES = Object.freeze({
   'deep-dive-l3': 'deep-dive-l3.md',
   'deep-dive-l4': 'deep-dive-l4.md',
   'deep-dive-l5': 'deep-dive-l5.md',
+  // bootstrap-tools v2 (D-001): agentic mode replaces hard-coded funnel for
+  // mixed real-world directories. v1 funnel prompts above are kept for the
+  // `--mode funnel` fallback path (D-008).
+  'agentic-deepdive': 'agentic-deepdive.md',
   commit: 'commit.md',
 })
 
