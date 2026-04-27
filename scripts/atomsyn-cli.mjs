@@ -2245,13 +2245,133 @@ async function cmdBootstrap(args) {
     return
   }
 
-  // ----- B18 stub: --resume branch (lands in B18 commit) ------------------
+  // ----- --resume branch (B18) --------------------------------------------
   if (opts.resume) {
-    process.stderr.write(
-      '⚠ --resume handler is under construction (B18 pending). ' +
-      'For now, re-run with --path to start fresh.\n'
-    )
-    process.exit(1)
+    const session = await sessionLib.loadSession(opts.resume)
+    if (!session) {
+      process.stderr.write(`✗ Session ${opts.resume} not found in ${sessionLib.sessionsDir()}\n`)
+      process.exit(2)
+    }
+    const { path: dataDir } = resolveDataDir()
+    try { sessionLib.assertSessionDataDir(session, dataDir) }
+    catch (err) {
+      process.stderr.write(`✗ ${err.message}\n`)
+      process.exit(2)
+    }
+
+    process.stderr.write(`▶ Resuming session ${session.id} (status: ${session.status || 'unknown'})\n`)
+
+    // Fast-fail terminal states
+    if (session.status === sessionLib.SESSION_STATUS.COMMIT_COMPLETED) {
+      process.stderr.write(
+        `✓ Session ${session.id} already committed — nothing to resume. ` +
+        `${session.atoms_created?.experience || 0} experiences + ${session.atoms_created?.fragment || 0} fragments + ${session.atoms_created?.profile || 0} profile.\n`
+      )
+      return
+    }
+    if (session.status === sessionLib.SESSION_STATUS.DRY_RUN_COMPLETED) {
+      process.stderr.write(
+        `✓ Session ${session.id} already finished dry-run. To materialize:\n  atomsyn-cli bootstrap --commit ${session.id}\n`
+      )
+      return
+    }
+
+    // Reuse the session's original options for path / pattern
+    const baseOpts = session.options || {}
+    if (!session.paths || session.paths.length === 0) {
+      process.stderr.write(`✗ Session ${session.id} has no paths recorded. Cannot resume.\n`)
+      process.exit(2)
+    }
+
+    // Fresh runs of remaining phases. We do NOT trust the prior partial deep-dive
+    // markdown — it may be incomplete. Resume restarts from the next un-completed phase.
+    const { runTriage } = await import('./lib/bootstrap/triage.mjs')
+    const { runSampling } = await import('./lib/bootstrap/sampling.mjs')
+    const { runDeepDiveDryRun, writeDryRunMarkdown } = await import('./lib/bootstrap/deepDive.mjs')
+
+    const resumeFromTriage = !session.phase1_overview
+    const resumeFromSampling = !session.phase2_hypothesis
+    let triageResult, samplingResult
+
+    if (resumeFromTriage) {
+      process.stderr.write(`▶ (resume) Phase 1 · TRIAGE\n`)
+      try {
+        triageResult = await runTriage({
+          paths: session.paths,
+          includePattern: baseOpts.includePattern,
+          excludePattern: baseOpts.excludePattern,
+        })
+        session.phase1_overview = {
+          totalFiles: triageResult.fileList.length,
+          totalBytes: triageResult.totalBytes,
+          byExt: triageResult.byExt,
+          sensitive_skipped: triageResult.sensitiveSkipped.map((s) => s.relPath),
+          recencyBuckets: triageResult.recencyBuckets,
+          warnings: triageResult.warnings,
+        }
+      } catch (err) {
+        await sessionLib.failSession(session, 'triage', err.message)
+        process.stderr.write(`✗ TRIAGE (resume) failed: ${err.message}\n`)
+        process.exit(1)
+      }
+    } else {
+      process.stderr.write(`✓ (resume) Phase 1 · TRIAGE — skipped (already in session)\n`)
+      // Re-run triage for the file list (cheap, no LLM). The prior phase1_overview
+      // is preserved as historical record; we just need fileList for phase 2/3.
+      triageResult = await runTriage({
+        paths: session.paths,
+        includePattern: baseOpts.includePattern,
+        excludePattern: baseOpts.excludePattern,
+      })
+    }
+
+    if (resumeFromSampling) {
+      process.stderr.write(`▶ (resume) Phase 2 · SAMPLING\n`)
+      try {
+        samplingResult = await runSampling({
+          fileList: triageResult.fileList,
+          userCorrection: baseOpts.userCorrection,
+        })
+        session.phase2_hypothesis = samplingResult.hypothesis
+      } catch (err) {
+        await sessionLib.failSession(session, 'sampling', err.message)
+        process.stderr.write(`✗ SAMPLING (resume) failed: ${err.message}\n`)
+        process.exit(1)
+      }
+    } else {
+      process.stderr.write(`✓ (resume) Phase 2 · SAMPLING — skipped (hypothesis already in session)\n`)
+      samplingResult = { hypothesis: session.phase2_hypothesis, sampleFiles: [], markdown: '', rawLlmText: '' }
+    }
+
+    process.stderr.write(`▶ (resume) Phase 3 · DEEP DIVE — re-running dry-run from scratch (per-file resume not yet supported)\n`)
+    let dryRunResult
+    try {
+      dryRunResult = await runDeepDiveDryRun({
+        fileList: triageResult.fileList,
+        hypothesis: samplingResult.hypothesis,
+        onProgress: ({ processed, total }) => {
+          if (processed % 10 === 0 || processed === total) process.stderr.write(`  ${processed}/${total} files processed\n`)
+        },
+      })
+    } catch (err) {
+      await sessionLib.failSession(session, 'deep-dive', err.message)
+      process.stderr.write(`✗ DEEP DIVE (resume) failed: ${err.message}\n`)
+      process.exit(1)
+    }
+    session.phase3_progress = dryRunResult.stats
+    session.phase3_skipped = dryRunResult.skipped
+    const mdFile = sessionLib.sessionMarkdownFile(session.id)
+    await writeDryRunMarkdown(mdFile, dryRunResult.markdown)
+    session.dry_run_markdown_path = mdFile
+    session.status = sessionLib.SESSION_STATUS.DRY_RUN_COMPLETED
+    session.endedAt = new Date().toISOString()
+    await sessionLib.writeSession(session)
+
+    process.stdout.write(dryRunResult.markdown + '\n')
+    process.stderr.write(`\n✓ resume complete. ${dryRunResult.stats.candidates} candidates surfaced.\n`)
+    process.stderr.write(`  Markdown report: ${mdFile}\n`)
+    process.stderr.write(`  Next: review the markdown, then run atomsyn-cli bootstrap --commit ${session.id}\n`)
+    return
   }
 
   // ----- Dry-run / full path ----------------------------------------------
@@ -2552,6 +2672,12 @@ Usage:
                                          V2.x · 软删除 atom (read/find 默认不返); --restore 反归档
   atomsyn-cli prune [--limit N]
                                          V2.x · 扫描候选 (永远 dry-run, D-005), 输出 JSON 让用户/Agent 裁决
+  atomsyn-cli bootstrap --path <dir> [--dry-run] [--commit <session-id>] [--resume <session-id>]
+                                         V2.x bootstrap-skill · 引导式批量冷启动:
+                                         3 阶段 funnel (TRIAGE → SAMPLING → DEEP DIVE)
+                                         典型流: --dry-run 出 markdown 报告 → 用户校对
+                                                 → --commit <session-id> 入库
+                                         详见: atomsyn-cli bootstrap --help
   atomsyn-cli --help                       Show this help
 
 Write input (loose — CLI owns all bookkeeping):
