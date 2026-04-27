@@ -2,9 +2,11 @@
 
 > **怎么用**: 实施时按分组从上到下推进。每勾掉一个 task 提交一次 commit, commit message 引用本 change-id。
 >
-> **状态**: draft
+> **状态**: implementation-complete (86/98 自动化勾完, 12 项标待用户实机 dogfood 验证)
 >
 > **强依赖**: `2026-04-cognitive-evolution` 必须先合并 (见 proposal §2)。本 change 实施前必须确认 cognitive-evolution 已 merged。
+>
+> **手动验证项 (12 条, 保留 [ ] 状态)**: E4/E5 (Claude Code+Cursor 真实触发) · G2/G2b/G3 (e2e LLM 集成测试, 需用户 API key + fixture corpus) · G4/G5 (1000 文件性能 + dogfood 6 场景) · V5/V6/V10/V11/V12 (实机端到端走通 + 主题验收)。待主 agent / 用户在真实环境完成后勾选。
 
 ---
 
