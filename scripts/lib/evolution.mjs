@@ -505,8 +505,9 @@ export async function applyProfileEvolution(deps, args) {
   profile.updatedAt = now
   profile.lastAccessedAt = now
 
-  // verifiedAt 仅在用户校准 / restore 时更新 (D-007: v1 仅观察)
+  // verified / verifiedAt 仅在用户校准 / restore 时更新 (D-007: v1 仅观察)
   if (trigger === 'user_calibration' || trigger === 'restore_previous') {
+    profile.verified = true
     profile.verifiedAt = now
   }
 

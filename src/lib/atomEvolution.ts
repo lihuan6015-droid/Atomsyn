@@ -280,3 +280,120 @@ export function filterAtomsForDefaultView<T extends AtomAny | Record<string, unk
   if (opts.showArchived) return atoms
   return atoms.filter(a => !(a as { archivedAt?: string }).archivedAt)
 }
+
+// ============================================================================
+// applyProfileEvolution · 单例覆写 + previous_versions 入栈 (D-008, D-010)
+// ----------------------------------------------------------------------------
+// TS port of scripts/lib/evolution.mjs::applyProfileEvolution. The vite-plugin
+// (Node) and Tauri router (browser) both consume this through deps injection,
+// so the I/O layer differs but the merge semantics stay in lockstep with the
+// CLI side. Keep the two copies aligned.
+// ============================================================================
+
+const VALID_PROFILE_TRIGGERS = new Set([
+  'bootstrap_initial',
+  'bootstrap_rerun',
+  'user_calibration',
+  'agent_evolution',
+  'restore_previous',
+])
+
+export type ProfileEvolutionTrigger =
+  | 'bootstrap_initial'
+  | 'bootstrap_rerun'
+  | 'user_calibration'
+  | 'agent_evolution'
+  | 'restore_previous'
+
+export interface ProfileEvolutionDeps {
+  dataDir: string
+  readProfile: (dataDir: string) => Promise<Record<string, any> | null>
+  writeProfile: (dataDir: string, profile: Record<string, any>) => Promise<void>
+  rebuildIndex: (dataDir: string) => Promise<unknown>
+}
+
+export interface ProfileEvolutionArgs {
+  newSnapshot: {
+    preferences?: Record<string, number>
+    identity?: Record<string, unknown>
+    knowledge_domains?: string[]
+    recurring_patterns?: string[]
+    evidence_atom_ids?: string[]
+  }
+  trigger: ProfileEvolutionTrigger
+  evidenceDelta?: unknown
+}
+
+export async function applyProfileEvolution(
+  deps: ProfileEvolutionDeps,
+  args: ProfileEvolutionArgs,
+): Promise<Record<string, any>> {
+  const { dataDir, readProfile, writeProfile, rebuildIndex } = deps
+  const { newSnapshot, trigger, evidenceDelta = null } = args
+  const now = new Date().toISOString()
+
+  if (!VALID_PROFILE_TRIGGERS.has(trigger)) {
+    const e: Error & { code?: string } = new Error(`Invalid trigger: ${trigger}`)
+    e.code = 'INVALID_TRIGGER'
+    throw e
+  }
+
+  let profile = await readProfile(dataDir)
+
+  if (!profile) {
+    profile = {
+      id: 'atom_profile_main',
+      schemaVersion: 1,
+      kind: 'profile',
+      createdAt: now,
+      updatedAt: now,
+      previous_versions: [],
+    }
+  } else {
+    const previousSnapshot = {
+      preferences: profile.preferences,
+      identity: profile.identity,
+      knowledge_domains: profile.knowledge_domains,
+      recurring_patterns: profile.recurring_patterns,
+      evidence_atom_ids: profile.evidence_atom_ids,
+    }
+    const hasPrior = Boolean(
+      previousSnapshot.preferences ||
+        previousSnapshot.identity ||
+        (Array.isArray(previousSnapshot.knowledge_domains) && previousSnapshot.knowledge_domains.length > 0),
+    )
+    if (hasPrior) {
+      profile.previous_versions = profile.previous_versions || []
+      const version = profile.previous_versions.length + 1
+      profile.previous_versions.unshift({
+        version,
+        supersededAt: now,
+        snapshot: previousSnapshot,
+        trigger,
+        evidence_delta: evidenceDelta,
+      })
+    }
+  }
+
+  if (newSnapshot.preferences !== undefined) profile.preferences = newSnapshot.preferences
+  if (newSnapshot.identity !== undefined) profile.identity = newSnapshot.identity
+  if (newSnapshot.knowledge_domains !== undefined) profile.knowledge_domains = newSnapshot.knowledge_domains
+  if (newSnapshot.recurring_patterns !== undefined) profile.recurring_patterns = newSnapshot.recurring_patterns
+  if (newSnapshot.evidence_atom_ids !== undefined) profile.evidence_atom_ids = newSnapshot.evidence_atom_ids
+
+  profile.updatedAt = now
+  profile.lastAccessedAt = now
+
+  if (trigger === 'user_calibration' || trigger === 'restore_previous') {
+    profile.verified = true
+    profile.verifiedAt = now
+  }
+
+  await writeProfile(dataDir, profile)
+  await rebuildIndex(dataDir)
+
+  return profile
+}
+
+export const PROFILE_SINGLETON_ID = 'atom_profile_main'
+export const PROFILE_SINGLETON_REL_PATH = ['atoms', 'profile', 'main', 'atom_profile_main.json'] as const

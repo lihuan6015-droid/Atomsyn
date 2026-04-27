@@ -19,7 +19,21 @@ import { loadAllAtoms, findAtomFile, rebuildIndex } from '../rebuildIndex'
 import {
   computeStaleness,
   detectPruneCandidates,
+  applyProfileEvolution,
+  PROFILE_SINGLETON_REL_PATH,
 } from '@/lib/atomEvolution'
+
+// V2.x bootstrap-skill · profile singleton I/O (D-010)
+async function readProfileSingleton(dataDir: string): Promise<any | null> {
+  const file = joinPathSync(dataDir, ...PROFILE_SINGLETON_REL_PATH)
+  if (!(await fileExists(file))) return null
+  try { return JSON.parse(await readTextFile(file)) } catch { return null }
+}
+async function writeProfileSingleton(dataDir: string, profile: Record<string, any>): Promise<void> {
+  const file = joinPathSync(dataDir, ...PROFILE_SINGLETON_REL_PATH)
+  await ensureDir(joinPathSync(dataDir, 'atoms', 'profile', 'main'))
+  await writeJSON(file, profile)
+}
 
 function ok(body: any, status = 200): RouteResult {
   return { status, body }
@@ -39,6 +53,44 @@ export async function handleAtoms(
   // GET /atoms — list all
   if (method === 'GET' && parts.length === 1) {
     return ok(await loadAllAtoms(dataDir))
+  }
+
+  // V2.x bootstrap-skill · profile singleton 4 endpoints (D1-D7, D-010 + D-013)
+  if (method === 'GET' && parts.length === 2 && parts[1] === 'profile') {
+    const profile = await readProfileSingleton(dataDir)
+    return ok({ atom: profile })
+  }
+  if (method === 'GET' && parts.length === 3 && parts[1] === 'profile' && parts[2] === 'versions') {
+    const profile = await readProfileSingleton(dataDir)
+    if (!profile) return err('profile not found')
+    return ok({ versions: profile.previous_versions || [] })
+  }
+  if (method === 'POST' && parts.length === 3 && parts[1] === 'profile' && parts[2] === 'restore') {
+    const version = Number(body?.version)
+    if (!Number.isFinite(version) || version <= 0) return err('version (number > 0) required', 400)
+    const profile = await readProfileSingleton(dataDir)
+    if (!profile) return err('profile not found')
+    const target = (profile.previous_versions || []).find((v: any) => v.version === version)
+    if (!target) return err(`version ${version} not in previous_versions`, 400)
+    const restored = await applyProfileEvolution(
+      {
+        dataDir,
+        readProfile: readProfileSingleton,
+        writeProfile: writeProfileSingleton,
+        rebuildIndex,
+      },
+      { newSnapshot: target.snapshot || {}, trigger: 'restore_previous' },
+    )
+    try {
+      const logFile = joinPathSync(dataDir, 'growth', 'usage-log.jsonl')
+      await ensureDir(joinPathSync(dataDir, 'growth'))
+      await appendJSONL(logFile, {
+        ts: new Date().toISOString(),
+        action: 'profile.restored',
+        version,
+      })
+    } catch { /* non-fatal */ }
+    return ok({ ok: true, atom: restored })
   }
 
   // V2.x cognitive-evolution · GET /atoms/prune-candidates
@@ -199,6 +251,38 @@ export async function handleAtoms(
     atom.updatedAt = new Date().toISOString()
     await writeJSON(file, atom)
     return ok({ ok: true, locked: atom.stats.locked, confidence: atom.confidence })
+  }
+
+  // V2.x bootstrap-skill · POST /atoms/:id/calibrate-profile (D-013)
+  if (method === 'POST' && parts.length === 3 && parts[2] === 'calibrate-profile') {
+    const id = parts[1]
+    const profile = await readProfileSingleton(dataDir)
+    if (!profile) return err('profile not found — run bootstrap first')
+    if (id !== profile.id) return err(`id ${id} is not the active profile (${profile.id})`, 400)
+    const newSnapshot: Record<string, unknown> = {}
+    if (body?.identity !== undefined) newSnapshot.identity = body.identity
+    if (body?.preferences !== undefined) newSnapshot.preferences = body.preferences
+    if (body?.knowledge_domains !== undefined) newSnapshot.knowledge_domains = body.knowledge_domains
+    if (body?.recurring_patterns !== undefined) newSnapshot.recurring_patterns = body.recurring_patterns
+    const updated = await applyProfileEvolution(
+      {
+        dataDir,
+        readProfile: readProfileSingleton,
+        writeProfile: writeProfileSingleton,
+        rebuildIndex,
+      },
+      { newSnapshot, trigger: 'user_calibration' },
+    )
+    try {
+      const logFile = joinPathSync(dataDir, 'growth', 'usage-log.jsonl')
+      await ensureDir(joinPathSync(dataDir, 'growth'))
+      await appendJSONL(logFile, {
+        ts: new Date().toISOString(),
+        action: 'profile.calibrated',
+        fields: Object.keys(newSnapshot),
+      })
+    } catch { /* non-fatal */ }
+    return ok({ ok: true, atom: updated })
   }
 
   // V2.x cognitive-evolution · POST /atoms/:id/supersede

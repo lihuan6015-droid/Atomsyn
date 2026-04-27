@@ -82,7 +82,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
-import { computeStaleness, detectPruneCandidates } from './src/lib/atomEvolution';
+import { computeStaleness, detectPruneCandidates, applyProfileEvolution, PROFILE_SINGLETON_REL_PATH, } from './src/lib/atomEvolution';
 /**
  * Non-destructively copy bundled seed data into a user's data directory.
  * Mirrors the semantics of src-tauri/src/lib.rs `init_seed_*` commands.
@@ -292,6 +292,26 @@ async function findAtomFile(dataDir, atomId) {
         catch { }
     }
     return null;
+}
+// V2.x bootstrap-skill · profile singleton I/O (D-010)
+function profileSingletonFile(dataDir) {
+    return path.join(dataDir, ...PROFILE_SINGLETON_REL_PATH);
+}
+async function readProfileSingleton(dataDir) {
+    const file = profileSingletonFile(dataDir);
+    if (!existsSync(file))
+        return null;
+    try {
+        return JSON.parse(await fs.readFile(file, 'utf-8'));
+    }
+    catch {
+        return null;
+    }
+}
+async function writeProfileSingleton(dataDir, profile) {
+    const file = profileSingletonFile(dataDir);
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    await writeJSON(file, profile);
 }
 async function findPracticeFile(dataDir, projectId, practiceId) {
     const dir = path.join(dataDir, 'projects', projectId, 'practices');
@@ -870,6 +890,54 @@ export function dataApiPlugin(opts) {
                         if (method === 'GET' && parts.length === 1) {
                             return send(res, 200, await loadAllAtoms(dataDir));
                         }
+                        // V2.x bootstrap-skill · profile singleton 4 endpoints (D1-D7, D-010 + D-013)
+                        //   GET /api/atoms/profile           → singleton, null when not present
+                        //   GET /api/atoms/profile/versions  → previous_versions[]
+                        //   POST /api/atoms/profile/restore  → revert by version (trigger=restore_previous)
+                        //   POST /api/atoms/:id/calibrate-profile → user_calibration (placed in :id branch below)
+                        if (method === 'GET' && parts.length === 2 && parts[1] === 'profile') {
+                            const profile = await readProfileSingleton(dataDir);
+                            return send(res, 200, { atom: profile });
+                        }
+                        if (method === 'GET' && parts.length === 3 && parts[1] === 'profile' && parts[2] === 'versions') {
+                            const profile = await readProfileSingleton(dataDir);
+                            if (!profile)
+                                return send(res, 404, { error: 'profile not found' });
+                            return send(res, 200, { versions: profile.previous_versions || [] });
+                        }
+                        if (method === 'POST' && parts.length === 3 && parts[1] === 'profile' && parts[2] === 'restore') {
+                            const restoreBody = await readBody(req);
+                            const version = Number(restoreBody?.version);
+                            if (!Number.isFinite(version) || version <= 0) {
+                                return send(res, 400, { error: 'version (number > 0) required' });
+                            }
+                            const profile = await readProfileSingleton(dataDir);
+                            if (!profile)
+                                return send(res, 404, { error: 'profile not found' });
+                            const target = (profile.previous_versions || []).find((v) => v.version === version);
+                            if (!target)
+                                return send(res, 400, { error: `version ${version} not in previous_versions` });
+                            const restored = await applyProfileEvolution({
+                                dataDir,
+                                readProfile: readProfileSingleton,
+                                writeProfile: writeProfileSingleton,
+                                rebuildIndex,
+                            }, {
+                                newSnapshot: target.snapshot || {},
+                                trigger: 'restore_previous',
+                            });
+                            try {
+                                const logFile = path.join(dataDir, 'growth', 'usage-log.jsonl');
+                                await fs.mkdir(path.dirname(logFile), { recursive: true });
+                                await fs.appendFile(logFile, JSON.stringify({
+                                    ts: new Date().toISOString(),
+                                    action: 'profile.restored',
+                                    version,
+                                }) + '\n', 'utf-8');
+                            }
+                            catch { /* non-fatal */ }
+                            return send(res, 200, { ok: true, atom: restored });
+                        }
                         // V2.x cognitive-evolution · GET /api/atoms/prune-candidates
                         if (method === 'GET' && parts.length === 2 && parts[1] === 'prune-candidates') {
                             const limitParam = url.searchParams.get('limit');
@@ -1057,6 +1125,43 @@ export function dataApiPlugin(opts) {
                             atom.updatedAt = new Date().toISOString();
                             await writeJSON(file, atom);
                             return send(res, 200, { ok: true, locked: atom.stats.locked, confidence: atom.confidence });
+                        }
+                        // V2.x bootstrap-skill · POST /api/atoms/:id/calibrate-profile (D-013)
+                        if (method === 'POST' && parts.length === 3 && parts[2] === 'calibrate-profile') {
+                            const id = parts[1];
+                            const calBody = await readBody(req);
+                            const profile = await readProfileSingleton(dataDir);
+                            if (!profile)
+                                return send(res, 404, { error: 'profile not found — run bootstrap first' });
+                            if (id !== profile.id) {
+                                return send(res, 400, { error: `id ${id} is not the active profile (${profile.id})` });
+                            }
+                            const newSnapshot = {};
+                            if (calBody?.identity !== undefined)
+                                newSnapshot.identity = calBody.identity;
+                            if (calBody?.preferences !== undefined)
+                                newSnapshot.preferences = calBody.preferences;
+                            if (calBody?.knowledge_domains !== undefined)
+                                newSnapshot.knowledge_domains = calBody.knowledge_domains;
+                            if (calBody?.recurring_patterns !== undefined)
+                                newSnapshot.recurring_patterns = calBody.recurring_patterns;
+                            const updated = await applyProfileEvolution({
+                                dataDir,
+                                readProfile: readProfileSingleton,
+                                writeProfile: writeProfileSingleton,
+                                rebuildIndex,
+                            }, { newSnapshot, trigger: 'user_calibration' });
+                            try {
+                                const logFile = path.join(dataDir, 'growth', 'usage-log.jsonl');
+                                await fs.mkdir(path.dirname(logFile), { recursive: true });
+                                await fs.appendFile(logFile, JSON.stringify({
+                                    ts: new Date().toISOString(),
+                                    action: 'profile.calibrated',
+                                    fields: Object.keys(newSnapshot),
+                                }) + '\n', 'utf-8');
+                            }
+                            catch { /* non-fatal */ }
+                            return send(res, 200, { ok: true, atom: updated });
                         }
                         // V2.x cognitive-evolution · POST /api/atoms/:id/supersede
                         if (method === 'POST' && parts.length === 3 && parts[2] === 'supersede') {
