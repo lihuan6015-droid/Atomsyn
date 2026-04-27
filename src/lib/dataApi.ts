@@ -28,6 +28,10 @@ import type {
   Note,
   NotesMeta,
   Practice,
+  ProfileAtom,
+  ProfileIdentity,
+  ProfilePreferences,
+  ProfileVersionSnapshot,
   Project,
   PsychologicalEntry,
   SeedCheckResult,
@@ -100,6 +104,81 @@ export const atomsApi = {
     http<{ ok: true; locked: boolean; confidence: number }>(`/atoms/${id}/calibrate`, {
       method: 'PATCH',
       body: JSON.stringify(opts),
+    }),
+}
+
+// ---------- Profile (V2.x bootstrap-skill, D-010 + D-013) ----------
+export const profileApi = {
+  /** Singleton fetch; returns null when bootstrap has not run yet. */
+  get: () => http<{ atom: ProfileAtom | null }>('/atoms/profile'),
+  /** Versions list (newest → oldest, capped at all `previous_versions[]`). */
+  versions: () => http<{ versions: ProfileVersionSnapshot[] }>('/atoms/profile/versions'),
+  /** Restore a historic version into the top-level snapshot (D-010). */
+  restore: (version: number) =>
+    http<{ ok: true; atom: ProfileAtom }>('/atoms/profile/restore', {
+      method: 'POST',
+      body: JSON.stringify({ version }),
+    }),
+  /** User-driven calibration; flips verified=true + verifiedAt=now (D-013). */
+  calibrate: (
+    id: string,
+    body: {
+      identity?: ProfileIdentity
+      preferences?: ProfilePreferences
+      knowledge_domains?: string[]
+      recurring_patterns?: string[]
+    },
+  ) =>
+    http<{ ok: true; atom: ProfileAtom }>(`/atoms/${id}/calibrate-profile`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+}
+
+// ---------- Bootstrap sessions (V2.x bootstrap-skill, D-011) ----------
+export interface BootstrapSessionSummary {
+  id: string
+  status: string
+  paths: string[]
+  startedAt: string
+  endedAt: string | null
+  atoms_created: { profile: number; experience: number; fragment: number }
+}
+
+export interface BootstrapSession extends BootstrapSessionSummary {
+  options?: Record<string, unknown>
+  dataDirHash?: string | null
+  phase1_overview?: any
+  phase2_hypothesis?: any
+  phase3_progress?: { processed: number; total: number } | null
+  phase3_skipped?: Array<{ file: string; reason: string }>
+  dry_run_markdown_path?: string | null
+  errors?: Array<{ phase: string; message: string; ts: string }>
+}
+
+export interface BootstrapCommitResult {
+  ok: true
+  atoms_created: { profile: number; experience: number; fragment: number }
+  atom_ids: string[]
+  skipped: Array<{ candidate: any; error: string }>
+  duplicates: Array<{ candidate: any; matchedId: string; score: number; reason: string }>
+  parseErrors: string[]
+  session: BootstrapSession
+}
+
+export const bootstrapApi = {
+  listSessions: () =>
+    http<{ sessions: BootstrapSessionSummary[] }>('/bootstrap/sessions'),
+  getSession: (id: string) =>
+    http<{ session: BootstrapSession; markdown: string | null }>(`/bootstrap/sessions/${encodeURIComponent(id)}`),
+  commit: (id: string, opts: { markdown_corrected?: string } = {}) =>
+    http<BootstrapCommitResult>(`/bootstrap/sessions/${encodeURIComponent(id)}/commit`, {
+      method: 'POST',
+      body: JSON.stringify(opts),
+    }),
+  deleteSession: (id: string) =>
+    http<{ ok: true; id: string }>(`/bootstrap/sessions/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
     }),
 }
 
