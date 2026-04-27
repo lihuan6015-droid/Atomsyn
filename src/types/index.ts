@@ -168,6 +168,8 @@ export function getFrameworkNodeIds(fw: Framework): Array<{ id: string | number;
 // Atom — a single knowledge unit. V1.5 introduces the `kind` discriminator
 // and splits atoms into three variants: methodology (V1 carry-over),
 // experience (agent-crystallized), and skill-inventory (local skill catalog).
+// V2.x bootstrap-skill (2026-04) adds a fourth variant: profile (singleton
+// meta-cognitive profile per data dir).
 //
 // The canonical `Atom` alias = `MethodologyAtom` for V1 backward compatibility.
 // All existing code importing `Atom` continues to work unchanged after
@@ -178,7 +180,7 @@ export function getFrameworkNodeIds(fw: Framework): Array<{ id: string | number;
 // `AtomAny` (the discriminated union) + the type guards at the bottom.
 // =============================================================================
 
-export type AtomKind = 'methodology' | 'experience' | 'skill-inventory'
+export type AtomKind = 'methodology' | 'experience' | 'skill-inventory' | 'profile'
 
 export interface AtomBookmark {
   id: string
@@ -214,6 +216,10 @@ export interface AtomStats {
   userDemoted?: boolean
   /** V1.5 · T-6.2 calibration. Blocks agent write operations from mutating this atom. */
   locked?: boolean
+  /** V2.x bootstrap-skill · True if this atom was created by atomsyn-cli bootstrap during a batch import session. */
+  imported?: boolean
+  /** V2.x bootstrap-skill · Source bootstrap session id when imported=true. Null otherwise. */
+  bootstrap_session_id?: string | null
 }
 
 export type AtomRelationType = 'child' | 'sibling' | 'parent'
@@ -416,11 +422,120 @@ export interface ExperienceFragment extends AtomEvolutionFields {
   updatedAt: string
 }
 
+// =============================================================================
+// V2.x bootstrap-skill (2026-04) · Profile atom — singleton meta-cognitive
+// profile per data dir. id MUST be `atom_profile_main`. Historic snapshots
+// are kept inline in `previous_versions[]` (new→old) instead of supersede
+// chains (D-008 + D-010). See skills/schemas/profile-atom.schema.json.
+//
+// IMPORTANT: profile MUST NOT use supersededBy / supersedes (D-008). Use
+// applyProfileEvolution() in scripts/lib/evolution.mjs to evolve the
+// singleton — it pushes prior snapshot into previous_versions[] for you.
+//
+// v1: read/mentor do NOT consume profile until user calibrates verified=true
+// (D-007). The atom still exists in the corpus and can be read by GUI.
+// =============================================================================
+
+/** D-008: 5 numeric dimensions, 0-1, plan-tune compatible (same names + semantics). */
+export interface ProfilePreferences {
+  /** 小步 (0) ↔ 完整 (1) */
+  scope_appetite?: number
+  /** 谨慎 (0) ↔ 激进 (1) */
+  risk_tolerance?: number
+  /** 简洁 (0) ↔ 详尽 (1) */
+  detail_preference?: number
+  /** 咨询 (0) ↔ 委托 (1) */
+  autonomy?: number
+  /** 速度 (0) ↔ 设计 (1) */
+  architecture_care?: number
+}
+
+/** Free-form identity fields for human storytelling (not enums). */
+export interface ProfileIdentity {
+  role?: string
+  working_style?: string
+  primary_languages?: string[]
+  primary_tools?: string[]
+  /** Open for forward extension — schema additionalProperties=true. */
+  [key: string]: unknown
+}
+
+/** D-008 + D-010 · enumerated triggers; mirrors evolution.mjs::VALID_PROFILE_TRIGGERS. */
+export type ProfileEvolutionTrigger =
+  | 'bootstrap_initial'
+  | 'bootstrap_rerun'
+  | 'user_calibration'
+  | 'agent_evolution'
+  | 'restore_previous'
+
+/** Frozen snapshot of the previous top-level fields (pushed onto previous_versions). */
+export interface ProfileSnapshot {
+  preferences?: ProfilePreferences
+  identity?: ProfileIdentity
+  knowledge_domains?: string[]
+  recurring_patterns?: string[]
+  evidence_atom_ids?: string[]
+}
+
+export interface ProfileVersionSnapshot {
+  version: number
+  supersededAt: string
+  snapshot: ProfileSnapshot
+  trigger: ProfileEvolutionTrigger
+  /** Optional metadata about evidence delta — free shape for mentor v2 consumption. */
+  evidence_delta?: string[] | Record<string, unknown> | null
+}
+
+/**
+ * ProfileAtom · V2.x singleton. Extends AtomEvolutionFields for
+ * lastAccessedAt / archivedAt / archivedReason, BUT supersededBy /
+ * supersedes MUST stay unset (D-008) — use previous_versions[] instead.
+ */
+export interface ProfileAtom extends AtomEvolutionFields {
+  id: string
+  schemaVersion: 1
+  kind: 'profile'
+  name: string
+  nameEn?: string
+  /**
+   * Optional tags. Profile rarely uses tags semantically, but the field is
+   * declared so generic atom-list components (KnowledgeCard / SkeletonView)
+   * can access `atom.tags` without per-kind narrowing. Default: undefined / [].
+   */
+  tags?: string[]
+
+  /** D-007: false until user goes through GUI calibration at least once. */
+  verified?: boolean
+  verifiedAt?: string | null
+  /** When the current top-level snapshot was first inferred. Independent of createdAt. */
+  inferred_at?: string
+  /** Short human summary of what was scanned. Privacy: NOT raw content. */
+  source_summary?: string
+
+  identity?: ProfileIdentity
+  preferences?: ProfilePreferences
+  knowledge_domains?: string[]
+  recurring_patterns?: string[]
+  evidence_atom_ids?: string[]
+
+  /** D-010: stack of historic profile snapshots, NEW→OLD. */
+  previous_versions?: ProfileVersionSnapshot[]
+
+  stats: AtomStats
+  createdAt: string
+  updatedAt: string
+}
+
 /**
  * Discriminated union of all atom kinds. Use this for code that needs to
  * handle any variant (indexing, search, feed rendering, CLI serialization).
  */
-export type AtomAny = MethodologyAtom | ExperienceAtom | ExperienceFragment | SkillInventoryItem
+export type AtomAny =
+  | MethodologyAtom
+  | ExperienceAtom
+  | ExperienceFragment
+  | SkillInventoryItem
+  | ProfileAtom
 
 // ----- Type guards (prefer over direct `kind` checks for TS narrowing) ----
 
@@ -438,6 +553,10 @@ export function isExperienceFragment(atom: AtomAny): atom is ExperienceFragment 
 
 export function isSkillInventoryItem(atom: AtomAny): atom is SkillInventoryItem {
   return atom.kind === 'skill-inventory'
+}
+
+export function isProfileAtom(atom: AtomAny): atom is ProfileAtom {
+  return atom.kind === 'profile'
 }
 
 // =============================================================================
