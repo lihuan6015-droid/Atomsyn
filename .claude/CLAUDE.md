@@ -44,6 +44,7 @@ When the user opens Claude Code in this directory, you are a **协作建设者**
 data/
 ├── frameworks/<id>.json                       Framework definitions
 ├── atoms/<framework>/<cell>/<slug>.json       Knowledge atoms
+├── atoms/profile/main/atom_profile_main.json  Profile singleton (D-010 of 2026-04-bootstrap-skill, ≤1 active)
 ├── projects/<projectId>/meta.json             Project metadata
 ├── projects/<projectId>/practices/<id>.json   Project execution records
 ├── index/knowledge-index.json                 Auto-generated lightweight index
@@ -70,6 +71,7 @@ skills/
   use `project-NNN-<slug>`, practices use `practice_<slug>_<timestamp>`
 - **ALWAYS update timestamps** (`updatedAt`) when mutating an object
 - **ALWAYS rebuild index** after writing — Copilot and Spotlight depend on it
+- **profile atom 默认 verified=false**, 不被 atomsyn-read 自动注入直到用户在 GUI ProfilePage (Growth 子 tab "画像") 校准 (D-007 of 2026-04-bootstrap-skill); profile 永远是单例 id=`atom_profile_main` (D-010), 跨多次 bootstrap / 校准 / restore 用 `previous_versions[]` 追溯, 不产生独立 profile
 
 ---
 
@@ -96,6 +98,7 @@ skills/
 | "重建一下索引" | `npm run reindex` (or hit `POST /api/index/rebuild` if dev server is up) |
 | "新建一个骨架" | Create `data/frameworks/<id>.json` matching the framework schema, then ask if user wants seed atoms |
 | "把 X 原子和 Y 原子建立父子关系" | Set `parentAtomId` + `relationType` on the child, save, rebuild index |
+| "初始化 atomsyn / bootstrap / 把 ~/X 倒进来" | 引导用户走 dry-run + commit 两步 (D-011 of 2026-04-bootstrap-skill), 别一步到位; profile 单例语义保留 (D-010); GUI 入口在聊天页"初始化向导"按钮 |
 
 ---
 
@@ -126,6 +129,15 @@ atomsyn-cli mentor  [--range week|month|all] [--format data|report]   # cognitiv
 atomsyn-cli supersede --id <old-id> --input <new-atom-file> [--no-archive-old]   # 用新 atom 取代旧 atom (默认 archive 旧的)
 atomsyn-cli archive --id <id> [--reason "..."] [--restore]                       # 软删除 atom; --restore 反归档
 atomsyn-cli prune [--limit N]                                                    # dry-run 扫描候选 (永远不自动 mutate)
+
+# V2.x bootstrap-skill (2026-04 change) · 引导式批量冷启动
+atomsyn-cli bootstrap --path <dir> [--path <dir2> ...]
+                      [--phase triage|sampling|deep-dive|all]
+                      [--dry-run | --commit <session-id> | --resume <session-id>]
+                      [--include-pattern <csv>] [--exclude-pattern <csv>]
+                      [--user-correction "..."] [--markdown-corrected-file <path>]
+                      # 3 阶段 funnel + dry-run/commit 两步 (D-011)
+                      # session 持久化到 ~/.atomsyn/bootstrap-sessions/
 
 atomsyn-cli reindex
 atomsyn-cli where
@@ -233,3 +245,12 @@ CLI 安装路径: `~/.atomsyn/bin/atomsyn-cli.mjs`（由 Tauri `install_agent_sk
 - 核心命令 (write, update, get, find, read, where) 使用 `resolveDataDir()` → 不依赖 PROJECT_ROOT ✅
 - `reindex` 命令：优先尝试 `PROJECT_ROOT/scripts/rebuild-index.mjs`，不存在时使用内联实现 ✅
 - `install-skill` 命令：仅在开发模式使用，打包模式由 Rust `install_agent_skills` 处理
+
+### V2.x bootstrap-skill API (2026-04 change)
+
+bootstrap session 端点 + profile 4 端点已实现双通道 (`vite-plugin-data-api.ts` + `src/lib/tauri-api/routes/{atoms,bootstrap}.ts`):
+
+- `GET /atoms/profile` · `GET /atoms/profile/versions` · `POST /atoms/profile/restore` · `POST /atoms/:id/calibrate-profile`
+- `GET /bootstrap/sessions` · `GET /bootstrap/sessions/:id` · `POST /bootstrap/sessions/:id/commit` · `DELETE /bootstrap/sessions/:id`
+
+**packaged Tauri commit caveat**: `POST /bootstrap/sessions/:id/commit` 在 packaged 模式当前返回 501 (Tauri 无 shell 插件 + 无中心化 LLM 客户端, 不能 spawn `atomsyn-cli ingest` 子进程)。tauri:dev 模式 GUI 走 Vite 中间件正常。打包模式 fallback: `~/.atomsyn/bin/atomsyn-cli bootstrap --commit <id>` 直跑, 待后续 Rust shell command 包装。

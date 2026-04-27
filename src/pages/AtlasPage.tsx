@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Library, ChevronRight, Sparkles, Bot, BarChart3, Pencil, Plus } from 'lucide-react'
-import { frameworksApi, indexApi, atomsApi } from '@/lib/dataApi'
+import { useNavigate } from 'react-router-dom'
+import { Library, ChevronRight, Sparkles, Bot, BarChart3, Pencil, Plus, User, CheckCircle2 } from 'lucide-react'
+import { frameworksApi, indexApi, atomsApi, profileApi } from '@/lib/dataApi'
+import type { ProfileAtom } from '@/types'
 import { useAppStore } from '@/stores/useAppStore'
 import type { Framework, KnowledgeIndex, Atom } from '@/types'
 import { isMatrixFramework, isListFramework, isTreeFramework } from '@/types'
@@ -14,6 +16,7 @@ import { NewAtomDialog } from './NewAtomDialog'
 
 
 export default function AtlasPage() {
+  const navigate = useNavigate()
   const activeFrameworkId = useAppStore((s) => s.activeFrameworkId)
   const [framework, setFramework] = useState<Framework | null>(null)
   const [index, setIndex] = useState<KnowledgeIndex | null>(null)
@@ -21,6 +24,8 @@ export default function AtlasPage() {
   const [activeTag, setActiveTag] = useState<string>('all')
   const [feedOpen, setFeedOpen] = useState(false)
   const [showStats, setShowStats] = useState(false)
+  // V2.x bootstrap-skill (C19) · profile hero badge in header
+  const [profile, setProfile] = useState<ProfileAtom | null>(null)
 
   useEffect(() => {
     if (!activeFrameworkId) return
@@ -30,6 +35,7 @@ export default function AtlasPage() {
   useEffect(() => {
     indexApi.get().then(setIndex).catch(() => undefined)
     atomsApi.list().then(setAtoms).catch(() => undefined)
+    profileApi.get().then((r) => setProfile(r.atom)).catch(() => undefined)
   }, [])
 
   // Refresh atoms/index when atoms are created or deleted elsewhere
@@ -115,6 +121,19 @@ export default function AtlasPage() {
           <BarChart3 className="w-3.5 h-3.5" />
           <span>统计</span>
         </button>
+
+        {/* V2.x bootstrap-skill (C19) · profile hero entry — only when profile exists */}
+        {profile && (
+          <button
+            onClick={() => navigate('/growth')}
+            className="flex items-center gap-2 px-3 h-9 rounded-xl border border-violet-300/60 dark:border-violet-500/30 bg-violet-500/5 dark:bg-violet-500/10 text-xs text-violet-700 dark:text-violet-300 hover:border-violet-500 dark:hover:border-violet-400 transition-colors shrink-0"
+            title={profile.verified ? '已校准的认知画像' : '画像未校准, 去 Growth 完成首次确认'}
+          >
+            <User className="w-3.5 h-3.5" />
+            <span>画像</span>
+            {profile.verified && <CheckCircle2 className="w-3 h-3 text-emerald-500" />}
+          </button>
+        )}
 
         <button
           onClick={() => setFeedOpen(true)}
