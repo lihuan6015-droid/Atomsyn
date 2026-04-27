@@ -2127,15 +2127,152 @@ async function cmdBootstrap(args) {
     return
   }
 
-  // Phase wiring lands in B9 (dry-run path) and B10 (commit path).
-  // Until then, the validated opts are echoed so the dispatcher + flag
-  // contract can be smoke-tested.
-  process.stderr.write(
-    '⚠ atomsyn-cli bootstrap is under construction (B 组 in progress). ' +
-    'Flag parsing + session state implemented (B3, B4); Phase logic pending B9-B10.\n'
-  )
-  process.stderr.write(`Parsed options: ${JSON.stringify(opts, null, 2)}\n`)
-  process.exit(1)
+  // ----- Lazy imports of bootstrap library modules ------------------------
+  const { runTriage } = await import('./lib/bootstrap/triage.mjs')
+  const { runSampling } = await import('./lib/bootstrap/sampling.mjs')
+  const { runDeepDiveDryRun, writeDryRunMarkdown } = await import('./lib/bootstrap/deepDive.mjs')
+  const sessionLib = await import('./lib/bootstrap/session.mjs')
+
+  // ----- B10 stub: --commit branch (lands in next commit) -----------------
+  if (opts.commit) {
+    process.stderr.write(
+      '⚠ --commit handler is under construction (B10 pending). ' +
+      `Session ${opts.commit} loaded but not yet materialized.\n`
+    )
+    process.exit(1)
+  }
+
+  // ----- B18 stub: --resume branch (lands in B18 commit) ------------------
+  if (opts.resume) {
+    process.stderr.write(
+      '⚠ --resume handler is under construction (B18 pending). ' +
+      'For now, re-run with --path to start fresh.\n'
+    )
+    process.exit(1)
+  }
+
+  // ----- Dry-run / full path ----------------------------------------------
+  const { path: dataDir } = resolveDataDir()
+  const session = await sessionLib.createSession({
+    paths: opts.paths,
+    options: {
+      phase: opts.phase,
+      parallel: opts.parallel,
+      includePattern: opts.includePattern,
+      excludePattern: opts.excludePattern,
+      dryRun: opts.dryRun,
+      userCorrection: opts.userCorrection,
+    },
+    dataDir,
+  })
+
+  process.stderr.write(`▶ bootstrap session ${session.id} created (data dir: ${dataDir})\n`)
+  process.stderr.write(`▶ Phase 1 · TRIAGE — scanning ${opts.paths.length} root(s)…\n`)
+
+  // ----- Phase 1: TRIAGE ---------------------------------------------------
+  let triageResult
+  try {
+    triageResult = await runTriage({
+      paths: opts.paths,
+      includePattern: opts.includePattern,
+      excludePattern: opts.excludePattern,
+    })
+  } catch (err) {
+    await sessionLib.failSession(session, 'triage', err.message)
+    process.stderr.write(`✗ TRIAGE failed: ${err.message}\n`)
+    process.exit(1)
+  }
+  session.phase1_overview = {
+    totalFiles: triageResult.fileList.length,
+    totalBytes: triageResult.totalBytes,
+    byExt: triageResult.byExt,
+    sensitive_skipped: triageResult.sensitiveSkipped.map((s) => s.relPath),
+    recencyBuckets: triageResult.recencyBuckets,
+    warnings: triageResult.warnings,
+  }
+  session.status = sessionLib.SESSION_STATUS.TRIAGE_COMPLETED
+  await sessionLib.writeSession(session)
+
+  if (triageResult.fileList.length === 0) {
+    process.stderr.write(`✗ No files surfaced after privacy + ignore filters. Aborting.\n`)
+    await sessionLib.failSession(session, 'triage', 'no files surfaced')
+    process.exit(4)
+  }
+
+  process.stdout.write(triageResult.markdown + '\n')
+
+  if (opts.phase === 'triage') {
+    process.stderr.write(`✓ Phase 1 complete. session: ${session.id}\n`)
+    return
+  }
+  process.stdout.write('\n---\n\n')
+
+  // ----- Phase 2: SAMPLING --------------------------------------------------
+  process.stderr.write(`▶ Phase 2 · SAMPLING — picking representatives + 1 LLM call…\n`)
+  let samplingResult
+  try {
+    samplingResult = await runSampling({
+      fileList: triageResult.fileList,
+      userCorrection: opts.userCorrection,
+    })
+  } catch (err) {
+    await sessionLib.failSession(session, 'sampling', err.message)
+    process.stderr.write(`✗ SAMPLING failed: ${err.message}\n`)
+    process.stderr.write(
+      `  (If this is "LLM_NOT_CONFIGURED", set ATOMSYN_LLM_API_KEY in your shell.)\n`
+    )
+    process.exit(1)
+  }
+  session.phase2_hypothesis = samplingResult.hypothesis
+  session.status = sessionLib.SESSION_STATUS.SAMPLING_COMPLETED
+  await sessionLib.writeSession(session)
+
+  process.stdout.write(samplingResult.markdown + '\n')
+
+  if (opts.phase === 'sampling') {
+    process.stderr.write(`✓ Phase 2 complete. session: ${session.id}\n`)
+    return
+  }
+  process.stdout.write('\n---\n\n')
+
+  // ----- Phase 3: DEEP DIVE (dry-run path B9) -------------------------------
+  process.stderr.write(`▶ Phase 3 · DEEP DIVE — ${triageResult.fileList.length} files (dry-run: ${opts.dryRun || opts.phase === 'deep-dive'})…\n`)
+  session.status = sessionLib.SESSION_STATUS.DEEP_DIVE_IN_PROGRESS
+  await sessionLib.writeSession(session)
+
+  // For now, all paths through Phase 3 use dry-run output. Commit path
+  // (`--commit <id>` after a dry-run) lands in B10.
+  let dryRunResult
+  try {
+    dryRunResult = await runDeepDiveDryRun({
+      fileList: triageResult.fileList,
+      hypothesis: samplingResult.hypothesis,
+      onProgress: ({ processed, total }) => {
+        if (processed % 10 === 0 || processed === total) {
+          process.stderr.write(`  ${processed}/${total} files processed\n`)
+        }
+      },
+    })
+  } catch (err) {
+    await sessionLib.failSession(session, 'deep-dive', err.message)
+    process.stderr.write(`✗ DEEP DIVE failed: ${err.message}\n`)
+    process.exit(1)
+  }
+  session.phase3_progress = { processed: dryRunResult.stats.processed, total: dryRunResult.stats.total }
+  session.phase3_skipped = dryRunResult.skipped
+  const mdFile = sessionLib.sessionMarkdownFile(session.id)
+  await writeDryRunMarkdown(mdFile, dryRunResult.markdown)
+  session.dry_run_markdown_path = mdFile
+  session.status = sessionLib.SESSION_STATUS.DRY_RUN_COMPLETED
+  session.endedAt = new Date().toISOString()
+  await sessionLib.writeSession(session)
+
+  process.stdout.write(dryRunResult.markdown + '\n')
+  process.stderr.write(`\n✓ dry-run complete. ${dryRunResult.stats.candidates} candidates surfaced.\n`)
+  process.stderr.write(`  Markdown report: ${mdFile}\n`)
+  process.stderr.write(`  Session id: ${session.id}\n`)
+  process.stderr.write(`  Next: review the markdown, then run\n`)
+  process.stderr.write(`    atomsyn-cli bootstrap --commit ${session.id}\n`)
 }
 
 async function cmdMentor(args) {
