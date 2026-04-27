@@ -1980,32 +1980,161 @@ async function cmdIngest(args) {
 // Implementation lands incrementally (see scripts/lib/bootstrap/* + B 组 commits).
 // This stub validates the dispatcher wiring and prints a brief notice.
 // ---------------------------------------------------------------------------
+/**
+ * Parse `atomsyn-cli bootstrap` flags into a normalized options object.
+ * Repeats: --path. CSV: --include-pattern, --exclude-pattern. Mutex:
+ *   - --resume conflicts with --path / --commit (resume reuses the session's paths)
+ *   - --commit conflicts with --resume / --path (commit operates on a finished dry-run)
+ *   - --phase only valid alongside --path or --resume (not --commit)
+ *
+ * Exit code 4 (validation failure) on any rule violation.
+ */
+function parseBootstrapArgs(args) {
+  const opts = {
+    paths: [],
+    phase: 'all', // triage | sampling | deep-dive | all
+    parallel: false,
+    includePattern: '',
+    excludePattern: '',
+    dryRun: false,
+    commit: null,
+    resume: null,
+    userCorrection: '',
+    showHelp: false,
+    markdownCorrectedFile: null, // GUI / scripted commit can pass an inline file
+  }
+
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i]
+    const next = () => args[++i]
+    switch (a) {
+      case '--help':
+      case '-h':
+        opts.showHelp = true
+        break
+      case '--path':
+        if (!args[i + 1]) return { error: '--path requires a value', code: 4 }
+        opts.paths.push(next())
+        break
+      case '--phase':
+        if (!args[i + 1]) return { error: '--phase requires a value', code: 4 }
+        opts.phase = next()
+        break
+      case '--parallel':
+        opts.parallel = true
+        break
+      case '--include-pattern':
+        if (!args[i + 1]) return { error: '--include-pattern requires a value', code: 4 }
+        opts.includePattern = next()
+        break
+      case '--exclude-pattern':
+        if (!args[i + 1]) return { error: '--exclude-pattern requires a value', code: 4 }
+        opts.excludePattern = next()
+        break
+      case '--dry-run':
+        opts.dryRun = true
+        break
+      case '--commit':
+        if (!args[i + 1]) return { error: '--commit requires a session id', code: 4 }
+        opts.commit = next()
+        break
+      case '--resume':
+        if (!args[i + 1]) return { error: '--resume requires a session id', code: 4 }
+        opts.resume = next()
+        break
+      case '--user-correction':
+        if (!args[i + 1]) return { error: '--user-correction requires text', code: 4 }
+        opts.userCorrection = next()
+        break
+      case '--markdown-corrected-file':
+        if (!args[i + 1]) return { error: '--markdown-corrected-file requires a path', code: 4 }
+        opts.markdownCorrectedFile = next()
+        break
+      default:
+        return { error: `Unknown bootstrap flag: ${a}`, code: 4 }
+    }
+  }
+
+  if (opts.showHelp) return { opts }
+
+  // Mutex / required-flag checks
+  if (opts.commit && (opts.resume || opts.paths.length > 0)) {
+    return { error: '--commit cannot be combined with --resume or --path', code: 4 }
+  }
+  if (opts.resume && opts.paths.length > 0) {
+    return { error: '--resume cannot be combined with --path', code: 4 }
+  }
+  if (!opts.commit && !opts.resume && opts.paths.length === 0) {
+    return { error: 'one of --path / --resume / --commit is required', code: 4 }
+  }
+
+  const validPhases = new Set(['triage', 'sampling', 'deep-dive', 'all'])
+  if (!validPhases.has(opts.phase)) {
+    return { error: `--phase must be one of triage|sampling|deep-dive|all (got ${opts.phase})`, code: 4 }
+  }
+  if (opts.commit && opts.phase !== 'all') {
+    return { error: '--phase is not compatible with --commit (commit always finalizes)', code: 4 }
+  }
+
+  return { opts }
+}
+
+const BOOTSTRAP_HELP = `atomsyn-cli bootstrap — Batch import existing local docs into Atomsyn.
+
+3-phase funnel (D-003): TRIAGE (~30s, 0 LLM) → SAMPLING (~5min, 1 LLM call)
+                        → DEEP DIVE (~30min serial / ~8min parallel)
+
+Two-stage protocol (D-011): default flow is dry-run + commit:
+  1. atomsyn-cli bootstrap --path ~/Documents --dry-run
+     → produces markdown report at ~/.atomsyn/bootstrap-sessions/<id>.md
+     → user edits / deletes lines they don't want
+  2. atomsyn-cli bootstrap --commit <session-id>
+     → reads the (possibly edited) markdown, calls LLM to assemble atom JSON,
+       and writes via atomsyn-cli ingest
+
+Flags:
+  --path <dir>             Source directory, repeatable
+  --phase triage|sampling|deep-dive|all   (default: all)
+  --parallel               Phase 3 four-way sub-agent (token cost 4x, opt-in)
+  --include-pattern <csv>  Glob whitelist (e.g. "*.md,*.txt")
+  --exclude-pattern <csv>  Glob blacklist (stacks with .atomsynignore)
+  --dry-run                Emit markdown report only (no atoms written)
+  --commit <session-id>    Materialize a previously dry-run'd session
+  --resume <session-id>    Continue an interrupted session
+  --user-correction "..."  Inline correction injected into Phase 2 hypothesis
+  --markdown-corrected-file <path>
+                           Override the session markdown with edits from a file
+                           (used by the GUI commit endpoint)
+
+Exit codes:
+  0  success
+  1  generic failure (LLM / IO / schema)
+  2  --path / --resume / --commit not found
+  3  user aborted at an AskUserQuestion gate
+  4  validation failure / sensitive scan filtered everything
+
+See openspec/changes/2026-04-bootstrap-skill/ for the full contract.`
+
 async function cmdBootstrap(args) {
-  // B3 will implement full flag parsing + phase routing.
-  if (args.includes('--help') || args.includes('-h')) {
-    console.log(`atomsyn-cli bootstrap — Batch import existing local docs into Atomsyn.
-
-Status: scaffolding (B1+B2 landed). Full flow lands in B3-B20.
-
-Planned flags (B3):
-  --path <dir>            Source directory (repeatable)
-  --phase triage|sampling|deep-dive|all
-  --parallel              Phase 3 4-way sub-agent (token cost 4x, opt-in)
-  --include-pattern <csv> Glob whitelist
-  --exclude-pattern <csv> Glob blacklist (stacks with .atomsynignore)
-  --dry-run               Emit markdown report only (no atoms written)
-  --commit <session-id>   Materialize a previously dry-run'd session
-  --resume <session-id>   Continue an interrupted session
-  --user-correction "..." Inline correction injected into Phase 2 hypothesis
-
-See openspec/changes/2026-04-bootstrap-skill/ for the full contract.`)
+  const parsed = parseBootstrapArgs(args)
+  if (parsed.error) {
+    process.stderr.write(`Error: ${parsed.error}\n`)
+    process.exit(parsed.code || 1)
+  }
+  const { opts } = parsed
+  if (opts.showHelp) {
+    console.log(BOOTSTRAP_HELP)
     return
   }
 
-  console.error(
+  // Phase wiring lands in B9 (dry-run path) and B10 (commit path).
+  // Until then, the validated opts are echoed so the dispatcher + flag
+  // contract can be smoke-tested.
+  process.stderr.write(
     '⚠ atomsyn-cli bootstrap is under construction (B 组 in progress). ' +
-    'Run with --help for the planned interface.'
+    'Flag parsing + session state implemented (B3, B4); Phase logic pending B9-B10.\n'
   )
+  process.stderr.write(`Parsed options: ${JSON.stringify(opts, null, 2)}\n`)
   process.exit(1)
 }
 
