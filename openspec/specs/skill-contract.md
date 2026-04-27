@@ -17,6 +17,7 @@
 | `atomsyn-write` | **沉淀即投资** —— 自带主动建议哲学, 在自然停顿时短问一句 "要不要记一下" | 对话中产生了"如果不记下来未来不会知道"的认知 |
 | `atomsyn-read` | **默认主动 + 空结果沉默** —— 任何非闲聊的实质性工作开始前都先调一次 | 用户提出实质性问题, 先看本地资产 |
 | `atomsyn-mentor` | **数据驱动 + 教练闭环** —— 主动分析盲区和趋势, 推用户行动 | 用户说 "复盘" / "导师模式" / "回顾一下" / "我最近学了什么" / "我的盲区" |
+| `atomsyn-bootstrap` | **引导式批量冷启动 + 用户主权** —— 把硬盘上散落的过程文档按 5 层架构提炼成 1 profile + N experience/fragment, 三阶段 funnel + dry-run/commit 两阶段, 让用户全程在场 (V2.x bootstrap-skill) | 用户说 "初始化 atomsyn / bootstrap atomsyn / 把 ~/X 倒进来 / 从我之前的笔记导入 / 第一次用 atomsyn" |
 
 ---
 
@@ -90,35 +91,98 @@
 [TODO]
 
 
+## 5 · `atomsyn-bootstrap` 契约 (V2.x bootstrap-skill)
+
+### 5.1 frontmatter
+
+```yaml
+---
+name: atomsyn-bootstrap
+description: "把用户硬盘上散落的过程文档 (markdown / 笔记 / 历史聊天导出 / 源代码注释) 引导式地导入 Atomsyn 知识库, 产出 1 条 profile atom + N 条 experience/fragment atom。3 阶段 funnel: TRIAGE 扫描概览 → SAMPLING 采样画像 → DEEP DIVE 5 层归类。隐私优先: 默认敏感关键字扫描 + .atomsynignore。用户说 '初始化我的 atomsyn / 把这个目录倒进来 / bootstrap atomsyn / 从我之前的笔记导入' 时触发。"
+allowed-tools: Bash, Read
+---
+```
+
+### 5.2 触发条件
+
+- **显式**: 用户说"初始化 atomsyn / bootstrap atomsyn / 把 ~/X 倒进来 / 从我之前的笔记导入 / 第一次用 atomsyn"
+- **静默规则**: 检测到用户 `atomsyn-cli where` 返回的数据目录里 atom 数 < 5 且用户在做实质性 AI 任务时, **不自动触发**, 但**可以问一句**"你的 atomsyn 看起来很空, 要不要先 bootstrap 一下?"
+
+### 5.3 不可变承诺 (Invariants)
+
+- **B-I1 · 永不绕过 ingest**: bootstrap 写入 atom 必须通过 `atomsyn-cli ingest`, 不直接写 disk (与全局 CLI-first 铁律一致, 见 cli-contract §4 I1)
+- **B-I2 · Phase 之间是关卡**: TRIAGE → SAMPLING → DEEP DIVE 之间必须有用户确认, 不一次跑完 (D-003)
+- **B-I3 · profile v1 仅观察** (D-007): 写入的 profile atom `verified=false`, **本 Skill 不让 read 自动注入** (与 atomsyn-read R-I6 一致); profile 校准入口在 GUI ProfilePage, Skill v1 不消费
+- **B-I4 · 隐私默认关闭** (D-005): 没显式 `--include-pattern` 时, 默认按 `.atomsynignore` 严格过滤; 14 条敏感关键字扫描默认开启 (强敏感整文件跳过 + 弱敏感字段 redact)
+- **B-I5 · session 可恢复**: 任何 phase 失败必须保留 session 状态, 用户可 `atomsyn-cli bootstrap --resume <session-id>`
+- **B-I6 · dry-run 是默认推荐路径** (D-011): Skill 的标准工作流是先 `--dry-run` 输出 markdown, 用户校对后才调 `--commit` 写入。Skill 在引导用户时必须明确这两步, 不要让用户感觉 bootstrap 是"一键不可逆"
+- **B-I7 · profile 单例** (D-010): 跨多次 bootstrap, profile id 始终是 `atom_profile_main`, Skill 调用演化协议时不创建新 id; 历史快照通过 `previous_versions[]` 追溯, 不进 supersede 关系网 (与 cognitive-evolution D-008 联动)
+- **B-I8 · prompt 模板锁定** (D-012): bootstrap 内部使用的 LLM prompt 模板从 `scripts/bootstrap/prompts/*.md` 加载, 用户配置文件不可覆盖 (v1); v2 视用户反馈再开放 override
+
+### 5.4 Token 预算 (单次 bootstrap)
+
+| 阶段 | LLM calls | 预算 | 说明 |
+|---|---|---|---|
+| TRIAGE | 0 | 纯文件元信息 (`stat()`), 无 LLM 调用 | < 30s @ 10000 文件 |
+| SAMPLING | 1 | ≤ 30k input + 4k output | < 5 min |
+| DEEP DIVE 串行 (默认) | N (= 文件数) | 每次 ≤ 8k input + 2k output | 1000 文件预算 = ~10M tokens, 用户 LLM 配置成本约 $5-30 |
+| DEEP DIVE 并行 (`--parallel`) | 4N | 4x token cost | < 8 min @ 1000 文件 |
+
+文档明确告诉用户预算量级, GUI BootstrapWizard 的 token/cost 估算预览组件必须在启动前展示估算 (见 cli-contract §3.14.6)。
+
+### 5.5 3 阶段 funnel 关卡执行流程
+
+每个 Phase 完成后, Skill 通过 `AskUserQuestion` 让用户确认才进下一阶段。用户可在任何关卡选"放弃" (退出码 3, session 保留可 resume)。
+
+**Phase 1 · TRIAGE (扫描概览)**:
+- 触发: 用户说"我想把 ~/Documents 倒进来" → Skill 调 `atomsyn-cli bootstrap --path ~/Documents --phase triage`
+- 关卡: 输出目录概览 markdown 表格 → AskUserQuestion("范围确认? 1. 全部 800 个 .md (推荐) / 2. 只看最近 1 年的 320 个 / 3. 自定义 include/exclude")
+
+**Phase 2 · SAMPLING (采样推断画像)**:
+- 触发: 用户在 Phase 1 后确认范围 → Skill 自动调 `bootstrap --resume <id> --phase sampling`
+- 关卡: 输出画像假设 markdown (identity + preferences 5 维 + knowledge_domains) → AskUserQuestion("画像确认? 1. 准确, 继续 / 2. 我补充: <文本框> / 3. 重新采样")
+
+**Phase 3 · DEEP DIVE (深读 + dry-run + commit)**:
+- 默认走 dry-run 路径 (B-I6): Skill 调 `bootstrap --resume <id> --phase deep-dive --dry-run` → 输出人类友好 markdown 候选列表 + 持久化到 session `.md` 文件
+- 关卡: AskUserQuestion("dry-run 报告已就绪 (50 条候选 + 1 profile 草案), 是否打开 GUI 校对? 或直接 --commit?")
+- commit 阶段: Skill 调 `bootstrap --commit <session-id>` (可选 `--markdown-corrected-file`) → LLM 把保留的 markdown 候选生成完整 atom JSON → 通过 `atomsyn-cli ingest --stdin` 落盘 → profile 通过 `applyProfileEvolution` 单例语义入库
+
+### 5.6 与其他 Skill 的关系
+
+- **atomsyn-write**: bootstrap 内部走 `atomsyn-cli ingest`, 不走 write Skill 的对话流程 (write 仍是单点增量沉淀路径)
+- **atomsyn-read**: 本 change v1 不修改 read 触发逻辑; read 仍**不消费** profile (R-I6); v2 待用户 GUI 校准 verified=true 后再考虑放开
+- **atomsyn-mentor**: 本 change v1 不修改 mentor; v2 计划在报告里加入 profile.preferences (declared) vs 行为推断 (inferred) 的 gap 分析
+
 ---
 
-## 5 · 跨 Skill 共享契约
+## 6 · 跨 Skill 共享契约
 
-### 5.1 数据目录解析
+### 6.1 数据目录解析
 所有 Skill 必须通过 `atomsyn-cli where` 或 CLI 命令隐式解析数据目录, 不假定路径。
 
-### 5.2 安装与升级
-- 安装: `atomsyn-cli install-skill --target claude,cursor`
+### 6.2 安装与升级
+- 安装: `atomsyn-cli install-skill --target claude,cursor` (V2.x bootstrap-skill 后含第 4 个 skill `atomsyn-bootstrap`)
 - 升级: 重新运行同命令, 旧文件被覆盖
 - 卸载: 由用户手工删除 `~/.claude/skills/atomsyn-*/`
 
-### 5.3 隐私边界
+### 6.3 隐私边界
 - Skill 在 prompt 里**不打印** data 目录的绝对路径 (避免泄露用户名)
 - Skill 在 prompt 里**不打印** 完整 atom 内容到 LLM 服务商, 只打印必要字段
+- bootstrap 特别约定 (D-005, B-I4): 给 LLM 的 prompt **包含** 文件内容片段 (这是其与其他 Skill 的关键区别), 但所有弱敏感字段 (email / phone / SSN / 身份证) 已自动 redact 为 `[REDACTED-EMAIL]` 等占位; 强敏感 (sk-xxxx / api_key=... / `-----BEGIN PRIVATE KEY-----` 等 14 条正则) 直接整文件跳过
 
 [TODO] 详细隐私字段清单待 change 填充
 
 ---
 
-## 6 · 实现引用
+## 7 · 实现引用
 
-- Skill 文件: `skills/atomsyn-write.skill.md` · `skills/atomsyn-read.skill.md` · `skills/atomsyn-mentor.skill.md`
+- Skill 文件: `skills/atomsyn-write.skill.md` · `skills/atomsyn-read.skill.md` · `skills/atomsyn-mentor.skill.md` · `skills/atomsyn-bootstrap/SKILL.md` (V2.x bootstrap-skill)
 - 安装逻辑: `scripts/atomsyn-cli.mjs install-skill` 子命令 + Tauri `install_agent_skills` 命令
 - 测试方法: 在 Claude Code / Cursor 内手动触发, 观察是否符合契约
 
 ---
 
-## 7 · Changelog
+## 8 · Changelog
 
 > 每次 change 归档时, 如改动了 Skill 触发条件 / 不可变契约 / Token 预算, 在此追加。
 >
@@ -126,3 +190,4 @@
 
 - 2026-04-26 · openspec-bootstrap · all · 建立本契约文档骨架, 内容标记 [TODO] 待后续 change 填充
 - 2026-04-26 · 2026-04-cognitive-evolution · all · atomsyn-read 加 W2.x 温度计句 + profile 不消费; atomsyn-write 加 collision 三选一 + archived/superseded 只读; atomsyn-mentor 加 Phase 2.5 prune 主动建议 (Token 预算 ≤ 5000), prune 严禁自动 mutate (D-005)
+- 2026-04-26 · 2026-04-bootstrap-skill · atomsyn-bootstrap (new) · 新增第 4 个 skill atomsyn-bootstrap (8 条不可变承诺含 B-I6 dry-run/commit + B-I7 profile 单例 + B-I8 prompt 锁定); 新增 §5 完整契约 (frontmatter + 触发条件 + 8 条不可变承诺 + Token 预算 + 3 阶段 funnel 关卡); 现有 §5/§6/§7 重编号为 §6/§7/§8
