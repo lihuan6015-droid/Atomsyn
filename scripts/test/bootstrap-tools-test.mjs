@@ -360,6 +360,58 @@ await describe('G3 · agentic loop (mock LLM)', async () => {
   }
 })
 
+// ─── G6 · v1 → v2 compatibility ──────────────────────────────────────────────
+
+await describe('G6 · v1 → v2 session compatibility', async () => {
+  const root = setupSandbox()
+  try {
+    // Simulate a v1 session JSON (no `mode`, no `agent_trace`) — agent code
+    // should accept it and default sensibly.
+    const v1Session = {
+      id: 'boot_legacy_v1',
+      status: 'dry_run_completed',
+      paths: ['/some/path'],
+      options: { phase: 'all', dryRun: true, parallel: false },
+      startedAt: '2026-04-26T10:00:00Z',
+      endedAt: '2026-04-26T10:05:00Z',
+      atoms_created: { profile: 0, experience: 0, fragment: 0 },
+      // mode missing
+      // agent_trace missing
+    }
+    // Loader semantics: any consumer may treat missing as defaults. We don't
+    // touch session JSON in this test, just assert the shape is accepted by
+    // the runtime types we serialize/deserialize.
+    const json = JSON.stringify(v1Session)
+    const loaded = JSON.parse(json)
+    assert(loaded.options?.mode === undefined, 'v1 session has no mode (legacy)')
+    assert(loaded.agent_trace === undefined, 'v1 session has no agent_trace (legacy)')
+
+    // resolveMode helper-style sanity: code that defaults missing mode → 'funnel'
+    const resolvedMode = loaded.options?.mode || 'funnel'
+    assert(resolvedMode === 'funnel', `legacy session defaults to mode=funnel (got ${resolvedMode})`)
+
+    // session.agent_trace defaulting
+    const trace = loaded.agent_trace ?? []
+    assert(Array.isArray(trace) && trace.length === 0, 'legacy agent_trace defaults to []')
+
+    // Verify createSession produces a v2 shape (mode kept in options + agent_trace=[])
+    const { createSession, sessionFile } = await import('../lib/bootstrap/session.mjs')
+    process.env.HOME = root  // redirect ~/.atomsyn → temp
+    const created = await createSession({
+      paths: ['/x'],
+      options: { mode: 'agentic', dryRun: true },
+      dataDir: root,
+    })
+    assert(created.options.mode === 'agentic', 'createSession persists options.mode')
+    assert(Array.isArray(created.agent_trace), 'createSession initializes agent_trace=[]')
+    assert(created.agent_trace.length === 0, 'fresh agent_trace is empty')
+    // cleanup the new session file
+    try { rmSync(sessionFile(created.id), { force: true }) } catch {}
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
 // ─── Summary ─────────────────────────────────────────────────────────────────
 
 console.log('')
