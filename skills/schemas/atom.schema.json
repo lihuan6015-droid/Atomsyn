@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "MethodologyAtom",
-  "description": "A single methodology / knowledge atom card (kind='methodology'). For kind='experience' see experience-atom.schema.json; for kind='skill-inventory' see skill-inventory-item.schema.json. Introduced in V1.5: the 'kind' discriminator field.",
+  "description": "A single methodology / knowledge atom card (kind='methodology'). For kind='experience' see experience-atom.schema.json (subKind='crystallized') and experience-fragment.schema.json (subKind='fragment'); for kind='skill-inventory' see skill-inventory-item.schema.json; for kind='profile' (V2.x bootstrap-skill, singleton id=atom_profile_main) see profile-atom.schema.json. Introduced in V1.5: the 'kind' discriminator field. V2.x adds the 'profile' kind via the 2026-04-bootstrap-skill change.",
   "type": "object",
   "required": [
     "id",
