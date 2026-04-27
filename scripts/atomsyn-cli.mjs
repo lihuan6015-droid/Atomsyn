@@ -1969,6 +1969,46 @@ async function cmdIngest(args) {
 // mentor — P1 cognitive review command
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Subcommand: bootstrap (V2.x bootstrap-skill change)
+//
+// 3-phase funnel (D-003): TRIAGE → SAMPLING → DEEP DIVE. Each phase is a gate;
+// the user (via the atomsyn-bootstrap skill) confirms before the next phase.
+// dry-run + commit two-stage protocol (D-011): dry-run emits markdown only,
+// commit reads user-edited markdown and ingests atoms.
+//
+// Implementation lands incrementally (see scripts/lib/bootstrap/* + B 组 commits).
+// This stub validates the dispatcher wiring and prints a brief notice.
+// ---------------------------------------------------------------------------
+async function cmdBootstrap(args) {
+  // B3 will implement full flag parsing + phase routing.
+  if (args.includes('--help') || args.includes('-h')) {
+    console.log(`atomsyn-cli bootstrap — Batch import existing local docs into Atomsyn.
+
+Status: scaffolding (B1+B2 landed). Full flow lands in B3-B20.
+
+Planned flags (B3):
+  --path <dir>            Source directory (repeatable)
+  --phase triage|sampling|deep-dive|all
+  --parallel              Phase 3 4-way sub-agent (token cost 4x, opt-in)
+  --include-pattern <csv> Glob whitelist
+  --exclude-pattern <csv> Glob blacklist (stacks with .atomsynignore)
+  --dry-run               Emit markdown report only (no atoms written)
+  --commit <session-id>   Materialize a previously dry-run'd session
+  --resume <session-id>   Continue an interrupted session
+  --user-correction "..." Inline correction injected into Phase 2 hypothesis
+
+See openspec/changes/2026-04-bootstrap-skill/ for the full contract.`)
+    return
+  }
+
+  console.error(
+    '⚠ atomsyn-cli bootstrap is under construction (B 组 in progress). ' +
+    'Run with --help for the planned interface.'
+  )
+  process.exit(1)
+}
+
 async function cmdMentor(args) {
   const { path: dataDir } = resolveDataDir()
 
@@ -2155,6 +2195,9 @@ async function main() {
         break
       case 'prune':
         await cmdPrune(rest)
+        break
+      case 'bootstrap':
+        await cmdBootstrap(rest)
         break
       default:
         die(`Unknown command: ${cmd}. Run atomsyn-cli --help for usage.`)
