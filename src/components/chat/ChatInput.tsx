@@ -11,13 +11,29 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { Paperclip, Send } from 'lucide-react'
 import type { ChatAttachment } from '@/types'
 import { cn } from '@/lib/cn'
 import { AttachmentBar } from './AttachmentBar'
 import { SkillCommandPalette } from './SkillCommandPalette'
 import { ModelSelector } from './ModelSelector'
+import {
+  PathDetectionBanner,
+  detectAbsolutePath,
+  isPasteDismissed,
+  setPasteDismissed,
+} from './PathDetectionBanner'
 import { useChatStore } from '@/stores/useChatStore'
+
+/**
+ * V2.x bootstrap-tools (B2/B3): the `/bootstrap` palette pick + the
+ * `/bootstrap <path>` typed command both flow through this CustomEvent so
+ * ChatPage owns the wizard open/close state in one place.
+ */
+function dispatchOpenBootstrap(paths: string[] = []) {
+  window.dispatchEvent(new CustomEvent('atomsyn:open-bootstrap', { detail: { paths } }))
+}
 
 interface ChatInputProps {
   onSend: (text: string, attachments?: ChatAttachment[]) => void
@@ -38,6 +54,7 @@ export function ChatInput({
   const [text, setText] = useState('')
   const [attachments, setAttachments] = useState<ChatAttachment[]>([])
   const [showPalette, setShowPalette] = useState(false)
+  const [pastedPath, setPastedPath] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -79,6 +96,19 @@ export function ChatInput({
   function handleSend() {
     const trimmed = text.trim()
     if (!trimmed && attachments.length === 0) return
+
+    // bootstrap-tools B3 — `/bootstrap [path]` short-circuits to the wizard
+    // instead of being sent to the LLM as an actual chat turn.
+    if (trimmed.startsWith('/bootstrap')) {
+      const pathArg = trimmed.slice('/bootstrap'.length).trim()
+      const paths = pathArg ? [pathArg] : []
+      dispatchOpenBootstrap(paths)
+      setText('')
+      setShowPalette(false)
+      if (textareaRef.current) textareaRef.current.style.height = 'auto'
+      return
+    }
+
     onSend(trimmed, attachments.length > 0 ? attachments : undefined)
     setText('')
     setAttachments([])
@@ -90,9 +120,39 @@ export function ChatInput({
   }
 
   function handlePaletteSelect(command: string) {
+    // bootstrap-tools B2 — /bootstrap opens the wizard directly instead of
+    // pre-filling text the user has to manually send.
+    if (command === '/bootstrap') {
+      dispatchOpenBootstrap([])
+      setShowPalette(false)
+      return
+    }
     setText(command + ' ')
     setShowPalette(false)
     textareaRef.current?.focus()
+  }
+
+  // bootstrap-tools B5 — paste an absolute path → offer one-click bootstrap.
+  function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    if (isPasteDismissed()) return
+    const clip = e.clipboardData?.getData('text') || ''
+    const path = detectAbsolutePath(clip)
+    if (path) setPastedPath(path)
+  }
+
+  function acceptPastedPath() {
+    if (!pastedPath) return
+    dispatchOpenBootstrap([pastedPath])
+    setPastedPath(null)
+    // Clear the textarea content the path got pasted into so it doesn't get
+    // sent as a chat message after the user accepts the bootstrap shortcut.
+    setText('')
+    if (textareaRef.current) textareaRef.current.style.height = 'auto'
+  }
+
+  function dismissPastedPath(rememberChoice: boolean) {
+    if (rememberChoice) setPasteDismissed(true)
+    setPastedPath(null)
   }
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
@@ -144,6 +204,17 @@ export function ChatInput({
         onClose={() => setShowPalette(false)}
       />
 
+      {/* bootstrap-tools B4 — pasted-path detection banner */}
+      <AnimatePresence>
+        {pastedPath && (
+          <PathDetectionBanner
+            path={pastedPath}
+            onAccept={acceptPastedPath}
+            onDismiss={dismissPastedPath}
+          />
+        )}
+      </AnimatePresence>
+
       <div
         className={cn(
           'rounded-2xl border border-neutral-200/70 dark:border-white/10',
@@ -164,6 +235,7 @@ export function ChatInput({
             value={text}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
             disabled={disabled}
             placeholder={placeholder}
             rows={1}

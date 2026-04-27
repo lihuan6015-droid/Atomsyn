@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Search, PenLine, Brain } from 'lucide-react'
+import { Search, PenLine, Brain, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/cn'
 
 interface SkillCommandPaletteProps {
@@ -34,6 +34,12 @@ const COMMANDS = [
     label: '认知复盘',
     description: '启动导师模式，分析盲区和成长趋势',
     icon: Brain,
+  },
+  {
+    command: '/bootstrap',
+    label: '导入硬盘文档',
+    description: '把存量笔记 / 文档 / 历史聊天导入 Atomsyn (支持 .md / .docx / .pdf)',
+    icon: Sparkles,
   },
 ] as const
 

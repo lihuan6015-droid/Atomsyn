@@ -26,6 +26,7 @@ import {
   ClipboardCopy,
   ChevronLeft,
   ChevronRight,
+  FileText,
   FolderOpen,
   Loader2,
   RefreshCw,
@@ -199,13 +200,41 @@ function PathsScreen() {
   const [textPath, setTextPath] = useState('')
   const tauri = isTauri()
 
-  async function pickWithDialog() {
+  // bootstrap-tools B6 — multi-select directories.
+  async function pickDirectories() {
     try {
       const { open } = await import('@tauri-apps/plugin-dialog')
-      const picked = await open({ directory: true, multiple: false })
-      if (typeof picked === 'string') addPath(picked)
+      const picked = await open({ directory: true, multiple: true })
+      if (!picked) return
+      const list = Array.isArray(picked) ? picked : [picked]
+      for (const p of list) if (typeof p === 'string') addPath(p)
     } catch (err) {
-      console.error('dialog open failed', err)
+      console.error('dialog open (dir) failed', err)
+    }
+  }
+
+  // bootstrap-tools B6 — multi-select specific document files. Filter list is
+  // wide on purpose: bootstrap-tools v2 supports markdown / text / docx / pdf
+  // via the extractors chain; users can also pick yaml / json config-style
+  // notes if they want.
+  async function pickFiles() {
+    try {
+      const { open } = await import('@tauri-apps/plugin-dialog')
+      const picked = await open({
+        directory: false,
+        multiple: true,
+        filters: [
+          {
+            name: '文档',
+            extensions: ['md', 'markdown', 'txt', 'docx', 'pdf', 'json', 'yaml', 'yml'],
+          },
+        ],
+      })
+      if (!picked) return
+      const list = Array.isArray(picked) ? picked : [picked]
+      for (const p of list) if (typeof p === 'string') addPath(p)
+    } catch (err) {
+      console.error('dialog open (files) failed', err)
     }
   }
 
@@ -221,7 +250,8 @@ function PathsScreen() {
   return (
     <div className="space-y-4">
       <p className="text-sm text-neutral-600 dark:text-neutral-300">
-        选 1+ 个目录扫描你已有的 markdown / 笔记 / 历史聊天导出。bootstrap 会按 5 层架构提炼成 1 条 profile + N 条 experience/fragment atom。
+        选 1+ 个目录或具体文件 (支持 .md / .markdown / .txt / .docx / .pdf / .json / .yaml)。
+        Agent 会探索式扫描内容，按 5 层架构提炼成 1 条 profile + N 条 experience/fragment atom。
       </p>
 
       <div className="space-y-2">
@@ -243,14 +273,23 @@ function PathsScreen() {
         ))}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         {tauri && (
-          <button
-            onClick={pickWithDialog}
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg bg-violet-500 text-white font-medium shadow-sm hover:bg-violet-600 transition-colors"
-          >
-            <FolderOpen className="w-4 h-4" /> 选择文件夹
-          </button>
+          <>
+            <button
+              onClick={pickDirectories}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg bg-violet-500 text-white font-medium shadow-sm hover:bg-violet-600 transition-colors"
+            >
+              <FolderOpen className="w-4 h-4" /> 选文件夹
+            </button>
+            <button
+              onClick={pickFiles}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-violet-300/70 dark:border-violet-500/30 text-violet-700 dark:text-violet-300 hover:bg-violet-500/5 transition-colors"
+              title="支持 .md / .markdown / .txt / .docx / .pdf / .json / .yaml"
+            >
+              <FileText className="w-4 h-4" /> 选具体文件
+            </button>
+          </>
         )}
         <input
           value={textPath}

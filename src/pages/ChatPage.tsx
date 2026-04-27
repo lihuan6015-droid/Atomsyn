@@ -56,6 +56,7 @@ export function ChatPage() {
   const [hasApiKey, setHasApiKey] = useState<boolean>(() => !!getStoredApiKey())
   const [wizardOpen, setWizardOpen] = useState(false)
   const openWizard = useBootstrapStore((s) => s.open)
+  const addBootstrapPath = useBootstrapStore((s) => s.addPath)
   const abortRef = useRef<AbortController | null>(null)
   const inputRef = useRef<{ focus: () => void }>(null)
 
@@ -79,6 +80,23 @@ export function ChatPage() {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [createSession])
+
+  // V2.x bootstrap-tools (B2/B3/B5) — `/bootstrap` in palette, `/bootstrap <path>`
+  // typed, and pasted-path detection all dispatch this CustomEvent. ChatPage
+  // owns the wizard open state, so the listener belongs here.
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail || {}
+      const paths = Array.isArray(detail.paths) ? detail.paths : []
+      openWizard()
+      for (const p of paths) {
+        if (typeof p === 'string' && p.trim()) addBootstrapPath(p.trim())
+      }
+      setWizardOpen(true)
+    }
+    window.addEventListener('atomsyn:open-bootstrap', handler)
+    return () => window.removeEventListener('atomsyn:open-bootstrap', handler)
+  }, [openWizard, addBootstrapPath])
 
   // ─── Send message handler ─────────────────────────────────────────
 
