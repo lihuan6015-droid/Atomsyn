@@ -11,6 +11,7 @@ import { handleChat } from './routes/chat'
 import { handleAnalysis } from './routes/analysis'
 import { handleMisc } from './routes/misc'
 import { handleFileServing } from './routes/fileServing'
+import { handleBootstrap } from './routes/bootstrap'
 
 export interface RouteResult<T = any> {
   status: number
@@ -42,6 +43,7 @@ const handlers: Array<{ prefix: string; handler: RouteHandler }> = [
   { prefix: 'llm-config', handler: handleMisc },
   { prefix: 'analysis', handler: handleAnalysis },
   { prefix: 'chat', handler: handleChat },
+  { prefix: 'bootstrap', handler: handleBootstrap },
 ]
 
 export async function dispatch(method: string, path: string, body?: any): Promise<any> {

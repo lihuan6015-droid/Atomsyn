@@ -1333,6 +1333,117 @@ export function dataApiPlugin(opts: Options): Plugin {
             }
           }
 
+          // ---------- bootstrap (V2.x bootstrap-skill, D8-D12) -------------
+          if (parts[0] === 'bootstrap' && parts[1] === 'sessions') {
+            // @ts-ignore — .mjs not covered by tsconfig.node.json
+            const { sessionFile, sessionMarkdownFile, loadSession, writeSession, listSessions, SESSION_STATUS, assertSessionDataDir } = await import('./scripts/lib/bootstrap/session.mjs')
+
+            // GET /api/bootstrap/sessions
+            if (method === 'GET' && parts.length === 2) {
+              const summaries = await listSessions()
+              return send(res, 200, { sessions: summaries })
+            }
+
+            // GET /api/bootstrap/sessions/:id
+            if (method === 'GET' && parts.length === 3) {
+              const session = await loadSession(parts[2])
+              if (!session) return send(res, 404, { error: 'session not found' })
+              const mdFile = sessionMarkdownFile(parts[2])
+              let markdown: string | null = null
+              if (existsSync(mdFile)) {
+                try { markdown = await fs.readFile(mdFile, 'utf-8') } catch { markdown = null }
+              }
+              return send(res, 200, { session, markdown })
+            }
+
+            // POST /api/bootstrap/sessions/:id/commit
+            if (method === 'POST' && parts.length === 4 && parts[3] === 'commit') {
+              const id = parts[2]
+              const session = await loadSession(id)
+              if (!session) return send(res, 404, { error: 'session not found' })
+
+              // Bind session to current data dir (OQ-4 protection)
+              try { assertSessionDataDir(session, dataDir) }
+              catch (e: any) {
+                return send(res, 409, { error: e.message })
+              }
+              if (session.status === SESSION_STATUS.COMMIT_COMPLETED) {
+                return send(res, 409, { error: 'session already committed' })
+              }
+
+              const commitBody = await readBody(req)
+              let markdownText: string = ''
+              if (commitBody?.markdown_corrected && typeof commitBody.markdown_corrected === 'string') {
+                markdownText = commitBody.markdown_corrected
+              } else {
+                const mdFile = sessionMarkdownFile(id)
+                if (!existsSync(mdFile)) {
+                  return send(res, 400, { error: 'no markdown report on disk; pass markdown_corrected' })
+                }
+                markdownText = await fs.readFile(mdFile, 'utf-8')
+              }
+
+              session.status = SESSION_STATUS.COMMIT_IN_PROGRESS
+              await writeSession(session)
+
+              // @ts-ignore — .mjs not covered by tsconfig.node.json
+              const { runCommit } = await import('./scripts/lib/bootstrap/commit.mjs')
+              const startedAt = Date.now()
+              try {
+                const result = await runCommit({ session, markdownText, dataDir })
+                session.status = SESSION_STATUS.COMMIT_COMPLETED
+                session.endedAt = new Date().toISOString()
+                session.atoms_created = {
+                  profile: result.atomsCreated.profile,
+                  experience: result.atomsCreated.experience,
+                  fragment: result.atomsCreated.fragment,
+                }
+                await writeSession(session)
+                try {
+                  const logFile = path.join(dataDir, 'growth', 'usage-log.jsonl')
+                  await fs.mkdir(path.dirname(logFile), { recursive: true })
+                  await fs.appendFile(logFile, JSON.stringify({
+                    ts: new Date().toISOString(),
+                    action: 'bootstrap.commit_completed',
+                    session_id: id,
+                    atoms_created: session.atoms_created,
+                    duration_ms: Date.now() - startedAt,
+                    skipped: result.skipped.length,
+                    duplicates: result.duplicates.length,
+                  }) + '\n', 'utf-8')
+                } catch { /* non-fatal */ }
+                return send(res, 200, {
+                  ok: true,
+                  atoms_created: session.atoms_created,
+                  atom_ids: result.atomIds,
+                  skipped: result.skipped,
+                  duplicates: result.duplicates,
+                  parseErrors: result.parseErrors,
+                  session,
+                })
+              } catch (err: any) {
+                session.status = SESSION_STATUS.FAILED
+                session.endedAt = new Date().toISOString()
+                session.errors = session.errors || []
+                session.errors.push({ phase: 'commit', message: String(err.message || err).slice(0, 1000), ts: new Date().toISOString() })
+                await writeSession(session)
+                return send(res, 500, { error: err.message || String(err), code: err.code || 'COMMIT_FAILED' })
+              }
+            }
+
+            // DELETE /api/bootstrap/sessions/:id
+            if (method === 'DELETE' && parts.length === 3) {
+              const id = parts[2]
+              const session = await loadSession(id)
+              if (!session) return send(res, 404, { error: 'session not found' })
+              const sf = sessionFile(id)
+              const mdf = sessionMarkdownFile(id)
+              try { if (existsSync(sf)) await fs.unlink(sf) } catch { /* tolerate */ }
+              try { if (existsSync(mdf)) await fs.unlink(mdf) } catch { /* tolerate */ }
+              return send(res, 200, { ok: true, id })
+            }
+          }
+
           // ---------- projects ----------
           if (parts[0] === 'projects') {
             if (method === 'GET' && parts.length === 1) {
