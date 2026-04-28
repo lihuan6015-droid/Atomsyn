@@ -17,6 +17,7 @@
  * partial-result markdown.
  */
 
+import { statSync } from 'node:fs'
 import { createAgentTools } from './agentTools.mjs'
 import { chatWithTools } from './llmClient.mjs'
 import { loadPrompt } from './extract.mjs'
@@ -234,7 +235,19 @@ export async function runAgenticDeepDive(args) {
 function renderUserOpening(paths, hypothesis) {
   const lines = []
   lines.push(`Sandbox roots (you may explore inside these only):`)
-  for (const p of paths) lines.push(`- ${p}`)
+  for (const p of paths) {
+    let kind = 'unknown'
+    try {
+      const st = statSync(p)
+      if (st.isDirectory()) kind = 'dir'
+      else if (st.isFile()) kind = 'file'
+    } catch { /* leave as 'unknown' */ }
+    lines.push(`- [${kind}] ${p}`)
+  }
+  lines.push('')
+  lines.push(`Tips:`)
+  lines.push(`- Roots marked **[file]** are individual files the user explicitly picked. Don't \`ls\` them — call \`read\` directly.`)
+  lines.push(`- Roots marked **[dir]** can be explored with \`ls\` / \`glob\` first.`)
   lines.push('')
   lines.push(`Phase 2 hypothesis (treat as a prior, not gospel):`)
   lines.push('```json')

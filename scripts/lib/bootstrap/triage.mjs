@@ -20,7 +20,7 @@
 
 import { stat, readdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
-import { join, extname, relative } from 'node:path'
+import { basename, dirname, extname, join } from 'node:path'
 import { loadIgnoreForRoot, relPathFor } from './ignore.mjs'
 import { scanFile, isStrongSensitive } from './privacy.mjs'
 
@@ -111,11 +111,68 @@ export async function runTriage(opts) {
   const recency = { last30d: 0, last90d: 0, last1y: 0, older: 0 }
   const now = Date.now()
 
+  // Per-entry bookkeeping shared by directory walks AND single-file paths
+  // (bootstrap-tools v2: GUI / `/bootstrap <file>` may pass concrete file paths).
+  // privacy peek + ext bucket + recency bucket — single source of truth.
+  async function recordEntry(entry, rootPath) {
+    if (TEXT_EXTS.has(entry.ext) || entry.ext === '') {
+      const scan = await scanFile(entry.absPath, { maxBytes: privacyByteCap })
+      if (isStrongSensitive(scan)) {
+        sensitiveSkipped.push({
+          relPath: entry.relPath,
+          root: rootPath,
+          hits: scan.strong.map((h) => h.name),
+        })
+        return
+      }
+    }
+    fileList.push({ ...entry, root: rootPath })
+    totalBytes += entry.size
+    const k = entry.ext || '(no-ext)'
+    byExt[k] ??= { count: 0, totalBytes: 0 }
+    byExt[k].count++
+    byExt[k].totalBytes += entry.size
+    const age = now - entry.mtime.getTime()
+    const day = 86400_000
+    if (age < 30 * day) recency.last30d++
+    else if (age < 90 * day) recency.last90d++
+    else if (age < 365 * day) recency.last1y++
+    else recency.older++
+  }
+
   for (const rootPath of paths) {
     if (!existsSync(rootPath)) {
       warnings.push(`Path not found: ${rootPath}`)
       continue
     }
+
+    // bootstrap-tools v2 single-file branch: when `--path` points at a file
+    // (e.g. user picked one .md / .docx / .pdf in the Wizard), treat it as a
+    // 1-entry list. The directory walk + .atomsynignore matcher is meaningless
+    // here — the user explicitly chose the file, ignore patterns shouldn't
+    // override that. Privacy peek still runs.
+    let st
+    try { st = await stat(rootPath) } catch (err) {
+      warnings.push(`Could not stat ${rootPath}: ${err.message}`)
+      continue
+    }
+    if (st.isFile()) {
+      const ext = extname(rootPath).toLowerCase()
+      const entry = {
+        absPath: rootPath,
+        relPath: basename(rootPath),
+        ext,
+        size: st.size,
+        mtime: st.mtime,
+      }
+      await recordEntry(entry, dirname(rootPath))
+      continue
+    }
+    if (!st.isDirectory()) {
+      warnings.push(`Not a file or directory: ${rootPath}`)
+      continue
+    }
+
     const { matcher, sourceFile, patternCount } = await loadIgnoreForRoot(rootPath)
     if (!sourceFile) {
       warnings.push(`No .atomsynignore in ${rootPath} — using built-in fallback (${patternCount} patterns)`)
@@ -129,34 +186,7 @@ export async function runTriage(opts) {
       return true
     }
     for await (const entry of walkFiles(rootPath, filterFn)) {
-      // Light privacy peek (8 KB). Only on text-ish files; binaries get
-      // sniffed-out by scanFile's NUL byte heuristic. `.docx` / `.pdf` are
-      // extractor-only: their containers are binary, so the byte peek would
-      // never hit a strong pattern — privacy enforcement happens inside
-      // `extractors/extract()` when the file is actually opened.
-      if (TEXT_EXTS.has(entry.ext) || entry.ext === '') {
-        const scan = await scanFile(entry.absPath, { maxBytes: privacyByteCap })
-        if (isStrongSensitive(scan)) {
-          sensitiveSkipped.push({
-            relPath: entry.relPath,
-            root: rootPath,
-            hits: scan.strong.map((h) => h.name),
-          })
-          continue
-        }
-      }
-      fileList.push({ ...entry, root: rootPath })
-      totalBytes += entry.size
-      const k = entry.ext || '(no-ext)'
-      byExt[k] ??= { count: 0, totalBytes: 0 }
-      byExt[k].count++
-      byExt[k].totalBytes += entry.size
-      const age = now - entry.mtime.getTime()
-      const day = 86400_000
-      if (age < 30 * day) recency.last30d++
-      else if (age < 90 * day) recency.last90d++
-      else if (age < 365 * day) recency.last1y++
-      else recency.older++
+      await recordEntry(entry, rootPath)
     }
   }
 

@@ -14,7 +14,9 @@ All paths must be **inside the sandbox roots** the user gave; trying to step out
 
 ## How to explore
 
-1. **Start with `ls` on the roots.** Read directory names — Chinese names like `开发过程资料` / `我的研究` / `调试日志` carry strong semantic signal about what's inside. Use them to triage by hand.
+0. **Look at the root types in the user message.** Each root is labelled `[dir]` or `[file]`. For a `[file]` root, **don't call `ls` — call `read` directly**. `ls` on a file errors out and wastes a round. Only `[dir]` roots benefit from listing.
+
+1. **Start with `ls` on the dir roots.** Read directory names — Chinese names like `开发过程资料` / `我的研究` / `调试日志` carry strong semantic signal about what's inside. Use them to triage by hand.
 
 2. **Use `glob` to filter aggressively.** Bootstrap cares about `.md / .markdown / .txt / .docx / .pdf / .json / .yaml`. Source code (`.py / .ts / ...`) is fine to read **only** if the file likely documents intent (e.g. a `*.md` is missing but a `README` lookalike is the only doc).
 

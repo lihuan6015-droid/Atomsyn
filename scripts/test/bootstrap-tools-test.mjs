@@ -360,6 +360,48 @@ await describe('G3 · agentic loop (mock LLM)', async () => {
   }
 })
 
+// ─── G2.1 · triage accepts single-file paths (regression for v2 GUI flow) ────
+
+await describe('G2.1 · triage single-file path support', async () => {
+  const { runTriage } = await import('../lib/bootstrap/triage.mjs')
+  const root = setupSandbox()
+  try {
+    const filePath = join(root, 'note with spaces.txt')
+    writeFileSync(filePath, 'Just a note about something interesting.\n', 'utf8')
+
+    // Pre-fix: this returned fileList=[] because walkFiles tried readdir(file).
+    // Post-fix: single-file branch records it directly.
+    const r = await runTriage({ paths: [filePath] })
+    assert(r.fileList.length === 1, `single-file path yields 1 entry (got ${r.fileList.length})`)
+    assert(r.fileList[0].relPath === 'note with spaces.txt', 'relPath = basename for single file')
+    assert(r.fileList[0].ext === '.txt', 'ext detected')
+    assert(r.byExt['.txt']?.count === 1, 'byExt bucket populated')
+    assert(r.totalBytes > 0, 'totalBytes > 0')
+
+    // Mixed: dir + file in same paths array
+    const subdir = join(root, 'sub')
+    mkdirSync(subdir, { recursive: true })
+    writeFileSync(join(subdir, 'a.md'), '# A\n', 'utf8')
+    writeFileSync(join(subdir, 'b.md'), '# B\n', 'utf8')
+    const r2 = await runTriage({ paths: [filePath, subdir] })
+    assert(r2.fileList.length === 3, `mixed dir+file yields 3 entries (got ${r2.fileList.length})`)
+
+    // Non-existent path → warning, not crash
+    const r3 = await runTriage({ paths: ['/nonexistent/path/abc'] })
+    assert(r3.fileList.length === 0, 'non-existent path yields empty fileList')
+    assert(r3.warnings.some((w) => /not found/i.test(w)), 'non-existent path produces warning')
+
+    // Strong-sensitive file via single-file path → sensitive_skipped, not fileList
+    const secretPath = join(root, 'secret.txt')
+    writeFileSync(secretPath, 'api_key = "sk-' + 'a'.repeat(40) + '"\n', 'utf8')
+    const r4 = await runTriage({ paths: [secretPath] })
+    assert(r4.fileList.length === 0, 'strong-sensitive single file is dropped')
+    assert(r4.sensitiveSkipped.length === 1, 'strong-sensitive single file is logged')
+  } finally {
+    rmSync(root, { recursive: true, force: true })
+  }
+})
+
 // ─── G6 · v1 → v2 compatibility ──────────────────────────────────────────────
 
 await describe('G6 · v1 → v2 session compatibility', async () => {
