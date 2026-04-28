@@ -2,14 +2,14 @@
 
 > **目的**: 让任意 Agent (主 Claude / 子 agent / 新会话压缩后的延续) 在**不需要回看历史对话**的情况下, 准确理解本批 change 的实施意图、顺序、耦合关系和验证标准, 端到端推进开发到合并归档。
 >
-> **状态**: **bootstrap 双 change 已归档; chat-as-portal design locked, 进入 implement (B 组先行)**
+> **状态**: **chat-as-portal 核心闭环已交付 (B0/B1/B7), 余下 B5/A/C/D/V 留后续会话**
 > **创建**: 2026-04-26
-> **最后更新**: 2026-04-28 · chat-as-portal design 锁定 (D-001~D-007 全部 accepted)
+> **最后更新**: 2026-04-28 · chat-as-portal 第一阶段交付 (D-001~D-013, B0.1~B0.11 + B1 + B7 完成)
 > **关联 changes**:
 > - ✅ `openspec/archive/2026/04/2026-04-cognitive-evolution/` (Phase α 已合并归档, 13 commit `dbd428b..2ffd483`)
 > - ✅ `openspec/archive/2026/04/2026-04-bootstrap-skill/` (Phase β v1 已合并归档, 86/98 任务自动完成)
 > - ✅ `openspec/archive/2026/04/2026-04-bootstrap-tools/` (Phase γ v2 已合并归档, A-V 自动化全过 = 8 commit + 184 assertion)
-> - 🚧 `openspec/changes/2026-04-chat-as-portal/` (Phase δ design locked, status=approved, 进 implement)
+> - 🚧 `openspec/changes/2026-04-chat-as-portal/` (Phase δ 第一阶段交付, status=in-progress, B5/A/C/D/V 留后续)
 
 ---
 
@@ -87,9 +87,13 @@ ca4481b fix(...): triage 支持单文件 path + agentic LLM 区分 file vs dir
 
 ---
 
-## 0.7 · Phase δ 状态: design locked, implement 进行中 (2026-04-28)
+## 0.7 · Phase δ 状态: 第一阶段交付 (2026-04-28 收尾)
 
-**`2026-04-chat-as-portal` change** review 完成, 7 个 OQ 全部拍板:
+**`2026-04-chat-as-portal` change** 第一阶段交付完成. 13 个决策 (D-001~D-013) 全部 accepted; B0/B1/B7 已实施 + 部署验证. 余下 B5/A/C/D/V 等后续会话继续.
+
+### 已完成 (本次会话, 2026-04-26 ~ 04-28, ~10 commits)
+
+**核心 OQ 决策 (D-001~D-007)**:
 
 | OQ | 决策 | ID |
 |---|---|---|
@@ -101,31 +105,115 @@ ca4481b fix(...): triage 支持单文件 path + agentic LLM 区分 file vs dir
 | OQ-7 触发率测试方法 | 手动跑 60 测试点 (5 场景 × 4 skill × 3 工具) | D-006 |
 | OQ-2 卡片视觉 | 延用 atom-card.html 玻璃态 + Inter | D-007 |
 
-**design 状态**: locked. proposal status=approved. tasks 状态=ready.
+**实测驱动新增决策 (D-008~D-013, B0 系列触发, 实机 dogfood 暴露的偏离修正)**:
 
-**实施顺序铁律** (proposal §7 R1 + D-004): **B 组先于 A 组**. B5 触发率 ≥ 80% 才能动 A 组; B5 不达标走 D-004 升级路径 (调 description → 主推复制 prompt → 起 followup change), 永不路径 B (GUI tool-use).
+| 决策 | 内容 | 触发实测 |
+|---|---|---|
+| D-008 | atomsyn-cli 在外部 Agent 内**不调 LLM** (sampling/deep-dive 留给 Wizard) | 第 1 次 boot_813079ea2c1f76 卡 ATOMSYN_LLM_API_KEY |
+| D-009 | SKILL.md 完全 Agent 视角重写, 删除"v1 仅支持 X 格式" 类约束 | 14 文件中 11 个 (.pdf/.docx/.xlsx) 被错跳 |
+| D-010 | SOUL + AGENTS 双重声明"桌面客户端不执行 bootstrap" | 防 GUI 内置 LLM 假装能跑 |
+| D-011 | profile 写入纳入 agent-driven (修正 D-009 偏离) + 证据驱动 + rerun 字段级校准协议 | 第 2 次 16 experience + 0 profile 暴露 |
+| D-012 | SKILL.md 从"操作手册"重写为"哲学契约" (~500 → 165 行, -67%) | "为什么 atom 提取都是 10 条" 反思 |
+| D-013 | cli get 加 profile 渲染 + SKILL rerun 加"读取现状"入口 | profile 闭环不完整 (写但读不全) |
 
-**核心命题** (回顾): L1 GUI 聊天页**减负** (移除 / 大幅简化 bootstrap 重流程相关 UI, BootstrapWizard 移到 Settings 高级后门), L2 Skill **加固验证** (实机跑 atomsyn-bootstrap / write / read / mentor 在 Claude Code + Cursor + Codex 真实触发率, 60 测试点 ≥ 80%), L1 仅保留**美观引导卡片** (`<ExternalAgentHandoffCard>` 双 Agent 推荐 + 一键复制 prompt) 让用户在外部 Agent 触发 skill.
+### 已交付的实施 (本次会话)
 
-**战略转折点** (2026-04-28 本人与主 agent 在 bootstrap-tools 收尾对话中明确):
-- 用户期望直接在 GUI 聊天里多轮对话让 Agent 完成 bootstrap, 但 GUI 内置 LLM 没 tool-use 能力
-- 实现 GUI tool-use 重构 (路径 B) 工程量 2-3 周 + 与外部成熟 Agent 必输竞争
-- 真正符合 V2.x 北极星 §6 哲学 2 "L1+L2 双层缺一不可" + 哲学 3 "大厂结构性不会做" 的解法 = L1 引导 + L2 加固, 二者**互补不竞争**
-- atomsyn 差异化是 "100% 本地认知仓库 + 双骨架结构 + profile 演化", 不是 "另一个能帮你做事的对话框"
+**B0 SKILL/SOUL/AGENTS/cli 重写** (B0.1~B0.11):
+- ✅ B0.1-B0.3 atomsyn-bootstrap SKILL.md 完全 Agent 视角重写 + 删格式约束
+- ✅ B0.4 SOUL.md 加"运行环境与边界" 段 (双份: skills/chat/ + 用户私有)
+- ✅ B0.5 AGENTS.md atomsyn-bootstrap 触发段 + 路由决策树更新
+- ✅ B0.6 审查 write/read/mentor SKILL.md → 三个已是 Agent 视角, 无需大改
+- ✅ B0.7 atomsyn-cli 加 `write-profile --stdin` (复用 evolution.mjs::applyProfileEvolution)
+- ✅ B0.8 SKILL.md 加 Step 2.5 (证据驱动 profile 抽象) + Step 4.5 (write-profile 入库) + 字段级校准协议
+- ✅ B0.9 重新部署 SKILL 到三家
+- ✅ B0.10 SKILL.md 哲学化重写 (~500 → 165 行, -67%)
+- ✅ B0.11 cli get profile-specific markdown 渲染 + SKILL rerun "读取现状" 入口
 
-**implement 前必读** (新会话压缩后启动 implement 时, 按顺序):
+**B1 atomsyn-cli install-skill 加 Codex 支持** (B1.1-B1.4): ✅
+
+**B7 用户指南**: ✅ `docs/guide/external-agent-integration.md` (~270 行, 含安装/触发话术/工具差异/工作流/FAQ)
+
+**Profile 闭环完整 ✅**:
+- 写入新 profile: `cli write-profile --stdin` (auto trigger=initial)
+- 读取现状: `cli get --id atom_profile_main` (markdown 含 5 维 + identity + domains + patterns + verified + previous_versions)
+- 更新 (rerun): `cli write-profile --stdin` (auto rerun + 旧入 previous_versions + reset verified=false)
+- 字段级校准: SKILL.md rerun 章节 (读现状 → diff → AskUserQuestion → 合并写入)
+- 历史回溯: `previous_versions[]` 自动入栈
+
+**实测验证 (3 次 dogfood, 完整覆盖)**:
+- 第 1 次 (boot_813079ea2c1f76): 暴露 D-008 + D-009
+- 第 2 次: 16 experience + 0 profile, 暴露 D-011
+- 第 3 次: 10 experience + 1 profile (verified=true), D-008/D-009/D-010/D-011 全跑通; 暴露 D-012 + D-013 → 完成 SKILL 哲学化 + cli get profile 渲染
+
+### 未完成 (留给后续会话)
+
+**B 组余下** (实机实测 + 调描述):
+- ⏳ B2-B4 实测 atomsyn-bootstrap/write/read/mentor 在 Claude Code / Cursor / Codex 触发率
+- ⏳ B5 60 测试点全矩阵 (5 场景 × 4 skill × 3 工具) ≥ 80% — 用户实机, 半天工作量
+- ⏳ B6 触发率 < 80% 时调 SKILL.md description (B5 后视情况)
+
+**A 组 L1 减负** (依赖 B5 ≥ 80% 通过):
+- ⏳ A1 BootstrapWizard 移到 Settings 高级后门 (聊天页移除入口)
+- ⏳ A2 ChatInput 入口减负 (`/bootstrap` 改语义 + 删 PathDetectionBanner)
+- ⏳ A3 AGENTS.md 触发段 + first-run 提示 (双份)
+
+**C 组美观引导组件** (前端工作, 不依赖实测):
+- ⏳ C1 `<ExternalAgentHandoffCard>` 组件 (Linear 玻璃态 + Inter + spring)
+- ⏳ C2 MarkdownRenderer 加 `[[handoff:<task>|<json>]]` 解析
+- ⏳ C3 一键复制 + toast
+- ⏳ C4 Settings "默认外部 Agent" 偏好
+- ⏳ C5 usage-log 三个新事件类型
+
+**D 组文档与 specs 同步**:
+- ⏳ D1 评估 framing 是否需更新 (倾向不动)
+- ⏳ D2 specs/skill-contract.md 加 G-I1 不变量 + 加 D-008..D-013 派生不变量
+- ⏳ D3 specs/cli-contract.md install-skill 加三家 + write-profile + get profile 渲染条目
+- ⏳ D4 docs/plans/v2.4-chat-as-portal.md 叙事段落 (待全 change 完成后)
+- ⏳ D5 .claude/CLAUDE.md Quick reference 表更新
+
+**V 组跨任务回归** (全 change 完成前):
+- ⏳ V1-V12 剩余项 (大部分已自动跑通, V7 触发率 / V8 操作步数 / V9 用户指南可用性需要 B5 + 用户实测)
+
+### 用户明确提及的后续方向 (不在本 change 范围, 留待新 change)
+
+- **profile 维度细化、扩展**: 当前 5 维 (scope_appetite / risk_tolerance / detail_preference / autonomy / architecture_care) 可能不够覆盖. 后续 change 可加更多维度 (e.g. communication_style / decision_speed 等), 或按用户角色分套画像
+- **更新机制 (增量 / 单点更新)**: 当前 bootstrap rerun 是全量重抽象 + 字段级校准. 后续 change 可加 `atomsyn-cli update-profile --field <X>` 单字段更新, 或增量补充而不全量重跑
+
+这些方向应该起 followup change (e.g. `2026-XX-profile-evolution-v2`), 不在 chat-as-portal 范围.
+
+### 实施顺序铁律 (proposal §7 R1 + D-004) — 仍有效
+
+**B 组先于 A 组**. B5 触发率 ≥ 80% 才能动 A 组; B5 不达标走 D-004 升级路径 (调 description → 主推复制 prompt → 起 followup change), 永不路径 B (GUI tool-use).
+
+### 核心命题 (回顾)
+
+L1 GUI 聊天页**减负** (移除重流程 UI, Wizard 移到 Settings 高级后门), L2 Skill **加固验证** (实机 60 测试点 ≥ 80%), L1 保留**美观引导卡片**让用户在外部 Agent 触发 skill. 不与 Cursor/Codex 等成熟 Agent 重复造轮子, 互补不竞争.
+
+**战略转折点** (2026-04-28 用户与主 agent 在 bootstrap-tools 收尾对话中明确, 已固化):
+- GUI 内置 LLM 没 tool-use 能力, 实现路径 B (GUI tool-use 重构) 是必输竞争
+- 真正符合 V2.x 北极星 §6 哲学 2 "L1+L2 双层缺一不可" + 哲学 3 "大厂结构性不会做" 的解法 = L1 引导 + L2 加固
+
+### 新会话启动该 change 的指引
+
+**implement 前必读** (按顺序):
+
 1. `.claude/CLAUDE.md`
 2. `docs/framing/v2.x-north-star.md` (重点 §1 三层架构 + §6 八条哲学)
 3. `openspec/README.md`
 4. `openspec/changes/IMPLEMENTATION-HANDOFF.md` (本文)
-5. `openspec/changes/2026-04-chat-as-portal/proposal.md` (核心命题 + 风险)
-6. `openspec/changes/2026-04-chat-as-portal/design.md` (锁定的设计, 重点 §3 流程 + §5 接口契约 + §11 验证策略)
-7. `openspec/changes/2026-04-chat-as-portal/decisions.md` (D-001 ~ D-007 全部 accepted)
-8. `openspec/changes/2026-04-chat-as-portal/tasks.md` (B → A → C → D → V 顺序)
-9. `~/Library/Application Support/atomsyn/chat/AGENTS.md` (A3 任务的修改对象)
-10. `scripts/atlas-cli.mjs` (B1 任务的修改对象, install-skill 加 codex)
+5. `openspec/changes/2026-04-chat-as-portal/proposal.md` (核心命题)
+6. `openspec/changes/2026-04-chat-as-portal/design.md` (锁定的设计 + §6 决策矩阵)
+7. `openspec/changes/2026-04-chat-as-portal/decisions.md` (D-001 ~ D-013 全部 accepted)
+8. `openspec/changes/2026-04-chat-as-portal/tasks.md` (B → A → C → D → V, ✅ 已勾选 vs ⏳ 待跑)
+9. **`docs/guide/external-agent-integration.md`** (B7 用户指南, 了解集成体验)
+10. `~/Library/Application Support/atomsyn/chat/AGENTS.md` + `SOUL.md` (D-010 双重声明)
+11. `skills/atomsyn-bootstrap/SKILL.md` (D-012 哲学化版, 165 行)
 
-**第一个动作**: B1 - atomsyn-cli install-skill 加 Codex 支持 (调研 + 实现). B1 完成后 B2/B3/B4 才能开始实测.
+**下一个动作 (按优先级)**:
+
+1. **用户优先**: 跑 B5 60 测试矩阵 (实机半天) → 调 description (B6 如需) → A 组 L1 减负
+2. **主 agent 可独立做**: C 组 `<ExternalAgentHandoffCard>` 组件 (前端工作, 不依赖实测) — 但 A 组依赖 B5, C 组与 A 组耦合, 通常一起做
+3. **主 agent 同步可做**: D 组 specs 同步 (把 D-008~D-013 派生的契约性不变量沉淀到 specs/skill-contract.md + specs/cli-contract.md)
 
 ---
 

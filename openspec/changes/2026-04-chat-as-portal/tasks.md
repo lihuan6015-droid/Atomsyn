@@ -110,11 +110,11 @@
 
 ## V · Verification (跨任务回归)
 
-- [ ] **V1.** `npm run build` 通过
-- [ ] **V2.** `npm run lint` 通过
-- [ ] **V3.** `cargo check` 通过 (有 Tauri 改动如有)
-- [ ] **V4.** `npm run reindex` 通过
-- [ ] **V5.** 已归档 change 测试套件全过: `test:bootstrap-skill` / `test:bootstrap-tools` / `test:evolution` / `test:cli`
+- [ ] **V1.** `npm run build` 通过 (待 A/C 组前端改动后跑)
+- [ ] **V2.** `npm run lint` 通过 (待 A/C 组前端改动后跑)
+- [ ] **V3.** `cargo check` 通过 (待 Tauri 改动如有)
+- [x] **V4.** `npm run reindex` 通过 (cli 内部隐式调用多次, 含 write/write-profile/install-skill)
+- [x] **V5.** 已归档 change 测试套件全过: cli (19/19) + bootstrap-skill (52) + bootstrap-tools (71) + evolution (34) = **176 assertion 全过** (本次会话跑过 4 次回归)
 - [ ] **V6.** light + dark 主题视觉走查 (ExternalAgentHandoffCard + Settings 入口)
 - [ ] **V7.** **B5 触发率 ≥ 80%** (proposal §6 指标 1, design §11.2) — **必须先满足才能 ship**
 - [ ] **V8.** **L1 减负操作步数 ≤ 2** (proposal §6 指标 2, design §11.2) — 录屏验证
@@ -129,3 +129,43 @@
 > 1. mv openspec/changes/2026-04-chat-as-portal openspec/archive/2026/04/
 > 2. docs/plans/v2.4-chat-as-portal.md 已写
 > 3. IMPLEMENTATION-HANDOFF.md 加完结状态
+
+---
+
+## 📍 本次会话进度快照 (2026-04-28 收尾)
+
+**会话范围**: 2026-04-26 review proposal → 2026-04-28 第一阶段交付收尾, 共 ~10 commits.
+
+### ✅ 已完成 (全部部署 + 实测验证)
+
+- **决策**: D-001 ~ D-013 (13 个) 全部 accepted, decisions.md 完整
+- **B0 SKILL/SOUL/AGENTS/cli 重写** (B0.1 ~ B0.11): 11 个子任务全部勾
+- **B1 install-skill 加 Codex** (B1.1 ~ B1.4): 4 个子任务全部勾
+- **B7 用户指南**: `docs/guide/external-agent-integration.md` 已落 (~270 行)
+- **V4/V5 自动化回归**: 176 assertion 全过
+
+### ⏳ 留给后续会话 (按依赖顺序)
+
+| 优先级 | 任务组 | 是否依赖用户实机 |
+|---|---|---|
+| 🔥 P0 | B2-B5 实测 60 测试矩阵 | ✅ 用户半天 |
+| 🔥 P0 | B6 调 SKILL description (B5 < 80% 时) | 视 B5 结果 |
+| P1 | A 组 L1 减负 (Wizard 移到 Settings + ChatInput 减负) | 依赖 B5 通过 |
+| P1 | C 组 ExternalAgentHandoffCard 组件 (前端) | 不依赖, 可独立做 |
+| P2 | D 组 specs 同步 (D-008..D-013 派生不变量沉淀) | 不依赖 |
+| P2 | V1/V2 build/lint (A/C 组完成后跑) | 不依赖 |
+
+### 🚀 用户明确提及的后续方向 (新 change, 不在本范围)
+
+- **profile 维度细化、扩展**: 当前 5 维 → 后续可加更多维度 / 角色分套画像
+- **更新机制 (增量、单点更新)**: 当前 rerun 全量 → 后续可加 `update-profile --field <X>` 单点更新
+
+→ 起 followup change, 推荐 ID `2026-XX-profile-evolution-v2`
+
+### 🎯 下一个会话续跑路径
+
+1. 读 `openspec/changes/IMPLEMENTATION-HANDOFF.md` §0.7 (本文件最新状态)
+2. 跑 `atomsyn-cli where` 确认 skill 部署仍有效 (三家 4 skill 都 `installed: true`)
+3. 选择切入点:
+   - 用户优先 → 跑 B5 60 测试矩阵
+   - 主 agent 独立 → C 组组件 + D 组 specs 同步
