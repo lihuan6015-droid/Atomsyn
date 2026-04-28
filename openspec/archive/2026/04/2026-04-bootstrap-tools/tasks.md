@@ -10,9 +10,11 @@
 
 ---
 
-> **状态总览** (2026-04-28 更新):
-> - 自动化任务 A/B/C/D/E/F/G6 + V1/V2/V3/V4/V5/V6/V7/V8 全部勾掉, 主 agent 完成
-> - 用户实机验证残留: H1/H2/H5 (Skill 真实触发) + H3/H4 + V11/V12 (UI 视觉) + G4/G5/G7/G8 (真实 LLM dogfood) — 等用户跑
+> **状态总览** (2026-04-28 归档):
+> - **status: archived** — 自动化任务 A/B/C/D/E/F/G/V 全过 (build/lint/cargo/reindex/3 套测试 = 184 assertion)
+> - **后续修复**: triage 单文件路径回归 + agentic LLM file-vs-dir 标注 (commit `ca4481b`, dogfood 暴露)
+> - **用户实机验证残留 (12 项) 转入下游 change**: 战略调整后, GUI 内嵌 bootstrap 重流程 (PathDetectionBanner / Wizard 多选 / agent_trace timeline / GUI 校准) 不再是核心路径; 真正的实机验证 = "skill 在 Codex / Claude Code / Cursor 等成熟 Agent 中可触发可用". 该验证 + 战略落地由 `openspec/changes/2026-04-chat-as-portal/` 接管.
+> - 实施完成后步骤 (本 change 范围内已做): mv 到 archive/2026/04/ ✓ · docs/plans/v2.3-bootstrap-tools.md 已写 ✓ · IMPLEMENTATION-HANDOFF §0.6 完结状态已加 ✓
 
 ## A · 文档解析层 (extractors/)
 
