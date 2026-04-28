@@ -1,8 +1,9 @@
 ---
 change_id: 2026-04-chat-as-portal
 title: 聊天页定位重构 — L1 与外部 Agent 互补而非竞争
-status: proposed
+status: approved
 created: 2026-04-28
+approved: 2026-04-28
 owner: 主 agent + 用户
 supersedes: ""
 related: 2026-04-bootstrap-tools (已归档, GUI 重流程实施完成但战略上让位); 2026-04-bootstrap-skill (已归档, v1)

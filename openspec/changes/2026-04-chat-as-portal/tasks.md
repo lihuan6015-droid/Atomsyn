@@ -1,86 +1,114 @@
 # Tasks · 2026-04-chat-as-portal
 
-> **状态**: **draft (skeleton)** — proposal 仍 in review, design 尚未锁定. 实施前必须先按 README §6 流程: review proposal → 拍 OQ-1/OQ-3/OQ-6 → 填 design → 锁 design → 才进 implement.
+> **状态**: **ready** — proposal approved, design locked (D-001 ~ D-007 全部 accepted). 进入 implement 阶段.
 >
-> **强约束**: B 组 (L2 真实可用性验证) **必须先于** A 组 (L1 减负) — 见 proposal §7 R1. 如果 B 验证不达标, A 组冻结, 重新评估方案 (可能要做 OQ-6 兜底).
+> **强约束**: B 组 (L2 真实可用性验证) **必须先于** A 组 (L1 减负) — 见 proposal §7 R1 + D-004 后果. 如果 B 验证不达标 (触发率 < 80%), A 组冻结, 升级路径见 D-004 (调 description → 主推 prompt 复制 → 起 followup change), 永远不走"加 GUI tool-use 兜底" 路径.
 
 ---
 
-## A · L1 减负 (减法工程, 等 B 验证通过后启动)
+## B · L2 真实可用性验证 + 加固 (先做, 依 D-005 + D-006)
 
-> [TODO] 待 OQ-1/OQ-3/OQ-4 拍板后填具体 task
+> **强约束**: B 组先于 A. B7 触发率 < 80% 时, A 组冻结, 走 D-004 升级路径.
 
-- [ ] A1. **BootstrapWizard 命运处理** (依 OQ-1):
-  - 选项 (i) 完全删除: 删 `src/pages/Chat/BootstrapWizard/index.tsx` 整个目录 + `useBootstrapStore.ts` + `bootstrapApi` 相关 + ChatPage 移除引用
-  - 选项 (ii) 保留作高级后门: 仅移除聊天页入口 (ChatPage 不再 setWizardOpen, 不监听 atomsyn:open-bootstrap), 加 Settings → "高级 → bootstrap 向导" 入口
-- [ ] A2. **ChatInput 入口减负**:
-  - 移除 `/bootstrap` 命令 (or OQ-3 改语义为输出引导卡片)
-  - 移除 `onPaste` PathDetectionBanner 触发 (or OQ-4 改用途)
-  - 删 `src/components/chat/PathDetectionBanner.tsx` (or 改用途)
-- [ ] A3. **ChatPage 监听清理**:
-  - 移除 `atomsyn:open-bootstrap` CustomEvent 监听 (B5)
-  - 移除 `addBootstrapPath` 引用
-  - 移除 BootstrapWizard 组件挂载 (或视 OQ-1 调整)
-- [ ] A4. **AGENTS.md 教 LLM 输出 handoff 卡片**:
-  - 加新段 `### atomsyn-bootstrap (引导外部 Agent)` 替代当前的"假装能做" 描述
-  - 触发关键词 → 输出 `[[handoff:bootstrap|{...}]]` action 卡片
+- [ ] **B1. atomsyn-cli install-skill 加 Codex 支持** (依 D-005, design §5.1):
+  - [ ] B1.1 调研 Codex CLI skill 加载路径 (候选: `~/.codex/skills/`, `~/.codex/agents/`, 项目级 `.codex/skills/`)
+  - [ ] B1.2 在 `scripts/atlas-cli.mjs` 的 `cmdInstallSkill` 加 `--target codex` 分支
+  - [ ] B1.3 `--target all` 同时装 claude + cursor + codex
+  - [ ] B1.4 在 `atomsyn-cli where` 输出列出已安装位置
+- [ ] **B2. 实测 atomsyn-bootstrap 在 Claude Code 触发**:
+  - [ ] B2.1 跑 `atomsyn-cli install-skill --target claude`, 验证 `~/.claude/skills/atomsyn-bootstrap/SKILL.md` 存在
+  - [ ] B2.2 新 Claude Code 会话发 5 个测试 prompt, 记录命中情况
+- [ ] **B3. 实测在 Cursor 触发**: 同 B2 流程, `--target cursor`
+- [ ] **B4. 实测在 Codex 触发** (依 D-005): 同 B2 流程, `--target codex`
+- [ ] **B5. 60 测试点全矩阵实测** (D-006): 5 场景 × 4 skill × 3 工具
+  - 场景: "记下这个洞察 X" / "找用户访谈方法" / "帮我复盘最近一个月" / "我在做 X 项目, 有什么相关经验" / "下一步该学什么"
+  - 输出 `docs/guide/external-agent-integration-test-results.md` (新文件), 含 60 行测试矩阵 + 触发率统计 + 失败分类
+- [ ] **B6. 触发率 < 80% 时调 SKILL.md description** (D-004 升级路径 step 1):
+  - [ ] B6.1 失败原因分类 (description 不准 / 关键词漏 / 上下文示例不足)
+  - [ ] B6.2 修 4 个 skill SKILL.md 的 description / 触发关键词 / 上下文示例
+  - [ ] B6.3 重跑全部 60 测试点
+  - [ ] B6.4 仍不达标 → D-004 升级路径 step 2: handoff 卡片改为主推 "复制完整 prompt"
+- [ ] **B7. 写 docs/guide/external-agent-integration.md**:
+  - 安装步骤 (install-skill 三个 target / 环境变量 / 验证)
+  - 4 个 skill (bootstrap/write/read/mentor) 各自最佳触发话术
+  - Claude Code / Cursor / Codex 三个工具差异 + 已知 quirks
+  - FAQ (key 隔离 / 路径泄露 cloud / 触发失败排查)
 
-## B · L2 真实可用性验证 + 加固 (优先做)
+## A · L1 减负 (依 D-001 + D-002 + D-003 + D-005, 等 B 验证通过后启动)
 
-- [ ] B1. **真实机器实测 atomsyn-bootstrap 在 Claude Code 触发** (= 已归档 bootstrap-tools H1):
-  - 跑 `atomsyn-cli install-skill --target claude` 装 SKILL.md 到 `~/.claude/skills/atomsyn-bootstrap/`
-  - 在新 Claude Code 会话发: "把 ~/Documents/混沌 倒进 atomsyn"
-  - 观察: SKILL.md 是否被 selector 命中 / 是否走 dry-run/commit / AskUserQuestion 是否生效
-  - 记录: 触发率 / 执行准确性 / 失败原因 (description 不准 / 关键词漏 / 上下文不足)
-- [ ] B2. **真实机器实测在 Cursor 触发** (= 已归档 H2):
-  - 同 B1 流程, target=cursor
-- [ ] B3. **测 atomsyn-write/read/mentor 在双工具触发**:
-  - 5 个真实用户场景 × 4 个 skill × 2 个工具 = 40 个测试点
-  - 场景: "记下这个洞察 X" / "找用户访谈方法" / "帮我复盘最近一个月" / "我在做 X 项目, 有什么相关经验" / "我下一步该学什么"
-  - 记录每个测试点是否触发 + 触发后行为是否符合 SKILL.md 契约
-- [ ] B4. **触发率 < 80% 时调 SKILL.md description**:
-  - 加更多触发关键词 (中英文 / 同义词)
-  - 加更多上下文示例
-  - 调整 description 长度 (太长可能被截断, 太短描述不充分)
-  - 重测验证
-- [ ] B5. **写 docs/guide/external-agent-integration.md**:
-  - 安装步骤 (install-skill / 环境变量 / 验证)
-  - 4 个 skill 各自的最佳触发话术
-  - Codex / Claude Code / Cursor 三个工具的差异 + 各自怎么用
-  - 已知 quirks / FAQ
+- [ ] **A1. BootstrapWizard 保留作高级后门** (D-001 ii):
+  - [ ] A1.1 **不删** `src/pages/Chat/BootstrapWizard/` 整个目录 + `useBootstrapStore` + `bootstrapApi`
+  - [ ] A1.2 `ChatPage.tsx` 移除 BootstrapWizard 组件挂载 + 移除 `atomsyn:open-bootstrap` CustomEvent 监听 + 移除 `addBootstrapPath` 引用
+  - [ ] A1.3 在 `src/pages/SettingsPage.tsx` (or 等价位置) 加"高级 → Bootstrap 向导"入口, 标签 "(高级 / 离线 / 调试)"
+  - [ ] A1.4 该入口直接挂载 BootstrapWizard 模态 (不复用聊天页路径)
+  - [ ] A1.5 加 usage-log 事件 `settings.bootstrap_wizard_opened` (用于 6 个月后判断是否真删)
+- [ ] **A2. ChatInput 入口减负** (D-002 + D-003):
+  - [ ] A2.1 `SkillCommandPalette.tsx` 的 `/bootstrap` 命令改语义: 选中后预填触发提示词 ("我想把 X 倒进 atomsyn") 到 ChatInput, **不再** dispatch `atomsyn:open-bootstrap`
+  - [ ] A2.2 `ChatInput.tsx` 移除 `onPaste` 中的 PathDetectionBanner 触发逻辑
+  - [ ] A2.3 删除文件 `src/components/chat/PathDetectionBanner.tsx`
+  - [ ] A2.4 zustand store 中的 `pendingPath` / `addBootstrapPath` 等字段全部删除
+  - [ ] A2.5 加 usage-log 事件 `chat.bootstrap_command_invoked`
+- [ ] **A3. AGENTS.md 教 LLM 输出 handoff 卡片** (D-002 + D-005, design §5.4.3):
+  - [ ] A3.1 用户私有 `~/Library/Application Support/atomsyn/chat/AGENTS.md` 加 § "🚀 atomsyn-bootstrap (引导外部 Agent 执行)" 段
+  - [ ] A3.2 项目内 seed AGENTS.md (供 reset 用, 位置在 `src-tauri/resources/seed/AGENTS.md` 或等价 seed 位置) 同步更新
+  - [ ] A3.3 触发关键词列表完整 (中: 导入/倒进/沉淀这批/初始化 atomsyn/把这个目录; 英: import/bootstrap/onboard/init atomsyn)
+  - [ ] A3.4 输出格式 `[[handoff:bootstrap|{"task":"bootstrap","skill":"atomsyn-bootstrap","agents":[...claude-code, codex]}]]`
+  - [ ] A3.5 first-run 提示 "Bootstrap 已迁移到外部 Agent..." (zustand `bootstrap_migration_seen` 标记)
 
-## C · 美观引导组件 (依赖 A4 AGENTS.md)
+## C · 美观引导组件 (依 A3 + D-005 + D-007)
 
-- [ ] C1. 新组件 `src/components/chat/ExternalAgentHandoffCard.tsx`:
-  - props: `{ task: string, prompt: string, skill: string, recommendedAgent?: string }`
-  - 视觉: Linear/Raycast 玻璃态 + Inter 字体 + spring 动画 (与 atom-card.html 风格一致)
-  - 内容: 推荐 Agent (按用户偏好) + 一键复制提示词 + 对应 skill 名称 + 文档链接
-- [ ] C2. `MarkdownRenderer.tsx` 识别 `[[handoff:<task>|<json>]]`:
-  - 解析 JSON, 渲染 ExternalAgentHandoffCard
-  - 错误兜底 (JSON parse 失败 → 显示原始 markdown)
-- [ ] C3. 一键复制实现:
-  - `navigator.clipboard.writeText(prompt)`
-  - copy 后短暂 toast "已复制, 切到 Cursor 粘贴即可"
-- [ ] C4. light + dark 主题验收
+- [ ] **C1. 新组件 `src/components/chat/ExternalAgentHandoffCard.tsx`** (design §5.4.1):
+  - [ ] C1.1 props 类型 `ExternalAgentHandoffCardProps` (含 `task` / `skill` / `agents[]`)
+  - [ ] C1.2 视觉: 玻璃态 + Inter + JetBrains Mono + Framer Motion spring 入场 (D-007)
+  - [ ] C1.3 双 Agent 推荐布局 (Claude Code + Codex 并列), 各自独立操作区
+  - [ ] C1.4 一键复制按钮 + 安装命令按钮 + 文档链接
+  - [ ] C1.5 light + dark 主题样式
+- [ ] **C2. MarkdownRenderer 加 `[[handoff:<task>|<json>]]` 解析** (design §5.4.2):
+  - [ ] C2.1 在 `src/components/chat/MarkdownRenderer.tsx` 现有 action 解析器 (atom / ingest:confirm) 旁加 handoff 分支
+  - [ ] C2.2 JSON parse 失败 fallback 到原始 markdown (与 ingest:confirm 一致)
+  - [ ] C2.3 渲染 ExternalAgentHandoffCard
+- [ ] **C3. 一键复制实现**:
+  - [ ] C3.1 `navigator.clipboard.writeText(prompt)`
+  - [ ] C3.2 copy 后 toast "已复制, 粘贴到 <Agent> 即可" + 含路径警示 (design §7)
+  - [ ] C3.3 加 usage-log 事件 `chat.handoff_copied { task, agent }`
+- [ ] **C4. Settings 加"聊天偏好 → 默认外部 Agent" 偏好** (依 D-005 后果):
+  - [ ] C4.1 zustand store 加 `defaultExternalAgent: AgentId` 字段
+  - [ ] C4.2 SettingsPage 增加单选 (Claude Code / Codex / Cursor / Claude Desktop)
+  - [ ] C4.3 ExternalAgentHandoffCard 根据偏好排序 agents 数组 (默认排序前置用户偏好)
+- [ ] **C5. usage-log schema 加新事件** (design §9):
+  - [ ] C5.1 `chat.handoff_card_shown` (含 `{task, agents[]}`)
+  - [ ] C5.2 `chat.handoff_copied` (含 `{task, agent}`)
+  - [ ] C5.3 `chat.bootstrap_command_invoked` (空 payload)
+  - [ ] C5.4 `settings.bootstrap_wizard_opened` (空 payload)
 
 ## D · 一致性与文档
 
-- [ ] D1. 评估 `docs/framing/v2.x-north-star.md` 是否需更新 — L1/L2 边界是否需在战略文档明确加段
-- [ ] D2. `openspec/specs/skill-contract.md` 加 G-I1 不变量 "L1 不实现 skill 重流程"
-- [ ] D3. `openspec/specs/cli-contract.md` install-skill 章节列举支持的外部 Agent + 安装路径
-- [ ] D4. 写 `docs/plans/v2.4-chat-as-portal.md` 叙事段落 (北极星对齐 + 决策回顾 + L1/L2 分工图)
-- [ ] D5. 更新 `.claude/CLAUDE.md` Quick reference 表 — bootstrap 引导从 GUI 直跑改为"建议引导用户去 Cursor"
+- [ ] **D1.** 评估 `docs/framing/v2.x-north-star.md` 是否需更新 — L1/L2 边界是否需在战略文档明确加段 (倾向: 不动, 因为现有 §1+§6 已覆盖, 加段反而冗余)
+- [ ] **D2.** `openspec/specs/skill-contract.md` 加新不变量:
+  - **G-I1** "L1 不实现 skill 重流程" (design §5.3)
+- [ ] **D3.** `openspec/specs/cli-contract.md` 更新:
+  - [ ] D3.1 `install-skill` 章节列举支持的外部 Agent (claude / cursor / codex / all)
+  - [ ] D3.2 各 target 的安装路径 (依 B1.1 调研结果)
+- [ ] **D4.** 写 `docs/plans/v2.4-chat-as-portal.md` 叙事段落 (北极星对齐 + 决策回顾 + L1/L2 分工图 + 战略转折点)
+- [ ] **D5.** 更新 `.claude/CLAUDE.md`:
+  - [ ] D5.1 Quick reference 表 — bootstrap 入口从 "聊天页 `/bootstrap`" 改为 "外部 Agent + handoff 卡片"
+  - [ ] D5.2 Tauri 双通道架构章节如无影响则不动
+- [ ] **D6.** IMPLEMENTATION-HANDOFF.md §0.7 更新到 implement 进行中状态 (本次 commit 一并做)
 
 ## V · Verification (跨任务回归)
 
-- [ ] V1. `npm run build` 通过
-- [ ] V2. `npm run lint` 通过
-- [ ] V3. (Tauri 改动如有) `cargo check` 通过
-- [ ] V4. `npm run reindex` 通过
-- [ ] V5. test:bootstrap-skill / test:bootstrap-tools / test:evolution 全过 (回归)
-- [ ] V6. light + dark 主题验收 (新组件 ExternalAgentHandoffCard)
-- [ ] V7. **B3 触发率指标 ≥ 80%** (proposal §6 指标 1) — 必须先满足才能 ship
-- [ ] V8. 用户指南 5 分钟可用性 (proposal §6 指标 4)
+- [ ] **V1.** `npm run build` 通过
+- [ ] **V2.** `npm run lint` 通过
+- [ ] **V3.** `cargo check` 通过 (有 Tauri 改动如有)
+- [ ] **V4.** `npm run reindex` 通过
+- [ ] **V5.** 已归档 change 测试套件全过: `test:bootstrap-skill` / `test:bootstrap-tools` / `test:evolution` / `test:cli`
+- [ ] **V6.** light + dark 主题视觉走查 (ExternalAgentHandoffCard + Settings 入口)
+- [ ] **V7.** **B5 触发率 ≥ 80%** (proposal §6 指标 1, design §11.2) — **必须先满足才能 ship**
+- [ ] **V8.** **L1 减负操作步数 ≤ 2** (proposal §6 指标 2, design §11.2) — 录屏验证
+- [ ] **V9.** 用户指南 5 分钟可用性 (proposal §6 指标 4, design §11.2)
+- [ ] **V10.** ExternalAgentHandoffCard 视觉与 atom-card.html 一致 (design §11.3)
+- [ ] **V11.** 双 Agent 推荐信息密度合适, 不溢出 (design §11.3)
+- [ ] **V12.** BootstrapWizard 通过 Settings 入口仍能正常打开 + dry-run/commit 走通 (D-001 后果回归)
 
 ---
 

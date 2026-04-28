@@ -2,14 +2,14 @@
 
 > **目的**: 让任意 Agent (主 Claude / 子 agent / 新会话压缩后的延续) 在**不需要回看历史对话**的情况下, 准确理解本批 change 的实施意图、顺序、耦合关系和验证标准, 端到端推进开发到合并归档。
 >
-> **状态**: **bootstrap 双 change 已归档; 战略调整中, 新 change `2026-04-chat-as-portal` proposal 待 review**
+> **状态**: **bootstrap 双 change 已归档; chat-as-portal design locked, 进入 implement (B 组先行)**
 > **创建**: 2026-04-26
-> **最后更新**: 2026-04-28 · bootstrap-tools / bootstrap-skill 全归档 + chat-as-portal 立项
+> **最后更新**: 2026-04-28 · chat-as-portal design 锁定 (D-001~D-007 全部 accepted)
 > **关联 changes**:
 > - ✅ `openspec/archive/2026/04/2026-04-cognitive-evolution/` (Phase α 已合并归档, 13 commit `dbd428b..2ffd483`)
 > - ✅ `openspec/archive/2026/04/2026-04-bootstrap-skill/` (Phase β v1 已合并归档, 86/98 任务自动完成)
 > - ✅ `openspec/archive/2026/04/2026-04-bootstrap-tools/` (Phase γ v2 已合并归档, A-V 自动化全过 = 8 commit + 184 assertion)
-> - 🔲 `openspec/changes/2026-04-chat-as-portal/` (Phase δ 待 review, **战略调整: L1 减负 + L2 加固**)
+> - 🚧 `openspec/changes/2026-04-chat-as-portal/` (Phase δ design locked, status=approved, 进 implement)
 
 ---
 
@@ -87,11 +87,25 @@ ca4481b fix(...): triage 支持单文件 path + agentic LLM 区分 file vs dir
 
 ---
 
-## 0.7 · Phase δ 启动状态 (2026-04-28)
+## 0.7 · Phase δ 状态: design locked, implement 进行中 (2026-04-28)
 
-**`2026-04-chat-as-portal` change** proposal 已立, 状态 **proposed**, 设计 (design.md / tasks.md / decisions.md) 是骨架, 等待新会话 review 阶段拍板 OQ-1 ~ OQ-7 后填充。
+**`2026-04-chat-as-portal` change** review 完成, 7 个 OQ 全部拍板:
 
-**核心命题**: L1 GUI 聊天页**减负** (移除 / 大幅简化 bootstrap 重流程相关 UI), L2 Skill **加固验证** (实机跑 atomsyn-bootstrap / write / read / mentor 在 Claude Code + Cursor + Codex 真实触发率), L1 仅保留**美观引导卡片**让用户在外部 Agent 触发 skill.
+| OQ | 决策 | ID |
+|---|---|---|
+| OQ-1 BootstrapWizard 命运 | 保留作高级后门 (Settings 入口标"高级/离线/调试") | D-001 |
+| OQ-3 `/bootstrap` 命令 | 改语义为输出 handoff 卡片 | D-002 |
+| OQ-4 PathDetectionBanner | 完全删除 | D-003 |
+| OQ-6 L2 失败 fallback | 不做 GUI tool-use 兜底, 用"复制完整 prompt"作为安全网 | D-004 |
+| OQ-5 推荐外部 Agent | 默认 Claude Code + Codex 双推 (Cursor 走 Settings 切换) | D-005 |
+| OQ-7 触发率测试方法 | 手动跑 60 测试点 (5 场景 × 4 skill × 3 工具) | D-006 |
+| OQ-2 卡片视觉 | 延用 atom-card.html 玻璃态 + Inter | D-007 |
+
+**design 状态**: locked. proposal status=approved. tasks 状态=ready.
+
+**实施顺序铁律** (proposal §7 R1 + D-004): **B 组先于 A 组**. B5 触发率 ≥ 80% 才能动 A 组; B5 不达标走 D-004 升级路径 (调 description → 主推复制 prompt → 起 followup change), 永不路径 B (GUI tool-use).
+
+**核心命题** (回顾): L1 GUI 聊天页**减负** (移除 / 大幅简化 bootstrap 重流程相关 UI, BootstrapWizard 移到 Settings 高级后门), L2 Skill **加固验证** (实机跑 atomsyn-bootstrap / write / read / mentor 在 Claude Code + Cursor + Codex 真实触发率, 60 测试点 ≥ 80%), L1 仅保留**美观引导卡片** (`<ExternalAgentHandoffCard>` 双 Agent 推荐 + 一键复制 prompt) 让用户在外部 Agent 触发 skill.
 
 **战略转折点** (2026-04-28 本人与主 agent 在 bootstrap-tools 收尾对话中明确):
 - 用户期望直接在 GUI 聊天里多轮对话让 Agent 完成 bootstrap, 但 GUI 内置 LLM 没 tool-use 能力
@@ -99,20 +113,19 @@ ca4481b fix(...): triage 支持单文件 path + agentic LLM 区分 file vs dir
 - 真正符合 V2.x 北极星 §6 哲学 2 "L1+L2 双层缺一不可" + 哲学 3 "大厂结构性不会做" 的解法 = L1 引导 + L2 加固, 二者**互补不竞争**
 - atomsyn 差异化是 "100% 本地认知仓库 + 双骨架结构 + profile 演化", 不是 "另一个能帮你做事的对话框"
 
-**新会话启动该 change 的指引**: 见 chat-as-portal/proposal.md 末尾"附录 · 启动新会话的指引".
-
-**实施前必读** (~5500 行):
+**implement 前必读** (新会话压缩后启动 implement 时, 按顺序):
 1. `.claude/CLAUDE.md`
 2. `docs/framing/v2.x-north-star.md` (重点 §1 三层架构 + §6 八条哲学)
 3. `openspec/README.md`
 4. `openspec/changes/IMPLEMENTATION-HANDOFF.md` (本文)
-5. `openspec/changes/2026-04-chat-as-portal/proposal.md` (全, 含 OQ-1 ~ OQ-7 + §7 风险)
-6. `openspec/changes/2026-04-chat-as-portal/{design,tasks,decisions}.md` (骨架, 看 [TODO] 知道哪里需要填)
-7. `openspec/archive/2026/04/2026-04-bootstrap-tools/{proposal,design}.md` (复用接口)
-8. `~/Library/Application Support/atomsyn/chat/AGENTS.md` + `SOUL.md` (当前 GUI LLM 行为规范)
-9. `src/lib/contextHarness.ts` + `src/lib/chatLlmClient.ts` (当前聊天链路, 不实现 tool-use)
+5. `openspec/changes/2026-04-chat-as-portal/proposal.md` (核心命题 + 风险)
+6. `openspec/changes/2026-04-chat-as-portal/design.md` (锁定的设计, 重点 §3 流程 + §5 接口契约 + §11 验证策略)
+7. `openspec/changes/2026-04-chat-as-portal/decisions.md` (D-001 ~ D-007 全部 accepted)
+8. `openspec/changes/2026-04-chat-as-portal/tasks.md` (B → A → C → D → V 顺序)
+9. `~/Library/Application Support/atomsyn/chat/AGENTS.md` (A3 任务的修改对象)
+10. `scripts/atlas-cli.mjs` (B1 任务的修改对象, install-skill 加 codex)
 
-**第一步**: 与用户对齐 OQ-1 / OQ-3 / OQ-6 (核心架构选择), 拍板后回填 design.md, 状态 draft → reviewed → locked → 进入 implement.
+**第一个动作**: B1 - atomsyn-cli install-skill 加 Codex 支持 (调研 + 实现). B1 完成后 B2/B3/B4 才能开始实测.
 
 ---
 
