@@ -322,9 +322,29 @@ async function appendUsageLog(dataDir, event) {
 async function cmdWhere() {
   const { path, source } = resolveDataDir()
   const exists = existsSync(path)
+
+  // Skill 安装位置探测 (B1.4 of 2026-04-chat-as-portal): 对每个 target 检查
+  // skill 目录是否存在 + 哪些 skill 已装. 帮用户定位 skill 在外部 Agent 中
+  // 是否就位 (B 组实测前置).
+  const SKILL_NAMES = ['atomsyn-bootstrap', 'atomsyn-write', 'atomsyn-read', 'atomsyn-mentor']
+  const skillTargets = Object.entries(TARGET_SKILL_DIRS).map(([target, dirFn]) => {
+    const dir = dirFn()
+    const dirExists = existsSync(dir)
+    const installed = SKILL_NAMES.map((name) => ({
+      name,
+      installed: dirExists && existsSync(join(dir, name, 'SKILL.md')),
+    }))
+    return { target, dir, dirExists, installed }
+  })
+
+  // CLI shim 探测
+  const shimPath = join(homedir(), '.atomsyn', 'bin', 'atomsyn-cli')
+  const shimInstalled = existsSync(shimPath)
+
   console.log(
     JSON.stringify(
       {
+        // 顶层 path/source/exists/resolutionOrder 保持向后兼容 (cli-regression 依赖)
         path,
         source,
         exists,
@@ -333,6 +353,12 @@ async function cmdWhere() {
           { rule: 'config', file: join(homedir(), '.atomsyn-config.json'), matched: source === 'config' },
           { rule: 'default', platformPath: join(platformAppDataDir(), 'atomsyn'), matched: source === 'default' },
         ],
+        // V2.x chat-as-portal 新增: skill 安装位置探测 (additive)
+        cliShim: {
+          path: shimPath,
+          installed: shimInstalled,
+        },
+        skills: skillTargets,
       },
       null,
       2
@@ -1409,7 +1435,10 @@ async function cmdPrune(args) {
 const TARGET_SKILL_DIRS = {
   claude: () => join(homedir(), '.claude', 'skills'),
   cursor: () => join(homedir(), '.cursor', 'skills'),
-  // codex / trae deliberately left out of V1.5 scope
+  // Codex CLI 用户级全局 skills 路径: $HOME/.agents/skills/<skill>/SKILL.md
+  // 来源: https://developers.openai.com/codex/skills (跨 repo 的 user-level skills)
+  // 注意: 不是 ~/.codex/skills (那是 Codex 内置目录)
+  codex: () => join(homedir(), '.agents', 'skills'),
 }
 
 async function copyDirRecursive(src, dst) {
@@ -1609,8 +1638,11 @@ async function cmdInstallSkill(args) {
   }
 
   const pathHint = shimInfo ? pathRcInstructions(shimInfo.binDir) : ''
+  const restartHint = targets.includes('codex')
+    ? 'Restart your AI tool (Claude Code / Cursor / Codex) so it picks up the new skills.'
+    : 'Restart your AI coding tool (Claude Code / Cursor) so it picks up the new skills.'
   const nextSteps = [
-    'Restart your AI coding tool (Claude Code / Cursor) so it picks up the new skills.',
+    restartHint,
     'Try saying "帮我记下来" or "save to my atomsyn" in a conversation to test.',
     `CLI shim at ${shimInfo ? shimInfo.binDir : '(dry-run, not created)'}`,
   ]
@@ -2733,11 +2765,14 @@ Usage:
                                          (agent-friendly output for atomsyn-read)
   atomsyn-cli reindex                      Rebuild data/index/knowledge-index.json
   atomsyn-cli where                        Print resolved data directory + source
-  atomsyn-cli install-skill [--target claude|cursor|all] [--dry-run] [--no-path]
-                                         Install atomsyn-write / atomsyn-read skills
-                                         into ~/.claude/skills and/or
-                                         ~/.cursor/skills, plus a stable
-                                         CLI shim at ~/.atomsyn/bin/atomsyn-cli
+  atomsyn-cli install-skill [--target claude|cursor|codex|all] [--dry-run] [--no-path]
+                                         Install atomsyn-bootstrap / write / read /
+                                         mentor skills into:
+                                           claude → ~/.claude/skills/
+                                           cursor → ~/.cursor/skills/
+                                           codex  → ~/.agents/skills/
+                                         (+ stable CLI shim at ~/.atomsyn/bin/atomsyn-cli)
+                                         --target all 一次装三家 (Anthropic + OpenAI 双覆盖)
   atomsyn-cli mentor [--range week|month|all] [--format data|report]
                                          Cognitive review: analyze knowledge gaps
   atomsyn-cli supersede --id <old-id> --input <new-atom-file> [--no-archive-old]

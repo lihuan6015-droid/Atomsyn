@@ -10,11 +10,11 @@
 
 > **强约束**: B 组先于 A. B7 触发率 < 80% 时, A 组冻结, 走 D-004 升级路径.
 
-- [ ] **B1. atomsyn-cli install-skill 加 Codex 支持** (依 D-005, design §5.1):
-  - [ ] B1.1 调研 Codex CLI skill 加载路径 (候选: `~/.codex/skills/`, `~/.codex/agents/`, 项目级 `.codex/skills/`)
-  - [ ] B1.2 在 `scripts/atlas-cli.mjs` 的 `cmdInstallSkill` 加 `--target codex` 分支
-  - [ ] B1.3 `--target all` 同时装 claude + cursor + codex
-  - [ ] B1.4 在 `atomsyn-cli where` 输出列出已安装位置
+- [x] **B1. atomsyn-cli install-skill 加 Codex 支持** (依 D-005, design §5.1):
+  - [x] B1.1 调研 Codex CLI skill 加载路径 → 用户级全局: `~/.agents/skills/<skill>/SKILL.md` (来源: developers.openai.com/codex/skills)
+  - [x] B1.2 在 `scripts/atomsyn-cli.mjs` 的 `TARGET_SKILL_DIRS` 加 `codex` 分支 (路径 `~/.agents/skills/`)
+  - [x] B1.3 `--target all` 自动装三家 (`Object.keys(TARGET_SKILL_DIRS)` 自动覆盖)
+  - [x] B1.4 `cmdWhere` 输出 additive 新增 `cliShim` + `skills` (列出三家 target 的目录存在 + 4 skill 安装状态), 顶层字段保持向后兼容
 - [ ] **B2. 实测 atomsyn-bootstrap 在 Claude Code 触发**:
   - [ ] B2.1 跑 `atomsyn-cli install-skill --target claude`, 验证 `~/.claude/skills/atomsyn-bootstrap/SKILL.md` 存在
   - [ ] B2.2 新 Claude Code 会话发 5 个测试 prompt, 记录命中情况

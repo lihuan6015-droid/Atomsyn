@@ -235,16 +235,27 @@ session.json / atom.schema.json / profile-atom.schema.json 全部沿用 bootstra
 
 **核心命令面无变更** (bootstrap / write / read / mentor / supersede / archive / prune / reindex / where 全 surface 沿用).
 
-**install-skill 子命令扩展** (B 组前置, D-005 触发):
+**install-skill 子命令扩展** (B1 已实施, D-005 触发):
 
 ```
 atomsyn-cli install-skill --target <claude|cursor|codex|all>
 ```
 
-新增 `--target codex` 支持. Codex CLI 的 skill 加载路径需在 B1 任务前调研 (Codex CLI 文档 + 实测), 候选位置:
-- `~/.codex/skills/atomsyn-bootstrap/SKILL.md` (类比 Claude Code)
-- `~/.codex/agents/atomsyn-*.md` (Codex 用 agents 命名)
-- 项目级 `.codex/skills/` (本地工作区)
+**Codex CLI skill 加载路径** (B1.1 调研结果, 来源 https://developers.openai.com/codex/skills):
+- 用户级全局 (跨 repo): **`~/.agents/skills/<skill-name>/SKILL.md`** ← atomsyn-cli 选这个
+- 项目级 (单 repo): `<project>/.agents/skills/<skill-name>/SKILL.md` (本 change 不涉及)
+- 不是 `~/.codex/skills/` (那是 Codex 内置目录) — 容易混淆, 文档 + cli usage 已加注释
+
+**三家 target 安装路径汇总**:
+
+| Target | 安装路径 | 说明 |
+|---|---|---|
+| `claude` | `~/.claude/skills/<skill-name>/SKILL.md` | Anthropic Claude Code |
+| `cursor` | `~/.cursor/skills/<skill-name>/SKILL.md` | Cursor IDE |
+| `codex` | `~/.agents/skills/<skill-name>/SKILL.md` | OpenAI Codex CLI (B1 新增) |
+| `all` | 三家全装 | 默认推荐 (atomsyn-cli usage doc) |
+
+**`atomsyn-cli where` 输出扩展** (B1.4 已实施): 顶层 path/source/exists 保持向后兼容 (cli-regression 依赖), additive 新增 `cliShim` (shim 路径 + installed) + `skills` (各 target 目录存在 + 4 个 skill 安装状态), 帮用户定位 skill 是否就位.
 
 **install-skill 不写**: D-006 触发率测试用手动跑, 不写 `atomsyn-cli skill-test` 子命令.
 
