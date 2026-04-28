@@ -515,5 +515,98 @@ D-009 决策"agent-driven 模式 v1 不写 profile" 是错误的工程偏离 —
 
 ---
 
+## D-012 · SKILL.md 从"操作手册"重写为"哲学契约" (2026-04-28 第三次实测后新增)
+
+**状态**: accepted
+**日期**: 2026-04-28
+**决策人**: 用户 + 主 agent (基于 atomsyn-bootstrap 第三次实测的战略反思)
+
+### 背景
+
+第三次实测 (~/Documents/时光留声 + ~/Documents/开发过程资料 + ~/develop git history) 跑通了 D-011 双层产出 (10 experience + 1 profile), 但用户在事后反思中指出根本性设计偏差:
+
+> "我还是觉得整个 bootstrap 是否存在过多的规则约束, 现在 Agent 的能力我们如果做太多约束反而起到反作用. 例如**为什么 atom 提取都是 10 条**? 是否应该根据用户实际指定的目录, 渐进式的交互推进, 不要急于总结输出, **与用户对齐认知比努力做更有效**. 我们的 skill 应该以一种**哲学的视角**进行设计, 不要被我们当前的认知束缚住了不同用户、不同环境、不同 Agent 的能力."
+
+具体诊断:
+
+1. **隐性数量约束**: SKILL.md Step 3 markdown 模板含"候选 1 / M"暗示了固定结构, 导致 Claude Code 实测时输出"10 条" — 不是因为文档里真有 10 个洞察, 而是模板暗示
+2. **过度操作化**: 7 步编号 (Step 0/1/2/2.5/3/4/4.5/5) 把流程锁死, 不允许 Agent 根据具体场景渐进调整
+3. **字段表 over-prescription**: Step 2 文件格式 → 工具映射表 + Step 2.5 每字段"何时跳过"细则, 假设了我们比 Agent 更懂当下场景
+4. **批量主义**: 当前流程是"扫完 → 批量 markdown → 批量入库", 强制一次性输出. 用户期望: 边读边对齐 ("我在 X 看到了 Y, 这值得作为 atom 吗?"), 渐进推进
+5. **认知束缚**: 当前 SKILL 假设了一个"标准 bootstrap 工况", 但不同用户 (开发者 vs 学习者) / 不同环境 (Cursor vs Codex vs Claude Desktop) / 不同目录 (10 文件 vs 1000 文件) 的最佳路径完全不同
+
+更深层: SKILL.md 应该是给 Agent 看的**契约 (what / why)**, 不是**剧本 (how)**. Agent 拿到契约能在不同场景下灵活适配; 拿到剧本就被锁在我们的预设里.
+
+### 决策
+
+**重写 atomsyn-bootstrap SKILL.md, 从"操作手册"转为"哲学契约"**, 严格遵循以下分类:
+
+#### 保留 (核心契约 / 不变量 / 接口)
+
+- **北极星 + 双层产出本质**: atomsyn 是什么 + bootstrap 在仓库层的角色
+- **5 条 Iron Promises (B-I1..B-I5)**: 永远不可妥协的契约
+- **接口契约**: cli 应调 ✅ / 不调 ❌ 命令面 + schema 文件路径引用 (不内联示例)
+- **触发关键词**: 简短的中英关键词列表 (skill selector 命中)
+- **重跑校准协议**: D-011 字段级 diff 不可让步
+- **流程哲学** (1 段, 不编号): 与用户对齐 → cli triage → 你 read → 用户认可 → cli write → cli write-profile (有证据时) → reindex
+
+#### 删除 (操作约束, Agent 自有判断)
+
+- **步骤编号 (Step 0/1/2/2.5/3/4/4.5/5)** → 改成"流程哲学" 1 段精神描述
+- **文件格式 → 工具映射表** (.pdf → pdftotext, .docx → pandoc) → Agent 自己懂用什么工具读
+- **Step 2.5 字段抽取规则表** (每字段说"何时跳过") → 1 句话哲学 "证据驱动, 没证据 OMIT"
+- **Step 3 markdown 报告模板** (含"候选 1 / M" 暗示数量) → 删整段, 强调"渐进式与用户对齐, 数量由文档决定"
+- **Step 4 cli write 命令 + 临时文件示例** → 删, cli 自己有 usage doc
+- **Step 4.5 完整 profile JSON 示例** → 删, schema 文件路径足够
+- **错误处理速查表 (10 行)** → 精简到 3-5 行关键的
+- **Token 预算段** → 删
+- **v1 限制段过细**:精简
+
+#### 新增 (回应反馈)
+
+> **流程是渐进的, 不是一次性的. 与用户对齐认知比努力做完更有效. 不要预设要抽多少条 atom — 看用户实际文档质量决定. 不要憋一份完整 markdown 再 commit, 可以边读边和用户对齐. 你比 SKILL 更懂当下场景, 用你的判断力, 不要被这份文档束缚.**
+
+#### 实施清单
+
+- B0.10 重写 atomsyn-bootstrap SKILL.md (~500 行 → ~180 行, -65%)
+- 重新部署到三家 (`install-skill --target all`)
+
+#### 暂不精简 (留下次实测)
+
+- atomsyn-write SKILL.md (~370 行)
+- atomsyn-read SKILL.md (~240 行)
+- atomsyn-mentor SKILL.md (~270 行)
+
+理由: 这三个 skill 还没经历 chat-as-portal 时代的真实实测 (B5 60 测试矩阵尚未跑), 不知道哪些约束是过度的. 等 B5 实测时 Claude Code/Cursor/Codex 的实际表现暴露具体过度约束, 再起 followup 重写 (可能是 D-013, 也可能不需要).
+
+### 理由
+
+- **Agent 能力进化**: Anthropic / OpenAI 持续提升 Claude Code / Codex 等 Agent 的判断力, 我们今天写的"详细操作手册" 6 个月后会变成"过时的束缚"
+- **多 Agent 兼容**: SKILL 装到 Claude Code / Cursor / Codex 三家, 它们的工具集 + 默认行为不同. 操作模板假设单一 Agent 能力, 哲学契约才能跨 Agent
+- **用户场景多样**: 10 文件 vs 1000 文件 / 技术文档 vs 心情日记 / 第一次跑 vs 第十次跑, 最优流程完全不同. SKILL 不应假定单一场景
+- **设计哲学**: Anthropic 自己的 SKILL 设计原则: 给 description (when) + Iron Rules (must), 而不是 procedure (how). 我们之前偏离了这条
+- **奥卡姆剃刀**: 越精简的 SKILL, Agent 越能展现真实能力 + 越能在不同环境适配
+
+### 备选方案
+
+- **(a) 维持当前 ~500 行**: Agent 看模板复制粘贴, 容易出"10 条 atom"这种隐性约束. 表面"标准化"实际"束缚化"
+- **(b) 哲学化重写至 ~180 行** (选中): Agent 拿哲学 + 不变量 + 接口契约, 在不同场景下灵活适配
+- **(c) 极简化 (~50 行 frontmatter only)**: 失去契约性 (B-I1..B-I5 不变量必须显式表达), Agent 不知道边界在哪
+
+### 后果
+
+- bootstrap SKILL.md 重写到 ~180 行, 大量删 (-320 行) + 少量增 (+30 行哲学段)
+- B5 60 测试矩阵的 atomsyn-bootstrap 触发后行为可能有差异 (Agent 自由度更大), 需要重新建立 baseline
+- 反向 trigger: 如果新 SKILL 实测后发现某个 Iron Promise 没被遵守 (e.g. 用户主权被违反), 不重新加操作步骤, 而是把违反点写进 Iron Promises (扩 B-I 到 6 条 / 7 条等), 保持哲学契约的纯粹性
+- write/read/mentor 三个 SKILL 暂不精简, 等 B5 实测发现具体过度约束再决定 (可能起 D-013)
+
+### 与之前决策的关系
+
+- D-008/D-009/D-010 不变 (cli 不调 LLM / SKILL Agent 视角 / SOUL+AGENTS 双重声明)
+- D-011 不变 (profile 写入 + 证据驱动 + 校准协议) — 这些是核心契约, 不在精简范围
+- B0.1..B0.9 已完成的工作不回滚, 本次仅在 SKILL.md 文本层面重写, 不动 cli / schema / decisions 的实质决策
+
+---
+
 > **追加新决策**时, 复制 D-XXX 模板 entry。决策被新决策替代时, 旧决策状态改为 `superseded by D-XXX`, 不删除。
 > **归档前**再扫一遍, 把 proposed 状态的决策定型为 accepted (或 rejected)。
