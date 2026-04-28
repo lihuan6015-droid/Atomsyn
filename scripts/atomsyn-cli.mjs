@@ -928,6 +928,99 @@ async function cmdGet(args) {
       for (const mid of atom.linked_methodologies) lines.push(`- \`${mid}\``)
       lines.push('')
     }
+  } else if (atom.kind === 'profile') {
+    // Profile-specific markdown render (D-013, chat-as-portal): 提供完整字段视图
+    // 让 Agent 在 rerun 场景下做字段级 diff. cli get --id atom_profile_main 是
+    // SKILL.md 重跑章节的入口命令.
+    lines.push(`# ${atom.name || '用户元认知画像'}`)
+    const verifiedTag =
+      atom.verified === true ? '✅ 已校准' : '❌ 未校准 (verified=false)'
+    const infoBits = [
+      `*ID*: \`${atom.id}\``,
+      `*Kind*: profile`,
+      `*Verified*: ${verifiedTag}`,
+    ]
+    if (atom.verifiedAt) infoBits.push(`*Verified at*: ${atom.verifiedAt}`)
+    if (atom.inferred_at) infoBits.push(`*Inferred at*: ${atom.inferred_at}`)
+    lines.push(infoBits.join(' · '))
+    lines.push('')
+
+    if (atom.source_summary) {
+      lines.push(`**Source summary**: ${atom.source_summary}`)
+      lines.push('')
+    }
+
+    // Identity (含 schema 已知 4 字段 + additionalProperties)
+    if (atom.identity && Object.keys(atom.identity).length > 0) {
+      lines.push('## Identity')
+      const KNOWN_IDENTITY = ['role', 'working_style', 'primary_languages', 'primary_tools']
+      if (atom.identity.role) lines.push(`- **Role**: ${atom.identity.role}`)
+      if (atom.identity.working_style) lines.push(`- **Working style**: ${atom.identity.working_style}`)
+      if (atom.identity.primary_languages?.length) {
+        lines.push(`- **Primary languages**: ${atom.identity.primary_languages.join(', ')}`)
+      }
+      if (atom.identity.primary_tools?.length) {
+        lines.push(`- **Primary tools**: ${atom.identity.primary_tools.join(', ')}`)
+      }
+      for (const [k, v] of Object.entries(atom.identity)) {
+        if (KNOWN_IDENTITY.includes(k)) continue
+        const display = Array.isArray(v) ? v.join(', ') : String(v)
+        lines.push(`- **${k}**: ${display}`)
+      }
+      lines.push('')
+    }
+
+    // Preferences (5 维 plan-tune 兼容, 按 schema 定义顺序)
+    if (atom.preferences && Object.keys(atom.preferences).length > 0) {
+      lines.push('## Preferences (0-1, plan-tune 兼容)')
+      const PREF_ORDER = [
+        'scope_appetite',
+        'risk_tolerance',
+        'detail_preference',
+        'autonomy',
+        'architecture_care',
+      ]
+      for (const k of PREF_ORDER) {
+        if (typeof atom.preferences[k] === 'number') {
+          lines.push(`- **${k}**: ${atom.preferences[k]}`)
+        }
+      }
+      lines.push('')
+    }
+
+    // Knowledge Domains
+    if (atom.knowledge_domains?.length) {
+      lines.push(`## Knowledge Domains (${atom.knowledge_domains.length})`)
+      for (const d of atom.knowledge_domains) lines.push(`- ${d}`)
+      lines.push('')
+    }
+
+    // Recurring Patterns (numbered, 用户校准时易引用)
+    if (atom.recurring_patterns?.length) {
+      lines.push(`## Recurring Patterns (${atom.recurring_patterns.length})`)
+      for (let i = 0; i < atom.recurring_patterns.length; i++) {
+        lines.push(`${i + 1}. ${atom.recurring_patterns[i]}`)
+      }
+      lines.push('')
+    }
+
+    // Stats (counts, 不展开实际 atom_id 列表 — 太长)
+    const evidenceCount = (atom.evidence_atom_ids || []).length
+    const versionsCount = (atom.previous_versions || []).length
+    lines.push('## Stats')
+    lines.push(`- Evidence atoms: ${evidenceCount} 条`)
+    lines.push(`- Previous versions: ${versionsCount} 历史快照`)
+    if (atom.lastAccessedAt) lines.push(`- Last accessed: ${atom.lastAccessedAt}`)
+    if (atom.createdAt) lines.push(`- Created: ${atom.createdAt}`)
+    if (atom.updatedAt) lines.push(`- Updated: ${atom.updatedAt}`)
+    lines.push('')
+
+    // Agent hint (D-013): rerun 场景的下一步
+    lines.push('---')
+    lines.push('')
+    lines.push(
+      '> **For Agent (rerun 场景)**: 这是当前 profile 的现状. 与你新抽象的 profile 数据做**字段级 diff**, 让用户逐字段决定 `keep_old` / `use_new` / `merge` (array 类型才有 merge), 然后用合并版本调 `atomsyn-cli write-profile --stdin` 写入. cli 自动 trigger=`bootstrap_rerun`, 旧快照入 `previous_versions[]`, **强制 reset verified=false** 提醒用户去 GUI ProfilePage 重新校准. 详见 atomsyn-bootstrap SKILL.md 重跑章节 + decisions.md D-011/D-013.'
+    )
   } else {
     // skill-inventory or unknown kind: minimal output
     lines.push(`# ${atom.name || atom.id}`)

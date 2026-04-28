@@ -608,5 +608,56 @@ D-009 决策"agent-driven 模式 v1 不写 profile" 是错误的工程偏离 —
 
 ---
 
+## D-013 · cli get 加 profile-specific markdown 渲染 + SKILL 明确读取现状路径 (2026-04-28)
+
+**状态**: accepted
+**日期**: 2026-04-28
+**决策人**: 用户 + 主 agent (基于"profile 写入与更新闭环"反思)
+
+### 背景
+
+D-011 实现了 profile 写入 (initial + rerun + applyProfileEvolution + reset verified). 第三次实测后用户指出闭环不完整:
+
+> "由于用户的画像是会迭代变化的, 我们的 skill 中是否提供了**读取当前用户 profile 现状**, 与更新的说明设计?"
+
+核实结果:
+- ✅ `cli get --id atom_profile_main` 能找到 profile 文件
+- ❌ `cmdGet` 走 fallback 分支 (line 931 "skill-inventory or unknown kind"), 只输出 name + id + 一段 coreIdea, **不展示** preferences 5 维 / identity / knowledge_domains / recurring_patterns / verified 状态 / previous_versions
+- ❌ SKILL.md 重跑章节说"展示旧值 vs 新值" 但**没说怎么读取旧值**
+- ❌ 部分弱 Agent 不知道有 cli get 能力, 可能 Read JSON 自行 parse, 输出格式不一致
+
+### 决策
+
+**A 方案 (修补现有命令而非加新命令)**:
+
+1. **cli get 加 profile-specific markdown 渲染分支** (`atomsyn-cli.mjs:931` 之前): 输出含 identity (4 字段) / preferences (5 维, plan-tune 兼容顺序) / knowledge_domains / recurring_patterns (numbered) / verified 状态 / previous_versions 计数 / source_summary / lastAccessedAt / 末尾 "For Agent (rerun 场景)" 提示段
+2. **SKILL.md rerun 章节加"第一步 — 读取现状"**: 明确说调 `atomsyn-cli get --id atom_profile_main` 拿现有 profile 的结构化 markdown 作为字段级 diff 的"旧值"基础
+3. **SKILL.md "应调用 ✅"列表加** `cli get --id atom_profile_main` (rerun 必经入口)
+
+### 理由
+
+- **接口对称**: write-profile 已存在, get --id 复用现有命令面 (api 不膨胀)
+- **markdown 输出对所有 Agent 一致**, 不依赖 Agent 解析 JSON 的能力 (弱 Agent 也能用)
+- **完善 D-011 闭环**: 写 (write-profile) + 读 (get --id) + 单例语义 (applyProfileEvolution) + 校准协议 (rerun 字段级 diff) 形成完整闭环
+
+### 备选方案
+
+- **(B) 加 atomsyn-cli read-profile 专用命令**: 命令面新增对称但冗余 (cli get --id 已能查), 增加 ~80 行代码维护成本
+- **(C) SKILL 教 Agent 直接 Read JSON 文件**: 最经济 (0 cli 改动), 但 Agent 依赖解析能力, 弱 Agent 渲染不一致, 也违反 cli-first 的接口契约美感
+
+### 后果
+
+- B0.11 任务: cli get profile 渲染 + SKILL.md 调整 + 重新部署
+- get profile 输出含 ~30 行结构化 markdown, 末尾"For Agent" 提示段引导 rerun 流程
+- profile 闭环完整: 写 ✅ + 读 ✅ + 单例 ✅ + 校准协议 ✅
+- 同时 cli get 对 profile 也走 aiInvokeCount + lastAccessedAt 节流更新逻辑 (与 experience atom 一致)
+
+### 与之前决策的关系
+
+- D-011 不变 (profile 写入 + rerun 协议) — D-013 完善其"读"端
+- D-008/D-009/D-010/D-012 不变
+
+---
+
 > **追加新决策**时, 复制 D-XXX 模板 entry。决策被新决策替代时, 旧决策状态改为 `superseded by D-XXX`, 不删除。
 > **归档前**再扫一遍, 把 proposed 状态的决策定型为 accepted (或 rejected)。

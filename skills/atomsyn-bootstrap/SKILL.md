@@ -28,6 +28,7 @@ bootstrap 是仓库层 (Vault) 的冷启动. 没有它, 新用户面对空知识
 - `atomsyn-cli where` — 数据目录路径 + 现有 profile 探测 (rerun 判断)
 - `atomsyn-cli bootstrap --path <X> --phase triage` — 扫盘列文件元数据 (cli 不读内容, 不调 LLM, 不需要 ATOMSYN_LLM_API_KEY)
 - `atomsyn-cli write --stdin` 或 `--input <file>` — 写入一条 experience atom
+- `atomsyn-cli get --id atom_profile_main` — **读取现有 profile 的结构化 markdown** (D-013, rerun 场景必经入口); 加 `--json` 拿 raw
 - `atomsyn-cli write-profile --stdin` 或 `--input <file>` — 写入 profile atom (单例 + applyProfileEvolution + 自动 trigger)
 - `atomsyn-cli find --query "..."` — 查重 (可选)
 - `atomsyn-cli reindex` — 重建索引
@@ -96,18 +97,27 @@ bootstrap 是仓库层 (Vault) 的冷启动. 没有它, 新用户面对空知识
 
 ## 重跑场景 (D-011 校准协议)
 
-`atomsyn-cli where` 输出含 `skills` 段或直接 `find <dataDir>/atoms/profile/main/atom_profile_main.json` 速查; 已有 profile = rerun.
+`atomsyn-cli where` 输出含 skills 段 / 或直接 `find <dataDir>/atoms/profile/main/atom_profile_main.json` 速查; 已有 profile = rerun.
+
+**rerun 第一步 — 读取现状** (D-013):
+
+```bash
+atomsyn-cli get --id atom_profile_main
+```
+
+cli 输出现有 profile 的**结构化 markdown** (含 identity / preferences 5 维 / knowledge_domains / recurring_patterns / verified 状态 / previous_versions 计数 / source_summary / Agent 提示段). 这是字段级 diff 的"旧值"基础. 也可加 `--json` 拿 raw JSON 自行 parse, 但默认 markdown 输出对所有 Agent 一致, 推荐使用.
 
 **rerun 时必须**:
 
 - 不要把新 profile 数据直接覆写, 必须**字段级**对齐用户:
-  - 每个字段展示 旧值 vs 新值
+  - 每个字段展示 旧值 (来自 `cli get`) vs 新值 (来自你 Step 2.5 抽象)
   - 用 AskUserQuestion 让用户选 keep_old / use_new / merge (array 类型才有 merge)
 - 用户全确认后, 用合并版本调 `cli write-profile`
 - cli 自动 trigger=`bootstrap_rerun`, 旧快照入 previous_versions 历史栈, **强制 reset verified=false** 提醒用户去 GUI 重新校准
 - 校准是双向: 字段级 (你完成) + verified 元状态 (用户去 GUI ProfilePage 切)
 
 **rerun 不要**:
+- ❌ 跳过"读取现状"步直接抽象新 profile (你不知道旧值就没法做 diff)
 - ❌ 跳过字段级 diff 直接覆写
 - ❌ 因为新数据看起来更全就单方面用新值
 - ❌ 修改 verified 状态 (cli 内部处理, 你不要传)

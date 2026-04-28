@@ -21,6 +21,7 @@
   - [x] B0.8 SKILL.md 加 Step 2.5 (证据驱动 profile 抽象) + Step 4.5 (cli write-profile 入库) + Step 3 markdown 字段级 diff 校准协议; Iron Promises 加 B-I5; 反模式加 placeholder + rerun 跳过 diff 两条; v1 限制段移除"agent-driven 不写 profile"
   - [x] B0.9 重新部署 SKILL 到三家 (`install-skill --target all`)
   - [x] B0.10 SKILL.md 哲学化重写 (依 D-012, 第三次实测后): ~500 行 → 165 行 (-67%); 删步骤编号 + 字段表 + markdown 模板 + 命令示例 + 隐性数量约束; 保留 5 条 Iron Promises + cli 接口契约 + 流程哲学段 (强调"渐进式 + 与用户对齐 > 努力做完"); 重新部署到三家
+  - [x] B0.11 cli get profile 渲染 + SKILL rerun 读取现状 (依 D-013): cmdGet 加 profile-specific markdown 分支 (~85 行, 输出 identity/preferences/domains/patterns/verified/previous_versions/source_summary + Agent 提示); SKILL.md rerun 章节加"第一步 — 读取现状" 明确 `cli get --id atom_profile_main` 入口; 应调用列表加 cli get; 重新部署
 
 - [x] **B1. atomsyn-cli install-skill 加 Codex 支持** (依 D-005, design §5.1):
   - [x] B1.1 调研 Codex CLI skill 加载路径 → 用户级全局: `~/.agents/skills/<skill>/SKILL.md` (来源: developers.openai.com/codex/skills)
