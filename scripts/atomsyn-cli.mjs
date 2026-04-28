@@ -39,6 +39,7 @@ import {
   applySupersede,
   applyArchive,
   detectPruneCandidates,
+  applyProfileEvolution,
 } from './lib/evolution.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
@@ -1676,6 +1677,188 @@ async function cmdInstallSkill(args) {
 }
 
 // ---------------------------------------------------------------------------
+// Subcommand: write-profile (V2.x chat-as-portal · D-011)
+// 给外部 Agent (Claude Code / Cursor / Codex) 写 profile atom 的入口。
+// 复用 evolution.mjs::applyProfileEvolution 实现单例 + previous_versions 入栈;
+// rerun 时强制 reset verified=false (D-011 校准协议: 字段级校准 + verified 元状态
+// 是双向操作, 字段在 SKILL.md 已让用户做了 diff 校准, verified 必须用户去 GUI
+// ProfilePage 重新切).
+// ---------------------------------------------------------------------------
+
+const VALID_PROFILE_TRIGGERS = [
+  'bootstrap_initial',
+  'bootstrap_rerun',
+  'user_calibration',
+  'agent_evolution',
+  'restore_previous',
+]
+
+async function readProfileFile(dataDir) {
+  const file = join(dataDir, 'atoms', 'profile', 'main', 'atom_profile_main.json')
+  if (!existsSync(file)) return null
+  try {
+    return JSON.parse(await readFile(file, 'utf8'))
+  } catch {
+    return null
+  }
+}
+
+async function writeProfileFile(dataDir, profile) {
+  const dir = join(dataDir, 'atoms', 'profile', 'main')
+  await mkdir(dir, { recursive: true })
+  const file = join(dir, 'atom_profile_main.json')
+  await writeFile(file, JSON.stringify(profile, null, 2), 'utf8')
+}
+
+async function cmdWriteProfile(args) {
+  let input
+  if (hasFlag(args, '--stdin')) {
+    input = await readStdin()
+  } else {
+    const inputFile = getFlag(args, '--input')
+    if (!inputFile) die('write-profile requires --stdin or --input <file>')
+    input = await readFile(inputFile, 'utf8')
+  }
+  if (!input.trim()) die('Empty input')
+
+  let payload
+  try {
+    payload = parseJsonRobust(input)
+  } catch (err) {
+    die(`Input is not valid JSON: ${err.message}\nTip: 如仍失败, 请先写入临时文件, 再用 --input /tmp/atomsyn_profile.json`)
+  }
+
+  const { path: dataDir } = resolveDataDir()
+  await ensureDataLayout(dataDir)
+
+  // D-011 evidence-driven: 至少一个 evolution 字段非空, 否则拒绝写入空 profile.
+  const hasContent =
+    payload.preferences ||
+    payload.identity ||
+    (Array.isArray(payload.knowledge_domains) && payload.knowledge_domains.length > 0) ||
+    (Array.isArray(payload.recurring_patterns) && payload.recurring_patterns.length > 0)
+  if (!hasContent) {
+    die(
+      `Profile payload is empty. D-011 (evidence-driven): at least one of preferences / identity / knowledge_domains / recurring_patterns must have content. Skip profile entirely if no evidence found in source files — do NOT call write-profile with placeholder data.`,
+      4
+    )
+  }
+
+  // Auto-detect trigger unless explicitly overridden.
+  const explicitTrigger = getFlag(args, '--trigger')
+  let trigger
+  if (explicitTrigger) {
+    if (!VALID_PROFILE_TRIGGERS.includes(explicitTrigger)) {
+      die(
+        `Invalid --trigger '${explicitTrigger}'. Valid: ${VALID_PROFILE_TRIGGERS.join(', ')}`,
+        4
+      )
+    }
+    trigger = explicitTrigger
+  } else {
+    const existing = await readProfileFile(dataDir)
+    trigger = existing ? 'bootstrap_rerun' : 'bootstrap_initial'
+  }
+
+  // applyProfileEvolution 内部会调 writeProfile + rebuildIndex; 我们 noop 它们,
+  // 自己最后做一次 (避免双写盘 + 双 reindex), 同时利于 merge meta 字段。
+  const deps = {
+    dataDir,
+    readProfile: readProfileFile,
+    writeProfile: async () => {},
+    rebuildIndex: async () => {},
+  }
+  let profile
+  try {
+    profile = await applyProfileEvolution(deps, {
+      newSnapshot: {
+        preferences: payload.preferences,
+        identity: payload.identity,
+        knowledge_domains: payload.knowledge_domains,
+        recurring_patterns: payload.recurring_patterns,
+        evidence_atom_ids: payload.evidence_atom_ids,
+      },
+      trigger,
+      evidenceDelta: payload.evidence_delta || null,
+    })
+  } catch (err) {
+    if (err.code === 'INVALID_TRIGGER') die(err.message, 4)
+    die(err.stack || err.message)
+  }
+
+  // Merge schema-required + meta fields evolution.mjs 不处理.
+  if (!profile.name) {
+    profile.name = payload.name || `用户元认知画像 - ${new Date().toISOString().slice(0, 10)}`
+  } else if (payload.name) {
+    profile.name = payload.name
+  }
+  if (payload.nameEn !== undefined) profile.nameEn = payload.nameEn
+  if (payload.source_summary !== undefined) profile.source_summary = payload.source_summary
+  if (payload.inferred_at !== undefined) profile.inferred_at = payload.inferred_at
+
+  // schema requires `stats` block.
+  if (!profile.stats) profile.stats = { usedInProjects: [], useCount: 0 }
+  if (!Array.isArray(profile.stats.usedInProjects)) profile.stats.usedInProjects = []
+  if (typeof profile.stats.useCount !== 'number') profile.stats.useCount = 0
+  if (payload.stats?.bootstrap_session_id !== undefined) {
+    profile.stats.bootstrap_session_id = payload.stats.bootstrap_session_id
+  }
+  if (payload.stats?.imported !== undefined) {
+    profile.stats.imported = payload.stats.imported
+  } else if (trigger === 'bootstrap_initial' || trigger === 'bootstrap_rerun') {
+    profile.stats.imported = true
+  }
+
+  // D-011 校准协议: bootstrap_rerun 强制 reset verified=false.
+  if (trigger === 'bootstrap_rerun') {
+    profile.verified = false
+    profile.verifiedAt = null
+  } else if (trigger === 'bootstrap_initial' && profile.verified === undefined) {
+    profile.verified = false
+  }
+
+  await writeProfileFile(dataDir, profile)
+  await inlineRebuildIndex(dataDir)
+
+  await appendUsageLog(dataDir, {
+    ts: new Date().toISOString(),
+    event: 'profile.write',
+    payload: {
+      trigger,
+      profileId: profile.id,
+      evidenceCount: (profile.evidence_atom_ids || []).length,
+      previousVersions: (profile.previous_versions || []).length,
+    },
+  })
+
+  const outFile = join(dataDir, 'atoms', 'profile', 'main', 'atom_profile_main.json')
+  console.log(
+    JSON.stringify(
+      {
+        ok: true,
+        profileId: profile.id,
+        path: outFile,
+        trigger,
+        isInitial: trigger === 'bootstrap_initial',
+        isRerun: trigger === 'bootstrap_rerun',
+        previousVersionsCount: (profile.previous_versions || []).length,
+        evidenceCount: (profile.evidence_atom_ids || []).length,
+        verified: profile.verified === true,
+        verifiedAt: profile.verifiedAt || null,
+        hint:
+          trigger === 'bootstrap_rerun'
+            ? 'Profile updated (rerun). verified reset to false — please re-calibrate in Atomsyn ProfilePage.'
+            : trigger === 'bootstrap_initial'
+              ? 'Profile created (verified=false). Please go to Atomsyn ProfilePage to calibrate.'
+              : 'Profile evolution applied.',
+      },
+      null,
+      2
+    )
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Subcommand: reindex (inline implementation — works when CLI is installed
 // at ~/.atomsyn/bin/ without access to PROJECT_ROOT)
 // ---------------------------------------------------------------------------
@@ -2786,7 +2969,23 @@ Usage:
                                          3 阶段 funnel (TRIAGE → SAMPLING → DEEP DIVE)
                                          典型流: --dry-run 出 markdown 报告 → 用户校对
                                                  → --commit <session-id> 入库
+                                         GUI Wizard 路径用; 外部 Agent 走
+                                         atomsyn-bootstrap SKILL 的 agent-driven 流程.
                                          详见: atomsyn-cli bootstrap --help
+  atomsyn-cli write-profile (--stdin | --input <file>) [--trigger <name>]
+                                         V2.x chat-as-portal · agent-driven bootstrap
+                                         的 profile 入口 (D-011). 接受 profile JSON
+                                         snapshot, 自动判断 trigger:
+                                           dataDir 无 profile → bootstrap_initial
+                                           dataDir 有 profile → bootstrap_rerun
+                                         单例语义 (id=atom_profile_main) + 旧快照入
+                                         previous_versions[] 自动. rerun 时 reset
+                                         verified=false (D-011 校准协议). 显式
+                                         --trigger 可选 user_calibration /
+                                         agent_evolution / restore_previous.
+                                         input schema: skills/schemas/profile-atom.schema.json
+                                         至少含 preferences/identity/knowledge_domains/
+                                         recurring_patterns 之一 (evidence-driven, 拒空).
   atomsyn-cli --help                       Show this help
 
 Write input (loose — CLI owns all bookkeeping):
@@ -2857,6 +3056,9 @@ async function main() {
         break
       case 'bootstrap':
         await cmdBootstrap(rest)
+        break
+      case 'write-profile':
+        await cmdWriteProfile(rest)
         break
       default:
         die(`Unknown command: ${cmd}. Run atomsyn-cli --help for usage.`)

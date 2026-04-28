@@ -10,13 +10,16 @@
 
 > **强约束**: B 组先于 A. B5 触发率 < 80% 时, A 组冻结, 走 D-004 升级路径.
 
-- [x] **B0. SKILL.md + SOUL.md + AGENTS.md 完全重写** (依 D-008/D-009/D-010, 2026-04-28 实测后新增):
+- [x] **B0. SKILL.md + SOUL.md + AGENTS.md + cli write-profile** (依 D-008/D-009/D-010/D-011, 2026-04-28 实测后新增):
   - [x] B0.1 atomsyn-bootstrap SKILL.md frontmatter description 重写 (Agent 视角, 触发关键词加固, 删除"v1 仅支持 X 格式"约束)
-  - [x] B0.2 atomsyn-bootstrap SKILL.md 主体 rewrite (Agent-driven 5 步: where → triage → 自读任何格式 → markdown 候选报告 → cli write/reindex; 删除 sampling/deep-dive/commit 段; 4 条新 Iron Promises)
+  - [x] B0.2 atomsyn-bootstrap SKILL.md 主体 rewrite (Agent-driven 7 步: where → triage → 自读任何格式 → 抽象 profile → markdown 候选报告 → cli write 入 experience → cli write-profile 入 profile → reindex; 删除 sampling/deep-dive/commit 段)
   - [x] B0.3 删除"v1 仅支持 .md/.txt/.json/源代码" 类格式约束 (随 B0.2 完成)
   - [x] B0.4 SOUL.md 加 "运行环境与边界" 段 (双份: `skills/chat/SOUL.md` + `~/Library/Application Support/atomsyn/chat/SOUL.md`)
   - [x] B0.5 AGENTS.md 加 "🚀 atomsyn-bootstrap (引导外部 Agent 执行)" 段 + Skill 路由决策树加 bootstrap 路由 (双份)
-  - [x] B0.6 审查 atomsyn-write/read/mentor SKILL.md 错位 → **审查结果**: 三个 SKILL.md 已是 Agent 视角 (cli 输出 markdown/JSON, agent 引用/分析), 无需大改
+  - [x] B0.6 审查 atomsyn-write/read/mentor SKILL.md 错位 → **审查结果**: 三个 SKILL.md 已是 Agent 视角, 无需大改
+  - [x] B0.7 atomsyn-cli 加 `write-profile --stdin` (依 D-011): 复用 `evolution.mjs::applyProfileEvolution`, 自动 trigger (initial/rerun), rerun 强制 reset verified=false, 拒空 payload (exit 4); smoke test 三场景 (initial / rerun / empty) 全过
+  - [x] B0.8 SKILL.md 加 Step 2.5 (证据驱动 profile 抽象) + Step 4.5 (cli write-profile 入库) + Step 3 markdown 字段级 diff 校准协议; Iron Promises 加 B-I5; 反模式加 placeholder + rerun 跳过 diff 两条; v1 限制段移除"agent-driven 不写 profile"
+  - [x] B0.9 重新部署 SKILL 到三家 (`install-skill --target all`)
 
 - [x] **B1. atomsyn-cli install-skill 加 Codex 支持** (依 D-005, design §5.1):
   - [x] B1.1 调研 Codex CLI skill 加载路径 → 用户级全局: `~/.agents/skills/<skill>/SKILL.md` (来源: developers.openai.com/codex/skills)

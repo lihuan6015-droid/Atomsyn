@@ -401,14 +401,18 @@ export interface ExternalAgentHandoffCardProps {
 | **D-008** | atomsyn-cli 在 Agent 内是否调 LLM | **不调 LLM** | Agent 已是 LLM 不需要 cli 复刻; cli 仅做 triage / write / reindex 工具操作; sampling/deep-dive 留给 Wizard 路径 |
 | **D-009** | SKILL.md 视角 | **完全 Agent 视角重写** | 删除"v1 仅支持 X 格式" 类约束; Agent 自己 read 任何格式 (.pdf/.docx/.xlsx 等); 不为 Wizard 留双路径 |
 | **D-010** | LLM 假装跑 bootstrap 的防护 | **SOUL + AGENTS 双重声明** | SOUL.md 加运行环境与边界段; AGENTS.md atomsyn-bootstrap 触发段语气强化"永不假装" |
+| **D-011** | profile 写入纳入 agent-driven (修正 D-009) | **加 cli write-profile + 证据驱动 + 校准协议** | bootstrap 双层产出兑现 (1 profile + N experience); cli 复用 applyProfileEvolution; 证据不足整段跳过; rerun 字段级 diff + verified 强制 reset |
 
 **B5 测试矩阵规模**: D-005 加入 Codex → 5 场景 × 4 skill × 3 工具 = **60 测试点** (原 40), 触发率门槛仍 ≥ 80%.
 
-**B0 引发的范围调整** (D-008/D-009/D-010 后追加):
+**B0 引发的范围调整** (D-008/D-009/D-010/D-011 后追加):
 - atomsyn-bootstrap SKILL.md 重写 (B0.1+B0.2 已完成)
 - SOUL.md 加运行环境段 (B0.4 已完成, 双份: skills/chat/ + 用户私有)
 - AGENTS.md atomsyn-bootstrap 触发段 (B0.5 已完成, 双份)
 - write/read/mentor SKILL.md 审查无错位, 不需大改 (B0.6 已完成)
+- atomsyn-cli `write-profile --stdin` 子命令 (B0.7 已完成, 复用 evolution.mjs::applyProfileEvolution)
+- SKILL.md 加 Step 2.5 + Step 4.5 + 字段级校准协议 (B0.8 已完成)
+- 重新部署 SKILL 到三家 (B0.9 待跑)
 
 ## 7 · 安全与隐私
 
