@@ -288,5 +288,142 @@ ExternalAgentHandoffCard 是本 change 唯一的新视觉资产。视觉契约 2
 
 ---
 
+## D-008 · atomsyn-cli 在外部 Agent 内**不调 LLM** (2026-04-28 实测后新增)
+
+**状态**: accepted
+**日期**: 2026-04-28
+**决策人**: 用户 + 主 agent (基于 boot_813079ea2c1f76 实测)
+
+### 背景
+
+bootstrap-tools v2 的 D-001 (agentic 模式默认) 让 atomsyn-cli bootstrap 自带 LLM tool-use loop, 由 cli 内部驱动 sampling/deep-dive/commit 阶段调 LLM。但在 chat-as-portal 战略调整后, atomsyn-cli 在外部成熟 Agent (Claude Code / Cursor / Codex) 内运行时, **Agent 本身就是 LLM** — 已经有 read/reason/tool-use 的全部能力, cli 再独立调 LLM 是:
+
+1. **资源浪费**: 双 LLM 调用 (Agent 调用一次, cli 内部又调一次)
+2. **凭证错位**: Agent 已有自己的 API key (Cursor / Claude Code 自带 key), cli 又要 ATOMSYN_LLM_API_KEY (用户 boot_813079ea2c1f76 实测时 cli 在 sampling 阶段卡死, 报错 "No LLM credentials available")
+3. **能力错位**: cli 内部 LLM 一定不会比外部 Agent 内置的更先进 (Agent 持续投入), 是必输竞争
+4. **违反 chat-as-portal 命题**: cli 应该是"工具", 不应该试图变成"小型 Agent"
+
+### 决策
+
+**atomsyn-cli 在外部 Agent 内执行 bootstrap 时, 完全不调 LLM**:
+
+- cli 仅做: triage (列文件清单 + 元信息) + ingest (`atomsyn-cli write --stdin <atom JSON>`) + reindex
+- sampling / deep-dive / commit 阶段在 SKILL.md 中**明确不推荐外部 Agent 走** — 由 Agent 自己 read 文件 + 自己生成 atom JSON + 通过 `cli write` 入库
+- bootstrap 子命令保留所有现有 phase 选项 (triage/sampling/deep-dive/all + agentic/funnel mode), 但仅 GUI Wizard (D-001 高级后门) 路径仍使用 sampling/deep-dive/commit
+- ATOMSYN_LLM_API_KEY 在外部 Agent 路径**不需要**, 在 GUI Wizard 路径仍可选 (供 Wizard 内部 self-LLM 模式使用)
+
+### 理由
+
+- 用户 2026-04-28 实测 (boot_813079ea2c1f76) 验证: Claude Code 进 SAMPLING 阶段卡死的根因不是 LLM 凭证缺失, 而是**cli 不应该在这里调 LLM**
+- Agent 视角 + cli 视角分离: SKILL.md 给 Agent 看, 教 Agent 用 cli 做"工具调用"; cli 内部 LLM 模式归 GUI Wizard 用 (cli 是 Wizard 的实现细节)
+- 不删 cli 现有 sampling/deep-dive/commit 代码 (BootstrapWizard 仍消费), 只在 SKILL.md 改 Agent 行为指引
+
+### 备选方案
+
+- **(a) cli 双模式 `--mode agent-driven` / `--mode self`**: 工程量中, 命令面变复杂, 命令选项暴露 LLM 路径细节给用户
+- **(b) cli 完全去掉 LLM 路径**: 工程量大, 破坏 71+ assertion 的 bootstrap-tools 测试矩阵, BootstrapWizard 也要重写
+- **(c) 不动 cli, 改 SKILL.md 引导 Agent 不走 sampling/deep-dive** (选中): 工程量小, cli 代码 0 改动, BootstrapWizard 不受影响, 仅 SKILL.md 重写
+
+### 后果
+
+- atomsyn-bootstrap SKILL.md 完全重写 (B0.2 任务): 教 Agent 用 `cli bootstrap --phase triage` + Agent 自己 read 文件 + Agent 自己生成 atom JSON + `cli write --stdin` + `cli reindex`
+- D-009/D-010 联动 (见下)
+- BootstrapWizard 内部仍用 cli 的 LLM 模式 (D-001 后果不变)
+- ATOMSYN_LLM_API_KEY 文档调整: 在 cli usage 改成"GUI Wizard 高级模式可选, 外部 Agent 路径不需要"
+
+---
+
+## D-009 · SKILL.md 完全基于外部 Agent 视角重写, 不复刻 cli 的格式限制 (2026-04-28 新增)
+
+**状态**: accepted
+**日期**: 2026-04-28
+**决策人**: 用户 + 主 agent (基于 boot_813079ea2c1f76 实测)
+
+### 背景
+
+实测中 Claude Code 跑 atomsyn-bootstrap 时, SKILL.md 当前写明 "v1 仅支持 .md / .txt / .json / 源代码" — 这是 atomsyn-cli **extractors 的实现限制** (cli 自己读文件需要 extractor), 不是外部 Agent 的能力限制。结果:
+
+- 用户 ~/Documents/混沌 下 14 个文件, 11 个是 .pptx / .pdf / .xlsx / .docx / .xmind, **被 SKILL.md 错误地告知 Agent "跳过"**
+- 实际上 Claude Code / Cursor / Codex 都能直接 Read PDF (Read 工具支持) + 用 Bash 调 pdftotext / pandoc 处理 .docx / .xlsx
+- SKILL.md 用 cli 的视角写 Agent 限制 = **限制了 Agent 的发挥**, 与"L2 加固 = 让 Agent 充分发挥能力"的 chat-as-portal 命题相反
+
+### 决策
+
+**atomsyn-bootstrap SKILL.md 完全重写, 严格基于外部 Agent 视角**:
+
+1. **删除所有"v1 仅支持 X 格式"** 类约束 — 让 Agent 用自己的全部能力处理任何格式 (.pdf/.docx/.xlsx/.pptx/.xmind/图片/etc.)
+2. **不再为 BootstrapWizard 留双路径分支** — SKILL.md 只服务外部 Agent (Wizard 内部用什么逻辑是 GUI 自己的事, 跟 SKILL 无关)
+3. **流程改为 Agent-driven**:
+   - Step 1: `atomsyn-cli bootstrap --phase triage --path <X>` 拿文件清单 (cli 不调 LLM, 仅扫盘列表)
+   - Step 2: Agent **自己** Read / pdftotext / pandoc 等读所有想读的文件 (任何格式)
+   - Step 3: Agent **自己** 思考生成 profile + atom JSON (Agent 是 LLM, 这是它的本职)
+   - Step 4: `atomsyn-cli write --stdin <atom JSON>` 入库 (走 schema 校验, cli 不调 LLM)
+   - Step 5: `atomsyn-cli reindex` 重建索引
+4. **明确禁止** Agent 调 `bootstrap --phase sampling/deep-dive/commit` (那些是 GUI Wizard 用的)
+
+### 理由
+
+- Agent 视角 ≠ cli 视角 — SKILL.md 是给 Agent 看的合约, 必须用 Agent 能做的事写, 不要把 cli 的实现限制传染过去
+- 实测验证: Claude Code 实际能力 ≫ SKILL.md 描述的能力, 我们之前的 SKILL 是**人为限制**外部 Agent
+- "L2 加固" 不只是装好 SKILL.md, 还要让 SKILL.md 充分释放外部 Agent 的能力 (这正是 chat-as-portal 命题)
+
+### 备选方案
+
+- **(a) 保持 cli 视角, SKILL.md 不动**: 维持现状, 但限制 Agent 发挥, 11/14 文件被错误跳过
+- **(b) 完全 Agent 视角重写** (选中): SKILL 释放 Agent 能力, .pdf/.docx 等都能处理, 与 chat-as-portal 命题一致
+- **(c) 双视角维护两份 SKILL**: 一份给外部 Agent, 一份给 GUI Wizard — 维护成本翻倍, 不必要 (Wizard 不消费 SKILL.md)
+
+### 后果
+
+- B0.2 任务: 重写 atomsyn-bootstrap/SKILL.md 主体 (~270 行, 大改)
+- B0.6 审查: write/read/mentor 三个 SKILL.md **不需要大改** (审查后确认它们已是 Agent 视角)
+- 60 测试点矩阵 (B5) 在 SKILL.md 重写后必须重测一次, 因为 description 变了
+- 文件格式覆盖率: 从 v1 的 .md/.txt/.json/.code → 任意格式 (Agent 自由)
+
+---
+
+## D-010 · SOUL.md + AGENTS.md 双重声明"桌面客户端不执行 bootstrap" (2026-04-28 新增)
+
+**状态**: accepted
+**日期**: 2026-04-28
+**决策人**: 用户 + 主 agent
+
+### 背景
+
+D-002 (`/bootstrap` 改语义) 和 D-009 (SKILL.md 完全外部 Agent 视角) 决定后, 还需要确保 atomsyn 桌面客户端**内置 LLM** 自身知道 "我不能执行 bootstrap, 我只能输出 handoff 卡片". 否则:
+- 内置 LLM 看到用户说"导入 X" 时, 可能假装自己能跑 (输出 markdown 自演完整流程, 用户失望)
+- AGENTS.md 现有触发段 (本 change A3 设计) 仅说"输出 handoff", 但没解释**为什么** — LLM 缺背景下容易绕过指令
+
+### 决策
+
+**SOUL.md (持久身份) + AGENTS.md (行为规则) 双重声明**:
+
+- **SOUL.md** 加 "运行环境与边界" 段:
+  > 我是运行在 atomsyn 桌面客户端内的 LLM 助手, 不具备 tool-use 能力 (无法读硬盘/扫目录/调 cli/spawn 子进程). 当用户需要重数据流操作 (扫盘/批量解析/批量入库) 时, 我转而**生成完整提示词让用户复制到外部成熟 Agent (Claude Code / Codex / Cursor) 执行**. 我不会假装自己能跑这些任务, 也不会输出"假装做完了"的 markdown 报告.
+- **AGENTS.md** atomsyn-bootstrap 触发段语气强化 (基于 chat-as-portal A3 + D-010 升级):
+  > 触发关键词 → 永远输出 `[[handoff:bootstrap|{...}]]` 卡片 (D-005 双 Agent 推荐). **永不假装能跑** bootstrap (即使用户说"快帮我导入"也不行). **永不输出**"我已经处理了这些文件"类自演内容. 用户的期望是"看见正确路径", 不是"看见你假装做完了".
+
+### 理由
+
+- 用户在 chat-as-portal 收尾对话明确提出: "可以在合适的位置加上注释, 告诉程序内调用的 LLM, 当前是桌面客户端, 不进行 atomsyn-bootstrap 真实操作"
+- SOUL.md (persona/identity) + AGENTS.md (behavior) 是双重保险:
+  - SOUL.md 让 LLM **理解为什么** 不能跑重流程 (运行环境限制)
+  - AGENTS.md 让 LLM **知道具体怎么做** (输出 handoff 卡片)
+- 双声明降低 LLM 因为压力情况 (用户催促 / 长上下文遗忘) 绕过指令的概率
+
+### 备选方案
+
+- **(a) 仅 AGENTS.md 加段**: A3 任务的原方案, 但 LLM 缺"为什么"背景, 在长上下文容易遗忘
+- **(b) 双重声明** (选中): SOUL.md 解释为什么 + AGENTS.md 规定怎么做, 形成双重保险
+
+### 后果
+
+- B0.4 任务: SOUL.md 加 "运行环境与边界" 段 (skills/chat/SOUL.md + ~/Library/Application Support/atomsyn/chat/SOUL.md 双份)
+- B0.5 任务: AGENTS.md atomsyn-bootstrap 触发段语气强化 (skills/chat/AGENTS.md + ~/Library/Application Support/atomsyn/chat/AGENTS.md 双份)
+- A3 任务 (原 chat-as-portal proposal) 升级为 B0.5 + B0.4 的合集, 不再单独标 A3
+- 这条声明也覆盖未来其他重数据任务 (e.g. 批量 export, 批量 supersede 等), 不只是 bootstrap
+
+---
+
 > **追加新决策**时, 复制 D-XXX 模板 entry。决策被新决策替代时, 旧决策状态改为 `superseded by D-XXX`, 不删除。
 > **归档前**再扫一遍, 把 proposed 状态的决策定型为 accepted (或 rejected)。
