@@ -43,3 +43,4 @@ CLAUDE.md
 src/**/*.js
 src/**/*.d.ts
 src/**/*.js.map
+OPENSPEC-BOOTSTRAP-PROMPT.md
