@@ -1,7 +1,7 @@
 {
   "name": "atomsyn",
   "private": false,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "A local-first personal knowledge vault with AI agent integration",
   "author": "circlelee",
@@ -16,9 +16,11 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "npm run lint && vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit",
+    "lint": "npm run typecheck:app && npm run typecheck:node",
+    "typecheck:app": "tsc --noEmit -p tsconfig.json",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
     "reindex": "node scripts/rebuild-index.mjs",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",

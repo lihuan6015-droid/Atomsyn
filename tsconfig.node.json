@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "composite": true,
     "target": "ES2022",
     "lib": ["ES2022"],
     "skipLibCheck": true,
@@ -8,6 +7,7 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "noEmit": true,
     "strict": true
   },
   "include": ["vite.config.ts", "vite-plugin-data-api.ts", "src/lib/atomEvolution.ts", "src/types/index.ts", "src/types/notes.ts"]

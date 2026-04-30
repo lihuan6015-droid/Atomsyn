@@ -43,4 +43,6 @@ CLAUDE.md
 src/**/*.js
 src/**/*.d.ts
 src/**/*.js.map
+tsconfig.tsbuildinfo
+tsconfig.node.tsbuildinfo
 OPENSPEC-BOOTSTRAP-PROMPT.md
